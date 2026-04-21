@@ -19,6 +19,10 @@ const nextConfig = {
                 protocol: 'https',
                 hostname: 'minio-api.hazratdev.top',
             },
+            {
+                protocol: 'https',
+                hostname: 'api-minio-storage.hazratdev.top',
+            },
         ],
     },
     async headers() {
