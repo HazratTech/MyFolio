@@ -37,6 +37,9 @@ async function dbConnect() {
         const opts = {
             bufferCommands: false,
             dbName: 'myfolio',
+            serverSelectionTimeoutMS: 10000, // 10 seconds timeout
+            tls: true,
+            tlsAllowInvalidCertificates: false, // Set to true for debugging only
         };
 
         cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {

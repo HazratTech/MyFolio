@@ -354,7 +354,7 @@ export const Projects = () => {
                                     </DialogHeader>
 
                                     <div className="prose prose-invert max-w-none mb-8">
-                                        <p className="text-gray-300 leading-relaxed text-base lg:text-lg">
+                                        <p className="text-gray-700 leading-relaxed text-base lg:text-lg">
                                             {selectedProject.description}
                                         </p>
                                     </div>
@@ -394,7 +394,7 @@ export const Projects = () => {
                                                                 {new Date(comment.createdAt).toLocaleDateString()}
                                                             </span>
                                                         </div>
-                                                        <p className="text-sm text-gray-300 leading-snug">{comment.content}</p>
+                                                        <p className="text-sm text-gray-700 leading-snug">{comment.content}</p>
                                                     </div>
                                                 ))
                                             ) : (
