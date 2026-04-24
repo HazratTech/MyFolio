@@ -17,6 +17,7 @@ services:
       - NODE_ENV=production
       - MONGODB_URI=${MONGODB_URI}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - NEXT_SERVER_ACTIONS_ENCRYPTION_KEY=${NEXT_SERVER_ACTIONS_ENCRYPTION_KEY}
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/projects', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
