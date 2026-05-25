@@ -1,4 +1,4 @@
-const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1442057843284115497/GgXitJ6JVywxC4EIIS3758iOtEpmia8j0wmL9jxv_CX4i8uiVkmm8sPG_foqbNs9p0zK";
+const DISCORD_WEBHOOK_URL = process.env.DISCORD_ADMIN_WEBHOOK_URL;
 
 interface WebhookPayload {
     email: string;

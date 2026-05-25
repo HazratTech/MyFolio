@@ -54,8 +54,6 @@ export const Contact = () => {
         setIsSubmitting(true);
         setResult(null);
 
-        const webhookUrl = "https://discord.com/api/webhooks/1441725199308296213/scOEahaOdNDgYzg8rBeI8zvDYSlm5NVK8Vxgk8mtjhFEJpoEcuwSr7L5jJYbydw-bvCf";
-
         const embed = {
             title: "New Contact Form Submission",
             color: 5814783, // Blue color
@@ -70,7 +68,7 @@ export const Contact = () => {
         };
 
         try {
-            const response = await fetch(webhookUrl, {
+            const response = await fetch("/api/contact", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ embeds: [embed] }),
