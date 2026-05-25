@@ -345,7 +345,7 @@ export const Projects = () => {
                                                 <Badge
                                                     key={i}
                                                     variant="secondary"
-                                                    className="bg-gradient-to-r from-blue-500 to-purple-600 text-white border-none px-3 py-1 text-sm font-medium transition-transform hover:scale-105 shadow-lg shadow-primary/20"
+                                                    className="bg-gradient-to-r from-gray-600 to-gray-900 text-white border-none px-3 py-1.5 text-sm font-medium transition-transform hover:scale-105 shadow-lg shadow-primary/20"
                                                 >
                                                     {tag}
                                                 </Badge>
@@ -361,7 +361,7 @@ export const Projects = () => {
 
                                     <div className="flex gap-3 mb-8">
                                         <a href={selectedProject.githubUrl} target="_blank" rel="noopener noreferrer" className="flex-1">
-                                            <Button variant="outline" className="w-full border-white/10 hover:bg-white/5 hover:text-white hover:border-white/30 transition-all h-11">
+                                            <Button variant="outline" className="w-full border-white/10 hover:bg-white/5 hover:text-gray-700 hover:border-white/30 transition-all h-11">
                                                 <Github className="w-4 h-4 mr-2" />
                                                 Code
                                             </Button>
@@ -379,7 +379,7 @@ export const Projects = () => {
                                     </div>
 
                                     <div className="border-t border-white/10 pt-6">
-                                        <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-white">
+                                        <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-gray-700">
                                             <MessageSquare className="w-4 h-4 text-primary" />
                                             Discussion ({comments.length})
                                         </h3>
