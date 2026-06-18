@@ -1,0 +1,17 @@
+name: Auto-Blog Cron
+
+on:
+  schedule:
+    # Runs every 4 hours
+    - cron: '0 */4 * * *'
+  workflow_dispatch: # Allows you to manually trigger it from GitHub UI
+
+jobs:
+  run-cron:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Auto-Blog Endpoint
+        run: |
+          curl -X POST "https://hazratdev.top/api/cron/auto-blog" \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+          --fail || echo "Cron job failed, but workflow will continue"

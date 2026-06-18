@@ -43,7 +43,7 @@ export default function PostCard({ post }: PostCardProps) {
 
             <CardContent className="flex-grow">
                 <p className="text-muted-foreground text-sm line-clamp-3 mb-4">
-                    {post.excerpt || post.content.substring(0, 150) + "..."}
+                    {post.excerpt || post.content.replace(/<[^>]*>?/gm, '').substring(0, 150) + "..."}
                 </p>
 
                 <div className="flex flex-wrap gap-2 mb-4">

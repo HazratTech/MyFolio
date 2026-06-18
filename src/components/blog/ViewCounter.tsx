@@ -4,14 +4,19 @@ import { useEffect } from "react";
 
 export default function ViewCounter({ slug }: { slug: string }) {
     useEffect(() => {
-        // Call the API to increment view count
-        // We use the existing GET /api/blog/posts/[slug] which increments views
-        // Or we could have a dedicated endpoint. 
-        // Given the existing API implementation:
-        // const post = await Post.findOneAndUpdate({ slug }, { $inc: { views: 1 } }, { new: true });
-        // calling fetch matches that logic.
+        // Industry standard approach for unique views without requiring login
+        const viewedPosts = JSON.parse(localStorage.getItem('viewedPosts') || '[]');
 
-        fetch(`/api/blog/posts/${slug}`, { cache: 'no-store' }).catch(err => console.error(err));
+        if (!viewedPosts.includes(slug)) {
+            fetch(`/api/blog/posts/${slug}`, { cache: 'no-store' })
+                .then(res => {
+                    if (res.ok) {
+                        viewedPosts.push(slug);
+                        localStorage.setItem('viewedPosts', JSON.stringify(viewedPosts));
+                    }
+                })
+                .catch(err => console.error("Failed to update view count", err));
+        }
     }, [slug]);
 
     return null; // Invisible component
