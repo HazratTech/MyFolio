@@ -103,11 +103,10 @@ export async function uploadFromUrl(url: string, bucket: string = "myfolio") {
         }
 
         // 4. Complete Upload
-        await completeUpload(object_key, fileSize, fileType, bucket);
+        const completeData = await completeUpload(object_key, fileSize, fileType, bucket);
 
-        // Force Public URL construction (Since user confirmed bucket is public)
-        // This avoids storing expiring signed URLs returned by the API
-        const publicUrl = `${STORAGE_API_URL}/${bucket}/${object_key}`;
+        // Use the returned final_url from the complete API call
+        const publicUrl = completeData.final_url || `${STORAGE_API_URL}/${bucket}/${object_key}`;
 
         return { final_url: publicUrl, object_key: object_key };
     } catch (error) {

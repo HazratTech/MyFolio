@@ -98,7 +98,7 @@ const TiptapEditor = ({ content, onChange, onEditorReady }: TiptapEditorProps) =
         },
         editorProps: {
             attributes: {
-                class: 'prose prose-invert max-w-none focus:outline-none p-4 min-h-[300px] prose-pre:!bg-zinc-950 prose-pre:!text-zinc-100 prose-pre:!border prose-pre:!border-white/10 prose-img:my-4 prose-p:!my-2',
+                class: 'blog-prose max-w-4xl mx-auto focus:outline-none min-h-[500px] outline-none py-12 px-6 md:px-12',
             },
         },
         immediatelyRender: false,
@@ -108,11 +108,14 @@ const TiptapEditor = ({ content, onChange, onEditorReady }: TiptapEditorProps) =
         return null;
     }
 
-    console.log("Checking components:", {
-        BubbleMenu, FloatingMenu, EditorContent, Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-        MediaPickerModal, Button, Bold, Italic, Strikethrough, Code, Terminal, List, ListOrdered, Quote,
-        Undo, Redo, LinkIcon, ImageIcon, AlignLeft, AlignCenter, AlignRight, Heading1, Heading2, Heading3
-    });
+    const getActiveStyle = () => {
+        if (editor.isActive('heading', { level: 1 })) return 'h1';
+        if (editor.isActive('heading', { level: 2 })) return 'h2';
+        if (editor.isActive('heading', { level: 3 })) return 'h3';
+        if (editor.isActive('heading', { level: 4 })) return 'h4';
+        if (editor.isActive('heading', { level: 5 })) return 'h5';
+        return 'p';
+    };
 
     const setLink = () => {
         const previousUrl = editor.getAttributes('link').href;
@@ -173,7 +176,7 @@ const TiptapEditor = ({ content, onChange, onEditorReady }: TiptapEditorProps) =
 
 
     return (
-        <div className="border border-white/10 rounded-lg overflow-hidden bg-white/5 relative group">
+        <div className="border border-border rounded-lg overflow-hidden bg-card relative group shadow-sm">
             <style>{`
                 .hljs-comment, .hljs-quote { color: #5c6370; font-style: italic; }
                 .hljs-doctag, .hljs-keyword, .hljs-formula { color: #c678dd; }
@@ -197,7 +200,7 @@ const TiptapEditor = ({ content, onChange, onEditorReady }: TiptapEditorProps) =
             />
 
             {/* Bubble Menu for formatting text */}
-            <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }} className="flex bg-zinc-900 border border-white/10 shadow-2xl rounded-full overflow-hidden p-1 gap-1 items-center">
+            <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }} className="flex bg-zinc-950 border border-zinc-800 shadow-2xl rounded-full overflow-hidden p-1 gap-1 items-center">
                 <Button type="button" variant="ghost" size="icon" className={editor.isActive('bold') ? 'bg-white/10 text-primary h-8 w-8' : 'h-8 w-8 text-white hover:bg-white/10 rounded-full'} onClick={() => editor.chain().focus().toggleBold().run()}><Bold className="w-4 h-4" /></Button>
                 <Button type="button" variant="ghost" size="icon" className={editor.isActive('italic') ? 'bg-white/10 text-primary h-8 w-8' : 'h-8 w-8 text-white hover:bg-white/10 rounded-full'} onClick={() => editor.chain().focus().toggleItalic().run()}><Italic className="w-4 h-4" /></Button>
                 <Button type="button" variant="ghost" size="icon" className={editor.isActive('strike') ? 'bg-white/10 text-primary h-8 w-8' : 'h-8 w-8 text-white hover:bg-white/10 rounded-full'} onClick={() => editor.chain().focus().toggleStrike().run()}><Strikethrough className="w-4 h-4" /></Button>
@@ -211,7 +214,7 @@ const TiptapEditor = ({ content, onChange, onEditorReady }: TiptapEditorProps) =
             </BubbleMenu>
 
             {/* Full Top Toolbar */}
-            <div className="flex flex-wrap gap-2 p-2 border-b border-white/10 bg-white/5 items-center sticky top-0 z-10">
+            <div className="flex flex-wrap gap-2 p-2 border-b border-border bg-muted/40 items-center sticky top-0 z-10">
                 {/* Text Style */}
                 <Select
                     value={getActiveStyle()}
@@ -226,7 +229,7 @@ const TiptapEditor = ({ content, onChange, onEditorReady }: TiptapEditorProps) =
                         }
                     }}
                 >
-                    <SelectTrigger className="w-[120px] h-8 text-xs bg-black/40 border-white/10 focus:ring-0 shadow-none">
+                    <SelectTrigger className="w-[120px] h-8 text-xs bg-background border-border focus:ring-0 shadow-none">
                         <SelectValue placeholder="Style" />
                     </SelectTrigger>
                     <SelectContent>
@@ -242,7 +245,7 @@ const TiptapEditor = ({ content, onChange, onEditorReady }: TiptapEditorProps) =
                 <div className="w-px h-6 bg-white/10 mx-1" />
 
                 {/* Basic Formatting */}
-                <div className="flex bg-black/20 rounded-md p-0.5 gap-0.5">
+                <div className="flex bg-muted rounded-md p-0.5 gap-0.5">
                     <Button type="button" variant="ghost" size="icon" className={editor.isActive('bold') ? 'bg-white/10 text-primary h-8 w-8' : 'h-8 w-8'} onClick={() => editor.chain().focus().toggleBold().run()}><Bold className="w-4 h-4" /></Button>
                     <Button type="button" variant="ghost" size="icon" className={editor.isActive('italic') ? 'bg-white/10 text-primary h-8 w-8' : 'h-8 w-8'} onClick={() => editor.chain().focus().toggleItalic().run()}><Italic className="w-4 h-4" /></Button>
                     <Button type="button" variant="ghost" size="icon" className={editor.isActive('strike') ? 'bg-white/10 text-primary h-8 w-8' : 'h-8 w-8'} onClick={() => editor.chain().focus().toggleStrike().run()}><Strikethrough className="w-4 h-4" /></Button>
@@ -252,7 +255,7 @@ const TiptapEditor = ({ content, onChange, onEditorReady }: TiptapEditorProps) =
                 <div className="w-px h-6 bg-white/10 mx-1" />
 
                 {/* Alignment */}
-                <div className="flex bg-black/20 rounded-md p-0.5 gap-0.5">
+                <div className="flex bg-muted rounded-md p-0.5 gap-0.5">
                     <Button type="button" variant="ghost" size="icon" className={editor.isActive({ textAlign: 'left' }) ? 'bg-white/10 text-primary h-8 w-8' : 'h-8 w-8'} onClick={() => editor.chain().focus().setTextAlign('left').run()}><AlignLeft className="w-4 h-4" /></Button>
                     <Button type="button" variant="ghost" size="icon" className={editor.isActive({ textAlign: 'center' }) ? 'bg-white/10 text-primary h-8 w-8' : 'h-8 w-8'} onClick={() => editor.chain().focus().setTextAlign('center').run()}><AlignCenter className="w-4 h-4" /></Button>
                     <Button type="button" variant="ghost" size="icon" className={editor.isActive({ textAlign: 'right' }) ? 'bg-white/10 text-primary h-8 w-8' : 'h-8 w-8'} onClick={() => editor.chain().focus().setTextAlign('right').run()}><AlignRight className="w-4 h-4" /></Button>
@@ -261,7 +264,7 @@ const TiptapEditor = ({ content, onChange, onEditorReady }: TiptapEditorProps) =
                 <div className="w-px h-6 bg-white/10 mx-1" />
 
                 {/* Lists & Quotes */}
-                <div className="flex bg-black/20 rounded-md p-0.5 gap-0.5">
+                <div className="flex bg-muted rounded-md p-0.5 gap-0.5">
                     <Button type="button" variant="ghost" size="icon" className={editor.isActive('bulletList') ? 'bg-white/10 text-primary h-8 w-8' : 'h-8 w-8'} onClick={() => editor.chain().focus().toggleBulletList().run()}><List className="w-4 h-4" /></Button>
                     <Button type="button" variant="ghost" size="icon" className={editor.isActive('orderedList') ? 'bg-white/10 text-primary h-8 w-8' : 'h-8 w-8'} onClick={() => editor.chain().focus().toggleOrderedList().run()}><ListOrdered className="w-4 h-4" /></Button>
                     <Button type="button" variant="ghost" size="icon" className={editor.isActive('blockquote') ? 'bg-white/10 text-primary h-8 w-8' : 'h-8 w-8'} onClick={() => editor.chain().focus().toggleBlockquote().run()}><Quote className="w-4 h-4" /></Button>
@@ -270,7 +273,7 @@ const TiptapEditor = ({ content, onChange, onEditorReady }: TiptapEditorProps) =
                 <div className="w-px h-6 bg-white/10 mx-1" />
 
                 {/* Code Block & Language */}
-                <div className="flex bg-black/20 rounded-md p-0.5 gap-1 items-center">
+                <div className="flex bg-muted rounded-md p-0.5 gap-1 items-center">
                     <Button type="button" variant="ghost" size="icon" className={editor.isActive('codeBlock') ? 'bg-white/10 text-primary h-8 w-8' : 'h-8 w-8'} onClick={() => editor.chain().focus().toggleCodeBlock().run()}><Terminal className="w-4 h-4" /></Button>
 
                     {editor.isActive('codeBlock') && (
@@ -300,7 +303,7 @@ const TiptapEditor = ({ content, onChange, onEditorReady }: TiptapEditorProps) =
                 <div className="w-px h-6 bg-white/10 mx-1" />
 
                 {/* Media & Links */}
-                <div className="flex bg-black/20 rounded-md p-0.5 gap-0.5">
+                <div className="flex bg-muted rounded-md p-0.5 gap-0.5">
                     <Button type="button" variant="ghost" size="icon" className={editor.isActive('link') ? 'bg-white/10 text-primary h-8 w-8' : 'h-8 w-8'} onClick={setLink}><LinkIcon className="w-4 h-4" /></Button>
                     <MediaPickerModal onSelect={(media) => {
                         editor.chain().focus().setImage({
@@ -316,14 +319,16 @@ const TiptapEditor = ({ content, onChange, onEditorReady }: TiptapEditorProps) =
                 <div className="w-px h-6 bg-white/10 mx-1" />
 
                 {/* Undo/Redo */}
-                <div className="flex bg-black/20 rounded-md p-0.5 gap-0.5 ml-auto">
+                <div className="flex bg-muted rounded-md p-0.5 gap-0.5 ml-auto">
                     <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => editor.chain().focus().undo().run()} disabled={!editor.can().chain().focus().undo().run()}><Undo className="w-4 h-4" /></Button>
                     <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => editor.chain().focus().redo().run()} disabled={!editor.can().chain().focus().redo().run()}><Redo className="w-4 h-4" /></Button>
                 </div>
             </div>
 
-            <div className="p-2 sm:p-4 md:p-8">
-                <EditorContent editor={editor} />
+            <div className="bg-muted/30 p-4 md:p-8 border-t border-border/50">
+                <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-md border border-border/50 max-w-5xl mx-auto">
+                    <EditorContent editor={editor} />
+                </div>
             </div>
         </div>
     );

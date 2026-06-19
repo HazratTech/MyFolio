@@ -154,7 +154,7 @@ export default function BlogPostForm({ initialData, isEditing = false }: BlogPos
                         name="status"
                         value={formData.status}
                         onChange={handleChange}
-                        className="h-10 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="h-10 rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                         <option value="draft">Draft</option>
                         <option value="published">Published</option>
@@ -177,7 +177,7 @@ export default function BlogPostForm({ initialData, isEditing = false }: BlogPos
                                     value={formData.title}
                                     onChange={handleChange}
                                     required
-                                    className="text-lg font-bold bg-white/5 border-white/10"
+                                    className="text-lg font-bold bg-background border-border"
                                     placeholder="Enter post title..."
                                 />
                             </div>
@@ -188,7 +188,7 @@ export default function BlogPostForm({ initialData, isEditing = false }: BlogPos
                                         name="slug"
                                         value={formData.slug}
                                         onChange={handleChange}
-                                        className="bg-white/5 border-white/10 font-mono text-sm"
+                                        className="bg-background border-border font-mono text-sm"
                                         placeholder="custom-slug-url"
                                     />
                                 </div>
@@ -212,7 +212,7 @@ export default function BlogPostForm({ initialData, isEditing = false }: BlogPos
                                     name="excerpt"
                                     value={formData.excerpt}
                                     onChange={handleChange}
-                                    className="flex w-full rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[100px]"
+                                    className="flex w-full rounded-md border border-border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[100px]"
                                     placeholder="Brief summary for SEO and previews..."
                                 />
                             </div>
@@ -225,7 +225,7 @@ export default function BlogPostForm({ initialData, isEditing = false }: BlogPos
                         <CardContent className="pt-6 space-y-4">
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">Cover Image</label>
-                                <div className="border-2 border-dashed border-white/10 rounded-lg p-4 text-center hover:bg-white/5 transition-colors relative group">
+                                <div className="border-2 border-dashed border-border rounded-lg p-4 text-center hover:bg-muted/50 transition-colors relative group">
                                     <Input
                                         id="cover-upload"
                                         type="file"
@@ -286,7 +286,7 @@ export default function BlogPostForm({ initialData, isEditing = false }: BlogPos
                                         name="category"
                                         value={formData.category}
                                         onChange={handleChange}
-                                        className="flex h-10 w-full items-center justify-between rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                                        className="flex h-10 w-full items-center justify-between rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                                     >
                                         <option value="">Select Category...</option>
                                         {categories.map((cat: any) => (
@@ -304,7 +304,7 @@ export default function BlogPostForm({ initialData, isEditing = false }: BlogPos
                                     value={formData.tags}
                                     onChange={handleChange}
                                     placeholder="nextjs, react, tutorial"
-                                    className="bg-white/5 border-white/10"
+                                    className="bg-background border-border"
                                 />
                                 <p className="text-xs text-muted-foreground">Comma separated tags.</p>
                             </div>

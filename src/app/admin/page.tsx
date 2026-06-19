@@ -4,7 +4,8 @@ import Project from "@/models/Project";
 
 import Testimonial from "@/models/Testimonial";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FolderKanban, Briefcase, MessageSquare } from "lucide-react";
+import { FolderKanban, MessageSquare } from "lucide-react";
+import { AutoBlogConfigSection } from "@/components/admin/AutoBlogConfigSection";
 
 export const dynamic = 'force-dynamic';
 
@@ -40,7 +41,7 @@ export default async function AdminDashboard() {
                 <p className="text-muted-foreground mt-2">Welcome back, Admin. Here's what's happening.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {stats.map((stat) => (
                     <Card key={stat.name} className="bg-card/50 backdrop-blur-sm border-white/10">
                         <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -56,6 +57,10 @@ export default async function AdminDashboard() {
                         </CardContent>
                     </Card>
                 ))}
+            </div>
+
+            <div className="max-w-4xl">
+                <AutoBlogConfigSection />
             </div>
         </div>
     );
