@@ -1,7 +1,4 @@
 import { GoogleGenAI } from "@google/genai";
-import dotenv from "dotenv";
-
-dotenv.config({ path: ".env.local" });
 
 async function test() {
     console.log("Testing Gemini Image Generation...");

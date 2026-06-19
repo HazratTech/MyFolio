@@ -40,7 +40,7 @@ async function uploadBuffer(
     const putRes = await fetch(upload_url, {
         method: "PUT",
         headers: { "Content-Type": mimeType },
-        body: buffer,
+        body: buffer as any,
     });
     if (!putRes.ok) throw new Error(`MinIO PUT failed: ${await putRes.text()}`);
 
@@ -70,14 +70,36 @@ async function generateAndUpload(
     height = 630,
     retries = 5
 ): Promise<{ url: string; key: string } | null> {
-    const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${width}&height=${height}&nologo=true&enhance=false&model=flux`;
+    if (!process.env.FAL_KEY) throw new Error("FAL_KEY not configured");
 
     for (let attempt = 1; attempt <= retries; attempt++) {
         try {
-            const imageRes = await fetch(imageUrl);
-            if (!imageRes.ok) {
-                throw new Error(`Pollinations fetch failed with status ${imageRes.status}: ${imageRes.statusText}`);
+            const falRes = await fetch("https://fal.run/fal-ai/flux/schnell", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Key ${process.env.FAL_KEY}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    prompt,
+                    image_size: "landscape_16_9",
+                    num_inference_steps: 4,
+                    num_images: 1,
+                    enable_safety_checker: true,
+                    sync_mode: true
+                })
+            });
+
+            if (!falRes.ok) {
+                throw new Error(`Fal.ai fetch failed with status ${falRes.status}: ${await falRes.text()}`);
             }
+
+            const falData = await falRes.json();
+            const imageUrl = falData.images[0].url;
+
+            // Download image from Fal.ai to upload to MinIO
+            const imageRes = await fetch(imageUrl);
+            if (!imageRes.ok) throw new Error("Failed to download image from Fal.ai URL");
 
             const arrayBuffer = await imageRes.arrayBuffer();
             const buffer = Buffer.from(arrayBuffer);
@@ -185,7 +207,7 @@ export async function POST(req: NextRequest) {
                     t.includes(article.title.toLowerCase()) ||
                     article.title.toLowerCase().includes(t)
             );
-            
+
             // Check relevance. If "off topic" is configured, accept any tech trend
             const isOffTopicAllowed = allowedTopics.includes("off topic");
             const isRelevant = isOffTopicAllowed || article.tag_list?.some((tag: string) =>
@@ -211,7 +233,7 @@ export async function POST(req: NextRequest) {
         }
 
         // ── 3. Generate Content with Gemini ───────────────────────────────────
-        const postSubject = selectedArticle 
+        const postSubject = selectedArticle
             ? `inspired by this trending topic: "${selectedArticle.title}"\nReference description: "${selectedArticle.description}"\nTags/niche: ${selectedArticle.tag_list?.join(", ") || "web development"}`
             : `focused on the following topic: "${selectedTopic}"\nWrite a deep-dive, practical guide about "${selectedTopic}" in web/software engineering.`;
 
@@ -247,14 +269,15 @@ LENGTH & STRUCTURE:
 • Every section must deliver standalone value — no filler transitions
 
 ━━━━━ IMAGE PLACEMENT ━━━━━
-You MUST insert exactly 3 image markers into the content at natural visual break points (after intro, mid-article, before conclusion).
+You MUST insert exactly 3 image markers into the content at natural visual transitions. For example, place one immediately before the first major <h2> heading, one before a middle <h2> heading, and one before the conclusion/summary <h2> heading.
 Format: [IMAGE: <specific image generation prompt>]
 The image prompt must be:
-• A highly descriptive, standalone visual prompt for an AI image generator (e.g., FLUX).
-• Describe the scene, lighting, style, subject, and mood in detail.
-• Ensure it is highly relevant to the technical concept of the section.
-• NO TEXT, words, or letters should be visible in the image.
-• Example: [IMAGE: A detailed 3D isometric illustration of a server rack with glowing blue data streams connecting to a modern laptop, clean technical style, dark mode, high quality, photorealistic]
+• The prompt MUST describe an abstract architectural visualization or technical concept illustration using pure visual metaphors.
+• DO NOT use words like "diagram" or "flowchart" because the image generator will try to add text labels and misspell them. Use "abstract 3D illustration" or "visual metaphor" instead.
+• Tell the image generator to use shapes, glowing lines, and colors to represent data flow (e.g., "glowing blue spheres flowing into a central glass cube").
+• ABSOLUTELY NO TEXT, LABELS, OR LETTERS. The image AI cannot spell. Do not ask for screens, monitors, or documents.
+• Example 1: [IMAGE: A minimalist abstract 3D illustration of a load balancer: a central glowing glass prism splitting a thick beam of light into three smaller, equal beams hitting separate glass pillars, dark background, technical and modern]
+• Example 2: [IMAGE: An abstract visual metaphor for dependency injection: floating, glowing geometric puzzle pieces perfectly sliding into matching hollow slots, soft lighting, pastel tech colors, clean vector style]
 
 ━━━━━ FORMAT ━━━━━
 Return ONLY valid JSON matching the schema. Content must be HTML (not markdown):
@@ -263,7 +286,7 @@ Return ONLY valid JSON matching the schema. Content must be HTML (not markdown):
 • <ul><li> for lists
 • <strong> for emphasis  
 • <pre><code> for code blocks
-• Place [IMAGE: ...] markers BETWEEN block elements, never inside a <p> tag
+• Place [IMAGE: ...] markers BETWEEN block elements, NEVER nested inside any <p> tag. (e.g., place them immediately before a <h2> tag or between paragraphs)
 
 ━━━━━ SCHEMA ━━━━━
 {
@@ -406,19 +429,158 @@ Return ONLY valid JSON matching the schema. Content must be HTML (not markdown):
 
         // ── 5. Inject Inline Images ───────────────────────────────────────────
         let finalContent: string = aiData.content;
-        for (const { slot, result } of inlineResults) {
-            if (result) {
-                const figureHtml = `<figure class="blog-image">
-  <img src="${result.url}" alt="${slot.prompt.slice(0, 120)}" loading="lazy" />
-</figure>`;
-                finalContent = finalContent.replace(slot.placeholder, figureHtml);
+
+        // First, replace any explicit [IMAGE: ...] markers in the content sequentially
+        let replacedCount = 0;
+        while (true) {
+            const markerRegex = /\[IMAGE:[^\]]*\]/i;
+            const match = markerRegex.exec(finalContent);
+            if (!match) break;
+
+            const marker = match[0];
+            const matchIndex = match.index;
+            const resultObj = inlineResults[replacedCount];
+
+            let replacement = "";
+            if (resultObj && resultObj.result) {
+                const figureHtml = `\n<figure class="blog-image">
+  <img src="${resultObj.result.url}" alt="${resultObj.slot.prompt.slice(0, 120)}" loading="lazy" />
+</figure>\n`;
+
+                // If marker is inside a <p> tag, split the <p> tag to prevent invalid nesting
+                const before = finalContent.substring(0, matchIndex);
+                const lastOpenP = before.lastIndexOf("<p");
+                const lastCloseP = before.lastIndexOf("</p>");
+                const insideP = lastOpenP > lastCloseP;
+
+                if (insideP) {
+                    replacement = `</p>${figureHtml}<p>`;
+                } else {
+                    replacement = figureHtml;
+                }
+            }
+
+            finalContent = finalContent.substring(0, matchIndex) + replacement + finalContent.substring(matchIndex + marker.length);
+            replacedCount++;
+        }
+
+        // Clean up any remaining [IMAGE: ...] markers just in case
+        finalContent = finalContent.replace(/\[IMAGE:[^\]]*\]/g, "");
+
+        // Failsafe Fallback: If Gemini generated fewer markers in the HTML content than the inline images we generated,
+        // inject the remaining unused images at logical heading transitions (before h2 or h3 elements)
+        const unusedResults = inlineResults.slice(replacedCount);
+        if (unusedResults.length > 0) {
+            console.log(`Failsafe: Injecting ${unusedResults.length} unused generated inline images...`);
+            
+            // Find all H2 and H3 tags
+            const headingRegex = /<(h2|h3)[^>]*>([\s\S]*?)<\/\1>/gi;
+            const headings: Array<{ tag: string; text: string; index: number; length: number }> = [];
+            let hMatch;
+            while ((hMatch = headingRegex.exec(finalContent)) !== null) {
+                headings.push({
+                    tag: hMatch[1].toLowerCase(),
+                    text: hMatch[2],
+                    index: hMatch.index,
+                    length: hMatch[0].length
+                });
+            }
+
+            if (headings.length > 0) {
+                // Select heading indices to place the unused images before them
+                const targetHeadingIndices: number[] = [];
+                if (headings.length <= unusedResults.length) {
+                    for (let k = 0; k < headings.length; k++) {
+                        targetHeadingIndices.push(k);
+                    }
+                } else {
+                    // Spread the images evenly across headings
+                    for (let k = 0; k < unusedResults.length; k++) {
+                        const idx = Math.floor(((k + 0.5) / unusedResults.length) * headings.length);
+                        targetHeadingIndices.push(idx);
+                    }
+                }
+
+                // Sort target heading indices descending to insert from right-to-left without shifting indices
+                targetHeadingIndices.sort((a, b) => b - a);
+
+                for (let k = 0; k < targetHeadingIndices.length; k++) {
+                    const headingIdx = targetHeadingIndices[k];
+                    const heading = headings[headingIdx];
+                    const resultObjToUse = unusedResults[unusedResults.length - 1 - k];
+
+                    if (resultObjToUse && resultObjToUse.result) {
+                        const figureHtml = `\n<figure class="blog-image">
+  <img src="${resultObjToUse.result.url}" alt="${resultObjToUse.slot.prompt.slice(0, 120)}" loading="lazy" />
+</figure>\n`;
+                        finalContent = finalContent.substring(0, heading.index) + figureHtml + finalContent.substring(heading.index);
+                    }
+                }
             } else {
-                finalContent = finalContent.replace(slot.placeholder, "");
+                // If no headings, fall back to paragraphs
+                const pRegex = /<p[^>]*>/gi;
+                const paragraphs: Array<{ index: number; length: number }> = [];
+                let pMatch;
+                while ((pMatch = pRegex.exec(finalContent)) !== null) {
+                    paragraphs.push({
+                        index: pMatch.index,
+                        length: pMatch[0].length
+                    });
+                }
+
+                if (paragraphs.length > 0) {
+                    const targetPIndices: number[] = [];
+                    if (paragraphs.length <= unusedResults.length) {
+                        for (let k = 0; k < paragraphs.length; k++) {
+                            targetPIndices.push(k);
+                        }
+                    } else {
+                        for (let k = 0; k < unusedResults.length; k++) {
+                            const idx = Math.floor(((k + 0.5) / unusedResults.length) * paragraphs.length);
+                            targetPIndices.push(idx);
+                        }
+                    }
+
+                    targetPIndices.sort((a, b) => b - a);
+
+                    for (let k = 0; k < targetPIndices.length; k++) {
+                        const pIdx = targetPIndices[k];
+                        const pTag = paragraphs[pIdx];
+                        const resultObjToUse = unusedResults[unusedResults.length - 1 - k];
+
+                        if (resultObjToUse && resultObjToUse.result) {
+                            const figureHtml = `\n<figure class="blog-image">
+  <img src="${resultObjToUse.result.url}" alt="${resultObjToUse.slot.prompt.slice(0, 120)}" loading="lazy" />
+</figure>\n`;
+                            finalContent = finalContent.substring(0, pTag.index) + figureHtml + finalContent.substring(pTag.index);
+                        }
+                    }
+                } else {
+                    // Append as a last resort
+                    for (const resultObjToUse of unusedResults) {
+                        if (resultObjToUse && resultObjToUse.result) {
+                            const figureHtml = `\n<figure class="blog-image">
+  <img src="${resultObjToUse.result.url}" alt="${resultObjToUse.slot.prompt.slice(0, 120)}" loading="lazy" />
+</figure>\n`;
+                            finalContent += figureHtml;
+                        }
+                    }
+                }
             }
         }
 
-        // Clean up any remaining [IMAGE: ...] markers that weren't in imageSlots
-        finalContent = finalContent.replace(/\[IMAGE:[^\]]*\]/g, "");
+        // Clean up invalid nested elements wrapping headings/pre/figures and empty tags
+        finalContent = finalContent.replace(/<p>\s*<(h2|h3)[^>]*>([\s\S]*?)<\/\1>\s*<\/p>/gi, (match, tag, innerHtml) => {
+            return `<${tag}>${innerHtml}</${tag}>`;
+        });
+        finalContent = finalContent.replace(/<p>\s*<pre[^>]*>([\s\S]*?)<\/pre>\s*<\/p>/gi, (match, innerHtml) => {
+            return `<pre>${innerHtml}</pre>`;
+        });
+        finalContent = finalContent.replace(/<p>\s*<figure[^>]*>([\s\S]*?)<\/figure>\s*<\/p>/gi, (match, innerHtml) => {
+            return `<figure class="blog-image">${innerHtml}</figure>`;
+        });
+        finalContent = finalContent.replace(/<p>\s*<\/p>/gi, "");
+        finalContent = finalContent.replace(/<p>&nbsp;<\/p>/gi, "");
 
         // ── 6. Calculate reading time if not provided ──────────────────────────
         const words = countWords(finalContent);

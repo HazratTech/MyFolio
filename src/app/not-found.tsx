@@ -41,10 +41,10 @@ export default function NotFound() {
                             Error 404: Resource not found or currently unavailable.
                         </div>
                         <div className="text-muted-foreground">
-                            > Initiating search sequence...<br />
-                            > Scanning sector: /blog... <span className="text-red-400">Negative.</span><br />
-                            > Scanning sector: /projects... <span className="text-red-400">Negative.</span><br />
-                            > Determining user intent... <span className="text-green-400">Success.</span>
+                            &gt; Initiating search sequence...<br />
+                            &gt; Scanning sector: /blog... <span className="text-red-400">Negative.</span><br />
+                            &gt; Scanning sector: /projects... <span className="text-red-400">Negative.</span><br />
+                            &gt; Determining user intent... <span className="text-green-400">Success.</span>
                         </div>
                         <div className="text-green-400 animate-pulse">
                             <span className="text-blue-400">user@dev</span>:<span className="text-blue-300">~</span>$ _
