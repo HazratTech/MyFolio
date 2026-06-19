@@ -12,21 +12,21 @@ import { AdBanner } from "@/components/blog/AdBanner";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-    title: "Software Engineering & Web Development Blog | Hazrat Ummar Shaikh",
-    description: "Deep-dive technical tutorials, articles, and guides on React, Next.js, Node.js, Android, iOS, and system architecture. Written by software engineer Hazrat Ummar Shaikh.",
+    title: "Tech Blog | Android, iOS, Backend & Discord Dev | Hazrat Ummar",
+    description: "Deep-dive guides, tutorials, and developer insights on Native Android (Kotlin), iOS, Discord bot development, API backends, and software architecture.",
     alternates: {
         canonical: '/blog',
     },
     openGraph: {
-        title: "Software Engineering & Web Development Blog | Hazrat Ummar Shaikh",
-        description: "Deep-dive technical tutorials, articles, and guides on React, Next.js, Node.js, Android, iOS, and system architecture.",
+        title: "Tech Blog | Android, iOS, Backend & Discord Dev | Hazrat Ummar",
+        description: "Deep-dive guides, tutorials, and developer insights on Native Android (Kotlin), iOS, Discord bot development, API backends, and software architecture.",
         url: "https://hazratdev.top/blog",
         type: "website",
     },
     twitter: {
         card: "summary_large_image",
-        title: "Software Engineering & Web Development Blog | Hazrat Ummar Shaikh",
-        description: "Deep-dive technical tutorials, articles, and guides on React, Next.js, Node.js, Android, iOS, and system architecture.",
+        title: "Tech Blog | Android, iOS, Backend & Discord Dev | Hazrat Ummar",
+        description: "Deep-dive guides, tutorials, and developer insights on Native Android (Kotlin), iOS, Discord bot development, API backends, and software architecture.",
     }
 };
 
@@ -129,8 +129,8 @@ export default async function BlogPage({
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "Blog",
-        "name": "Software Engineering & Web Development Blog | Hazrat Ummar Shaikh",
-        "description": "Deep-dive technical tutorials, articles, and guides on React, Next.js, Node.js, Android, iOS, and system architecture.",
+        "name": "Tech Blog | Android, iOS, Backend & Discord Dev | Hazrat Ummar",
+        "description": "Deep-dive guides, tutorials, and developer insights on Native Android (Kotlin), iOS, Discord bot development, API backends, and software architecture.",
         "url": "https://hazratdev.top/blog",
         "publisher": {
             "@type": "Person",

@@ -167,9 +167,9 @@ export async function POST(req: NextRequest) {
 
         // ── 1. Fetch AutoBlogConfig and filter trends ────────────────────────
         let allowedTopics = [
-            "react", "next.js", "javascript", "typescript", "ai", "css", "html",
-            "node", "frontend", "backend", "fullstack", "web", "dev",
-            "programming", "software", "api", "database", "cloud",
+            "android", "kotlin", "compose", "android os", "ios dev", "ios", "swift", "swiftui",
+            "fastapi", "ktor", "mongodb", "discord bot", "discord server", "backend", "api",
+            "software", "programming", "database", "cloud",
         ];
         let isConfigActive = true;
 
@@ -229,16 +229,16 @@ export async function POST(req: NextRequest) {
                 const randomIndex = Math.floor(Math.random() * topicsToChoose.length);
                 selectedTopic = topicsToChoose[randomIndex];
             } else {
-                selectedTopic = "software engineering";
+                selectedTopic = "mobile app development";
             }
         }
 
         // ── 3. Generate Content with Gemini ───────────────────────────────────
         const postSubject = selectedArticle
-            ? `inspired by this trending topic: "${selectedArticle.title}"\nReference description: "${selectedArticle.description}"\nTags/niche: ${selectedArticle.tag_list?.join(", ") || "web development"}`
-            : `focused on the following topic: "${selectedTopic}"\nWrite a deep-dive, practical guide about "${selectedTopic}" in web/software engineering.`;
+            ? `inspired by this trending topic: "${selectedArticle.title}"\nReference description: "${selectedArticle.description}"\nTags/niche: ${selectedArticle.tag_list?.join(", ") || "mobile development"}`
+            : `focused on the following topic: "${selectedTopic}"\nWrite a deep-dive, practical guide about "${selectedTopic}" in mobile app, discord bot, or backend/software architecture.`;
 
-        const contentPrompt = `You are a senior software engineer who writes a popular tech blog. 
+        const contentPrompt = `You are a senior developer specializing in Native Android app development (Kotlin, Jetpack Compose), iOS dev (Swift, SwiftUI), custom Discord bot & server automation, high-performance API backends (FastAPI, Ktor, Node.js), and database systems (MongoDB). You write a highly technical blog for developers.
 Your readers are working developers — smart, busy, and allergic to fluff.
 
 Write a blog post ${postSubject}
