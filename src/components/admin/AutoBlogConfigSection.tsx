@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Sparkles, Loader2, Check } from "lucide-react";
+import { Sparkles, Loader2, Check, X } from "lucide-react";
 
 const PRESET_TOPICS = [
     { id: "python", label: "Python" },
@@ -22,7 +22,8 @@ const PRESET_TOPICS = [
 export function AutoBlogConfigSection() {
     const [isActive, setIsActive] = useState(true);
     const [selectedPresets, setSelectedPresets] = useState<string[]>([]);
-    const [customTopics, setCustomTopics] = useState("");
+    const [customTopics, setCustomTopics] = useState<string[]>([]);
+    const [newTopic, setNewTopic] = useState("");
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [success, setSuccess] = useState(false);
@@ -40,7 +41,7 @@ export function AutoBlogConfigSection() {
                     const customs = topics.filter(t => !PRESET_TOPICS.some(p => p.id === t));
                     
                     setSelectedPresets(presets);
-                    setCustomTopics(customs.join(", "));
+                    setCustomTopics(customs);
                 }
             } catch (err) {
                 console.error("Failed to load config:", err);
@@ -59,6 +60,25 @@ export function AutoBlogConfigSection() {
         }
     };
 
+    const handleAddTopic = () => {
+        const trimmed = newTopic.trim().toLowerCase();
+        if (trimmed && !customTopics.includes(trimmed)) {
+            setCustomTopics(prev => [...prev, trimmed]);
+        }
+        setNewTopic("");
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            handleAddTopic();
+        }
+    };
+
+    const handleRemoveTopic = (topicToRemove: string) => {
+        setCustomTopics(prev => prev.filter(t => t !== topicToRemove));
+    };
+
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         setSaving(true);
@@ -66,7 +86,6 @@ export function AutoBlogConfigSection() {
 
         // Parse custom topics
         const customs = customTopics
-            .split(",")
             .map(t => t.trim().toLowerCase())
             .filter(Boolean);
 
@@ -162,16 +181,49 @@ export function AutoBlogConfigSection() {
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <Label htmlFor="custom-topics" className="text-sm font-semibold">Custom / Other Topics</Label>
-                        <p className="text-xs text-muted-foreground">Add any other tags or technologies you want the AI to write about, comma-separated (e.g. node.js, rust, nextjs).</p>
-                        <Input
-                            id="custom-topics"
-                            value={customTopics}
-                            onChange={(e) => setCustomTopics(e.target.value)}
-                            placeholder="e.g. web assembly, docker, next.js"
-                            className="bg-black/20 border-white/10 text-sm py-5 focus-visible:ring-primary focus-visible:border-primary shadow-none"
-                        />
+                    <div className="space-y-3">
+                        <Label htmlFor="new-topic" className="text-sm font-semibold">Custom / Other Topics</Label>
+                        <p className="text-xs text-muted-foreground">Add any other tags or technologies you want the AI to write about (press Enter or click Add to add).</p>
+                        
+                        <div className="flex gap-2">
+                            <Input
+                                id="new-topic"
+                                value={newTopic}
+                                onChange={(e) => setNewTopic(e.target.value)}
+                                onKeyDown={handleKeyDown}
+                                placeholder="e.g. web assembly, docker, next.js"
+                                className="bg-black/20 border-white/10 text-sm py-5 focus-visible:ring-primary focus-visible:border-primary shadow-none flex-1"
+                            />
+                            <Button 
+                                type="button" 
+                                onClick={handleAddTopic}
+                                variant="outline"
+                                className="border-white/10 hover:bg-white/5 h-11 text-xs"
+                            >
+                                Add Topic
+                            </Button>
+                        </div>
+
+                        {customTopics.length > 0 && (
+                            <div className="flex flex-wrap gap-2 pt-2">
+                                {customTopics.map((topic) => (
+                                    <div 
+                                        key={topic} 
+                                        className="inline-flex items-center gap-1.5 bg-white/[0.04] border border-white/10 text-muted-foreground hover:text-white rounded-lg px-3 py-1.5 text-xs transition-colors group"
+                                    >
+                                        <span className="font-medium text-white/90">{topic}</span>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleRemoveTopic(topic)}
+                                            className="hover:bg-white/10 rounded p-0.5 transition-colors focus:outline-none"
+                                            aria-label={`Remove topic ${topic}`}
+                                        >
+                                            <X className="w-3.5 h-3.5 text-muted-foreground group-hover:text-red-400 transition-colors" />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     <div className="flex items-center gap-3 pt-2">

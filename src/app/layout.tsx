@@ -3,6 +3,7 @@ import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { cn } from "@/lib/utils";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
@@ -156,6 +157,12 @@ export default function RootLayout({
         )}
       >
         <GoogleAnalytics gaId="G-CGMGGSKEBE" />
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2489956198626091"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

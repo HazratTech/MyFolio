@@ -200,6 +200,7 @@ const TiptapEditor = ({ content, onChange, onEditorReady }: TiptapEditorProps) =
             />
 
             {/* Bubble Menu for formatting text */}
+            {/* @ts-ignore */}
             <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }} className="flex bg-zinc-950 border border-zinc-800 shadow-2xl rounded-full overflow-hidden p-1 gap-1 items-center">
                 <Button type="button" variant="ghost" size="icon" className={editor.isActive('bold') ? 'bg-white/10 text-primary h-8 w-8' : 'h-8 w-8 text-white hover:bg-white/10 rounded-full'} onClick={() => editor.chain().focus().toggleBold().run()}><Bold className="w-4 h-4" /></Button>
                 <Button type="button" variant="ghost" size="icon" className={editor.isActive('italic') ? 'bg-white/10 text-primary h-8 w-8' : 'h-8 w-8 text-white hover:bg-white/10 rounded-full'} onClick={() => editor.chain().focus().toggleItalic().run()}><Italic className="w-4 h-4" /></Button>
