@@ -49,7 +49,27 @@ export default function PrivacyPolicy() {
                 </section>
 
                 <section>
-                    <h2 className="text-2xl font-bold text-foreground mb-4">5. Contact Details</h2>
+                    <h2 className="text-2xl font-bold text-foreground mb-4">5. Google AdSense & Advertising Cookies</h2>
+                    <p>
+                        This website uses Google AdSense, a third-party advertising service provided by Google LLC. 
+                        Google AdSense uses cookies to serve interest-based advertisements to users based on their visits to this website 
+                        and other sites across the Internet.
+                    </p>
+                    <p className="mt-2">
+                        Google's use of advertising cookies enables it and its partners to serve targeted ads based on your web browsing history. 
+                        You can opt out of personalized advertising at any time by visiting the 
+                        <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline mx-1">
+                            Google Ads Settings
+                        </a> 
+                        page. Alternatively, you can opt out of third-party vendors' cookies for personalized advertising by visiting 
+                        <a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline ml-1">
+                            www.aboutads.info
+                        </a>.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 className="text-2xl font-bold text-foreground mb-4">6. Contact Details</h2>
                     <p>
                         If you have any questions about this privacy policy or my privacy practices, please contact me via the contact form on this website.
                     </p>

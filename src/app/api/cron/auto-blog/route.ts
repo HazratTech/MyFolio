@@ -5,6 +5,7 @@ import Post from "@/models/Post";
 import Category from "@/models/Category";
 import Media from "@/models/Media";
 import AutoBlogConfig from "@/models/AutoBlogConfig";
+import { sendCronFailureNotification } from "@/lib/discord";
 
 export const maxDuration = 120; // Vercel limit for hobby plan; upgrade for longer
 
@@ -635,6 +636,7 @@ Return ONLY valid JSON matching the schema. Content must be HTML (not markdown):
         });
     } catch (error) {
         console.error("Auto-blog cron failed:", error);
+        await sendCronFailureNotification(error);
         return NextResponse.json(
             {
                 error: "Failed to run auto-blog cron",

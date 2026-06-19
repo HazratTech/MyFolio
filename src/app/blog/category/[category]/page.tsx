@@ -44,7 +44,7 @@ export default async function CategoryPage({
     const { posts, total, pages } = await getPostsByCategory(category, page);
 
     return (
-        <div className="min-h-screen bg-background pt-24 pb-20">
+        <div className="min-h-screen bg-background pt-2 pb-16">
             <div className="container mx-auto px-6 max-w-7xl">
                 <Link href="/blog" className="inline-flex items-center text-muted-foreground hover:text-primary mb-8 transition-colors">
                     <ArrowLeft className="w-4 h-4 mr-2" />

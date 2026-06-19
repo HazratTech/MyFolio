@@ -55,3 +55,48 @@ export async function sendDiscordWebhook({ email, name, picture, success, ip }: 
         console.error("Failed to send Discord webhook:", error);
     }
 }
+
+export async function sendCronFailureNotification(error: any) {
+    if (!DISCORD_WEBHOOK_URL) return;
+    
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorStack = error instanceof Error && error.stack ? error.stack : "";
+    
+    const embed: any = {
+        title: "🚨 Auto-Blog Cron Job Failed",
+        description: "The automated blog posting pipeline failed to complete.",
+        color: 0xff0000, // Red
+        timestamp: new Date().toISOString(),
+        fields: [
+            {
+                name: "Error Message",
+                value: `\`\`\`\n${errorMessage.slice(0, 1000)}\n\`\`\``,
+                inline: false
+            }
+        ],
+        footer: {
+            text: "MyFolio Cron Alert System"
+        }
+    };
+
+    if (errorStack) {
+        embed.fields.push({
+            name: "Stack Trace",
+            value: `\`\`\`\n${errorStack.slice(0, 1000)}\n\`\`\``,
+            inline: false
+        });
+    }
+
+    try {
+        await fetch(DISCORD_WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                content: "<@475357995367137282> The auto-blog cron job has failed.",
+                embeds: [embed]
+            })
+        });
+    } catch (err) {
+        console.error("Failed to send Discord cron error webhook:", err);
+    }
+}

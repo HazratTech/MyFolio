@@ -31,6 +31,12 @@ export default function CookiePolicy() {
                             <strong>Third Party Cookies:</strong> In some special cases we also use cookies provided by trusted third parties. The following section details which third party cookies you might encounter through this site.
                             <ul className="list-disc pl-6 space-y-2 mt-2">
                                 <li>This site uses Google Analytics which is one of the most widespread and trusted analytics solution on the web for helping us to understand how you use the site and ways that we can improve your experience.</li>
+                                <li>
+                                    This site uses <strong>Google AdSense</strong> to serve advertisements. Google uses cookies (including the DoubleClick DART cookie) to serve relevant, interest-based ads to our visitors based on their browsing activity. You can learn more or opt out of these personalized advertising cookies by visiting 
+                                    <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline ml-1">
+                                        Google Ads Settings
+                                    </a>.
+                                </li>
                             </ul>
                         </li>
                     </ul>

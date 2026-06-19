@@ -9,8 +9,19 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 
 export const metadata: Metadata = {
-    title: "Blog | Hazrat Ummar Shaikh",
-    description: "Thoughts, tutorials, and insights on web development and tech.",
+    title: "Software Engineering & Web Development Blog | Hazrat Ummar Shaikh",
+    description: "Deep-dive technical tutorials, articles, and guides on React, Next.js, Node.js, Android, iOS, and system architecture. Written by software engineer Hazrat Ummar Shaikh.",
+    openGraph: {
+        title: "Software Engineering & Web Development Blog | Hazrat Ummar Shaikh",
+        description: "Deep-dive technical tutorials, articles, and guides on React, Next.js, Node.js, Android, iOS, and system architecture.",
+        url: "https://hazratdev.top/blog",
+        type: "website",
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "Software Engineering & Web Development Blog | Hazrat Ummar Shaikh",
+        description: "Deep-dive technical tutorials, articles, and guides on React, Next.js, Node.js, Android, iOS, and system architecture.",
+    }
 };
 
 async function getPosts(search?: string, category?: string, page: number = 1) {
@@ -59,8 +70,25 @@ export default async function BlogPage({
     const { posts, total, pages } = await getPosts(search, category, page);
     const categories = await getCategories();
 
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Blog",
+        "name": "Software Engineering & Web Development Blog | Hazrat Ummar Shaikh",
+        "description": "Deep-dive technical tutorials, articles, and guides on React, Next.js, Node.js, Android, iOS, and system architecture.",
+        "url": "https://hazratdev.top/blog",
+        "publisher": {
+            "@type": "Person",
+            "name": "Hazrat Ummar Shaikh",
+            "url": "https://hazratdev.top"
+        }
+    };
+
     return (
-        <div className="min-h-screen bg-background pt-24 pb-20">
+        <div className="min-h-screen bg-background pt-2 pb-16">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             <div className="container mx-auto px-6 max-w-7xl">
                 <div className="mb-12 text-center">
                     <h1 className="text-4xl md:text-6xl font-bold font-heading mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700">

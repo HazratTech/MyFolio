@@ -9,6 +9,7 @@ import ViewCounter from "@/components/blog/ViewCounter";
 import { Badge } from "@/components/ui/badge";
 import PostCard from "@/components/blog/PostCard";
 import ReadingProgressBar from "@/components/blog/ReadingProgressBar";
+import { AdBanner } from "@/components/blog/AdBanner";
 
 async function getPost(slug: string, isPreview: boolean = false) {
     await dbConnect();
@@ -186,6 +187,9 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
                     dangerouslySetInnerHTML={{ __html: post.content }}
                 />
 
+                {/* Inline Post Ad banner */}
+                <AdBanner slot="3829910482" format="rectangle" />
+
                 {/* Tags at bottom */}
                 {post.tags?.length > 0 && (
                     <div className="mt-12 pt-8 border-t border-white/10">
@@ -218,6 +222,11 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
                     </div>
                 </div>
             </article>
+
+            {/* Middle horizontal ad slot before Related Posts */}
+            <div className="max-w-7xl mx-auto px-6 md:px-12 my-6">
+                <AdBanner slot="9382019482" format="horizontal" />
+            </div>
 
             {/* ─── RELATED POSTS ─── */}
             {relatedPosts.length > 0 && (
