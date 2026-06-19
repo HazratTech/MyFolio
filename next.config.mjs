@@ -23,6 +23,14 @@ const nextConfig = {
                 protocol: 'https',
                 hostname: 'api-minio-storage.hazratdev.top',
             },
+            {
+                protocol: 'https',
+                hostname: 'image.pollinations.ai',
+            },
+            {
+                protocol: 'https',
+                hostname: 'images.unsplash.com',
+            },
         ],
     },
     async headers() {
