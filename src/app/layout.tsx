@@ -80,6 +80,9 @@ export const metadata: Metadata = {
   verification: {
     google: "YOUR_GOOGLE_VERIFICATION_CODE", // Replace with your code
   },
+  other: {
+    "google-adsense-account": "ca-pub-2489956198626091",
+  },
 };
 
 const jsonLd = {

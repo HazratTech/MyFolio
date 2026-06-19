@@ -12,7 +12,7 @@ export default function BlogLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <div className="flex flex-col min-h-screen bg-background">
+        <div className="dark flex flex-col min-h-screen bg-background text-foreground">
             {/* Load Google AdSense Script ONLY for /blog and its sub-pages */}
             <Script
                 async
