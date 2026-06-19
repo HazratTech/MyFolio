@@ -1,8 +1,20 @@
 'use client';
 
+import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import Script from 'next/script';
 
 export const GoogleAnalytics = ({ gaId }: { gaId: string }) => {
+    const pathname = usePathname();
+
+    useEffect(() => {
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+            (window as any).gtag('config', gaId, {
+                page_path: pathname,
+            });
+        }
+    }, [pathname, gaId]);
+
     return (
         <>
             <Script

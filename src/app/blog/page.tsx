@@ -14,6 +14,9 @@ import { cn } from "@/lib/utils";
 export const metadata: Metadata = {
     title: "Software Engineering & Web Development Blog | Hazrat Ummar Shaikh",
     description: "Deep-dive technical tutorials, articles, and guides on React, Next.js, Node.js, Android, iOS, and system architecture. Written by software engineer Hazrat Ummar Shaikh.",
+    alternates: {
+        canonical: '/blog',
+    },
     openGraph: {
         title: "Software Engineering & Web Development Blog | Hazrat Ummar Shaikh",
         description: "Deep-dive technical tutorials, articles, and guides on React, Next.js, Node.js, Android, iOS, and system architecture.",

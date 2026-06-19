@@ -42,6 +42,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     return {
         title: `${post.title} | Hazrat Ummar Shaikh`,
         description: post.excerpt || post.content.substring(0, 160),
+        alternates: {
+            canonical: `/blog/${params.slug}`,
+        },
         openGraph: {
             title: post.title,
             description: post.excerpt,

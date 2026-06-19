@@ -11,6 +11,9 @@ export async function generateMetadata({ params }: { params: { category: string 
     return {
         title: `${category} Posts | Hazrat Ummar Shaikh`,
         description: `Read articles about ${category}.`,
+        alternates: {
+            canonical: `/blog/category/${params.category}`,
+        },
     };
 }
 
