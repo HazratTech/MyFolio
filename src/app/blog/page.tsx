@@ -8,7 +8,6 @@ import PostCard from "@/components/blog/PostCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Calendar, Eye, ArrowRight } from "lucide-react";
-import { AdBanner } from "@/components/blog/AdBanner";
 import { cn, getCleanSlug } from "@/lib/utils";
 
 export async function generateMetadata({
@@ -391,10 +390,7 @@ export default async function BlogPage({
                             </form>
                         </div>
 
-                        {/* Sidebar Ad Unit Placement */}
-                        <div className="p-4 bg-white/[0.02] border border-white/5 rounded-2xl">
-                            <AdBanner slot="8293019284" format="rectangle" />
-                        </div>
+
 
                         {/* Trending Posts Card */}
                         {trendingPosts.length > 0 && (

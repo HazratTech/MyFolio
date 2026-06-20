@@ -283,7 +283,7 @@ SEO & LENGTH:
 • FAQ Section: You MUST include a dedicated H2 FAQ section (containing 3-4 specific technical questions and answers) at the end of the post.
 • Data Tables: You MUST include at least one relevant comparison table or benchmark data table (formatted as clean HTML <table>).
 • Affiliate Opportunity: You MUST naturally mention and link to an affiliate resource or tool (e.g. an Amazon technical book, Hostinger/Vultr/DigitalOcean hosting VPS, or a developer service) with a clear recommendation.
-• Human Review/Trust Score: You MUST include a trust/review box block: \`<div class="bg-primary/5 p-4 rounded-xl border border-primary/20"><p><strong>Author Review Score:</strong> 9.8/10 (Based on production stability and developer experience)</p></div>\` or similar, to reinforce quality.
+• Human Review/Trust Score: You MUST include a trust/review box block: \`<div class="bg-primary/5 p-4 rounded-xl border border-primary/20"><p><strong>Author Review Score:</strong> 9.8/10 (Based on production stability and developer experience)</p></div>\` or similar, placed at the VERY TOP of the article content (immediately after the first introduction paragraph, before the first H2 heading). Do NOT place it in the comparison table or FAQ sections.
 
 ━━━━━ FORMAT ━━━━━
 • Return ONLY valid JSON matching the schema. Content must be HTML (not markdown).
@@ -599,6 +599,26 @@ The image prompts must be:
         });
         finalContent = finalContent.replace(/<p>\s*<\/p>/gi, "");
         finalContent = finalContent.replace(/<p>&nbsp;<\/p>/gi, "");
+
+        // Failsafe: Clean up squashed code blocks if the AI model outputted them on a single line
+        finalContent = finalContent.replace(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/gi, (match, code) => {
+            let clean = code.trim();
+            if (!clean.includes('\n') && !clean.includes('\r')) {
+                // Restore bash setup newlines
+                clean = clean.replace(/(mkdir\s+[^\s]+)\s*(cd\s+[^\s]+)/gi, "$1\n$2");
+                clean = clean.replace(/(cd\s+[^\s]+)\s*(pip\s+install\s+|python3\s+|source\s+)/gi, "$1\n$2");
+                clean = clean.replace(/(python3\s+-m\s+venv\s+[^\s]+)\s*(source\s+)/gi, "$1\n$2");
+                
+                // Restore Python imports and startup code
+                clean = clean.replace(/(from\s+[^\s]+\s+import\s+[^\s]+)\s*(from\s+|import\s+)/g, "$1\n$2");
+                clean = clean.replace(/(import\s+[^\s]+)\s*(from\s+|import\s+)/g, "$1\n$2");
+                clean = clean.replace(/(load_dotenv\(\))\s*(app\s*=)/g, "$1\n$2");
+                clean = clean.replace(/(GITHUB_TOKEN\s*=\s*[^\s]+)\s*(if\s*not)/g, "$1\n$2");
+            }
+            // Auto-correct any squashed dependency typos
+            clean = clean.replace(/httpxpydantic/g, "httpx pydantic");
+            return `<pre><code>${clean}</code></pre>`;
+        });
 
         // ── 6. Calculate reading time if not provided ──────────────────────────
         const words = countWords(finalContent);
