@@ -16,3 +16,17 @@ export function slugify(text: string): string {
     .replace(/^-+/, '')          // Trim - from start of text
     .replace(/-+$/, '');         // Trim - from end of text
 }
+
+export function getCleanSlug(slug: string): string {
+  if (!slug) return "";
+  if (slug.startsWith('http://') || slug.startsWith('https://')) {
+    try {
+      const url = new URL(slug);
+      const pathParts = url.pathname.split('/');
+      return pathParts[pathParts.length - 1] || slug;
+    } catch {
+      return slug;
+    }
+  }
+  return slug;
+}

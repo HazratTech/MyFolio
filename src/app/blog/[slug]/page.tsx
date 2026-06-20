@@ -7,6 +7,7 @@ import Post from "@/models/Post";
 import { Calendar, Eye, Clock, ArrowLeft, Tag, User } from "lucide-react";
 import ViewCounter from "@/components/blog/ViewCounter";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import PostCard from "@/components/blog/PostCard";
 import ReadingProgressBar from "@/components/blog/ReadingProgressBar";
 import { AdBanner } from "@/components/blog/AdBanner";
@@ -170,10 +171,12 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
                         <Calendar className="w-3.5 h-3.5 text-primary" />
                         {publishDate}
                     </span>
-                    <span className="flex items-center gap-1.5">
-                        <Eye className="w-3.5 h-3.5 text-primary" />
-                        {post.views} views
-                    </span>
+                    {post.views >= 1000 && (
+                        <span className="flex items-center gap-1.5">
+                            <Eye className="w-3.5 h-3.5 text-primary" />
+                            {post.views} {post.views === 1 ? "view" : "views"}
+                        </span>
+                    )}
                     {post.readingTime && (
                         <span className="flex items-center gap-1.5">
                             <Clock className="w-3.5 h-3.5 text-primary" />
@@ -211,6 +214,29 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
                     </div>
                 )}
 
+                {/* Visual Call To Action (CTA) */}
+                <div className="mt-16 mb-12 p-8 rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card/50 to-secondary/10 backdrop-blur-sm text-center relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-secondary/5 opacity-50 pointer-events-none" />
+                    <h3 className="text-xl md:text-2xl font-bold font-heading text-white mb-2 relative z-10">
+                        Need Help with Android, Backend, or Discord Bots?
+                    </h3>
+                    <p className="text-slate-300 text-sm max-w-xl mx-auto mb-6 relative z-10 font-sans leading-relaxed">
+                        I build high-performance Native Android apps (Kotlin, Compose), robust API backends (FastAPI, Ktor, MongoDB), and custom automated Discord bots. Let's collaborate on your next project!
+                    </p>
+                    <div className="flex flex-wrap gap-4 justify-center relative z-10">
+                        <Link href="/#contact">
+                            <Button className="bg-primary hover:bg-primary/95 text-white font-medium rounded-xl px-5 shadow-lg shadow-primary/20">
+                                Work With Me
+                            </Button>
+                        </Link>
+                        <Link href="/">
+                            <Button variant="outline" className="bg-white/5 border-white/10 hover:bg-white/10 text-white font-medium rounded-xl px-5">
+                                View Portfolio
+                            </Button>
+                        </Link>
+                    </div>
+                </div>
+
                 {/* Author Card */}
                 <div className="mt-12 p-6 rounded-2xl border border-white/10 bg-card/40 backdrop-blur-sm flex gap-5 items-start">
                     <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary to-secondary flex-shrink-0 flex items-center justify-center text-white font-bold text-xl font-heading">
@@ -219,8 +245,8 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
                     <div>
                         <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Written by</p>
                         <h3 className="font-bold text-lg font-heading text-foreground">Hazrat Ummar Shaikh</h3>
-                        <p className="text-muted-foreground text-sm mt-1 leading-relaxed">
-                            Native Android & Backend Developer passionate about building robust systems, clean code, and sharing developer insights through writing.
+                        <p className="text-muted-foreground text-sm mt-1 leading-relaxed font-sans">
+                            Android Developer with 5+ years of experience. Built production Android apps, Ktor backends, Discord bots, and SaaS products using Kotlin, Python, and MongoDB. Passionate about building robust systems and writing clean code.
                         </p>
                     </div>
                 </div>

@@ -17,6 +17,7 @@ const PostSchema = new Schema({
     },
     views: { type: Number, default: 0 },
     readingTime: { type: Number }, // In minutes
+    featured: { type: Boolean, default: false },
     publishedAt: { type: Date },
 }, { timestamps: true });
 
@@ -38,6 +39,7 @@ export interface IPost {
     category?: string;
     status: 'draft' | 'published';
     views: number;
+    featured: boolean;
     readingTime?: number;
     publishedAt?: Date;
     createdAt: Date;

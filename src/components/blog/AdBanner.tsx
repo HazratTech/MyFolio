@@ -36,12 +36,7 @@ export const AdBanner = ({ slot, style, format = "auto", responsive = "true" }: 
                     data-full-width-responsive={responsive}
                 />
                 
-                {/* Fallback label when ad has not rendered yet */}
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
-                    <span className="font-mono text-white/10 text-[9px] uppercase tracking-widest">
-                        AdSense Slot [{slot}]
-                    </span>
-                </div>
+
             </div>
         </div>
     );

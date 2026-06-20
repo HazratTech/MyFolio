@@ -33,6 +33,7 @@ export default function BlogPostForm({ initialData, isEditing = false }: BlogPos
         tags: "",
         coverImage: "",
         status: "draft",
+        featured: false,
         ...initialData
     });
 
@@ -277,6 +278,20 @@ export default function BlogPostForm({ initialData, isEditing = false }: BlogPos
                                         </MediaPickerModal>
                                     )}
                                 </div>
+                            </div>
+
+                            <div className="flex items-center space-x-2.5 pt-2 pb-2">
+                                <input
+                                    type="checkbox"
+                                    id="featured"
+                                    name="featured"
+                                    checked={formData.featured || false}
+                                    onChange={(e) => setFormData((prev: any) => ({ ...prev, featured: e.target.checked }))}
+                                    className="h-4 w-4 rounded border-white/10 text-primary focus:ring-primary bg-background cursor-pointer"
+                                />
+                                <label htmlFor="featured" className="text-sm font-medium select-none cursor-pointer text-white/95">
+                                    Feature this article on homepage
+                                </label>
                             </div>
 
                             <div className="space-y-2">

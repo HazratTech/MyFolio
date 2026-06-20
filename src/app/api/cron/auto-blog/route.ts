@@ -62,6 +62,29 @@ async function uploadBuffer(
     return { url: completeData.final_url, key: object_key };
 }
 
+/** Seed default categories if they do not exist */
+async function seedDefaultCategories() {
+    const defaults = [
+        { name: "Android", description: "Native Android App Development tutorials using Kotlin and Jetpack Compose." },
+        { name: "iOS", description: "iOS development strategies, Swift, and SwiftUI tutorials." },
+        { name: "Backend", description: "Scalable backend APIs built with FastAPI, Ktor, and robust server architectures." },
+        { name: "Discord Bots", description: "Custom Discord server automation and bot development tutorials." },
+        { name: "Architecture", description: "System design, clean architecture, patterns, and development best practices." }
+    ];
+
+    for (const cat of defaults) {
+        const exists = await Category.findOne({ name: cat.name });
+        if (!exists) {
+            await Category.create({
+                name: cat.name,
+                slug: cat.name.toLowerCase().replace(/\s+/g, "-"),
+                description: cat.description
+            });
+            console.log(`Auto-seeded category: ${cat.name}`);
+        }
+    }
+}
+
 /** Generate an image with Pollinations AI (free, no key) and upload to MinIO. */
 async function generateAndUpload(
     prompt: string,
@@ -158,6 +181,7 @@ export async function POST(req: NextRequest) {
         }
 
         await dbConnect();
+        await seedDefaultCategories();
 
         if (!process.env.GEMINI_API_KEY) {
             return NextResponse.json({ error: "GEMINI_API_KEY not configured" }, { status: 500 });
@@ -244,57 +268,49 @@ Your readers are working developers — smart, busy, and allergic to fluff.
 Write a blog post ${postSubject}
 
 ━━━━━ CONTENT RULES ━━━━━
-VOICE & READABILITY:
-• Write like a smart friend explaining it over coffee — natural, direct, no corporate speak
-• Target 8th-10th grade reading level (Flesch-Kincaid): short sentences (avg 15-18 words), active voice, plain words
-• Use real analogies to explain complex concepts
-• Write in first person occasionally ("I've seen this break production three times")
-• Include one or two light, human observations (not forced humour)
+VOICE & READABILITY (NOT ROBOTIC):
+• NEVER write generic, boilerplate transitions, or overuse obvious AI phrases (like "Let's dive in", "Game changer", "Forget the fluff", "Let's talk...", "In conclusion", "As a developer", "In today's fast-paced world").
+• Write in first person ("I've seen this...", "When I built...", "In my production experience").
+• Start the post with a real-world story, a production incident, or a personal experience. For example: "When I migrated my bot from Node.js to FastAPI, the memory usage dropped by 70%." or "I spent three days debugging a compose memory leak..."
+• Avoid academic tone. Write like a senior engineer explaining code to a mid-level engineer during peer reviews: direct, technical, opinionated.
 
-AUTHENTIC & SPECIFIC (NO GENERIC POSTS):
-• NEVER write generic placeholder text, abstract summaries, or empty transition lists.
-• You MUST include actual, concrete code examples/snippets (written in clean HTML <pre><code> tags) demonstrating the patterns or configuration.
-• Provide specific tool names, setup files, or config variables where applicable (e.g., actual package.json configs, script blocks, config variables).
-• The post must feel highly authentic, technical, and valuable—written by a developer who has actually built this.
-
-SEO (do this naturally, not mechanically):
-• Title should be specific and promise a clear benefit (not clickbait)
-• Use the main keyword phrase in the first 100 words, then vary it naturally after
-• Cover related subtopics so the post satisfies full search intent
-• Write a compelling metaDescription (155 chars max, includes keyword, motivates the click)
-• Use descriptive H2/H3 headings that could be standalone FAQ answers
-
-LENGTH & STRUCTURE:
-• 1,400–1,800 words total
-• Intro (hook + why this matters) → Core Sections (3-5 H2s with H3s as needed) → Practical Takeaway / Summary
-• Every section must deliver standalone value — no filler transitions
-
-━━━━━ IMAGE PLACEMENT ━━━━━
-You MUST insert exactly 3 image markers into the content at natural visual transitions. For example, place one immediately before the first major <h2> heading, one before a middle <h2> heading, and one before the conclusion/summary <h2> heading.
-Format: [IMAGE: <specific image generation prompt>]
-The image prompt must be:
-• The prompt MUST describe an abstract architectural visualization or technical concept illustration using pure visual metaphors.
-• DO NOT use words like "diagram" or "flowchart" because the image generator will try to add text labels and misspell them. Use "abstract 3D illustration" or "visual metaphor" instead.
-• Tell the image generator to use shapes, glowing lines, and colors to represent data flow (e.g., "glowing blue spheres flowing into a central glass cube").
-• ABSOLUTELY NO TEXT, LABELS, OR LETTERS. The image AI cannot spell. Do not ask for screens, monitors, or documents.
-• Example 1: [IMAGE: A minimalist abstract 3D illustration of a load balancer: a central glowing glass prism splitting a thick beam of light into three smaller, equal beams hitting separate glass pillars, dark background, technical and modern]
-• Example 2: [IMAGE: An abstract visual metaphor for dependency injection: floating, glowing geometric puzzle pieces perfectly sliding into matching hollow slots, soft lighting, pastel tech colors, clean vector style]
+SEO & LENGTH:
+• Word count MUST be greater than 1,500 words. Provide rich, detailed, comprehensive coverage.
+• Title must be optimized for search intent (between 50-60 characters) and promise a clear, specific technical benefit.
+• Meta description MUST be between 140 and 155 characters (including keywords naturally).
+• Internal links: You MUST organically mention and link to at least 3 internal posts. Hardcode internal links using absolute paths: \`/blog/demystifying-android-os-internals\`, \`/blog/building-discord-ticket-bot-python\`, \`/blog/kotlin-multiplatform-mobile-guide\`, \`/blog/ktor-fastapi-backend-comparison\`. Place these link references naturally inside sentence structures.
+• External sources: Include at least 2 external links to official documentation (e.g., official docs at developer.android.com, fastapi.tiangolo.com, or python.org) using proper anchor text.
+• FAQ Section: You MUST include a dedicated H2 FAQ section (containing 3-4 specific technical questions and answers) at the end of the post.
+• Data Tables: You MUST include at least one relevant comparison table or benchmark data table (formatted as clean HTML <table>).
+• Affiliate Opportunity: You MUST naturally mention and link to an affiliate resource or tool (e.g. an Amazon technical book, Hostinger/Vultr/DigitalOcean hosting VPS, or a developer service) with a clear recommendation.
+• Human Review/Trust Score: You MUST include a trust/review box block: \`<div class="bg-primary/5 p-4 rounded-xl border border-primary/20"><p><strong>Author Review Score:</strong> 9.8/10 (Based on production stability and developer experience)</p></div>\` or similar, to reinforce quality.
 
 ━━━━━ FORMAT ━━━━━
-Return ONLY valid JSON matching the schema. Content must be HTML (not markdown):
-• <p> for paragraphs
-• <h2> / <h3> for headings
-• <ul><li> for lists
-• <strong> for emphasis  
-• <pre><code> for code blocks
+• Return ONLY valid JSON matching the schema. Content must be HTML (not markdown).
+• CRITICAL CODE BLOCK FORMATTING: Inside HTML <pre><code> blocks, you MUST use actual escaped newline characters (\\n) and proper indentation to separate code lines. Do NOT write all code on a single line or collapse spacing. Every single line of code, import, comment, or statement must end with a \\n character so that it parses as a newline. For example, a code block must be returned in the JSON string as: "<pre><code>import os\\n\\ndef main():\\n    print(\\"Hello\\")</code></pre>"
+• Use <table>, <thead>, <tbody>, <tr>, <th>, <td> tags for tables.
+• Use <p> for paragraphs, <h2> / <h3> for headings, <ul><li> for lists, <strong> for emphasis.
 • Place [IMAGE: ...] markers BETWEEN block elements, NEVER nested inside any <p> tag. (e.g., place them immediately before a <h2> tag or between paragraphs)
+
+━━━━━ IMAGE PLACEMENT & STYLE ━━━━━
+You MUST insert exactly 3 image markers into the content.
+Format: [IMAGE: <highly specific prompt>]
+The image prompts must be:
+• DO NOT generate abstract geometric shapes (cubes, spheres, boxes). They look generic and out-of-context.
+• The prompts MUST describe a highly specific, context-relevant illustration that relates directly to the article's topic.
+• Style: "Isometric 3D rendering", "detailed high-tech concept illustration", "cyberpunk workspace aesthetic", "vibrant neon cyan and purple accents", "clean dark mode UI presentation style", "studio lighting", "highly detailed 3D digital art".
+- For example, if the article is about Discord bots, describe a stylized futuristic robot wearing headphones, typing on a holographic terminal displaying messages, in a neon-lit server room.
+- If it is about Python high-performance, describe a glowing metallic python coiled around a high-speed engine turbine, with binary code flows in the background.
+- If it is about Android development, describe a stylized glowing green Android mascot assembly line installing puzzle pieces onto a mobile phone screen in a sleek studio room.
+• ABSOLUTELY NO TEXT, LABELS, LETTERS, OR WORDS in the image. The image generator cannot spell.
 
 ━━━━━ SCHEMA ━━━━━
 {
   "title": "SEO-optimised post title",
+  "category": "One of: Android, iOS, Backend, Discord Bots, Architecture",
   "excerpt": "2-sentence excerpt (max 160 chars) that hooks the reader",
   "metaDescription": "155-char meta description with keyword",
-  "coverImagePrompt": "Highly specific, cinematic image prompt for the cover thumbnail — must visually represent the post topic, no text, high quality, 16:9",
+  "coverImagePrompt": "Highly specific, thematic cover image prompt (matching Style guidelines, e.g. 'Isometric 3D rendering of...'), no text, high quality, 16:9",
   "content": "Full HTML content with exactly 3 [IMAGE: prompt] markers embedded",
   "imageSlots": [
     { "placeholder": "[IMAGE: exact text as in content]", "prompt": "exact same prompt" },
@@ -318,6 +334,7 @@ Return ONLY valid JSON matching the schema. Content must be HTML (not markdown):
                             type: Type.OBJECT,
                             properties: {
                                 title: { type: Type.STRING },
+                                category: { type: Type.STRING },
                                 excerpt: { type: Type.STRING },
                                 metaDescription: { type: Type.STRING },
                                 coverImagePrompt: { type: Type.STRING },
@@ -339,7 +356,7 @@ Return ONLY valid JSON matching the schema. Content must be HTML (not markdown):
                                 readingTime: { type: Type.INTEGER },
                             },
                             required: [
-                                "title", "excerpt", "metaDescription", "coverImagePrompt",
+                                "title", "category", "excerpt", "metaDescription", "coverImagePrompt",
                                 "content", "imageSlots", "tags", "readingTime",
                             ],
                         },
@@ -600,12 +617,12 @@ Return ONLY valid JSON matching the schema. Content must be HTML (not markdown):
         }
 
         // ── 8. Get or create category ──────────────────────────────────────────
-        const mainCategory = "Development";
+        const mainCategory = aiData.category || "Development";
         let categoryDoc = await Category.findOne({ name: mainCategory });
         if (!categoryDoc) {
             categoryDoc = await Category.create({
                 name: mainCategory,
-                slug: mainCategory.toLowerCase(),
+                slug: mainCategory.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, ""),
             });
         }
 
@@ -619,8 +636,7 @@ Return ONLY valid JSON matching the schema. Content must be HTML (not markdown):
             coverImageKey: coverResult?.key || null,
             category: mainCategory,
             tags: aiData.tags,
-            status: "published",
-            publishedAt: new Date(),
+            status: "draft",
             readingTime,
             views: 0,
         });

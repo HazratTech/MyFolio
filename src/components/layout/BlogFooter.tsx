@@ -22,7 +22,7 @@ export const BlogFooter = async () => {
                             Hazrat<span className="text-primary">.dev</span><span className="text-sm font-normal text-muted-foreground ml-2">Blog</span>
                         </Link>
                         <p className="text-muted-foreground mt-2 text-sm max-w-md">
-                            Deep-dive technical tutorials, articles, and guides on React, Next.js, Node.js, Android, iOS, and system architecture.
+                            Deep-dive technical tutorials, articles, and guides on Android, iOS, Backend development, Discord bots, and software architecture.
                         </p>
                     </div>
 

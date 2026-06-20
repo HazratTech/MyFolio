@@ -26,9 +26,6 @@ export const metadata: Metadata = {
     "Indian Developer",
     "Native Android Developer",
     "Backend Developer",
-    "Discord Bot Developer",
-    "Next.js Developer",
-    "React Native Developer",
     "Kotlin Developer",
     "Portfolio",
     "Web Developer",
@@ -77,9 +74,6 @@ export const metadata: Metadata = {
       "max-image-preview": "large",
       "max-snippet": -1,
     },
-  },
-  verification: {
-    google: "YOUR_GOOGLE_VERIFICATION_CODE", // Replace with your code
   },
   other: {
     "google-adsense-account": "ca-pub-2489956198626091",

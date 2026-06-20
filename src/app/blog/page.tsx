@@ -9,29 +9,62 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Calendar, Eye, ArrowRight } from "lucide-react";
 import { AdBanner } from "@/components/blog/AdBanner";
-import { cn } from "@/lib/utils";
+import { cn, getCleanSlug } from "@/lib/utils";
 
-export const metadata: Metadata = {
-    title: "Tech Blog | Android, iOS, Backend & Discord Dev | Hazrat Ummar",
-    description: "Deep-dive guides, tutorials, and developer insights on Native Android (Kotlin), iOS, Discord bot development, API backends, and software architecture.",
-    alternates: {
-        canonical: '/blog',
-    },
-    openGraph: {
-        title: "Tech Blog | Android, iOS, Backend & Discord Dev | Hazrat Ummar",
-        description: "Deep-dive guides, tutorials, and developer insights on Native Android (Kotlin), iOS, Discord bot development, API backends, and software architecture.",
-        url: "https://hazratdev.top/blog",
-        type: "website",
-    },
-    twitter: {
-        card: "summary_large_image",
-        title: "Tech Blog | Android, iOS, Backend & Discord Dev | Hazrat Ummar",
-        description: "Deep-dive guides, tutorials, and developer insights on Native Android (Kotlin), iOS, Discord bot development, API backends, and software architecture.",
-    }
-};
+export async function generateMetadata({
+    searchParams,
+}: {
+    searchParams: { q?: string; category?: string; page?: string };
+}): Promise<Metadata> {
+    const page = Number(searchParams.page) || 1;
+    const category = searchParams.category || "";
+    const search = searchParams.q || "";
+
+    const urlParams = new URLSearchParams();
+    if (page > 1) urlParams.set("page", page.toString());
+    if (category) urlParams.set("category", category);
+    if (search) urlParams.set("q", search);
+
+    const queryString = urlParams.toString();
+    const canonicalPath = queryString ? `/blog?${queryString}` : '/blog';
+    const absoluteUrl = `https://hazratdev.top${canonicalPath}`;
+
+    return {
+        title: "Hazrat.dev Blog | Android, Kotlin, Python & Discord Bot Development Tutorials",
+        description: "Deep-dive guides, tutorials, and developer insights on Native Android (Kotlin, Compose), iOS, Discord bot development, Python API backends (FastAPI, Ktor), and software architecture.",
+        alternates: {
+            canonical: canonicalPath,
+        },
+        openGraph: {
+            title: "Hazrat.dev Blog | Android, Kotlin, Python & Discord Bot Development Tutorials",
+            description: "Deep-dive guides, tutorials, and developer insights on Native Android (Kotlin, Compose), iOS, Discord bot development, Python API backends (FastAPI, Ktor), and software architecture.",
+            url: absoluteUrl,
+            type: "website",
+            images: [
+                {
+                    url: "/logo.png",
+                    width: 1200,
+                    height: 630,
+                    alt: "Hazrat Ummar Shaikh Tech Blog",
+                },
+            ],
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: "Hazrat.dev Blog | Android, Kotlin, Python & Discord Bot Development Tutorials",
+            description: "Deep-dive guides, tutorials, and developer insights on Native Android (Kotlin, Compose), iOS, Discord bot development, Python API backends (FastAPI, Ktor), and software architecture.",
+            images: ["/logo.png"],
+        }
+    };
+}
 
 async function getFeaturedPost() {
     await dbConnect();
+    const featured = await Post.findOne({ status: "published", featured: true })
+        .sort({ publishedAt: -1, createdAt: -1 })
+        .lean();
+    if (featured) return featured;
+
     return Post.findOne({ status: "published" })
         .sort({ publishedAt: -1, createdAt: -1 })
         .lean();
@@ -210,7 +243,7 @@ export default async function BlogPage({
                                         </span>
                                     </div>
 
-                                    <Link href={`/blog/${featuredPost.slug}`}>
+                                    <Link href={`/blog/${getCleanSlug(featuredPost.slug)}`}>
                                         <h2 className="text-2xl md:text-3xl font-bold font-heading leading-tight text-white mb-4 group-hover:text-primary transition-colors duration-300">
                                             {featuredPost.title}
                                         </h2>
@@ -227,13 +260,15 @@ export default async function BlogPage({
                                             <Calendar className="w-3.5 h-3.5 text-primary/70" />
                                             {featuredPost.readingTime ? `${featuredPost.readingTime} min read` : "5 min read"}
                                         </span>
-                                        <span className="flex items-center gap-1.5">
-                                            <Eye className="w-3.5 h-3.5 text-primary/70" />
-                                            {featuredPost.views} views
-                                        </span>
+                                        {featuredPost.views >= 1000 && (
+                                            <span className="flex items-center gap-1.5">
+                                                <Eye className="w-3.5 h-3.5 text-primary/70" />
+                                                {featuredPost.views} {featuredPost.views === 1 ? 'view' : 'views'}
+                                            </span>
+                                        )}
                                     </div>
                                     
-                                    <Link href={`/blog/${featuredPost.slug}`}>
+                                    <Link href={`/blog/${getCleanSlug(featuredPost.slug)}`}>
                                         <Button className="bg-primary hover:bg-primary/95 text-white shadow-lg shadow-primary/20 rounded-xl gap-2 font-medium">
                                             Read Article 
                                             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -375,14 +410,18 @@ export default async function BlogPage({
                                                 0{index + 1}
                                             </span>
                                             <div className="flex-grow">
-                                                <Link href={`/blog/${trendPost.slug}`}>
+                                                <Link href={`/blog/${getCleanSlug(trendPost.slug)}`}>
                                                     <h4 className="text-sm font-bold text-white/90 leading-snug group-hover:text-primary transition-colors duration-300 line-clamp-2">
                                                         {trendPost.title}
                                                     </h4>
                                                 </Link>
                                                 <div className="flex items-center gap-2 mt-1 text-[10px] text-muted-foreground/60 font-mono">
-                                                    <span>{trendPost.views} views</span>
-                                                    <span>•</span>
+                                                    {trendPost.views >= 1000 && (
+                                                        <>
+                                                            <span>{trendPost.views} {trendPost.views === 1 ? 'view' : 'views'}</span>
+                                                            <span>•</span>
+                                                        </>
+                                                    )}
                                                     <span>{trendPost.readingTime ? `${trendPost.readingTime}m read` : "5m read"}</span>
                                                 </div>
                                             </div>

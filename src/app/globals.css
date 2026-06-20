@@ -336,7 +336,8 @@
   color: #e2e8f0;
   /* light text inside dark code block */
   font-family: var(--font-geist-mono), 'Fira Code', 'Cascadia Code', monospace;
-  white-space: pre;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
 }
 
 /* Blockquote */

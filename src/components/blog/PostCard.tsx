@@ -4,6 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, Eye, ArrowRight } from "lucide-react";
 import { IPost } from "@/models/Post";
+import { getCleanSlug } from "@/lib/utils";
 
 interface PostCardProps {
     post: IPost;
@@ -47,7 +48,7 @@ export default function PostCard({ post }: PostCardProps) {
 
             {/* Title / Header */}
             <CardHeader className="pb-3 pt-5 px-6">
-                <Link href={`/blog/${post.slug}`} className="block">
+                <Link href={`/blog/${getCleanSlug(post.slug)}`} className="block">
                     <h3 className="text-lg font-bold font-heading leading-snug tracking-tight text-white/95 group-hover:text-primary transition-colors duration-300 line-clamp-2">
                         {post.title}
                     </h3>
@@ -77,13 +78,15 @@ export default function PostCard({ post }: PostCardProps) {
                         <Calendar className="w-3.5 h-3.5 text-primary/70" />
                         {formattedDate}
                     </span>
-                    <span className="flex items-center gap-1.5">
-                        <Eye className="w-3.5 h-3.5 text-primary/70" />
-                        {post.views}
-                    </span>
+                    {post.views >= 1000 && (
+                        <span className="flex items-center gap-1.5">
+                            <Eye className="w-3.5 h-3.5 text-primary/70" />
+                            {post.views}
+                        </span>
+                    )}
                 </div>
                 <Link 
-                    href={`/blog/${post.slug}`} 
+                    href={`/blog/${getCleanSlug(post.slug)}`} 
                     className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors font-semibold group-hover:gap-1.5 transition-all duration-300"
                 >
                     Read More 
