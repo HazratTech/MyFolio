@@ -6,7 +6,7 @@ import Link from '@tiptap/extension-link';
 import { Bold, Italic, Strikethrough, Code, Terminal, List, ListOrdered, Quote, Undo, Redo, Link as LinkIcon, Image as ImageIcon, AlignLeft, AlignCenter, AlignRight, Heading1, Heading2, Heading3 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { getPresignedUrl, completeUpload } from "@/app/actions/upload";
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import MediaPickerModal from "@/components/admin/MediaPickerModal";
 
 // @ts-ignore
@@ -103,6 +103,12 @@ const TiptapEditor = ({ content, onChange, onEditorReady }: TiptapEditorProps) =
         },
         immediatelyRender: false,
     });
+
+    useEffect(() => {
+        if (editor && content && content !== editor.getHTML()) {
+            editor.commands.setContent(content);
+        }
+    }, [content, editor]);
 
     if (!editor) {
         return null;

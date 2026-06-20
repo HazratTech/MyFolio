@@ -2,15 +2,19 @@
 
 import React, { useState, useEffect } from "react";
 import BlogPostForm from "@/components/admin/BlogPostForm";
+import { useParams } from "next/navigation";
 
-export default function EditPostPage({ params }: { params: { slug: string } }) {
+export default function EditPostPage() {
+    const params = useParams();
+    const slug = typeof params?.slug === "string" ? params.slug : "";
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (!slug) return;
         const fetchPost = async () => {
             try {
-                const res = await fetch(`/api/blog/posts/${params.slug}`);
+                const res = await fetch(`/api/blog/posts/${slug}`);
                 if (res.ok) {
                     const data = await res.json();
                     setPost(data);
@@ -23,7 +27,7 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
         };
 
         fetchPost();
-    }, [params.slug]);
+    }, [slug]);
 
     if (loading) {
         return <div className="text-center py-20">Loading...</div>;

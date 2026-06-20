@@ -283,7 +283,7 @@ SEO & LENGTH:
 • FAQ Section: You MUST include a dedicated H2 FAQ section (containing 3-4 specific technical questions and answers) at the end of the post.
 • Data Tables: You MUST include at least one relevant comparison table or benchmark data table (formatted as clean HTML <table>).
 • Affiliate Opportunity: You MUST naturally mention and link to an affiliate resource or tool (e.g. an Amazon technical book, Hostinger/Vultr/DigitalOcean hosting VPS, or a developer service) with a clear recommendation.
-• Human Review/Trust Score: You MUST include a trust/review box block: \`<div class="bg-primary/5 p-4 rounded-xl border border-primary/20"><p><strong>Author Review Score:</strong> 9.8/10 (Based on production stability and developer experience)</p></div>\` or similar, placed at the VERY TOP of the article content (immediately after the first introduction paragraph, before the first H2 heading). Do NOT place it in the comparison table or FAQ sections.
+
 
 ━━━━━ FORMAT ━━━━━
 • Return ONLY valid JSON matching the schema. Content must be HTML (not markdown).
@@ -656,7 +656,8 @@ The image prompts must be:
             coverImageKey: coverResult?.key || null,
             category: mainCategory,
             tags: aiData.tags,
-            status: "draft",
+            status: "published",
+            publishedAt: new Date(),
             readingTime,
             views: 0,
         });
