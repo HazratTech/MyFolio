@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, BookOpen } from "lucide-react";
 import { navLinks } from "@/data/portfolio";
 import { HireMeModal } from "@/components/modals/HireMeModal";
 import { cn } from "@/lib/utils";
@@ -43,9 +43,16 @@ export const Navbar = () => {
                 )}
             >
                 <div className="container mx-auto px-6 flex items-center justify-between">
-                    <Link href="/" className="text-2xl font-bold font-heading tracking-tighter">
-                        Hazrat<span className="text-primary">.dev</span>
-                    </Link>
+                    <div className="flex items-center gap-3">
+                        <Link href="/" className="text-xl font-bold font-heading tracking-tighter hover:opacity-90 transition-opacity">
+                            Hazrat<span className="text-primary">.dev</span>
+                        </Link>
+                        <span className="text-foreground/20">|</span>
+                        <Link href="/blog" className="flex items-center gap-1.5 text-sm bg-primary/10 text-primary border border-primary/20 px-2.5 py-0.5 rounded-full font-medium">
+                            <BookOpen className="w-3.5 h-3.5" />
+                            Blog
+                        </Link>
+                    </div>
 
                     {/* Desktop Menu */}
                     <div className="hidden md:flex items-center space-x-8">
