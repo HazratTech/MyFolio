@@ -186,7 +186,7 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
             {/* ─── ARTICLE CONTENT ─── */}
             <article className="max-w-4xl mx-auto px-6 py-12 md:py-16">
                 <div 
-                    className="prose prose-invert max-w-none font-sans leading-relaxed text-slate-300 md:text-lg"
+                    className="blog-prose"
                     dangerouslySetInnerHTML={{ __html: post.content }}
                 />
 
