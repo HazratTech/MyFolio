@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
+import { GoogleAdSense } from "@/components/analytics/GoogleAdSense";
+import { CookieConsent } from "@/components/layout/CookieConsent";
 import { cn } from "@/lib/utils";
 import Script from "next/script";
 
@@ -145,17 +147,13 @@ export default function RootLayout({
         )}
       >
         <GoogleAnalytics gaId="G-CGMGGSKEBE" />
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2489956198626091"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
+        <GoogleAdSense />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         {children}
+        <CookieConsent />
       </body>
     </html>
   );

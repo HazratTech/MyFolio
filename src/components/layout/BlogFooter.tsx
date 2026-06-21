@@ -51,6 +51,7 @@ export const BlogFooter = async () => {
                         <Link href="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link>
                         <Link href="/terms-of-service" className="hover:text-primary transition-colors">Terms of Service</Link>
                         <Link href="/cookie-policy" className="hover:text-primary transition-colors">Cookie Policy</Link>
+                        <Link href="#cookie-settings" className="hover:text-primary transition-colors">Manage Cookies</Link>
                     </div>
                 </div>
             </div>
