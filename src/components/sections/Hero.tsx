@@ -39,16 +39,16 @@ export const Hero = () => {
                         </p>
 
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                            <a href="#contact">
+                            <Link href="/contact" scroll={false}>
                                 <Button size="lg" className="bg-primary hover:bg-primary/90 text-white min-w-[160px] h-12 text-base shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] transition-all duration-300">
                                     Hire Me <ArrowRight className="ml-2 w-4 h-4" />
                                 </Button>
-                            </a>
-                            <a href="#projects">
+                            </Link>
+                            <Link href="/projects" scroll={false}>
                                 <Button variant="outline" size="lg" className="border-white/10 bg-white/5 hover:bg-white/10 text-foreground min-w-[160px] h-12 text-base backdrop-blur-sm">
                                     View Projects
                                 </Button>
-                            </a>
+                            </Link>
                         </div>
                     </m.div>
                 </LazyMotion>

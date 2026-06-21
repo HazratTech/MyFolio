@@ -218,7 +218,7 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
                         {ctaDescription}
                     </p>
                     <div className="flex flex-wrap gap-4 justify-center relative z-10">
-                        <Link href="/#contact">
+                        <Link href="/contact">
                             <Button className="bg-primary hover:bg-primary/95 text-white font-medium rounded-xl px-5 shadow-lg shadow-primary/20">
                                 Work With Me
                             </Button>

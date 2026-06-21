@@ -25,7 +25,7 @@ export const BlogNavbar = () => {
     const navLinks = [
         { name: "Blog Home", href: "/blog" },
         { name: "Portfolio", href: "/" },
-        { name: "Contact Me", href: "/#contact" }
+        { name: "Contact Me", href: "/contact" }
     ];
 
     return (

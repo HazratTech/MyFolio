@@ -1,11 +1,11 @@
 import { Github, Linkedin, Instagram, Twitter, Mail, Code, Smartphone, Zap, Globe, Server, Database, Layout, Terminal, MessageCircle, MessageSquare, Bot } from "lucide-react";
 
 export const navLinks = [
-    { name: "Home", href: "#home" },
-    { name: "About", href: "#about" },
-    { name: "Projects", href: "#projects" },
-    { name: "Services", href: "#services" },
-    { name: "Contact", href: "#contact" },
+    { name: "Home", href: "/" },
+    { name: "About", href: "/about" },
+    { name: "Projects", href: "/projects" },
+    { name: "Services", href: "/services" },
+    { name: "Contact", href: "/contact" },
     { name: "Blog", href: "/blog" },
 ];
 

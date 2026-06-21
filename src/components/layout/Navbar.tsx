@@ -24,11 +24,6 @@ export const Navbar = () => {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    const getHref = (href: string) => {
-        if (pathname === "/") return href;
-        return href.startsWith("#") ? `/${href}` : href;
-    };
-
     return (
         <LazyMotion features={domAnimation}>
             <m.nav
@@ -59,11 +54,18 @@ export const Navbar = () => {
                         {navLinks.map((link, index) => (
                             <Link
                                 key={index}
-                                href={getHref(link.href)}
-                                className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors relative group"
+                                href={link.href}
+                                scroll={false}
+                                className={cn(
+                                    "text-sm font-medium transition-colors relative group",
+                                    pathname === link.href ? "text-primary" : "text-muted-foreground hover:text-primary"
+                                )}
                             >
                                 {link.name}
-                                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
+                                <span className={cn(
+                                    "absolute -bottom-1 left-0 h-0.5 bg-primary transition-all group-hover:w-full",
+                                    pathname === link.href ? "w-full" : "w-0"
+                                )} />
                             </Link>
                         ))}
                         <Button variant="default" className="bg-primary hover:bg-primary/90 text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]">
@@ -95,9 +97,13 @@ export const Navbar = () => {
                             {navLinks.map((link, index) => (
                                 <Link
                                     key={index}
-                                    href={getHref(link.href)}
+                                    href={link.href}
+                                    scroll={false}
                                     onClick={() => setIsMobileMenuOpen(false)}
-                                    className="text-2xl font-bold text-foreground hover:text-primary transition-colors"
+                                    className={cn(
+                                        "text-2xl font-bold transition-colors",
+                                        pathname === link.href ? "text-primary" : "text-foreground hover:text-primary"
+                                    )}
                                 >
                                     {link.name}
                                 </Link>
