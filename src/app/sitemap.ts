@@ -1,6 +1,4 @@
 import { MetadataRoute } from 'next'
-import fs from 'fs'
-import path from 'path'
 import dbConnect from '@/lib/db'
 import Post from '@/models/Post'
 import Category from '@/models/Category'
@@ -11,43 +9,13 @@ export const dynamic = 'force-dynamic'
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://hazratdev.top'
 
-    // Function to recursively find all page.tsx files
-    function getPages(dir: string, baseUrl: string): string[] {
-        const files = fs.readdirSync(dir)
-        let pages: string[] = []
-
-        files.forEach((file) => {
-            const filePath = path.join(dir, file)
-            const stat = fs.statSync(filePath)
-
-            if (stat.isDirectory()) {
-                // Skip special Next.js directories, api routes, and dynamic routes (starting with [)
-                if (file.startsWith('_') || file === 'api' || file.startsWith('[')) return
-
-                pages = [...pages, ...getPages(filePath, baseUrl)]
-            } else {
-                if (file === 'page.tsx' || file === 'page.js') {
-                    // Convert file path to URL path
-                    let relativePath = filePath
-                        .replace(/\\/g, '/') // Normalize slashes for Windows
-                        .split('src/app')[1]
-                        .replace('/page.tsx', '')
-                        .replace('/page.js', '')
-                        // Remove route groups like (site) from the path
-                        .replace(/\/\([^)]+\)/g, '')
-
-                    // Handle root page
-                    if (relativePath === '') relativePath = '/'
-
-                    pages.push(relativePath)
-                }
-            }
-        })
-        return pages
-    }
-
-    const appDir = path.join(process.cwd(), 'src', 'app')
-    const staticPages = getPages(appDir, baseUrl)
+    const staticPages = [
+        '/',
+        '/blog',
+        '/cookie-policy',
+        '/privacy-policy',
+        '/terms-of-service'
+    ]
 
     const staticRoutes = staticPages.map((route) => ({
         url: `${baseUrl}${route === '/' ? '' : route}`,

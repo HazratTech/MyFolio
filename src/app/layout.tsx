@@ -25,7 +25,12 @@ export const metadata: Metadata = {
     "Discord Bot Developer",
     "Kotlin Developer",
     "FastAPI Developer",
-    "Ktor Developer"
+    "Ktor Developer",
+    "Kotlin Multiplatform Developer",
+    "Jetpack Compose Developer",
+    "Kotlin Multiplatform",
+    "Jetpack Compose",
+    "KMP Developer"
   ],
   authors: [{ name: "Hazrat Ummar Shaikh", url: "https://hazrat.dev" }],
   creator: "Hazrat Ummar Shaikh",

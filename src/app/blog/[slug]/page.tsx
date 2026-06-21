@@ -72,6 +72,24 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
 
     const relatedPosts: any[] = await getRelatedPosts(post.category, post.slug);
 
+    const categoryLower = (post.category || "").toLowerCase();
+    let ctaTitle = "Need a Professional Mobile & Backend Developer?";
+    let ctaDescription = "I build premium native mobile apps (Android, iOS) and high-performance backend systems (FastAPI, Ktor). Let's collaborate on your next project!";
+
+    if (categoryLower.includes("android")) {
+        ctaTitle = "Need Help with Native Android Development?";
+        ctaDescription = "I build high-performance Native Android apps using Kotlin, Jetpack Compose, and modern architecture. Let's collaborate to build a premium mobile experience!";
+    } else if (categoryLower.includes("discord")) {
+        ctaTitle = "Need Help with Custom Discord Bots or Server Automation?";
+        ctaDescription = "I design and develop custom, highly scalable Discord bots and server automation systems with rich API integrations. Let's build something interactive!";
+    } else if (categoryLower.includes("backend") || categoryLower.includes("api") || categoryLower.includes("database")) {
+        ctaTitle = "Need Help with Custom APIs or Backend Systems?";
+        ctaDescription = "I build robust, secure, and scalable backend services, databases, and microservices using FastAPI, Ktor, Node.js, and MongoDB. Let's build your server infrastructure!";
+    } else if (categoryLower.includes("ios") || categoryLower.includes("swift")) {
+        ctaTitle = "Need Help with iOS App Development?";
+        ctaDescription = "I build modern, fluid, and high-performance native iOS applications using Swift and SwiftUI. Let's collaborate to launch your iOS app!";
+    }
+
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "BlogPosting",
@@ -111,91 +129,69 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
                             src={post.coverImage}
                             alt={post.title}
                             fill
-                            className="object-cover"
                             priority
+                            className="object-cover"
                             sizes="100vw"
                         />
-                        {/* Multi-layer gradient overlay for text legibility */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-black/30" />
-                        <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
                     </>
                 ) : (
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-secondary/20" />
                 )}
 
-                {/* Back button on hero */}
-                <div className="absolute top-6 left-0 right-0 px-6 md:px-12 z-10">
-                    <Link
-                        href="/blog"
-                        className="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm font-medium bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20 transition-all hover:bg-black/50 hover:border-white/40"
-                    >
-                        <ArrowLeft className="w-4 h-4" />
-                        Back to Blog
-                    </Link>
-                </div>
-
-                {/* Hero text overlay at bottom */}
-                <div className="absolute bottom-0 left-0 right-0 px-6 md:px-12 pb-10 z-10">
+                {/* Hero Content (Overlaid on bottom of image) */}
+                <div className="absolute bottom-0 left-0 right-0 py-8 px-6 md:px-12">
                     <div className="max-w-4xl mx-auto">
-                        <div className="flex flex-wrap gap-2 mb-4">
-                            <Badge className="bg-primary text-white shadow-lg shadow-primary/30 text-xs font-semibold px-3 py-1">
-                                {post.category || "Development"}
+                        <Link href="/blog" className="inline-flex items-center text-primary hover:text-primary/80 font-medium mb-4 transition-colors">
+                            <ArrowLeft className="w-4 h-4 mr-2" />
+                            Back to Blog
+                        </Link>
+                        
+                        <div className="flex flex-wrap gap-2 items-center mb-4">
+                            <Badge className="bg-primary/20 text-primary border-primary/30 font-semibold px-3 py-0.5 rounded-full backdrop-blur-sm">
+                                {post.category}
                             </Badge>
-                            {post.tags?.slice(0, 3).map((tag: string) => (
-                                <Badge key={tag} variant="outline" className="text-white/70 border-white/20 bg-black/30 backdrop-blur-sm text-xs">
-                                    #{tag}
-                                </Badge>
-                            ))}
+                            <span className="text-slate-400 text-xs flex items-center gap-1">
+                                <Clock className="w-3.5 h-3.5" />
+                                {post.readingTime || 5} min read
+                            </span>
                         </div>
-                        <h1 className="text-3xl md:text-5xl font-bold font-heading leading-tight text-white drop-shadow-2xl mb-4">
+
+                        <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold font-heading text-white tracking-tight mb-4 leading-tight drop-shadow-sm">
                             {post.title}
                         </h1>
-                        {post.excerpt && (
-                        <p className="text-slate-700 text-base md:text-lg leading-relaxed max-w-3xl line-clamp-2">
-                                {post.excerpt}
-                            </p>
-                        )}
+
+                        <div className="flex flex-wrap items-center gap-6 text-sm text-slate-300 font-sans">
+                            <span className="flex items-center gap-2">
+                                <span className="w-7 h-7 rounded-full bg-primary/25 border border-primary/40 flex items-center justify-center text-primary font-bold text-xs">
+                                    H
+                                </span>
+                                Hazrat Ummar Shaikh
+                            </span>
+                            <span className="flex items-center gap-1.5">
+                                <Calendar className="w-4 h-4 text-primary" />
+                                {publishDate}
+                            </span>
+                            {!isPreview && (
+                                <span className="flex items-center gap-1.5">
+                                    <Eye className="w-4 h-4 text-primary" />
+                                    <span>{post.views || 0} views</span>
+                                </span>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* ─── META BAR ─── */}
-            <div className="border-b border-white/10 bg-card/30 backdrop-blur-sm sticky top-0 z-20">
-                <div className="max-w-4xl mx-auto px-6 md:px-12 py-3 flex flex-wrap items-center gap-5 text-sm text-muted-foreground">
-                    <span className="flex items-center gap-1.5">
-                        <User className="w-3.5 h-3.5 text-primary" />
-                        <span className="font-medium text-foreground/80">Hazrat Ummar Shaikh</span>
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                        <Calendar className="w-3.5 h-3.5 text-primary" />
-                        {publishDate}
-                    </span>
-                    {post.views >= 1000 && (
-                        <span className="flex items-center gap-1.5">
-                            <Eye className="w-3.5 h-3.5 text-primary" />
-                            {post.views} {post.views === 1 ? "view" : "views"}
-                        </span>
-                    )}
-                    {post.readingTime && (
-                        <span className="flex items-center gap-1.5">
-                            <Clock className="w-3.5 h-3.5 text-primary" />
-                            {post.readingTime} min read
-                        </span>
-                    )}
-                </div>
-            </div>
-
-            {/* ─── ARTICLE BODY ─── */}
-            <article className="max-w-4xl mx-auto px-6 md:px-12 pt-12 pb-16" id="article-content">
-                <div
-                    className="blog-prose"
+            {/* ─── ARTICLE CONTENT ─── */}
+            <article className="max-w-4xl mx-auto px-6 py-12 md:py-16">
+                <div 
+                    className="prose prose-invert max-w-none font-sans leading-relaxed text-slate-300 md:text-lg"
                     dangerouslySetInnerHTML={{ __html: post.content }}
                 />
 
-
-
-                {/* Tags at bottom */}
-                {post.tags?.length > 0 && (
+                {/* Tags Section */}
+                {post.tags && post.tags.length > 0 && (
                     <div className="mt-12 pt-8 border-t border-white/10">
                         <div className="flex items-center gap-2 flex-wrap">
                             <Tag className="w-4 h-4 text-muted-foreground" />
@@ -216,10 +212,10 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
                 <div className="mt-16 mb-12 p-8 rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card/50 to-secondary/10 backdrop-blur-sm text-center relative overflow-hidden group">
                     <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-secondary/5 opacity-50 pointer-events-none" />
                     <h3 className="text-xl md:text-2xl font-bold font-heading text-white mb-2 relative z-10">
-                        Need Help with Android, Backend, or Discord Bots?
+                        {ctaTitle}
                     </h3>
                     <p className="text-slate-300 text-sm max-w-xl mx-auto mb-6 relative z-10 font-sans leading-relaxed">
-                        I build high-performance Native Android apps (Kotlin, Compose), robust API backends (FastAPI, Ktor, MongoDB), and custom automated Discord bots. Let's collaborate on your next project!
+                        {ctaDescription}
                     </p>
                     <div className="flex flex-wrap gap-4 justify-center relative z-10">
                         <Link href="/#contact">
@@ -244,13 +240,11 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
                         <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Written by</p>
                         <h3 className="font-bold text-lg font-heading text-foreground">Hazrat Ummar Shaikh</h3>
                         <p className="text-muted-foreground text-sm mt-1 leading-relaxed font-sans">
-                            Android Developer with 5+ years of experience. Built production Android apps, Ktor backends, Discord bots, and SaaS products using Kotlin, Python, and MongoDB. Passionate about building robust systems and writing clean code.
+                            Android Developer with 4+ years of experience. Built production Android apps, Ktor backends, Discord bots, and SaaS products using Kotlin, Python, and MongoDB. Passionate about building robust systems and writing clean code.
                         </p>
                     </div>
                 </div>
             </article>
-
-
 
             {/* ─── RELATED POSTS ─── */}
             {relatedPosts.length > 0 && (

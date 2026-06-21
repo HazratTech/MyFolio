@@ -283,6 +283,8 @@ SEO & LENGTH:
 • FAQ Section: You MUST include a dedicated H2 FAQ section (containing 3-4 specific technical questions and answers) at the end of the post.
 • Data Tables: You MUST include at least one relevant comparison table or benchmark data table (formatted as clean HTML <table>).
 • Affiliate Opportunity: You MUST naturally mention and link to an affiliate resource or tool (e.g. an Amazon technical book, Hostinger/Vultr/DigitalOcean hosting VPS, or a developer service) with a clear recommendation.
+• NO AUTHOR RATINGS: NEVER include any "Author Review Score" or custom rating section (e.g. "Author Review Score: 9.8/10", ratings tables, etc.). Keep the tone completely objective, educational, and focused on code implementation.
+• GENERIC ENVIRONMENT VARIABLES: Any environmental configuration (.env or similar) or GitHub tokens in tutorials MUST use generic placeholder names and values like "GITHUB_TOKEN=your_token_here" (never use placeholders containing secret templates like "ghp_YOUR_SUPER_SECRET_TOKEN" or similar).
 
 
 ━━━━━ FORMAT ━━━━━
