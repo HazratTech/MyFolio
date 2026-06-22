@@ -218,7 +218,7 @@ export async function POST(req: NextRequest) {
         const recentPosts = await Post.find()
             .sort({ createdAt: -1 })
             .limit(100)
-            .select("title")
+            .select("title slug")
             .lean();
         const existingTitles = recentPosts.map((p: any) => p.title.toLowerCase());
 
@@ -257,6 +257,19 @@ export async function POST(req: NextRequest) {
             }
         }
 
+        // Fetch recent posts for internal backlinks focus
+        const availableBacklinks = recentPosts.slice(0, 15).map((p: any) => ({
+            title: p.title,
+            link: `/blog/${p.slug}`
+        }));
+
+        const backlinksPromptPart = availableBacklinks.length > 0
+            ? `\n━━━━━ MANDATORY INTERNAL BACKLINKS (SEO FOCUS) ━━━━━\n` +
+              `You MUST naturally and organically link to at least 2 or 3 of the following existing blog posts on this site using their exact URLs (using standard HTML anchor tags like <a href="/blog/slug">Anchor Text</a>):\n` +
+              availableBacklinks.map((b: any) => `- URL: "${b.link}" (Post Title: "${b.title}")`).join("\n") + "\n" +
+              `Ensure the anchor text is highly relevant, flows naturally within the sentence context, and improves SEO backlinks.\n`
+            : "";
+
         // ── 3. Generate Content with Gemini ───────────────────────────────────
         const postSubject = selectedArticle
             ? `inspired by this trending topic: "${selectedArticle.title}"\nReference description: "${selectedArticle.description}"\nTags/niche: ${selectedArticle.tag_list?.join(", ") || "mobile development"}`
@@ -266,6 +279,8 @@ export async function POST(req: NextRequest) {
 Your readers are working developers — smart, busy, and allergic to fluff.
 
 Write a blog post ${postSubject}
+
+${backlinksPromptPart}
 
 ━━━━━ CONTENT RULES ━━━━━
 VOICE & READABILITY (NOT ROBOTIC):
@@ -278,7 +293,7 @@ SEO & LENGTH:
 • Word count MUST be greater than 1,500 words. Provide rich, detailed, comprehensive coverage.
 • Title must be optimized for search intent (between 50-60 characters) and promise a clear, specific technical benefit.
 • Meta description MUST be between 140 and 155 characters (including keywords naturally).
-• Internal links: You MUST organically mention and link to at least 3 internal posts. Hardcode internal links using absolute paths: \`/blog/demystifying-android-os-internals\`, \`/blog/building-discord-ticket-bot-python\`, \`/blog/kotlin-multiplatform-mobile-guide\`, \`/blog/ktor-fastapi-backend-comparison\`. Place these link references naturally inside sentence structures.
+• Internal links: You MUST organically mention and link to at least 2 or 3 internal posts from the list of mandatory internal backlinks specified above. Ensure anchor text is descriptive and relevant.
 • External sources: Include at least 2 external links to official documentation (e.g., official docs at developer.android.com, fastapi.tiangolo.com, or python.org) using proper anchor text.
 • FAQ Section: You MUST include a dedicated H2 FAQ section (containing 3-4 specific technical questions and answers) at the end of the post.
 • Data Tables: You MUST include at least one relevant comparison table or benchmark data table (formatted as clean HTML <table>).
