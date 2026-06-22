@@ -39,10 +39,18 @@ export async function GET(req: NextRequest) {
             ];
         }
 
+        const sort = searchParams.get("sort") || "recent";
+        const sortOptions: any = {};
+        if (sort === "oldest") {
+            sortOptions.createdAt = 1;
+        } else {
+            sortOptions.createdAt = -1;
+        }
+
         const skip = (page - 1) * limit;
 
         const posts = await Post.find(query)
-            .sort({ publishedAt: -1, createdAt: -1 })
+            .sort(sortOptions)
             .skip(skip)
             .limit(limit);
 

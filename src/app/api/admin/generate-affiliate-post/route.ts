@@ -67,44 +67,82 @@ async function uploadBuffer(
     return { url: completeData.final_url, key: object_key };
 }
 
-/** Generate an image with DALL-E 3 via OpenAI and upload to MinIO. */
+/** Generate an image using either OpenAI gpt-image-1 or Fal.ai and upload to MinIO. */
 async function generateAndUpload(
     prompt: string,
     filenamePrefix: string,
     altText: string,
     width = 1024,
     height = 1024,
+    provider: "openai" | "fal" = "fal",
     retries = 3
 ): Promise<{ url: string; key: string } | null> {
-    if (!process.env.OPEN_AI_KEY) throw new Error("OPEN_AI_KEY not configured");
-
     for (let attempt = 1; attempt <= retries; attempt++) {
         try {
-            const openAiRes = await fetch("https://api.openai.com/v1/images/generations", {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${process.env.OPEN_AI_KEY}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    model: "gpt-image-1",
-                    prompt,
-                    n: 1,
-                    size: "1024x1024"
-                })
-            });
+            let buffer: Buffer;
+            let mimeType: string;
+            let filename: string;
 
-            if (!openAiRes.ok) {
-                throw new Error(`OpenAI gpt-image-1 failed: status ${openAiRes.status}: ${await openAiRes.text()}`);
+            if (provider === "openai") {
+                if (!process.env.OPEN_AI_KEY) throw new Error("OPEN_AI_KEY not configured");
+                const openAiRes = await fetch("https://api.openai.com/v1/images/generations", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${process.env.OPEN_AI_KEY}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-image-1",
+                        prompt,
+                        n: 1,
+                        size: "1024x1024"
+                    })
+                });
+
+                if (!openAiRes.ok) {
+                    throw new Error(`OpenAI gpt-image-1 failed: status ${openAiRes.status}: ${await openAiRes.text()}`);
+                }
+
+                const openAiData = await openAiRes.json();
+                const imageBase64 = openAiData.data[0].b64_json;
+                if (!imageBase64) throw new Error("b64_json not found in OpenAI response");
+
+                buffer = Buffer.from(imageBase64, "base64");
+                mimeType = "image/png";
+                filename = `${filenamePrefix}-${Date.now()}.png`;
+            } else {
+                if (!process.env.FAL_KEY) throw new Error("FAL_KEY not configured");
+                const falRes = await fetch("https://fal.run/fal-ai/flux/schnell", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Key ${process.env.FAL_KEY}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        prompt,
+                        image_size: "landscape_16_9",
+                        num_inference_steps: 4,
+                        num_images: 1,
+                        enable_safety_checker: true,
+                        sync_mode: true
+                    })
+                });
+
+                if (!falRes.ok) {
+                    throw new Error(`Fal.ai fetch failed with status ${falRes.status}: ${await falRes.text()}`);
+                }
+
+                const falData = await falRes.json();
+                const imageUrl = falData.images[0].url;
+
+                const imageRes = await fetch(imageUrl);
+                if (!imageRes.ok) throw new Error("Failed to download image from Fal.ai URL");
+
+                const arrayBuffer = await imageRes.arrayBuffer();
+                buffer = Buffer.from(arrayBuffer);
+                mimeType = imageRes.headers.get("content-type") || "image/jpeg";
+                filename = `${filenamePrefix}-${Date.now()}.jpg`;
             }
-
-            const openAiData = await openAiRes.json();
-            const imageBase64 = openAiData.data[0].b64_json;
-            if (!imageBase64) throw new Error("b64_json not found in OpenAI response");
-
-            const buffer = Buffer.from(imageBase64, "base64");
-            const mimeType = "image/png";
-            const filename = `${filenamePrefix}-${Date.now()}.png`;
 
             const { url, key } = await uploadBuffer(buffer, mimeType, filename);
 
@@ -121,7 +159,7 @@ async function generateAndUpload(
             return { url, key };
         } catch (err) {
             console.error(
-                `generateAndUpload attempt ${attempt} failed for "${filenamePrefix}":`,
+                `generateAndUpload attempt ${attempt} failed for "${filenamePrefix}" using ${provider}:`,
                 err instanceof Error ? err.message : String(err)
             );
             if (attempt === retries) return null;
@@ -140,7 +178,7 @@ function countWords(html: string): number {
 export async function POST(req: NextRequest) {
     try {
         if (!(await checkAuth())) {
-            return new Response("Unauthorized", { status: 401 });
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
         const { prompt, affiliateLinks } = await req.json();
@@ -190,6 +228,33 @@ export async function POST(req: NextRequest) {
               `Ensure the anchor text is highly relevant, flows naturally within the sentence context, and improves SEO backlinks.\n`
             : "";
 
+        // Extract brand name helper
+        const extractBrandName = (urlStr: string): string | null => {
+            try {
+                const url = new URL(urlStr);
+                const hostname = url.hostname.replace("www.", "");
+                const parts = hostname.split(".");
+                if (parts.length > 0) {
+                    const name = parts[0];
+                    return name.charAt(0).toUpperCase() + name.slice(1);
+                }
+                return null;
+            } catch {
+                return null;
+            }
+        };
+
+        const brands = linksList
+            .map((link: string) => extractBrandName(link))
+            .filter(Boolean) as string[];
+        const uniqueBrands = Array.from(new Set(brands));
+
+        const brandsPromptPart = uniqueBrands.length > 0
+            ? `\n━━━━━ AFFILIATE PRODUCTS / BRANDS VISUALS (COVER IMAGE ONLY) ━━━━━\n` +
+              `For the cover image prompt (coverImagePrompt), you MUST describe a product visual mockup or brand presentation showing the actual dashboard, website landing page, or product interface of one of these brands: ${uniqueBrands.join(", ")}.\n` +
+              `Example prompt format: "A realistic premium product mockup of [BrandName] homepage displayed on a sleek laptop screen, vibrant accents, dark mode workspace, no text."\n`
+            : "";
+
         const contentPrompt = `You are a high-performing affiliate copywriter and senior developer.
 Write a deep-dive, practical, and highly persuasive blog post about: "${prompt}"
 
@@ -197,12 +262,14 @@ Your tone should be honest, authoritative, and direct, but completely optimized 
 
 ${linksPromptPart}
 ${backlinksPromptPart}
+${brandsPromptPart}
 
 ━━━━━ CONTENT RULES ━━━━━
 • Word count MUST be greater than 1,200 words.
 • Title must be optimized for search intent (between 50-60 characters) promising a technical/practical benefit.
 • Meta description MUST be between 140 and 155 characters.
 • Place exactly 2 inline image placeholders: [IMAGE: prompt] and 1 cover image.
+• The cover image prompt (coverImagePrompt) MUST describe a realistic product visual/dashboard mockup for a promoted brand (such as ${uniqueBrands.join(", ")}) as detailed above.
 • The inline image prompts should be highly related to the product/service and describe a detailed modern isometric or 3D high-tech concept illustration with dark mode UI, vibrant colors, and no text.
 
 ━━━━━ FORMAT ━━━━━
@@ -293,13 +360,14 @@ ${backlinksPromptPart}
             }
         }
 
-        // Trigger cover and inline image generation in parallel using Fal.ai
+        // Trigger cover and inline image generation
         const coverPromise = generateAndUpload(
             aiData.coverImagePrompt,
             "cover",
             aiData.title,
             1200,
-            630
+            630,
+            "openai"
         );
 
         const slots: Array<{ placeholder: string; prompt: string }> = aiData.imageSlots || [];
@@ -311,7 +379,8 @@ ${backlinksPromptPart}
                         `inline-${index}`,
                         slot.prompt.slice(0, 100),
                         1200,
-                        675
+                        675,
+                        "fal"
                     );
                     resolve({ slot, result });
                 }, (index + 1) * 5000);

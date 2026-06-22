@@ -27,6 +27,10 @@ export default function BlogAdminPage() {
     const [search, setSearch] = useState("");
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [selectedCategory, setSelectedCategory] = useState("all");
+    const [selectedStatus, setSelectedStatus] = useState("all");
+    const [selectedSort, setSelectedSort] = useState("recent");
+    const [categories, setCategories] = useState<string[]>([]);
 
     // Custom AI Generation States
     const [isFabOpen, setIsFabOpen] = useState(false);
@@ -68,7 +72,15 @@ export default function BlogAdminPage() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ prompt, affiliateLinks }),
             });
-            const data = await res.json();
+            
+            let data: any = {};
+            const contentType = res.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                data = await res.json();
+            } else {
+                const text = await res.text();
+                data = { error: text || "Request failed" };
+            }
             clearInterval(interval);
 
             if (!res.ok) {
@@ -95,7 +107,9 @@ export default function BlogAdminPage() {
                 page: page.toString(),
                 limit: "10",
                 search,
-                status: "all" // fetch all
+                status: selectedStatus,
+                category: selectedCategory === "all" ? "" : selectedCategory,
+                sort: selectedSort
             });
             const res = await fetch(`/api/blog/posts?${query.toString()}`);
             const data = await res.json();
@@ -109,11 +123,30 @@ export default function BlogAdminPage() {
     };
 
     useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const res = await fetch("/api/blog/categories");
+                if (res.ok) {
+                    const data = await res.json();
+                    setCategories(data.map((c: any) => c.name));
+                }
+            } catch (err) {
+                console.error("Failed to fetch categories:", err);
+            }
+        };
+        fetchCategories();
+    }, []);
+
+    useEffect(() => {
+        setPage(1);
+    }, [selectedCategory, selectedStatus, selectedSort]);
+
+    useEffect(() => {
         const timeout = setTimeout(() => {
             fetchPosts();
         }, 500); // Debounce search
         return () => clearTimeout(timeout);
-    }, [search, page]);
+    }, [search, page, selectedCategory, selectedStatus, selectedSort]);
 
     const handleDelete = async (slug: string) => {
         if (!confirm("Are you sure you want to delete this post?")) return;
@@ -142,14 +175,51 @@ export default function BlogAdminPage() {
                 </Link>
             </div>
 
-            <div className="flex items-center gap-4 bg-muted/40 p-4 rounded-lg border border-border">
-                <Search className="w-5 h-5 text-muted-foreground" />
-                <Input
-                    placeholder="Search posts..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground"
-                />
+            <div className="flex flex-col md:flex-row items-center gap-4 bg-muted/40 p-4 rounded-lg border border-border">
+                <div className="flex items-center gap-2 bg-transparent w-full md:w-auto flex-1">
+                    <Search className="w-5 h-5 text-muted-foreground" />
+                    <Input
+                        placeholder="Search posts..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground w-full"
+                    />
+                </div>
+                
+                <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                    {/* Category Filter */}
+                    <select
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        className="h-10 rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary min-w-[140px]"
+                    >
+                        <option value="all">All Categories</option>
+                        {categories.map((cat) => (
+                            <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                    </select>
+
+                    {/* Status Filter */}
+                    <select
+                        value={selectedStatus}
+                        onChange={(e) => setSelectedStatus(e.target.value)}
+                        className="h-10 rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary min-w-[120px]"
+                    >
+                        <option value="all">All Statuses</option>
+                        <option value="published">Published</option>
+                        <option value="draft">Draft</option>
+                    </select>
+
+                    {/* Sorting Filter */}
+                    <select
+                        value={selectedSort}
+                        onChange={(e) => setSelectedSort(e.target.value)}
+                        className="h-10 rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary min-w-[120px]"
+                    >
+                        <option value="recent">Recent</option>
+                        <option value="oldest">Oldest</option>
+                    </select>
+                </div>
             </div>
 
             <div className="border border-border rounded-lg overflow-hidden bg-card">
@@ -199,7 +269,10 @@ export default function BlogAdminPage() {
                                     </TableCell>
                                     <TableCell className="text-foreground">{post.views}</TableCell>
                                     <TableCell className="text-muted-foreground text-sm">
-                                        {new Date(post.createdAt).toLocaleDateString()}
+                                        <div className="flex flex-col">
+                                            <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                                            <span className="text-[10px] opacity-75">{new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                        </div>
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end gap-2">
@@ -308,7 +381,7 @@ export default function BlogAdminPage() {
                             <div className="space-y-6 py-4">
                                 <div className="flex items-center gap-3">
                                     <Loader2 className="w-6 h-6 text-primary animate-spin" />
-                                    <span className="font-medium text-sm text-white">Generating Affiliate Content...</span>
+                                    <span className="font-medium text-sm text-gray-700">Generating Affiliate Content...</span>
                                 </div>
 
                                 <div className="space-y-3">
@@ -340,7 +413,7 @@ export default function BlogAdminPage() {
                         ) : (
                             <form onSubmit={handleGenerate} className="space-y-5">
                                 <div className="space-y-2">
-                                    <label htmlFor="prompt-field" className="text-sm font-semibold text-gray-700">Review Topic or Product Brief</label>
+                                    <label htmlFor="prompt-field" className="text-sm font-semibold text-foreground">Review Topic or Product Brief</label>
                                     <Textarea
                                         id="prompt-field"
                                         placeholder="e.g. Hostinger VPS Hosting review, compare it with AWS Lightsail, emphasize speed, pricing and reliability..."
@@ -352,7 +425,7 @@ export default function BlogAdminPage() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label htmlFor="links-field" className="text-sm font-semibold text-gray-700 flex items-center gap-1.5">
+                                    <label htmlFor="links-field" className="text-sm font-semibold text-foreground flex items-center gap-1.5">
                                         <Link2 className="w-4 h-4 text-primary" />
                                         Affiliate Link(s)
                                     </label>
