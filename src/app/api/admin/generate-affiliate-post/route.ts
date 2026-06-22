@@ -293,49 +293,69 @@ ${brandsPromptPart}
 }
 `;
 
-        const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
-            contents: contentPrompt,
-            config: {
-                responseMimeType: "application/json",
-                responseSchema: {
-                    type: Type.OBJECT,
-                    properties: {
-                        title: { type: Type.STRING },
-                        category: { type: Type.STRING },
-                        excerpt: { type: Type.STRING },
-                        metaDescription: { type: Type.STRING },
-                        coverImagePrompt: { type: Type.STRING },
-                        content: { type: Type.STRING },
-                        imageSlots: {
-                            type: Type.ARRAY,
-                            minItems: 2,
-                            maxItems: 2,
-                            items: {
-                                type: Type.OBJECT,
-                                properties: {
-                                    placeholder: { type: Type.STRING },
-                                    prompt: { type: Type.STRING },
+        let aiResponse = null;
+        let geminiError = null;
+        for (let attempt = 1; attempt <= 3; attempt++) {
+            try {
+                const response = await ai.models.generateContent({
+                    model: "gemini-2.5-flash",
+                    contents: contentPrompt,
+                    config: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: Type.OBJECT,
+                            properties: {
+                                title: { type: Type.STRING },
+                                category: { type: Type.STRING },
+                                excerpt: { type: Type.STRING },
+                                metaDescription: { type: Type.STRING },
+                                coverImagePrompt: { type: Type.STRING },
+                                content: { type: Type.STRING },
+                                imageSlots: {
+                                    type: Type.ARRAY,
+                                    minItems: 2,
+                                    maxItems: 2,
+                                    items: {
+                                        type: Type.OBJECT,
+                                        properties: {
+                                            placeholder: { type: Type.STRING },
+                                            prompt: { type: Type.STRING },
+                                        },
+                                        required: ["placeholder", "prompt"],
+                                    },
                                 },
-                                required: ["placeholder", "prompt"],
+                                tags: { type: Type.ARRAY, items: { type: Type.STRING } },
+                                readingTime: { type: Type.INTEGER },
                             },
+                            required: [
+                                "title", "category", "excerpt", "metaDescription", "coverImagePrompt",
+                                "content", "imageSlots", "tags", "readingTime",
+                            ],
                         },
-                        tags: { type: Type.ARRAY, items: { type: Type.STRING } },
-                        readingTime: { type: Type.INTEGER },
                     },
-                    required: [
-                        "title", "category", "excerpt", "metaDescription", "coverImagePrompt",
-                        "content", "imageSlots", "tags", "readingTime",
-                    ],
-                },
-            },
-        });
-
-        if (!response || !response.text) {
-            throw new Error("Failed to generate content from Gemini");
+                });
+                if (response && response.text) {
+                    aiResponse = response;
+                    break;
+                }
+            } catch (err) {
+                console.warn(`Gemini attempt ${attempt} failed:`, err instanceof Error ? err.message : String(err));
+                geminiError = err;
+                if (attempt < 3) {
+                    const errMsg = err instanceof Error ? err.message : String(err);
+                    const isTransient = errMsg.includes("429") || errMsg.includes("RESOURCE_EXHAUSTED") || errMsg.includes("503") || errMsg.includes("UNAVAILABLE");
+                    const delay = isTransient ? 15000 : attempt * 4000;
+                    console.log(`Waiting ${delay}ms before retrying Gemini...`);
+                    await new Promise((resolve) => setTimeout(resolve, delay));
+                }
+            }
         }
 
-        const aiData = JSON.parse(response.text);
+        if (!aiResponse || !aiResponse.text) {
+            throw geminiError || new Error("Failed to generate content from Gemini");
+        }
+
+        const aiData = JSON.parse(aiResponse.text);
         let finalContent: string = aiData.content;
 
         // Failsafe affiliate link validation
@@ -367,7 +387,7 @@ ${brandsPromptPart}
             aiData.title,
             1200,
             630,
-            "openai"
+            "fal"
         );
 
         const slots: Array<{ placeholder: string; prompt: string }> = aiData.imageSlots || [];
