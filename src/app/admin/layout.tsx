@@ -85,11 +85,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     return (
         <div className="flex h-screen bg-background overflow-hidden">
-            {/* Desktop Sidebar */}
-            <aside className="hidden md:flex w-64 border-r border-white/10 bg-card/30 backdrop-blur-md flex-col">
-                <SidebarContent />
-            </aside>
-
             {/* Mobile Header & Sidebar */}
             <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-white/10 p-4 flex items-center justify-between">
                 <Link href="/" className="text-xl font-bold font-heading tracking-tighter">
@@ -97,7 +92,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </Link>
                 <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
                     <SheetTrigger asChild>
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" aria-label="Open sidebar menu">
                             <Menu className="w-6 h-6" />
                         </Button>
                     </SheetTrigger>
@@ -106,6 +101,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     </SheetContent>
                 </Sheet>
             </div>
+            {/* Desktop Sidebar */}
+            <aside className="hidden md:flex w-64 border-r border-white/10 bg-card/30 backdrop-blur-md flex-col">
+                <SidebarContent />
+            </aside>
+
 
             {/* Main Content */}
             <main className="flex-1 overflow-y-auto bg-black/20 p-4 md:p-8 pt-20 md:pt-8">

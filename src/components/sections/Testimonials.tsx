@@ -93,8 +93,8 @@ export const Testimonials = () => {
                                             )}
                                         </div>
                                         <div>
-                                            <h4 className="font-bold text-sm">{review.name}</h4>
-                                            <p className="text-xs text-muted-foreground">{review.role}</p>
+                                            <div className="font-semibold text-white">{review.name}</div>
+                                            <div className="text-xs text-muted-foreground">{review.role}</div>
                                         </div>
                                     </div>
                                 </CardContent>

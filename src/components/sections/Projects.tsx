@@ -149,19 +149,21 @@ export const Projects = () => {
                             A selection of my best work, ranging from automation systems to mobile applications.
                         </p>
 
-                        <Tabs defaultValue="All" className="w-full max-w-3xl mx-auto" onValueChange={setActiveTab}>
-                            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 bg-white/5 p-1 rounded-xl">
-                                {categories.map((category) => (
-                                    <TabsTrigger
-                                        key={category}
-                                        value={category}
-                                        className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg transition-all duration-300"
-                                    >
-                                        {category}
-                                    </TabsTrigger>
-                                ))}
-                            </TabsList>
-                        </Tabs>
+                        <div className="w-full max-w-3xl mx-auto bg-white/5 p-1 rounded-xl grid grid-cols-2 md:grid-cols-4" role="group" aria-label="Project Categories">
+                            {categories.map((category) => (
+                                <button
+                                    key={category}
+                                    onClick={() => setActiveTab(category)}
+                                    className={`py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
+                                        activeTab === category
+                                            ? "bg-primary text-white"
+                                            : "text-foreground hover:bg-white/5 hover:text-white"
+                                    }`}
+                                >
+                                    {category}
+                                </button>
+                            ))}
+                        </div>
                     </m.div>
 
                     <m.div
@@ -201,19 +203,29 @@ export const Projects = () => {
 
                                             {/* Overlay with Links */}
                                             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 z-10">
-                                                <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-                                                    <Button size="icon" variant="secondary" className="rounded-full">
-                                                        <Github className="w-5 h-5" />
-                                                    </Button>
+                                                <a
+                                                    href={project.githubUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    aria-label={`View ${project.title} source code on GitHub`}
+                                                    className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                >
+                                                    <Github className="w-5 h-5" />
                                                 </a>
-                                                <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                                                    <Button size="icon" className="rounded-full bg-primary text-white hover:bg-primary/90">
-                                                        {project.liveUrl && project.liveUrl.includes("play.google.com") ? (
-                                                            <Smartphone className="w-5 h-5" />
-                                                        ) : (
-                                                            <ExternalLink className="w-5 h-5" />
-                                                        )}
-                                                    </Button>
+                                                <a
+                                                    href={project.liveUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    aria-label={`View ${project.title} live demo`}
+                                                    className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                >
+                                                    {project.liveUrl && project.liveUrl.includes("play.google.com") ? (
+                                                        <Smartphone className="w-5 h-5" />
+                                                    ) : (
+                                                        <ExternalLink className="w-5 h-5" />
+                                                    )}
                                                 </a>
                                             </div>
 
@@ -223,12 +235,14 @@ export const Projects = () => {
                                                     <button
                                                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); prevImage(project._id, project.images.length); }}
                                                         className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 p-1 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity z-20 hover:bg-black/70"
+                                                        aria-label="Previous project image"
                                                     >
                                                         <ChevronLeft className="w-4 h-4" />
                                                     </button>
                                                     <button
                                                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); nextImage(project._id, project.images.length); }}
                                                         className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 p-1 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity z-20 hover:bg-black/70"
+                                                        aria-label="Next project image"
                                                     >
                                                         <ChevronRight className="w-4 h-4" />
                                                     </button>
@@ -278,6 +292,7 @@ export const Projects = () => {
                             <button
                                 onClick={() => setSelectedProject(null)}
                                 className="absolute top-4 right-4 z-50 p-2 rounded-full bg-black/10 hover:bg-black/20 dark:bg-white/10 dark:hover:bg-white/20 transition-colors text-foreground"
+                                aria-label="Close project details"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x w-6 h-6"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
                             </button>
@@ -286,7 +301,7 @@ export const Projects = () => {
                                 <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/20 opacity-30" />
 
                                 <div className="relative w-full h-full min-h-[300px] lg:min-h-0 flex items-center justify-center">
-                                    <div className="relative w-full h-full max-h-[600px] rounded-xl overflow-hidden shadow-2xl border border-white/10 bg-muted/20">
+                                    <div className="relative w-full h-full max-h-[600px] max-w-4xl rounded-xl overflow-hidden shadow-2xl border border-white/10 bg-muted/20">
                                         {(selectedProject.images && selectedProject.images.length > 0) || selectedProject.image ? (
                                             <>
                                                 <Image
@@ -302,12 +317,14 @@ export const Projects = () => {
                                                         <button
                                                             onClick={(e) => { e.preventDefault(); e.stopPropagation(); prevImage(selectedProject._id, selectedProject.images.length); }}
                                                             className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-primary hover:text-white p-3 rounded-full text-white transition-all backdrop-blur-md border border-white/10 opacity-0 group-hover:opacity-100 translate-x-[-20px] group-hover:translate-x-0 duration-300"
+                                                            aria-label="Previous image"
                                                         >
                                                             <ChevronLeft className="w-6 h-6" />
                                                         </button>
                                                         <button
                                                             onClick={(e) => { e.preventDefault(); e.stopPropagation(); nextImage(selectedProject._id, selectedProject.images.length); }}
                                                             className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-primary hover:text-white p-3 rounded-full text-white transition-all backdrop-blur-md border border-white/10 opacity-0 group-hover:opacity-100 translate-x-[20px] group-hover:translate-x-0 duration-300"
+                                                            aria-label="Next image"
                                                         >
                                                             <ChevronRight className="w-6 h-6" />
                                                         </button>
