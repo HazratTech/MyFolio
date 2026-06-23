@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Loader2, Send } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
 
 export const HireMeModal = ({ children }: { children: React.ReactNode }) => {
     const [open, setOpen] = useState(false);
@@ -51,6 +52,9 @@ export const HireMeModal = ({ children }: { children: React.ReactNode }) => {
 
             if (response.ok) {
                 setResult("Message sent successfully!");
+                trackEvent("hire_me_submit", {
+                    service: formData.service,
+                });
                 setFormData({ name: "", email: "", service: "Discord Bot", message: "" });
                 setTimeout(() => setOpen(false), 2000);
             } else {
@@ -73,7 +77,7 @@ export const HireMeModal = ({ children }: { children: React.ReactNode }) => {
                 <DialogHeader>
                     <DialogTitle className="text-2xl font-bold text-center">Hire Me</DialogTitle>
                 </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+                <form id="hire-form" onSubmit={handleSubmit} className="space-y-4 mt-4">
                     <div className="space-y-2">
                         <Label htmlFor="hire-name">Name</Label>
                         <Input

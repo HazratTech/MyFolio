@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Mail, ExternalLink } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
 
 interface Social {
     name: string;
@@ -76,6 +77,10 @@ export const Contact = () => {
 
             if (response.ok) {
                 setResult("Message sent successfully!");
+                trackEvent("contact_form_submit", {
+                    service: formData.service,
+                    subject: formData.subject,
+                });
                 setFormData({ name: "", email: "", service: "Discord Bot", subject: "", message: "" });
             } else {
                 setResult("Failed to send message.");
@@ -190,7 +195,7 @@ export const Contact = () => {
                         >
                             <Card className="bg-card/50 backdrop-blur-md border-white/10">
                                 <CardContent className="p-6 space-y-4">
-                                    <form onSubmit={handleSubmit} className="space-y-4">
+                                    <form id="contact-form" onSubmit={handleSubmit} className="space-y-4">
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             <div className="space-y-2">
                                                 <label htmlFor="contact-name" className="text-sm font-medium">Name</label>
