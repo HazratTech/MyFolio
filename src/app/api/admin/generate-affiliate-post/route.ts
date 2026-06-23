@@ -255,11 +255,85 @@ export async function POST(req: NextRequest) {
               `Example prompt format: "A realistic premium product mockup of [BrandName] homepage displayed on a sleek laptop screen, vibrant accents, dark mode workspace, no text."\n`
             : "";
 
-        const contentPrompt = `You are a high-performing affiliate copywriter and senior developer.
-Write a deep-dive, practical, and highly persuasive blog post about: "${prompt}"
+        // Analyze target audience based on prompt and category
+        const promptLower = prompt.toLowerCase();
+        let targetAudience = "developers and general tech enthusiasts";
+        let targetAudienceDescription = "Write in an informative, authoritative, and helpful style.";
 
-Your tone should be honest, authoritative, and direct, but completely optimized to drive clicks to the affiliate links. Avoid obvious robotic fluff (e.g. "let's dive in", "forget the fluff").
+        // Determine if it is about hosting or developer tooling (VPS, server, database, hosting, etc.)
+        const isHostingOrDevOps = promptLower.includes("host") || 
+                                  promptLower.includes("vps") || 
+                                  promptLower.includes("server") || 
+                                  promptLower.includes("deploy") || 
+                                  promptLower.includes("infrastructure") || 
+                                  promptLower.includes("docker") ||
+                                  promptLower.includes("kubernetes");
 
+        // Determine if it is about building / hiring / client services
+        const isBuildingOrServices = promptLower.includes("build") || 
+                                     promptLower.includes("create") || 
+                                     promptLower.includes("how to make") || 
+                                     promptLower.includes("hire") || 
+                                     promptLower.includes("develop a") || 
+                                     promptLower.includes("service") || 
+                                     promptLower.includes("cost to");
+
+        // Determine category specifics
+        const isDiscordBot = promptLower.includes("discord") || promptLower.includes("bot");
+        const isAndroidOrApp = promptLower.includes("android") || promptLower.includes("app") || promptLower.includes("mobile") || promptLower.includes("ios");
+        const isBackend = promptLower.includes("backend") || promptLower.includes("api") || promptLower.includes("database") || promptLower.includes("sql") || promptLower.includes("nosql");
+
+        if (linksList.length > 0) {
+            // Affiliate posts context
+            if (isHostingOrDevOps) {
+                targetAudience = "Developers, DevOps engineers, and system administrators";
+                targetAudienceDescription = "Focus heavily on technical details, performance benchmarks, uptime, API access, SSH keys, CLI commands, cost-efficiency, and developer experience. Speak developer-to-developer.";
+            } else if (isBuildingOrServices) {
+                targetAudience = "Customers, product managers, and business owners looking to build products";
+                targetAudienceDescription = "Focus on the end-user value, cost to build, features, ROI, timeline, and how to get started (e.g. android app development, discord bot development, or hiring professional developers). Explain concepts clearly without getting bogged down in low-level code unless necessary to show capability.";
+            } else if (isBackend) {
+                targetAudience = "Both developers (looking for technical implementation details) and business owners (looking for scalable backend architecture solutions)";
+                targetAudienceDescription = "Strike a balance: explain the architectural advantages, scalability, and security for the business audience, while providing clean examples or benchmark comparisons for the developers.";
+            } else if (isDiscordBot) {
+                targetAudience = "Discord server owners, community managers, and developers seeking bot solutions";
+                targetAudienceDescription = "Focus on features, customization, ease of hosting, bot performance, and how a well-built bot enhances community engagement.";
+            } else if (isAndroidOrApp) {
+                targetAudience = "Business owners wanting to launch apps and developers building them";
+                targetAudienceDescription = "Highlight user experience (UX), development speed, security, and market viability for the business/customer, combined with tech stack benefits for devs.";
+            }
+        } else {
+            // General informative content
+            if (isBuildingOrServices) {
+                targetAudience = "Customers, clients, and aspiring product builders";
+                targetAudienceDescription = "Focus on guides, project architecture choices, hiring guidelines (like hiring a mobile app or Discord bot developer), and standard development practices.";
+            } else if (isHostingOrDevOps) {
+                targetAudience = "Developers and tech professionals";
+                targetAudienceDescription = "Keep it deeply technical, focused on benchmarks, infrastructure config, code examples, and tooling comparisons.";
+            } else if (isBackend) {
+                targetAudience = "Developers and technical stakeholders";
+                targetAudienceDescription = "Provide deep architectural analysis, API design best practices, code snippets, and performance testing data.";
+            } else {
+                targetAudience = "General developers and technical readers";
+                targetAudienceDescription = "Keep it educational, structured, clean, and focus on practical engineering.";
+            }
+        }
+
+        const personaPart = linksList.length > 0
+            ? `You are a high-performing affiliate copywriter and senior developer. Your tone should be honest, authoritative, and direct, but completely optimized to drive clicks to the affiliate links. Avoid obvious robotic fluff (e.g. "let's dive in", "forget the fluff").`
+            : `You are a senior software engineer and technical writer. Your tone should be honest, authoritative, educational, and direct, focused on technical clarity, deep explanations, and professional best practices. Avoid obvious robotic introduction/outro fluff.`;
+
+        const targetAudiencePart = `\n━━━━━ TARGET AUDIENCE ━━━━━\n` +
+            `• Target Audience: ${targetAudience}\n` +
+            `• Tone & Focus: ${targetAudienceDescription}\n`;
+
+        const coverImageRule = uniqueBrands.length > 0
+            ? `• The cover image prompt (coverImagePrompt) MUST describe a realistic product visual/dashboard mockup for a promoted brand (such as ${uniqueBrands.join(", ")}) as detailed above.`
+            : `• The cover image prompt (coverImagePrompt) should be a highly specific, thematic cover image prompt describing a modern isometric 3D developer workspace, dashboard concept, or high-tech system diagram, with dark background, neon accents, and no text.`;
+
+        const contentPrompt = `${personaPart}
+Write a deep-dive, practical, and highly engaging blog post about: "${prompt}"
+
+${targetAudiencePart}
 ${linksPromptPart}
 ${backlinksPromptPart}
 ${brandsPromptPart}
@@ -269,7 +343,7 @@ ${brandsPromptPart}
 • Title must be optimized for search intent (between 50-60 characters) promising a technical/practical benefit.
 • Meta description MUST be between 140 and 155 characters.
 • Place exactly 2 inline image placeholders: [IMAGE: prompt] and 1 cover image.
-• The cover image prompt (coverImagePrompt) MUST describe a realistic product visual/dashboard mockup for a promoted brand (such as ${uniqueBrands.join(", ")}) as detailed above.
+${coverImageRule}
 • The inline image prompts should be highly related to the product/service and describe a detailed modern isometric or 3D high-tech concept illustration with dark mode UI, vibrant colors, and no text.
 
 ━━━━━ FORMAT ━━━━━
