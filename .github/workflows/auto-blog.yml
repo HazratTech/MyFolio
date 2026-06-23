@@ -3,7 +3,7 @@ name: Auto-Blog Cron
 on:
   schedule:
     # Runs every 4 hours
-    - cron: '0 */4 * * *'
+    - cron: '0 0 * * *'
   workflow_dispatch: # Allows you to manually trigger it from GitHub UI
 
 jobs:
