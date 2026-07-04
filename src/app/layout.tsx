@@ -3,6 +3,7 @@ import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { GoogleAdSense } from "@/components/analytics/GoogleAdSense";
+import { FacebookPixel } from "@/components/analytics/FacebookPixel";
 import { CookieConsent } from "@/components/layout/CookieConsent";
 import { cn } from "@/lib/utils";
 import Script from "next/script";
@@ -148,6 +149,7 @@ export default function RootLayout({
       >
         <GoogleAnalytics gaId="G-CGMGGSKEBE" />
         <GoogleAdSense />
+        <FacebookPixel />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
