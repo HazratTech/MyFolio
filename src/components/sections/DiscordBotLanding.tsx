@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { 
-    Bot, Check, X, ShieldAlert, Sparkles, MessageSquare, Terminal, 
+import {
+    Bot, Check, X, ShieldAlert, Sparkles, MessageSquare, Terminal,
     Webhook, Clock, Award, Star, ArrowRight, Send, HelpCircle, ChevronDown, CheckCircle2, Lock, Eye
 } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
@@ -106,49 +106,55 @@ export const DiscordBotLanding = () => {
             if (simulatorTab === "verify") {
                 setMessages([
                     { sender: "user", text: "/verify", isCommand: true },
-                    { sender: "bot", text: "Click the button below to complete security verification and unlock the server:", embed: {
-                        title: "🔐 Server Security Verification",
-                        description: "To prevent spam and raid bots, please verify your account. Clicking verify will grant you access to all channels.",
-                        color: "#5865F2",
-                        fields: [
-                            { name: "Step 1", value: "Click the green 'Verify Me' button below." },
-                            { name: "Step 2", value: "Check your direct messages if prompted." }
-                        ],
-                        actions: true
-                    }}
+                    {
+                        sender: "bot", text: "Click the button below to complete security verification and unlock the server:", embed: {
+                            title: "🔐 Server Security Verification",
+                            description: "To prevent spam and raid bots, please verify your account. Clicking verify will grant you access to all channels.",
+                            color: "#5865F2",
+                            fields: [
+                                { name: "Step 1", value: "Click the green 'Verify Me' button below." },
+                                { name: "Step 2", value: "Check your direct messages if prompted." }
+                            ],
+                            actions: true
+                        }
+                    }
                 ]);
             } else if (simulatorTab === "ticket") {
                 setMessages([
                     { sender: "user", text: "/ticket open subject: Account Billing Help", isCommand: true },
-                    { sender: "bot", text: "Creating your private support channel...", embed: {
-                        title: "🎟️ Support Ticket Created",
-                        description: "Your support request has been registered successfully. A private channel has been created for your issue.",
-                        color: "#5865F2",
-                        fields: [
-                            { name: "Support Channel", value: "🔓 #ticket-0024" },
-                            { name: "Estimated Response", value: "⚡ Less than 10 minutes" }
-                        ]
-                    }}
+                    {
+                        sender: "bot", text: "Creating your private support channel...", embed: {
+                            title: "🎟️ Support Ticket Created",
+                            description: "Your support request has been registered successfully. A private channel has been created for your issue.",
+                            color: "#5865F2",
+                            fields: [
+                                { name: "Support Channel", value: "🔓 #ticket-0024" },
+                                { name: "Estimated Response", value: "⚡ Less than 10 minutes" }
+                            ]
+                        }
+                    }
                 ]);
             } else if (simulatorTab === "ai") {
                 setMessages([
                     { sender: "user", text: "/ask-ai how do I deploy my first bot?", isCommand: true },
                     { sender: "bot", text: "Thinking... 🧠" }
                 ]);
-                
+
                 setTimeout(() => {
                     setMessages([
                         { sender: "user", text: "/ask-ai how do I deploy my first bot?", isCommand: true },
-                        { sender: "bot", text: "", embed: {
-                            title: "🤖 Dev Assistant AI Response",
-                            description: "To deploy your Discord bot, I recommend hosting on a Linux VPS using PM2 to keep it online 24/7. Here are the quick commands:",
-                            color: "#5865F2",
-                            fields: [
-                                { name: "1. Install PM2", value: "```bash\nnpm install pm2 -g\n```" },
-                                { name: "2. Start Bot", value: "```bash\npm2 start index.js --name \"my-bot\"\n```" },
-                                { name: "3. Monitor status", value: "Check status using `pm2 status` or logs using `pm2 logs`." }
-                            ]
-                        }}
+                        {
+                            sender: "bot", text: "", embed: {
+                                title: "🤖 Dev Assistant AI Response",
+                                description: "To deploy your Discord bot, I recommend hosting on a Linux VPS using PM2 to keep it online 24/7. Here are the quick commands:",
+                                color: "#5865F2",
+                                fields: [
+                                    { name: "1. Install PM2", value: "```bash\nnpm install pm2 -g\n```" },
+                                    { name: "2. Start Bot", value: "```bash\npm2 start index.js --name \"my-bot\"\n```" },
+                                    { name: "3. Monitor status", value: "Check status using `pm2 status` or logs using `pm2 logs`." }
+                                ]
+                            }
+                        }
                     ]);
                 }, 1500);
             }
@@ -217,7 +223,7 @@ export const DiscordBotLanding = () => {
                     <div className="absolute bottom-[10%] right-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[140px] -z-10" />
 
                     <div className="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-                        <m.div 
+                        <m.div
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6 }}
@@ -234,7 +240,7 @@ export const DiscordBotLanding = () => {
                             </p>
 
                             <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                                <Button 
+                                <Button
                                     onClick={() => {
                                         const el = document.getElementById("quote-form");
                                         el?.scrollIntoView({ behavior: "smooth" });
@@ -244,7 +250,7 @@ export const DiscordBotLanding = () => {
                                 >
                                     🚀 Get Free Quote
                                 </Button>
-                                <a 
+                                <a
                                     href="#quote-form"
                                     onClick={() => trackEvent("hero_cta_click", { action: "discord_contact" })}
                                     className="inline-flex items-center justify-center gap-2 font-bold px-8 py-4 text-lg border border-white/10 hover:bg-white/5 rounded-xl transition-all"
@@ -256,7 +262,7 @@ export const DiscordBotLanding = () => {
                         </m.div>
 
                         {/* Interactive UI Mockup */}
-                        <m.div 
+                        <m.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 0.6, delay: 0.2 }}
@@ -350,7 +356,7 @@ export const DiscordBotLanding = () => {
                 {/* 3. PROBLEM SECTION */}
                 <section id="problems" className="py-20 bg-[#111214] relative">
                     <div className="container mx-auto px-6 max-w-5xl text-center">
-                        <m.div 
+                        <m.div
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
@@ -507,19 +513,19 @@ export const DiscordBotLanding = () => {
                         </p>
 
                         <div className="flex flex-wrap justify-center gap-3 mb-6">
-                            <Button 
+                            <Button
                                 onClick={() => { setSimulatorTab("verify"); trackEvent("simulator_tab_click", { tab: "verify" }); }}
                                 className={simulatorTab === "verify" ? "bg-[#5865F2] text-white hover:bg-[#5865F2]/90 font-bold" : "bg-white/5 text-[#dbdee1] hover:bg-white/10 font-bold"}
                             >
                                 🔐 /verify
                             </Button>
-                            <Button 
+                            <Button
                                 onClick={() => { setSimulatorTab("ticket"); trackEvent("simulator_tab_click", { tab: "ticket" }); }}
                                 className={simulatorTab === "ticket" ? "bg-[#5865F2] text-white hover:bg-[#5865F2]/90 font-bold" : "bg-white/5 text-[#dbdee1] hover:bg-white/10 font-bold"}
                             >
                                 🎟️ /ticket open
                             </Button>
-                            <Button 
+                            <Button
                                 onClick={() => { setSimulatorTab("ai"); trackEvent("simulator_tab_click", { tab: "ai" }); }}
                                 className={simulatorTab === "ai" ? "bg-[#5865F2] text-white hover:bg-[#5865F2]/90 font-bold" : "bg-white/5 text-[#dbdee1] hover:bg-white/10 font-bold"}
                             >
@@ -546,9 +552,8 @@ export const DiscordBotLanding = () => {
                                     messages.map((msg, i) => (
                                         <div key={i} className="flex gap-4 items-start">
                                             {/* Avatar */}
-                                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${
-                                                msg.sender === "user" ? "bg-orange-500/20 text-orange-400" : "bg-[#5865F2]/20 text-[#5865F2]"
-                                            }`}>
+                                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${msg.sender === "user" ? "bg-orange-500/20 text-orange-400" : "bg-[#5865F2]/20 text-[#5865F2]"
+                                                }`}>
                                                 {msg.sender === "user" ? "U" : "BOT"}
                                             </div>
 
@@ -561,9 +566,9 @@ export const DiscordBotLanding = () => {
                                                     {msg.sender === "bot" && (
                                                         <span className="bg-[#5865F2] text-[10px] text-white px-1.5 py-0.5 rounded font-black uppercase">Bot</span>
                                                     )}
-                                                    <span className="text-[10px] text-[#949ba4]">Today at {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                                                    <span className="text-[10px] text-[#949ba4]">Today at {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                                 </div>
-                                                
+
                                                 {msg.text && (
                                                     <p className={msg.isCommand ? "text-[#00aff4] font-semibold text-sm" : "text-[#dbdee1] text-sm"}>
                                                         {msg.text}
@@ -575,7 +580,7 @@ export const DiscordBotLanding = () => {
                                                     <div className="border-l-4 border-[#5865F2] bg-[#2b2d31] p-4 rounded-r-lg max-w-[520px] space-y-3 mt-2 shadow-md">
                                                         <div className="font-bold text-white text-base">{msg.embed.title}</div>
                                                         <div className="text-sm text-[#dbdee1]">{msg.embed.description}</div>
-                                                        
+
                                                         {msg.embed.fields && (
                                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                                                                 {msg.embed.fields.map((f: any, fIdx: number) => (
@@ -589,7 +594,7 @@ export const DiscordBotLanding = () => {
 
                                                         {msg.embed.actions && (
                                                             <div className="flex gap-2 pt-3">
-                                                                <Button 
+                                                                <Button
                                                                     onClick={() => {
                                                                         setMessages(prev => [
                                                                             ...prev,
@@ -631,7 +636,7 @@ export const DiscordBotLanding = () => {
 
                         <div className="space-y-12">
                             {caseStudies.map((study, idx) => (
-                                <m.div 
+                                <m.div
                                     key={idx}
                                     initial={{ opacity: 0, y: 30 }}
                                     whileInView={{ opacity: 1, y: 0 }}
@@ -714,9 +719,9 @@ export const DiscordBotLanding = () => {
                             ].map((img, idx) => (
                                 <div key={idx} className="bg-[#1e1f22] rounded-xl overflow-hidden border border-[#2f3136] group hover:border-[#5865F2]/40 transition-all flex flex-col justify-between text-left shadow-lg">
                                     <div className="relative aspect-video w-full overflow-hidden bg-black/40">
-                                        <img 
-                                            src={img.url} 
-                                            alt={img.title} 
+                                        <img
+                                            src={img.url}
+                                            alt={img.title}
                                             className="w-full h-full object-cover group-hover:scale-102 transition-all duration-300"
                                         />
                                     </div>
@@ -836,9 +841,9 @@ export const DiscordBotLanding = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
                             {[
-                                { 
-                                    name: "Basic Bot", 
-                                    price: "$100", 
+                                {
+                                    name: "Basic Bot",
+                                    price: "$100",
                                     desc: "Perfect for simple server administration, automated moderation, or social media webhook links.",
                                     features: [
                                         "Automated moderation filters",
@@ -847,9 +852,9 @@ export const DiscordBotLanding = () => {
                                         "Deployment documentation included"
                                     ]
                                 },
-                                { 
-                                    name: "Advanced Automation", 
-                                    price: "$300", 
+                                {
+                                    name: "Advanced Automation",
+                                    price: "$300",
                                     desc: "Great for billing automations, custom ticket queues, leveling mechanisms, and advanced logs panels.",
                                     features: [
                                         "Stripe / PayPal payment syncing",
@@ -860,9 +865,9 @@ export const DiscordBotLanding = () => {
                                     ],
                                     popular: true
                                 },
-                                { 
-                                    name: "Enterprise / AI Bot", 
-                                    price: "Contact Me", 
+                                {
+                                    name: "Enterprise / AI Bot",
+                                    price: "Contact Me",
                                     desc: "Fully customized systems integrated with external databases, OpenAI chatbots, or custom server panels.",
                                     features: [
                                         "OpenAI contextual fine-tuning",
@@ -873,9 +878,8 @@ export const DiscordBotLanding = () => {
                                     ]
                                 }
                             ].map((tier, idx) => (
-                                <Card key={idx} className={`bg-[#1e1f22] border border-[#2f3136] p-6 flex flex-col justify-between relative shadow-lg ${
-                                    tier.popular ? "border-primary/40 ring-1 ring-primary/30" : ""
-                                }`}>
+                                <Card key={idx} className={`bg-[#1e1f22] border border-[#2f3136] p-6 flex flex-col justify-between relative shadow-lg ${tier.popular ? "border-primary/40 ring-1 ring-primary/30" : ""
+                                    }`}>
                                     {tier.popular && (
                                         <span className="absolute top-[-12px] left-6 bg-primary text-white text-[10px] uppercase font-black px-2.5 py-0.5 rounded-full tracking-wider">
                                             Most Popular
@@ -901,25 +905,24 @@ export const DiscordBotLanding = () => {
                                             ))}
                                         </ul>
                                     </div>
-                                    <Button 
+                                    <Button
                                         onClick={() => {
                                             const el = document.getElementById("quote-form");
                                             el?.scrollIntoView({ behavior: "smooth" });
-                                            setFormData(prev => ({ 
-                                                ...prev, 
-                                                budget: tier.name === "Basic Bot" 
-                                                    ? "$100 - $300" 
-                                                    : tier.name === "Advanced Automation" 
-                                                        ? "$300 - $1,000" 
-                                                        : "$1,000+" 
+                                            setFormData(prev => ({
+                                                ...prev,
+                                                budget: tier.name === "Basic Bot"
+                                                    ? "$100 - $300"
+                                                    : tier.name === "Advanced Automation"
+                                                        ? "$300 - $1,000"
+                                                        : "$1,000+"
                                             }));
                                             trackEvent("pricing_cta_click", { tier: tier.name });
                                         }}
-                                        className={`w-full mt-6 font-bold ${
-                                            tier.popular 
-                                                ? "bg-primary hover:bg-primary/95 text-white shadow-md" 
-                                                : "bg-white/5 border border-white/10 hover:bg-white/10 text-white"
-                                        }`}
+                                        className={`w-full mt-6 font-bold ${tier.popular
+                                            ? "bg-primary hover:bg-primary/95 text-white shadow-md"
+                                            : "bg-white/5 border border-white/10 hover:bg-white/10 text-white"
+                                            }`}
                                     >
                                         Select {tier.name}
                                     </Button>
@@ -964,14 +967,14 @@ export const DiscordBotLanding = () => {
 
                         <div className="space-y-4">
                             {[
-                                { q: "Do you host the bot for me?", a: "I configure the bot to run 24/7 on a Linux VPS server using PM2 manager. If you don't have hosting, I can guide you through setting up a server for less than $5/month, or handle deployment for you." },
-                                { q: "What language and library do you write bots in?", a: "I write high-performance Discord bots in Python (using discord.py or nextcord) or TypeScript (using discord.js) to guarantee execution speed and complete support for the latest Discord slash commands and interactions." },
+                                { q: "Do you host the bot for me?", a: "I configure the bot to run 24/7 on a Linux VPS server using PM2 manager. If you don't have hosting, I can guide you through setting up a server for free, or handle deployment for you." },
+                                { q: "What language and library do you write bots in?", a: "I write high-performance Discord bots in Python (using discord.py or nextcord) to guarantee execution speed and complete support for the latest Discord slash commands and interactions." },
                                 { q: "Do I get full ownership of the source code?", a: "Yes, 100%. Upon completion and final payment, you will receive all files, modules, and configurations. You own all rights to your bot's custom source code." },
                                 { q: "How long does it take to deliver a bot?", a: "Basic bots take around 3-5 days. Advanced moderation or payment setups take 7-14 days. Complex enterprise/database-linked bots can take 2-3 weeks depending on criteria." },
                                 { q: "Can we add new features to the bot in the future?", a: "Yes, the code is structured modularly using Cogs/command-handler layouts, making it incredibly simple to append new features, databases, or APIs later as your server scales." }
                             ].map((faq, idx) => (
-                                <div 
-                                    key={idx} 
+                                <div
+                                    key={idx}
                                     className="border-b border-white/10 pb-4 cursor-pointer"
                                     onClick={() => {
                                         setOpenFaq(openFaq === idx ? null : idx);
@@ -987,7 +990,7 @@ export const DiscordBotLanding = () => {
                                     </div>
                                     <AnimatePresence>
                                         {openFaq === idx && (
-                                            <m.div 
+                                            <m.div
                                                 initial={{ height: 0, opacity: 0 }}
                                                 animate={{ height: "auto", opacity: 1 }}
                                                 exit={{ height: 0, opacity: 0 }}
@@ -1020,7 +1023,7 @@ export const DiscordBotLanding = () => {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div className="space-y-2 text-left">
                                         <label htmlFor="lead-name" className="text-xs font-semibold text-white uppercase tracking-wider">Your Name</label>
-                                        <Input 
+                                        <Input
                                             id="lead-name"
                                             value={formData.name}
                                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -1031,7 +1034,7 @@ export const DiscordBotLanding = () => {
                                     </div>
                                     <div className="space-y-2 text-left">
                                         <label htmlFor="lead-email" className="text-xs font-semibold text-white uppercase tracking-wider">Email Address</label>
-                                        <Input 
+                                        <Input
                                             id="lead-email"
                                             type="email"
                                             value={formData.email}
@@ -1046,7 +1049,7 @@ export const DiscordBotLanding = () => {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div className="space-y-2 text-left">
                                         <label htmlFor="lead-discord" className="text-xs font-semibold text-white uppercase tracking-wider">Discord Username</label>
-                                        <Input 
+                                        <Input
                                             id="lead-discord"
                                             value={formData.discord}
                                             onChange={(e) => setFormData({ ...formData, discord: e.target.value })}
@@ -1057,7 +1060,7 @@ export const DiscordBotLanding = () => {
                                     </div>
                                     <div className="space-y-2 text-left">
                                         <label htmlFor="lead-budget" className="text-xs font-semibold text-white uppercase tracking-wider">Project Budget</label>
-                                        <select 
+                                        <select
                                             id="lead-budget"
                                             value={formData.budget}
                                             onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
@@ -1073,7 +1076,7 @@ export const DiscordBotLanding = () => {
 
                                 <div className="space-y-2 text-left">
                                     <label htmlFor="lead-timeline" className="text-xs font-semibold text-white uppercase tracking-wider">Expected Timeline</label>
-                                    <select 
+                                    <select
                                         id="lead-timeline"
                                         value={formData.timeline}
                                         onChange={(e) => setFormData({ ...formData, timeline: e.target.value })}
@@ -1088,7 +1091,7 @@ export const DiscordBotLanding = () => {
 
                                 <div className="space-y-2 text-left">
                                     <label htmlFor="lead-desc" className="text-xs font-semibold text-white uppercase tracking-wider">Project Description</label>
-                                    <Textarea 
+                                    <Textarea
                                         id="lead-desc"
                                         value={formData.description}
                                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -1098,8 +1101,8 @@ export const DiscordBotLanding = () => {
                                     />
                                 </div>
 
-                                <Button 
-                                    type="submit" 
+                                <Button
+                                    type="submit"
                                     disabled={isSubmitting}
                                     className="w-full bg-[#5865F2] hover:bg-[#5865F2]/90 text-white font-bold text-base py-6 rounded-xl flex items-center justify-center gap-2"
                                 >
@@ -1139,7 +1142,7 @@ export const DiscordBotLanding = () => {
                             Transform your server administration workflow, stop bot raids, automate payments, and reward premium users automatically.
                         </p>
                         <div className="pt-4">
-                            <Button 
+                            <Button
                                 onClick={() => {
                                     const el = document.getElementById("quote-form");
                                     el?.scrollIntoView({ behavior: "smooth" });
