@@ -248,7 +248,7 @@ export const DiscordBotLanding = () => {
                                     }}
                                     className="bg-primary hover:bg-primary/95 text-white font-bold px-8 py-6 text-lg rounded-xl shadow-[0_0_20px_rgba(59,130,246,0.4)]"
                                 >
-                                    🚀 Get Free Quote
+                                    🚀 Discuss My Project
                                 </Button>
                                 <a
                                     href="#quote-form"
@@ -258,6 +258,12 @@ export const DiscordBotLanding = () => {
                                     <img src="/discord.svg" alt="Discord" className="w-5 h-5" />
                                     Message on Discord
                                 </a>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-3 pt-2 text-xs font-medium text-[#949ba4]">
+                                <span className="flex items-center gap-1"><Check className="w-3.5 h-3.5 text-green-500" /> Replies within 24 hours</span>
+                                <span className="flex items-center gap-1"><Check className="w-3.5 h-3.5 text-green-500" /> Free consultation</span>
+                                <span className="flex items-center gap-1"><Check className="w-3.5 h-3.5 text-green-500" /> Fixed pricing</span>
+                                <span className="flex items-center gap-1"><Check className="w-3.5 h-3.5 text-green-500" /> Source code included</span>
                             </div>
                         </m.div>
 
@@ -328,27 +334,65 @@ export const DiscordBotLanding = () => {
                 </section>
 
                 {/* 2. TRUST BAR */}
-                <section className="py-8 bg-[#18191c] border-y border-white/5">
+                <section className="py-8 bg-[#18191c] border-y border-white/5 relative z-10 -mt-4">
                     <div className="container mx-auto px-6 flex flex-wrap justify-around items-center gap-6 text-[#949ba4] font-medium text-sm md:text-base">
                         <div className="flex items-center gap-2">
                             <span className="flex text-yellow-500"><Star className="w-4 h-4 fill-yellow-500" /><Star className="w-4 h-4 fill-yellow-500" /><Star className="w-4 h-4 fill-yellow-500" /><Star className="w-4 h-4 fill-yellow-500" /><Star className="w-4 h-4 fill-yellow-500" /></span>
-                            <span className="text-white font-bold">5.0 Star Rating</span>
+                            <span className="text-white font-bold">24+ Verified Bot Reviews</span>
                         </div>
                         <div className="flex items-center justify-center gap-2">
                             <Check className="w-5 h-5 text-green-500" />
-                            <span>4+ Years Experience</span>
+                            <span className="text-white">Trusted by 160+ Clients</span> (202+ Orders)
+                        </div>
+                        <div className="flex items-center gap-2 text-white">
+                            <span>Clients in 🇺🇸 USA 🇩🇪 Germany 🇦🇹 Austria</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <Check className="w-4 h-4 text-green-500 font-black" />
-                            <span>100+ Custom Features</span>
+                            <span className="text-white">4+ Years Experience</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <Check className="w-4 h-4 text-green-500 font-black" />
-                            <span>API Integration Expert</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Check className="w-4 h-4 text-green-500 font-black" />
-                            <span>Full Support Included</span>
+                    </div>
+                </section>
+
+                {/* 2.5 MEET YOUR DEVELOPER */}
+                <section id="developer" className="py-20 bg-[#0f1012]">
+                    <div className="container mx-auto px-6 max-w-4xl text-center">
+                        <div className="bg-[#1e1f22] border border-[#2f3136] rounded-2xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#5865F2] to-secondary" />
+                            <div className="flex flex-col md:flex-row items-center gap-8 text-left">
+                                <div className="shrink-0 relative">
+                                    <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-[#2b2d31] overflow-hidden shadow-xl z-10 relative bg-[#2b2d31]">
+                                        <img src="https://github.com/ihazratummar.png" alt="Hazrat Ummar" className="w-full h-full object-cover" />
+                                    </div>
+                                    <div className="absolute -bottom-2 -right-2 bg-[#232428] border border-white/10 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-lg z-20">
+                                        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" /> Online
+                                    </div>
+                                </div>
+                                <div className="space-y-4">
+                                    <div>
+                                        <h2 className="text-3xl font-black text-white flex items-center gap-3">
+                                            👋 Hi, I'm Hazrat.
+                                        </h2>
+                                        <p className="text-[#dbdee1] mt-3">
+                                            I've spent the last <strong>4+ years</strong> building custom Discord automation for gaming communities, SaaS companies, and membership platforms.
+                                        </p>
+                                        <p className="text-[#dbdee1] mt-2">
+                                            Unlike agencies, you'll work directly with me from planning to deployment.
+                                        </p>
+                                    </div>
+                                    <div className="flex flex-wrap gap-3 pt-2">
+                                        <span className="bg-[#2b2d31] border border-white/5 px-3 py-1.5 rounded-lg text-xs font-medium text-white flex items-center gap-2">
+                                            <span className="text-lg">🌍</span> Based in India
+                                        </span>
+                                        <span className="bg-[#2b2d31] border border-white/5 px-3 py-1.5 rounded-lg text-xs font-medium text-white flex items-center gap-2">
+                                            <Clock className="w-3.5 h-3.5 text-blue-400" /> &lt; 24h Response
+                                        </span>
+                                        <span className="bg-[#2b2d31] border border-white/5 px-3 py-1.5 rounded-lg text-xs font-medium text-white flex items-center gap-2">
+                                            <Star className="w-3.5 h-3.5 text-yellow-500" /> 160+ Happy Clients
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -372,53 +416,90 @@ export const DiscordBotLanding = () => {
                         </m.div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 text-left">
-                            <Card className="bg-[#1e1f22] border border-red-500/20 backdrop-blur-sm p-6 space-y-4">
-                                <h3 className="text-lg font-bold text-red-400 flex items-center gap-2">
-                                    <ShieldAlert className="w-5 h-5" /> The Ongoing Headache
-                                </h3>
-                                <ul className="space-y-3 text-[#dbdee1] text-sm">
+                            <Card className="bg-[#1e1f22] border border-[#2f3136] p-6 space-y-4 relative overflow-hidden">
+                                <div className="absolute top-0 left-0 w-full h-1 bg-red-500/50" />
+                                <div className="flex justify-between items-center">
+                                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                                        The Old Way
+                                    </h3>
+                                    <span className="bg-red-500/10 text-red-400 text-xs font-bold px-2.5 py-1 rounded">Before: 4+ hours/day</span>
+                                </div>
+                                <ul className="space-y-3 text-[#dbdee1] text-sm pt-2">
                                     <li className="flex items-start gap-2">
                                         <X className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
-                                        <span>Spam accounts and verification bypass bot raids joining your server.</span>
+                                        <span className="text-[#949ba4]">Manually fighting spam accounts and verification bypass raids.</span>
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <X className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
-                                        <span>Answering the exact same support questions manually, 24/7.</span>
+                                        <span className="text-[#949ba4]">Answering the exact same support questions manually, 24/7.</span>
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <X className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
-                                        <span>Manually assigning roles to premium users after receiving payments.</span>
+                                        <span className="text-[#949ba4]">Manually assigning roles to premium users after receiving payments.</span>
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <X className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
-                                        <span>Disjointed tools and external dashboard tabs that don't talk to each other.</span>
+                                        <span className="text-[#949ba4]">Disjointed tools and external dashboard tabs that don't talk.</span>
                                     </li>
                                 </ul>
                             </Card>
 
-                            <Card className="bg-[#1e1f22] border border-green-500/20 backdrop-blur-sm p-6 space-y-4">
-                                <h3 className="text-lg font-bold text-green-400 flex items-center gap-2">
-                                    <Check className="w-5 h-5" /> The Custom Solution
-                                </h3>
-                                <ul className="space-y-3 text-[#dbdee1] text-sm">
+                            <Card className="bg-[#1e1f22] border border-[#5865F2]/30 p-6 space-y-4 relative overflow-hidden shadow-[0_0_15px_rgba(88,101,242,0.1)]">
+                                <div className="absolute top-0 left-0 w-full h-1 bg-[#5865F2]" />
+                                <div className="flex justify-between items-center">
+                                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                                        Custom Automation
+                                    </h3>
+                                    <span className="bg-[#5865F2]/20 text-[#5865F2] text-xs font-bold px-2.5 py-1 rounded">After: 20 mins/day</span>
+                                </div>
+                                <ul className="space-y-3 text-[#dbdee1] text-sm pt-2">
                                     <li className="flex items-start gap-2">
-                                        <Check className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
-                                        <span>OAuth2 captcha verification that completely stops spambots before they enter.</span>
+                                        <Check className="w-4 h-4 text-[#5865F2] shrink-0 mt-0.5" />
+                                        <span className="text-white font-medium">OAuth2 captcha verification</span> <span className="text-[#949ba4]">blocks spambots automatically.</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <Check className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
-                                        <span>OpenAI GPT chatbot fine-tuned to answer client questions about your project instantly.</span>
+                                        <Check className="w-4 h-4 text-[#5865F2] shrink-0 mt-0.5" />
+                                        <span className="text-white font-medium">OpenAI GPT chatbot</span> <span className="text-[#949ba4]">answers repetitive client questions instantly.</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <Check className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
-                                        <span>Automatic role Sync tied directly to Stripe or PayPal payment webhooks.</span>
+                                        <Check className="w-4 h-4 text-[#5865F2] shrink-0 mt-0.5" />
+                                        <span className="text-white font-medium">Automatic role Sync</span> <span className="text-[#949ba4]">tied directly to Stripe or PayPal webhooks.</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <Check className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
-                                        <span>A single integrated bot dashboard custom-built to match your exact server needs.</span>
+                                        <Check className="w-4 h-4 text-[#5865F2] shrink-0 mt-0.5" />
+                                        <span className="text-white font-medium">Single integrated bot dashboard</span> <span className="text-[#949ba4]">built for your exact needs.</span>
                                     </li>
                                 </ul>
                             </Card>
+                        </div>
+
+                        {/* WHO THIS IS FOR / ISNT FOR */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16 text-left border-t border-white/5 pt-16">
+                            <div>
+                                <div className="inline-block bg-green-500/10 text-green-400 font-bold px-3 py-1 rounded-full text-xs mb-4">Perfect Fit</div>
+                                <h3 className="text-2xl font-bold text-white mb-6">Who This Is For</h3>
+                                <ul className="space-y-4 text-sm text-white font-medium">
+                                    <li className="flex items-center gap-3"><Check className="w-5 h-5 text-green-500 shrink-0" /> Gaming Communities</li>
+                                    <li className="flex items-center gap-3"><Check className="w-5 h-5 text-green-500 shrink-0" /> SaaS Products</li>
+                                    <li className="flex items-center gap-3"><Check className="w-5 h-5 text-green-500 shrink-0" /> Patreon Servers</li>
+                                    <li className="flex items-center gap-3"><Check className="w-5 h-5 text-green-500 shrink-0" /> Paid Courses & Masterminds</li>
+                                    <li className="flex items-center gap-3"><Check className="w-5 h-5 text-green-500 shrink-0" /> Startups</li>
+                                </ul>
+                            </div>
+                            <div className="bg-[#161719] p-8 rounded-2xl border border-red-500/10">
+                                <div className="inline-block bg-red-500/10 text-red-400 font-bold px-3 py-1 rounded-full text-xs mb-4">Not A Good Fit</div>
+                                <h3 className="text-2xl font-bold text-white mb-6">Who This Isn't For</h3>
+                                <ul className="space-y-4 text-sm text-[#949ba4]">
+                                    <li className="flex items-center gap-3"><X className="w-5 h-5 text-red-500 shrink-0" /> Looking for a $20 pre-made bot</li>
+                                    <li className="flex items-center gap-3"><X className="w-5 h-5 text-red-500 shrink-0" /> Need delivery by tomorrow</li>
+                                    <li className="flex items-center gap-3"><X className="w-5 h-5 text-red-500 shrink-0" /> Just want a generic, unbranded bot</li>
+                                </ul>
+                                <div className="mt-8 pt-6 border-t border-white/5">
+                                    <p className="text-white font-semibold text-sm flex items-center gap-2">
+                                        <CheckCircle2 className="w-4 h-4 text-green-500" /> Perfect if you need custom automation.
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -502,6 +583,29 @@ export const DiscordBotLanding = () => {
                     </div>
                 </section>
 
+                {/* 5.5 REAL DEMO VIDEO PLACEHOLDER */}
+                <section id="demo-video" className="py-20 bg-[#111214] border-b border-white/5">
+                    <div className="container mx-auto px-6 max-w-5xl text-center">
+                        <div className="inline-block bg-primary/10 text-primary font-bold px-3 py-1 rounded-full text-xs mb-4">See It In Action</div>
+                        <h2 className="text-3xl md:text-4xl font-bold font-heading mb-6 text-white">
+                            A Real Demo is Worth 100 Screenshots
+                        </h2>
+                        <p className="text-[#dbdee1] max-w-xl mx-auto mb-10 text-sm">
+                            Watch a real 60-second raw screen recording of a custom bot handling user verification, automatic role assignments, and Stripe payment webhook syncing.
+                        </p>
+
+                        <div className="relative aspect-video max-w-4xl mx-auto bg-[#1e1f22] rounded-2xl border border-[#2f3136] shadow-2xl overflow-hidden flex flex-col items-center justify-center group">
+                            {/* PLACEHOLDER WRAPPER - Replace this div with a <video> tag once you have the recording */}
+                            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm z-10 flex flex-col items-center justify-center transition-all group-hover:bg-black/50">
+                                <div className="w-16 h-16 bg-[#5865F2] rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(88,101,242,0.6)] cursor-pointer hover:scale-110 transition-transform">
+                                    <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[16px] border-l-white border-b-[10px] border-b-transparent ml-1" />
+                                </div>
+                                <p className="text-white font-bold mt-4">Play Demo Video (60s)</p>
+                            </div>
+                            <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%235865F2\' fill-opacity=\'0.4\' fill-rule=\'evenodd\'%3E%3Ccircle cx=\'3\' cy=\'3\' r=\'3\'/%3E%3Cg/%3E%3C/svg%3E")' }} />
+                        </div>
+                    </div>
+                </section>
                 {/* 6. INTERACTIVE SIMULATOR */}
                 <section id="demo" className="py-20 bg-[#0f1012]">
                     <div className="container mx-auto px-6 max-w-4xl text-center">
@@ -676,13 +780,19 @@ export const DiscordBotLanding = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="lg:col-span-4 bg-[#2b2d31] p-6 rounded-xl border border-white/5 text-center space-y-2 self-stretch flex flex-col justify-center">
-                                        <div className="text-xs font-semibold text-[#5865F2] uppercase tracking-wide">Results Accomplished</div>
-                                        <div className="text-2xl font-black text-white">{study.result.split('.')[0]}</div>
-                                        <p className="text-[#dbdee1] text-xs">{study.result.substring(study.result.indexOf('.') + 1).trim()}</p>
+                                    <div className="lg:col-span-4 self-stretch flex flex-col gap-4 justify-center">
+                                        <div className="bg-[#2b2d31] p-6 rounded-xl border border-white/5 text-center space-y-2">
+                                            <div className="text-xs font-semibold text-[#5865F2] uppercase tracking-wide">Results Accomplished</div>
+                                            <div className="text-2xl font-black text-white">{study.result.split('.')[0]}</div>
+                                            <p className="text-[#dbdee1] text-xs">{study.result.substring(study.result.indexOf('.') + 1).trim()}</p>
+                                        </div>
+                                        <div className="bg-[#1e1f22] rounded-xl border border-[#2f3136] aspect-video flex flex-col items-center justify-center text-center p-4 relative group shadow-inner">
+                                            <svg className="w-8 h-8 text-[#949ba4] mb-2 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                            <p className="text-[#949ba4] text-xs font-medium">Add {study.name} Screenshot</p>
+                                        </div>
                                     </div>
                                 </m.div>
-                            ))}
+                            ))}s
                         </div>
                     </div>
                 </section>
@@ -939,14 +1049,13 @@ export const DiscordBotLanding = () => {
                             Our Streamlined Bot Delivery Process
                         </h2>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-6 relative">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 relative">
                             {[
-                                { step: "01", name: "Requirements", desc: "Detailed breakdown of commands & server layout." },
-                                { step: "02", name: "Quotation", desc: "Receive transparent pricing quote & milestones." },
-                                { step: "03", name: "Development", desc: "Construct code logic and test loops." },
-                                { step: "04", name: "Testing", desc: "Verify gateway latency and edge cases." },
-                                { step: "05", name: "Deployment", desc: "Launch bot on VPS with 24/7 PM2 uptime." },
-                                { step: "06", name: "Support", desc: "Long-term system support & updates." }
+                                { step: "01", name: "Submit Form", desc: "Send over your exact bot requirements using the form below." },
+                                { step: "02", name: "Review", desc: "I review your needs and map out the required logic." },
+                                { step: "03", name: "Within 24h", desc: "I reply with questions or a clear action plan." },
+                                { step: "04", name: "Quotation", desc: "You receive a fixed-price quote and development timeline." },
+                                { step: "05", name: "Development Begins", desc: "Code construction starts with regular updates." }
                             ].map((proc, idx) => (
                                 <div key={idx} className="bg-[#161719] border border-[#2f3136] p-5 rounded-xl space-y-3 text-left relative shadow-sm">
                                     <div className="text-2xl font-black text-primary/30">{proc.step}</div>
@@ -1016,6 +1125,24 @@ export const DiscordBotLanding = () => {
                             <p className="text-[#dbdee1] max-w-md mx-auto text-sm">
                                 Fill out our quick quote form to pre-qualify your project requirements and receive a transparent development quote within 24 hours.
                             </p>
+                        </div>
+
+                        <div className="flex flex-col md:flex-row items-center justify-between bg-[#1e1f22] border border-primary/20 rounded-xl p-6 mb-8 shadow-xl">
+                            <div className="text-left mb-4 md:mb-0">
+                                <h3 className="text-white font-bold text-lg flex items-center gap-2">
+                                    <Clock className="w-5 h-5 text-primary" /> Hate Filling Out Forms?
+                                </h3>
+                                <p className="text-[#949ba4] text-sm mt-1">Skip the queue and book a direct 15-minute consultation with me.</p>
+                            </div>
+                            <a
+                                href="https://calendly.com/hazratummarsk9/book-15-minutes"
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={() => trackEvent("calendly_click")}
+                                className="shrink-0 bg-primary text-white font-bold px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2 shadow-[0_0_15px_rgba(88,101,242,0.3)]"
+                            >
+                                Book 15 Minutes
+                            </a>
                         </div>
 
                         <Card className="bg-[#1e1f22] border border-[#2f3136] p-6 md:p-8 rounded-2xl shadow-xl">
@@ -1130,8 +1257,25 @@ export const DiscordBotLanding = () => {
                     </div>
                 </section>
 
+                {/* 13.5 TECH STACK BAR */}
+                <section className="py-6 border-t border-white/5 bg-[#0f1012]">
+                    <div className="container mx-auto px-6">
+                        <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4 text-[#949ba4] font-medium text-xs md:text-sm">
+                            <span className="text-white/50 font-bold uppercase tracking-widest text-[10px] w-full text-center mb-2">Powered By Next-Gen Tech</span>
+                            <span>Python</span>
+                            <span>discord.py</span>
+                            <span>MongoDB</span>
+                            <span>PostgreSQL</span>
+                            <span>Redis</span>
+                            <span>Docker</span>
+                            <span>Stripe / PayPal</span>
+                            <span>OpenAI / Claude / Gemini</span>
+                        </div>
+                    </div>
+                </section>
+
                 {/* 14. STRONG FINAL CTA */}
-                <section className="py-20 bg-gradient-to-t from-[#111214] to-[#0f1012] border-t border-white/5 relative overflow-hidden">
+                <section className="py-20 bg-gradient-to-t from-[#111214] to-[#0f1012] relative overflow-hidden">
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-[#5865F2]/5 rounded-full blur-[100px] -z-10" />
 
                     <div className="container mx-auto px-6 text-center max-w-xl space-y-6">
@@ -1150,11 +1294,29 @@ export const DiscordBotLanding = () => {
                                 }}
                                 className="bg-[#5865F2] hover:bg-[#5865F2]/90 text-white font-bold text-lg px-10 py-6 rounded-xl shadow-[0_0_25px_rgba(88,101,242,0.4)]"
                             >
-                                Get Free Quote
+                                Discuss My Project
                             </Button>
+                        </div>
+                        <div className="flex flex-wrap items-center justify-center gap-4 pt-8 text-xs font-medium text-[#949ba4]">
+                            <span className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-green-500" /> Worldwide Clients</span>
+                            <span className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-green-500" /> Secure Payments</span>
+                            <span className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-green-500" /> 100% Source Code</span>
+                            <span className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-green-500" /> 30 Days Support</span>
                         </div>
                     </div>
                 </section>
+
+                {/* FLOATING DISCORD BUTTON */}
+                <a
+                    href="#quote-form"
+                    onClick={() => trackEvent("floating_discord_click")}
+                    className="fixed bottom-6 right-6 z-50 bg-[#5865F2] text-white p-4 rounded-full shadow-[0_0_20px_rgba(88,101,242,0.5)] hover:scale-110 hover:bg-[#5865F2]/90 transition-all flex items-center justify-center group"
+                >
+                    <img src="/discord.svg" alt="Discord" className="w-6 h-6" />
+                    <span className="absolute right-full mr-4 bg-[#1e1f22] text-white text-xs font-bold px-3 py-1.5 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none border border-[#2f3136]">
+                        Need Help? Chat on Discord
+                    </span>
+                </a>
             </div>
         </LazyMotion>
     );
