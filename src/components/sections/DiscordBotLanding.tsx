@@ -583,29 +583,7 @@ export const DiscordBotLanding = () => {
                     </div>
                 </section>
 
-                {/* 5.5 REAL DEMO VIDEO PLACEHOLDER */}
-                <section id="demo-video" className="py-20 bg-[#111214] border-b border-white/5">
-                    <div className="container mx-auto px-6 max-w-5xl text-center">
-                        <div className="inline-block bg-primary/10 text-primary font-bold px-3 py-1 rounded-full text-xs mb-4">See It In Action</div>
-                        <h2 className="text-3xl md:text-4xl font-bold font-heading mb-6 text-white">
-                            A Real Demo is Worth 100 Screenshots
-                        </h2>
-                        <p className="text-[#dbdee1] max-w-xl mx-auto mb-10 text-sm">
-                            Watch a real 60-second raw screen recording of a custom bot handling user verification, automatic role assignments, and Stripe payment webhook syncing.
-                        </p>
 
-                        <div className="relative aspect-video max-w-4xl mx-auto bg-[#1e1f22] rounded-2xl border border-[#2f3136] shadow-2xl overflow-hidden flex flex-col items-center justify-center group">
-                            {/* PLACEHOLDER WRAPPER - Replace this div with a <video> tag once you have the recording */}
-                            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm z-10 flex flex-col items-center justify-center transition-all group-hover:bg-black/50">
-                                <div className="w-16 h-16 bg-[#5865F2] rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(88,101,242,0.6)] cursor-pointer hover:scale-110 transition-transform">
-                                    <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[16px] border-l-white border-b-[10px] border-b-transparent ml-1" />
-                                </div>
-                                <p className="text-white font-bold mt-4">Play Demo Video (60s)</p>
-                            </div>
-                            <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%235865F2\' fill-opacity=\'0.4\' fill-rule=\'evenodd\'%3E%3Ccircle cx=\'3\' cy=\'3\' r=\'3\'/%3E%3Cg/%3E%3C/svg%3E")' }} />
-                        </div>
-                    </div>
-                </section>
                 {/* 6. INTERACTIVE SIMULATOR */}
                 <section id="demo" className="py-20 bg-[#0f1012]">
                     <div className="container mx-auto px-6 max-w-4xl text-center">
