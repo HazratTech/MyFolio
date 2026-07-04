@@ -5,6 +5,7 @@ import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { GoogleAdSense } from "@/components/analytics/GoogleAdSense";
 import { FacebookPixel } from "@/components/analytics/FacebookPixel";
 import { CookieConsent } from "@/components/layout/CookieConsent";
+import { LiveChatWidget } from "@/components/chat/LiveChatWidget";
 import { cn } from "@/lib/utils";
 import Script from "next/script";
 
@@ -155,6 +156,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         {children}
+        <LiveChatWidget />
         <CookieConsent />
       </body>
     </html>

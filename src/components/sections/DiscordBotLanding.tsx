@@ -1305,18 +1305,6 @@ export const DiscordBotLanding = () => {
                         </div>
                     </div>
                 </section>
-
-                {/* FLOATING DISCORD BUTTON */}
-                <a
-                    href="#quote-form"
-                    onClick={() => trackEvent("floating_discord_click")}
-                    className="fixed bottom-6 right-6 z-50 bg-[#5865F2] text-white p-4 rounded-full shadow-[0_0_20px_rgba(88,101,242,0.5)] hover:scale-110 hover:bg-[#5865F2]/90 transition-all flex items-center justify-center group"
-                >
-                    <img src="/discord.svg" alt="Discord" className="w-6 h-6" />
-                    <span className="absolute right-full mr-4 bg-[#1e1f22] text-white text-xs font-bold px-3 py-1.5 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none border border-[#2f3136]">
-                        Need Help? Chat on Discord
-                    </span>
-                </a>
             </div>
         </LazyMotion>
     );
