@@ -1,12 +1,15 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
 import { MessageSquare, X, Send, User, Bot, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export const LiveChatWidget = () => {
+    const pathname = usePathname();
+    
     const [isOpen, setIsOpen] = useState(false);
     const [threadId, setThreadId] = useState<string | null>(null);
     const [name, setName] = useState("");
@@ -155,6 +158,16 @@ export const LiveChatWidget = () => {
             setThreadId(savedThreadId);
         }
     }, []);
+
+    // Hide chat on blog and legal pages
+    const isHiddenPath = pathname?.startsWith("/blog") || 
+                         pathname === "/privacy-policy" || 
+                         pathname === "/terms-of-service" || 
+                         pathname === "/cookie-policy";
+
+    if (isHiddenPath) {
+        return null;
+    }
 
     return (
         <LazyMotion features={domAnimation}>
