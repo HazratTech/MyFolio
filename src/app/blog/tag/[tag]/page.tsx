@@ -9,7 +9,7 @@ import { ArrowLeft } from "lucide-react";
 export async function generateMetadata({ params }: { params: { tag: string } }): Promise<Metadata> {
     const tag = decodeURIComponent(params.tag);
     return {
-        title: `#${tag} Posts | Hazrat Ummar Shaikh`,
+        title: `#${tag} Posts | RelayWorks`,
         description: `Read articles tagged with #${tag}.`,
         alternates: {
             canonical: `/blog/tag/${params.tag}`,

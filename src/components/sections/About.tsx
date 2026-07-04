@@ -19,10 +19,10 @@ export const About = () => {
                         className="mb-16 text-center"
                     >
                         <h2 className="text-3xl md:text-5xl font-bold font-heading mb-4">
-                            About <span className="text-primary">Me</span>
+                            About <span className="text-primary">Us</span>
                         </h2>
                         <p className="text-muted-foreground max-w-2xl mx-auto">
-                            Get to know more about my journey, skills, and what drives me.
+                            Get to know more about our journey, skills, and what drives us.
                         </p>
                     </m.div>
 
@@ -40,10 +40,10 @@ export const About = () => {
                                 {about.description}
                             </p>
                             <p className="text-muted-foreground leading-relaxed">
-                                Over the years, I've become fluent in <span className="text-primary font-semibold">Kotlin, Jetpack Compose, Ktor, Python, FastAPI</span>, and everything that comes with turning an idea into a working product. I've built complete Android apps, backends, complex APIs, and AI-powered Discord bots with features like activity tracking, image generation, and Stripe integrations.
+                                Over the years, we've become fluent in <span className="text-primary font-semibold">Kotlin, Jetpack Compose, Ktor, Python, FastAPI</span>, and everything that comes with turning an idea into a working product. We've built complete Android apps, backends, complex APIs, and AI-powered Discord bots with features like activity tracking, image generation, and Stripe integrations.
                             </p>
                             <p className="text-muted-foreground leading-relaxed mt-4">
-                                My strongest quality? I don't wait for someone to teach me. I open the docs, break things, fix them, and build again — until I master it. Everything I know today is the result of self-learning and discipline.
+                                Our strongest quality? We don't wait for someone to teach us. We open the docs, break things, fix them, and build again — until we master it. Everything we know today is the result of continuous learning and discipline.
                             </p>
                         </m.div>
 
@@ -82,7 +82,7 @@ export const About = () => {
                         <div className="relative border-l border-white/10 ml-4 md:ml-auto md:mr-auto md:w-2/3 pl-8 space-y-10">
                             <div className="relative">
                                 <span className="absolute -left-[41px] top-0 w-5 h-5 rounded-full bg-primary border-4 border-background" />
-                                <h4 className="text-xl font-bold">Freelance Developer</h4>
+                                <h4 className="text-xl font-bold">Automation Agency</h4>
                                 <span className="text-sm text-primary">2021 - Present</span>
                                 <p className="text-muted-foreground mt-2">Building custom Discord bots, Native Android apps, and backend systems for clients worldwide. 4+ years of experience in Discord bot development, server setup, and automation.</p>
                             </div>

@@ -26,16 +26,16 @@ export async function generateMetadata({
 
     const queryString = urlParams.toString();
     const canonicalPath = queryString ? `/blog?${queryString}` : '/blog';
-    const absoluteUrl = `https://hazratdev.top${canonicalPath}`;
+    const absoluteUrl = `https://relayworks.dev${canonicalPath}`;
 
     return {
-        title: "Hazrat.dev Blog | Android, Kotlin, Python & Discord Bot Development Tutorials",
+        title: "RelayWorks Blog | Automation & Software Engineering Tutorials",
         description: "Deep-dive guides, tutorials, and developer insights on Native Android (Kotlin, Compose), iOS, Discord bot development, Python API backends (FastAPI, Ktor), and software architecture.",
         alternates: {
             canonical: canonicalPath,
         },
         openGraph: {
-            title: "Hazrat.dev Blog | Android, Kotlin, Python & Discord Bot Development Tutorials",
+            title: "RelayWorks Blog | Automation & Software Engineering Tutorials",
             description: "Deep-dive guides, tutorials, and developer insights on Native Android (Kotlin, Compose), iOS, Discord bot development, Python API backends (FastAPI, Ktor), and software architecture.",
             url: absoluteUrl,
             type: "website",
@@ -44,13 +44,13 @@ export async function generateMetadata({
                     url: "/logo.png",
                     width: 1200,
                     height: 630,
-                    alt: "Hazrat Ummar Shaikh Tech Blog",
+                    alt: "RelayWorks Tech Blog",
                 },
             ],
         },
         twitter: {
             card: "summary_large_image",
-            title: "Hazrat.dev Blog | Android, Kotlin, Python & Discord Bot Development Tutorials",
+            title: "RelayWorks Blog | Automation & Software Engineering Tutorials",
             description: "Deep-dive guides, tutorials, and developer insights on Native Android (Kotlin, Compose), iOS, Discord bot development, Python API backends (FastAPI, Ktor), and software architecture.",
             images: ["/logo.png"],
         }
@@ -161,13 +161,12 @@ export default async function BlogPage({
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "Blog",
-        "name": "Tech Blog | Android, iOS, Backend & Discord Dev | Hazrat Ummar",
-        "description": "Deep-dive guides, tutorials, and developer insights on Native Android (Kotlin), iOS, Discord bot development, API backends, and software architecture.",
-        "url": "https://hazratdev.top/blog",
+        "name": "RelayWorks Tech Blog | Automation & Backend Dev",
+        "url": "https://relayworks.dev/blog",
         "publisher": {
             "@type": "Person",
-            "name": "Hazrat Ummar Shaikh",
-            "url": "https://hazratdev.top"
+            "name": "RelayWorks",
+            "url": "https://relayworks.dev"
         }
     };
 

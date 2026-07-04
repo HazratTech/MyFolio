@@ -23,25 +23,25 @@ export const Hero = () => {
                         transition={{ duration: 0.5 }}
                     >
                         <span className="inline-block py-1 px-3 rounded-full bg-white/5 border border-white/10 text-sm text-primary mb-6 backdrop-blur-sm">
-                            Available for Freelance Projects
+                            Available for New Projects
                         </span>
 
                         <h1 className="text-4xl md:text-7xl font-bold font-heading tracking-tight mb-6">
-                            Hi, I'm <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-blue-500 to-primary">Hazrat</span>
+                            Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-blue-500 to-primary">RelayWorks</span>
                             <br />
                             <span className="text-3xl md:text-6xl text-foreground/90">
-                                Native Android & Backend Developer
+                                Automation & Software Agency
                             </span>
                         </h1>
 
                         <p className="text-base md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-                            I build high-performance Discord bots, automation systems, and mobile apps that help businesses scale.
+                            We build high-performance Discord bots, automation systems, and custom software that help businesses scale.
                         </p>
 
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                             <Link href="/contact" scroll={false}>
                                 <Button size="lg" className="bg-primary hover:bg-primary/90 text-white min-w-[160px] h-12 text-base shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] transition-all duration-300">
-                                    Hire Me <ArrowRight className="ml-2 w-4 h-4" />
+                                    Partner with Us <ArrowRight className="ml-2 w-4 h-4" />
                                 </Button>
                             </Link>
                             <Link href="/projects" scroll={false}>

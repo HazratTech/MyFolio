@@ -2,9 +2,9 @@ import { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
     return {
-        name: 'Hazrat Ummar Shaikh Portfolio',
-        short_name: 'Hazrat.dev',
-        description: 'Portfolio of Hazrat Ummar Shaikh, an expert Native Android App Developer, Backend Developer, and Discord Bot Developer.',
+        name: 'RelayWorks | Custom Automation & Software Agency',
+        short_name: 'RelayWorks',
+        description: 'RelayWorks is an expert agency specializing in custom Discord Bots, Backend Development, and automated workflow solutions.',
         start_url: '/',
         display: 'standalone',
         background_color: '#000000',

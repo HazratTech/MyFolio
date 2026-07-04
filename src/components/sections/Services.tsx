@@ -49,7 +49,7 @@ export const Services = () => {
                         className="mb-16 text-center"
                     >
                         <h2 className="text-3xl md:text-5xl font-bold font-heading mb-4">
-                            My <span className="text-primary">Services</span>
+                            Our <span className="text-primary">Services</span>
                         </h2>
                         <p className="text-muted-foreground max-w-2xl mx-auto">
                             Specialized solutions tailored to your needs.

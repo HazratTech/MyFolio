@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     }
 
     return {
-        title: `${post.title} | Hazrat Ummar Shaikh`,
+        title: `${post.title} | RelayWorks`,
         description: post.excerpt || post.content.substring(0, 160),
         alternates: {
             canonical: `/blog/${params.slug}`,
@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
             description: post.excerpt,
             type: "article",
             publishedTime: post.publishedAt?.toString(),
-            authors: ["Hazrat Ummar Shaikh"],
+            authors: ["RelayWorks"],
             images: post.coverImage ? [post.coverImage] : [],
         },
         twitter: {
@@ -99,8 +99,8 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
         "dateModified": post.updatedAt,
         "author": [{
             "@type": "Person",
-            "name": "Hazrat Ummar Shaikh",
-            "url": "https://hazratdev.top"
+            "name": "RelayWorks",
+            "url": "https://relayworks.dev"
         }]
     };
 
@@ -166,7 +166,7 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
                                 <span className="w-7 h-7 rounded-full bg-primary/25 border border-primary/40 flex items-center justify-center text-primary font-bold text-xs">
                                     H
                                 </span>
-                                Hazrat Ummar Shaikh
+                                Hazrat Ummar Shaikh (Founder)
                             </span>
                             <span className="flex items-center gap-1.5">
                                 <Calendar className="w-4 h-4 text-primary" />
@@ -238,7 +238,7 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
                     </div>
                     <div>
                         <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Written by</p>
-                        <h3 className="font-bold text-lg font-heading text-foreground">Hazrat Ummar Shaikh</h3>
+                        <h3 className="font-bold text-lg font-heading text-foreground">Hazrat Ummar Shaikh <span className="text-sm font-normal text-muted-foreground ml-1">Founder, RelayWorks</span></h3>
                         <p className="text-muted-foreground text-sm mt-1 leading-relaxed font-sans">
                             Android Developer with 4+ years of experience. Built production Android apps, Ktor backends, Discord bots, and SaaS products using Kotlin, Python, and MongoDB. Passionate about building robust systems and writing clean code.
                         </p>

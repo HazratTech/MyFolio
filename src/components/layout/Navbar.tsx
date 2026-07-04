@@ -70,7 +70,7 @@ export const Navbar = () => {
                             "text-xl font-bold font-heading tracking-tighter hover:opacity-90 transition-opacity",
                             isDiscordBotPage ? "text-[#f2f3f5]" : "text-foreground"
                         )}>
-                            Hazrat<span className="text-primary">.dev</span>
+                            Relay<span className="text-primary">Works</span>
                         </Link>
                         <span className={cn("text-foreground/20", isDiscordBotPage && "text-white/20")}>|</span>
                         <Link href="/blog" className={cn(

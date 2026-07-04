@@ -7,7 +7,7 @@ import Tag from '@/models/Tag'
 export const dynamic = 'force-dynamic'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = 'https://hazratdev.top'
+    const baseUrl = 'https://relayworks.dev'
 
     const staticPages = [
         '/',

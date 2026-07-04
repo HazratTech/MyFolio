@@ -371,13 +371,13 @@ export const DiscordBotLanding = () => {
                                 <div className="space-y-4">
                                     <div>
                                         <h2 className="text-3xl font-black text-white flex items-center gap-3">
-                                            👋 Hi, I'm Hazrat.
+                                            👋 Meet Hazrat, Founder of RelayWorks.
                                         </h2>
                                         <p className="text-[#dbdee1] mt-3">
-                                            I've spent the last <strong>4+ years</strong> building custom Discord automation for gaming communities, SaaS companies, and membership platforms.
+                                            We've spent the last <strong>4+ years</strong> building custom Discord automation for gaming communities, SaaS companies, and membership platforms.
                                         </p>
                                         <p className="text-[#dbdee1] mt-2">
-                                            Unlike agencies, you'll work directly with me from planning to deployment.
+                                            Unlike generic agencies, you'll work directly with our leadership from planning to deployment.
                                         </p>
                                     </div>
                                     <div className="flex flex-wrap gap-3 pt-2">
@@ -823,15 +823,15 @@ export const DiscordBotLanding = () => {
                     </div>
                 </section>
 
-                {/* 8. WHY CHOOSE HAZRAT */}
+                {/* 8. WHY CHOOSE RELAYWORKS */}
                 <section className="py-20 bg-[#0f1012] border-t border-white/5">
                     <div className="container mx-auto px-6 max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div className="space-y-6">
                             <h2 className="text-3xl md:text-4xl font-bold font-heading text-white">
-                                Why Choose Hazrat For Your Bot?
+                                Why Choose RelayWorks For Your Bot?
                             </h2>
                             <p className="text-[#dbdee1] text-sm">
-                                I am not just a copy-paste developer. I build production-grade automation systems using clean, scalable code that responds instantly to user activity.
+                                We are not just copy-paste developers. We build production-grade automation systems using clean, scalable code that responds instantly to user activity.
                             </p>
                             <div className="space-y-4">
                                 {[
@@ -856,7 +856,7 @@ export const DiscordBotLanding = () => {
                         {/* Interactive UI Display */}
                         <div className="relative bg-[#1e1f22] rounded-2xl border border-white/10 p-6 space-y-4 shadow-xl">
                             <div className="flex items-center justify-between text-xs text-[#949ba4] border-b border-white/5 pb-4">
-                                <span className="font-bold text-white">🚀 hazrat.dev Bot Configuration</span>
+                                <span className="font-bold text-white">🚀 RelayWorks Bot Configuration</span>
                                 <span className="text-green-400 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" /> Active</span>
                             </div>
                             <div className="space-y-3 font-mono text-xs text-[#5865F2] text-left">
@@ -878,7 +878,7 @@ export const DiscordBotLanding = () => {
                                 Stories From Server Administrators
                             </h2>
                             <p className="text-[#dbdee1] max-w-lg mx-auto text-sm">
-                                Real reviews fetched directly from Hazrat's client database.
+                                Real reviews fetched directly from RelayWorks client database.
                             </p>
                         </div>
 

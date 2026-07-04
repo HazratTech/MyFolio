@@ -13,52 +13,46 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://hazratdev.top"),
+  metadataBase: new URL("https://relayworks.dev"),
   alternates: {
     canonical: '/',
   },
-  title: "Hazrat Ummar Shaikh | Native Android & Backend Developer",
-  description: "Portfolio of Hazrat Ummar Shaikh, an expert Native Android App Developer, Backend Developer, and Discord Bot Developer from India. Specializing in Kotlin, FastAPI, KTOR, and MongoDB.",
+  title: "RelayWorks | Custom Automation & Software Agency",
+  description: "RelayWorks is an expert agency specializing in custom Discord Bots, Backend Development, and automated workflow solutions. Founded by Hazrat Ummar Shaikh.",
   keywords: [
+    "RelayWorks",
+    "Relay Works",
+    "Discord Bot Agency",
+    "Custom Discord Bots",
+    "Backend Development Agency",
+    "Workflow Automation",
     "Hazrat Ummar Shaikh",
-    "Hazrat Developer",
-    "Android Developer",
-    "Android App Developer",
-    "Native Android Developer",
-    "Backend Developer",
-    "Discord Bot Developer",
-    "Kotlin Developer",
     "FastAPI Developer",
-    "Ktor Developer",
-    "Kotlin Multiplatform Developer",
-    "Jetpack Compose Developer",
-    "Kotlin Multiplatform",
-    "Jetpack Compose",
-    "KMP Developer"
+    "Ktor Developer"
   ],
-  authors: [{ name: "Hazrat Ummar Shaikh", url: "https://hazrat.dev" }],
-  creator: "Hazrat Ummar Shaikh",
+  authors: [{ name: "RelayWorks", url: "https://relayworks.dev" }],
+  creator: "RelayWorks",
 
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://hazrat.dev",
-    title: "Hazrat Ummar Shaikh | Native Android & Backend Developer",
-    description: "Portfolio of Hazrat Ummar Shaikh, an expert Native Android App Developer, Backend Developer, and Discord Bot Developer from India.",
-    siteName: "Hazrat Ummar Shaikh Portfolio",
+    url: "https://relayworks.dev",
+    title: "RelayWorks | Custom Automation & Software Agency",
+    description: "RelayWorks is an expert agency specializing in custom Discord Bots, Backend Development, and automated workflow solutions.",
+    siteName: "RelayWorks",
     images: [
       {
         url: "/logo.png",
         width: 1200,
         height: 630,
-        alt: "Hazrat Ummar Shaikh Portfolio",
+        alt: "RelayWorks",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Hazrat Ummar Shaikh | Native Android & Backend Developer",
-    description: "Portfolio of Hazrat Ummar Shaikh, an expert Native Android App Developer, Backend Developer, and Discord Bot Developer from India.",
+    title: "RelayWorks | Custom Automation & Software Agency",
+    description: "RelayWorks is an expert agency specializing in custom Discord Bots, Backend Development, and automated workflow solutions.",
     images: ["/logo.png"],
     creator: "@ihazratummar9",
   },
@@ -80,41 +74,29 @@ export const metadata: Metadata = {
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "Person",
-  name: "Hazrat Ummar Shaikh",
-  url: "https://hazratdev.top",
+  "@type": "Organization",
+  name: "RelayWorks",
+  url: "https://relayworks.dev",
   sameAs: [
     "https://github.com/ihazratummar",
     "https://www.linkedin.com/in/hazrat-ummar-shaikh/",
     "https://x.com/ihazratummar9",
     "https://www.instagram.com/hazratummar/"
   ],
-  jobTitle: "Native Android & Backend Developer",
-  worksFor: {
-    "@type": "Organization",
-    name: "Freelance"
+  description: "Custom automation and software agency.",
+  founder: {
+    "@type": "Person",
+    name: "Hazrat Ummar Shaikh"
   },
   knowsAbout: [
-    "Android Development",
-    "Kotlin",
-    "Jetpack Compose",
     "Backend Development",
     "FastAPI",
     "Ktor",
     "MongoDB",
     "Discord Bot Development",
-    "Python",
-    "Docker"
+    "Workflow Automation"
   ],
   offers: [
-    {
-      "@type": "Offer",
-      "itemOffered": {
-        "@type": "Service",
-        "name": "Native Android App Development",
-        "description": "High-performance native Android applications built with Kotlin and Jetpack Compose."
-      }
-    },
     {
       "@type": "Offer",
       "itemOffered": {

@@ -18,10 +18,30 @@ export const LiveChatWidget = () => {
     const [isStarting, setIsStarting] = useState(false);
     const [isSending, setIsSending] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
+    const [showTooltip, setShowTooltip] = useState(false);
     
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const isOpenRef = useRef(isOpen);
     const lastMessageCount = useRef(0);
+
+    // Check first-time visitor for CTA tooltip
+    useEffect(() => {
+        const hasSeenTooltip = localStorage.getItem("has_seen_chat_tooltip");
+        if (!hasSeenTooltip && !isOpen) {
+            const timer = setTimeout(() => {
+                setShowTooltip(true);
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [isOpen]);
+
+    const handleToggle = () => {
+        if (!isOpen) {
+            setShowTooltip(false);
+            localStorage.setItem("has_seen_chat_tooltip", "true");
+        }
+        setIsOpen(!isOpen);
+    };
 
     useEffect(() => {
         isOpenRef.current = isOpen;
@@ -193,7 +213,7 @@ export const LiveChatWidget = () => {
                                 </div>
                             </div>
                             <button
-                                onClick={() => setIsOpen(false)}
+                                onClick={handleToggle}
                                 className="text-white/80 hover:text-white transition-colors p-1 rounded-md hover:bg-white/10"
                             >
                                 <X className="w-5 h-5" />
@@ -208,7 +228,7 @@ export const LiveChatWidget = () => {
                                     <div className="bg-[#2b2d31] p-5 rounded-xl border border-white/5 shadow-inner">
                                         <h4 className="text-white font-semibold mb-2 text-center text-sm">Welcome! Let's get started.</h4>
                                         <p className="text-[#dbdee1] text-xs mb-5 text-center leading-relaxed">
-                                            Please provide your name and your question to start chatting with Hazrat.
+                                            Please provide your name and your question to start chatting with RelayWorks.
                                         </p>
                                         <form onSubmit={handleStartChat} className="space-y-4">
                                             <div>
@@ -307,11 +327,54 @@ export const LiveChatWidget = () => {
                 )}
             </AnimatePresence>
 
-            {/* Toggle Button */}
+            {/* Toggle Button Container */}
             <div className="fixed bottom-6 right-6 z-40">
+                <AnimatePresence>
+                    {showTooltip && !isOpen && (
+                        <m.div
+                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                            className="absolute bottom-[4.5rem] right-0 bg-[#1e1f22]/95 backdrop-blur-xl border border-white/10 p-3 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex items-center gap-3 cursor-pointer group w-[260px] origin-bottom-right"
+                            onClick={handleToggle}
+                        >
+                            {/* Avatar */}
+                            <div className="relative shrink-0">
+                                <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-[#2b2d31]">
+                                    <img src="https://github.com/ihazratummar.png" alt="RelayWorks Founder" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                </div>
+                                <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-[#1e1f22] rounded-full shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse" />
+                            </div>
+                            
+                            {/* Text */}
+                            <div className="flex-1 flex flex-col justify-center">
+                                <p className="text-[13px] font-bold text-white leading-tight flex items-center gap-1.5">
+                                    Have a question? <span className="text-[9px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-sm uppercase tracking-wider font-black">Live</span>
+                                </p>
+                                <p className="text-[11px] text-[#dbdee1] mt-0.5 leading-snug">Chat directly with Hazrat (Founder of RelayWorks).</p>
+                            </div>
+
+                            {/* Close cross for the tooltip */}
+                            <button 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setShowTooltip(false);
+                                    localStorage.setItem("has_seen_chat_tooltip", "true");
+                                }}
+                                className="absolute -top-2 -right-2 w-6 h-6 bg-[#2b2d31] hover:bg-[#383a40] text-[#949ba4] hover:text-white rounded-full flex items-center justify-center border border-white/10 transition-colors shadow-lg z-10"
+                            >
+                                <X className="w-3.5 h-3.5" />
+                            </button>
+
+                            {/* Triangle pointer to the bottom */}
+                            <div className="absolute -bottom-1.5 right-[1.125rem] w-3.5 h-3.5 bg-[#1e1f22] border-b border-r border-white/10 rotate-45 rounded-br-sm" />
+                        </m.div>
+                    )}
+                </AnimatePresence>
+
                 <button
-                    onClick={() => setIsOpen(!isOpen)}
-                    className="relative w-14 h-14 bg-[#5865F2] hover:bg-[#5865F2]/90 text-white rounded-full flex items-center justify-center shadow-[0_4px_20px_rgba(88,101,242,0.4)] transition-transform hover:scale-105"
+                    onClick={handleToggle}
+                    className="relative w-14 h-14 bg-[#5865F2] hover:bg-[#5865F2]/90 text-white rounded-full flex items-center justify-center shadow-[0_4px_20px_rgba(88,101,242,0.4)] transition-transform hover:scale-105 shrink-0"
                 >
                     {unreadCount > 0 && (
                         <span 

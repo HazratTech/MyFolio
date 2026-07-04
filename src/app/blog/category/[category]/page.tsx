@@ -9,7 +9,7 @@ import { ArrowLeft } from "lucide-react";
 export async function generateMetadata({ params }: { params: { category: string } }): Promise<Metadata> {
     const category = decodeURIComponent(params.category);
     return {
-        title: `${category} Posts | Hazrat Ummar Shaikh`,
+        title: `${category} Posts | RelayWorks`,
         description: `Read articles about ${category}.`,
         alternates: {
             canonical: `/blog/category/${params.category}`,

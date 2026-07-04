@@ -35,7 +35,7 @@ export default function NotFound() {
                     </div>
                     <div className="p-6 space-y-4 font-mono text-sm md:text-base">
                         <div className="text-green-400">
-                            <span className="text-blue-400">user@dev</span>:<span className="text-blue-300">~</span>$ curl https://hazratdev.top {path}
+                            <span className="text-blue-400">user@dev</span>:<span className="text-blue-300">~</span>$ curl https://relayworks.dev{path}
                         </div>
                         <div className="text-red-400">
                             Error 404: Resource not found or currently unavailable.
@@ -61,7 +61,7 @@ export default function NotFound() {
                         <Link href="/">
                             <Button size="lg" className="group">
                                 <Home className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
-                                Return Home
+                                Return to RelayWorks
                             </Button>
                         </Link>
                         <Link href="/blog">

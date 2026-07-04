@@ -44,7 +44,7 @@ export const BlogNavbar = () => {
                 <div className="container mx-auto px-6 flex items-center justify-between max-w-7xl">
                     <div className="flex items-center gap-3">
                         <Link href="/" className="text-xl font-bold font-heading tracking-tighter hover:opacity-90 transition-opacity">
-                            Hazrat<span className="text-primary">.dev</span>
+                            Relay<span className="text-primary">Works</span>
                         </Link>
                         <span className="text-white/20">|</span>
                         <Link href="/blog" className="flex items-center gap-1.5 text-sm bg-primary/10 text-primary border border-primary/20 px-2.5 py-0.5 rounded-full font-medium">

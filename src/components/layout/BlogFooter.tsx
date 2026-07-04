@@ -19,7 +19,7 @@ export const BlogFooter = async () => {
                 <div className="flex flex-col md:flex-row justify-between items-center pb-8 border-b border-white/5">
                     <div className="mb-6 md:mb-0 text-center md:text-left">
                         <Link href="/blog" className="text-2xl font-bold font-heading tracking-tighter">
-                            Hazrat<span className="text-primary">.dev</span><span className="text-sm font-normal text-muted-foreground ml-2">Blog</span>
+                            Relay<span className="text-primary">Works</span><span className="text-sm font-normal text-muted-foreground ml-2">Blog</span>
                         </Link>
                         <p className="text-muted-foreground mt-2 text-sm max-w-md">
                             Deep-dive technical tutorials, articles, and guides on Android, iOS, Backend development, Discord bots, and software architecture.
@@ -46,7 +46,7 @@ export const BlogFooter = async () => {
                 </div>
 
                 <div className="mt-8 flex flex-col md:flex-row justify-between items-center text-xs text-muted-foreground">
-                    <p>&copy; {new Date().getFullYear()} Hazrat Ummar Shaikh. All rights reserved.</p>
+                    <p>&copy; {new Date().getFullYear()} RelayWorks. All rights reserved.</p>
                     <div className="flex space-x-6 mt-4 md:mt-0">
                         <Link href="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link>
                         <Link href="/terms-of-service" className="hover:text-primary transition-colors">Terms of Service</Link>

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Custom Discord Bot Development Services | Hazrat Ummar Shaikh",
     description: "Get custom Discord bots tailored specifically for your community. Automate moderation, ticket systems, payments, role management, verification, and AI chatbots.",
-    url: "https://hazratdev.top/discord-bot",
+    url: "https://relayworks.dev/discord-bot",
     images: ["/logo.png"],
   }
 };

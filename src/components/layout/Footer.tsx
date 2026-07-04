@@ -18,7 +18,7 @@ export const Footer = async () => {
             <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
                 <div className="mb-6 md:mb-0">
                     <Link href="/" className="text-2xl font-bold font-heading tracking-tighter">
-                        Hazrat<span className="text-primary">.dev</span>
+                        Relay<span className="text-primary">Works</span>
                     </Link>
                     <p className="text-muted-foreground mt-2 text-sm">
                         Building digital experiences that matter.
@@ -44,7 +44,7 @@ export const Footer = async () => {
                 </div>
             </div>
             <div className="container mx-auto px-6 mt-8 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground">
-                <p>&copy; {new Date().getFullYear()} Hazrat. All rights reserved.</p>
+                <p>&copy; {new Date().getFullYear()} RelayWorks. All rights reserved.</p>
                 <div className="flex space-x-4 mt-4 md:mt-0">
                     <Link href="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link>
                     <Link href="/terms-of-service" className="hover:text-primary transition-colors">Terms of Service</Link>

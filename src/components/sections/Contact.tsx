@@ -56,7 +56,7 @@ export const Contact = () => {
         setResult(null);
 
         const embed = {
-            title: "New Contact Form Submission",
+            title: "🔥 New Lead from RelayWorks",
             color: 5814783, // Blue color
             fields: [
                 { name: "Name", value: formData.name, inline: true },
@@ -130,8 +130,8 @@ export const Contact = () => {
                                     </div>
                                     <div>
                                         <h4 className="font-medium mb-1">Email Me</h4>
-                                        <a href="mailto:hazratummar9@gmail.com" className="text-muted-foreground hover:text-primary transition-colors" aria-label="Email Me">
-                                            hazratummar9@gmail.com
+                                        <a href="mailto:contact@relayworks.dev" className="text-muted-foreground hover:text-primary transition-colors" aria-label="Email Me">
+                                            contact@relayworks.dev
                                         </a>
                                     </div>
                                 </div>
