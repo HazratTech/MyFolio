@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
     Bot, Check, X, ShieldAlert, Sparkles, MessageSquare, Terminal, 
-    Coins, Clock, Award, Star, ArrowRight, Send, HelpCircle, ChevronDown, CheckCircle2, Lock, Eye
+    Webhook, Clock, Award, Star, ArrowRight, Send, HelpCircle, ChevronDown, CheckCircle2, Lock, Eye
 } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
 
@@ -36,7 +36,7 @@ const caseStudies: CaseStudy[] = [
         problem: "Manually processing Stripe payments, upgrading user roles on checkout, and revoking roles on subscription cancellations.",
         solution: "Developed a transaction-monitoring bot integrated directly with Stripe Webhooks to instantly manage paid customer roles.",
         features: ["Stripe Webhook Sync", "Temporary Client Role Upgrade", "Automatic Expiry Warnings", "Invoice Alerts"],
-        result: "100% automated role delivery. Zero support tickets regarding missing roles, and increased customer lifetime value by 18%."
+        result: "100% automated role delivery. Zero support tickets regarding missing roles, and noticeably improved customer retention."
     },
     {
         name: "DevSphere AI Assistant Bot",
@@ -245,9 +245,7 @@ export const DiscordBotLanding = () => {
                                     🚀 Get Free Quote
                                 </Button>
                                 <a 
-                                    href="https://discord.com/users/ihazratummar"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                                    href="#quote-form"
                                     onClick={() => trackEvent("hero_cta_click", { action: "discord_contact" })}
                                     className="inline-flex items-center justify-center gap-2 font-bold px-8 py-4 text-lg border border-white/10 hover:bg-white/5 rounded-xl transition-all"
                                 >
@@ -274,7 +272,10 @@ export const DiscordBotLanding = () => {
                                 </div>
 
                                 {/* Simulated Bot Stats Card */}
-                                <div className="grid grid-cols-3 gap-3 pt-4">
+                                <div className="text-center mb-1 mt-3">
+                                    <span className="text-xs font-semibold text-[#949ba4] uppercase tracking-wider">Example bot dashboard</span>
+                                </div>
+                                <div className="grid grid-cols-3 gap-3 pt-2">
                                     <div className="bg-[#2b2d31] p-3 rounded-lg border border-white/5">
                                         <div className="text-xs text-[#949ba4]">Uptime</div>
                                         <div className="text-lg font-bold text-green-400">99.99%</div>
@@ -327,9 +328,9 @@ export const DiscordBotLanding = () => {
                             <span className="flex text-yellow-500"><Star className="w-4 h-4 fill-yellow-500" /><Star className="w-4 h-4 fill-yellow-500" /><Star className="w-4 h-4 fill-yellow-500" /><Star className="w-4 h-4 fill-yellow-500" /><Star className="w-4 h-4 fill-yellow-500" /></span>
                             <span className="text-white font-bold">5.0 Star Rating</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <Check className="w-4 h-4 text-green-500 font-black" />
-                            <span>6+ Years Experience</span>
+                        <div className="flex items-center justify-center gap-2">
+                            <Check className="w-5 h-5 text-green-500" />
+                            <span>4+ Years Experience</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <Check className="w-4 h-4 text-green-500 font-black" />
@@ -404,7 +405,7 @@ export const DiscordBotLanding = () => {
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <Check className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
-                                        <span>Automatic role Sync tied directly to Stripe, PayPal, or crypto payment webhooks.</span>
+                                        <span>Automatic role Sync tied directly to Stripe or PayPal payment webhooks.</span>
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <Check className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
@@ -430,7 +431,7 @@ export const DiscordBotLanding = () => {
                                 { icon: Lock, name: "OAuth2 Custom Verification", desc: "Ensure all members verify via web captcha, filtering out spam accounts before they can DM or scan channels." },
                                 { icon: MessageSquare, name: "Automated Ticket Systems", desc: "Organized support desk ticket triggers with transcript saving and staff dashboard alerts." },
                                 { icon: Bot, name: "Smart Auto-Moderation", desc: "Regex-based filters, image categorization scanners, link warnings, and automated user mutes." },
-                                { icon: Coins, name: "API & Webhook Integrations", desc: "Connect Discord directly with external APIs, databases, game servers, or custom website panels." }
+                                { icon: Webhook, name: "API & Webhook Integrations", desc: "Connect Discord directly with external APIs, databases, game servers, or custom website panels." }
                             ].map((service, idx) => (
                                 <Card key={idx} className="bg-[#1e1f22] border border-[#2f3136] hover:border-[#5865F2]/40 transition-all p-6 text-left space-y-3">
                                     <div className="w-10 h-10 rounded-lg bg-[#5865F2]/10 text-[#5865F2] flex items-center justify-center">
@@ -1063,9 +1064,9 @@ export const DiscordBotLanding = () => {
                                             className="flex h-10 w-full items-center justify-between rounded-md border border-[#2f3136] bg-black/20 px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-primary focus:ring-offset-0"
                                             style={{ color: '#f2f3f5', backgroundColor: '#1e1f22' }}
                                         >
-                                            <option value="$100 - $300" className="bg-[#1e1f22]" style={{ color: '#f2f3f5', backgroundColor: '#1e1f22' }}>Basic Bot ($100 - $300)</option>
-                                            <option value="$300 - $1,000" className="bg-[#1e1f22]" style={{ color: '#f2f3f5', backgroundColor: '#1e1f22' }}>Advanced Automation ($300 - $1,000)</option>
-                                            <option value="$1,000+" className="bg-[#1e1f22]" style={{ color: '#f2f3f5', backgroundColor: '#1e1f22' }}>Enterprise / AI Bot ($1,000+)</option>
+                                            <option value="Starts at $100" className="bg-[#1e1f22]" style={{ color: '#f2f3f5', backgroundColor: '#1e1f22' }}>Basic Bot (Starts at $100)</option>
+                                            <option value="Starts at $300" className="bg-[#1e1f22]" style={{ color: '#f2f3f5', backgroundColor: '#1e1f22' }}>Advanced Automation (Starts at $300)</option>
+                                            <option value="Contact for Quote" className="bg-[#1e1f22]" style={{ color: '#f2f3f5', backgroundColor: '#1e1f22' }}>Enterprise / AI Bot (Custom Quote)</option>
                                         </select>
                                     </div>
                                 </div>
