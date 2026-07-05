@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
-import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { GoogleAdSense } from "@/components/analytics/GoogleAdSense";
 import { FacebookPixel } from "@/components/analytics/FacebookPixel";
 import { CookieConsent } from "@/components/layout/CookieConsent";
@@ -136,7 +135,18 @@ export default function RootLayout({
           outfit.variable
         )}
       >
-        <GoogleAnalytics gaId="G-CGMGGSKEBE" />
+        <Script
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=G-CGMGGSKEBE"
+        />
+        <Script id="google-analytics" strategy="afterInteractive" dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-CGMGGSKEBE');
+          `
+        }} />
         <GoogleAdSense />
         <FacebookPixel />
         <script
