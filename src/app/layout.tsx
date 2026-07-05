@@ -35,6 +35,9 @@ export const metadata: Metadata = {
   icons: {
     icon: '/favicon-brand.ico',
   },
+  other: {
+    "google-adsense-account": "ca-pub-2489956198626091"
+  },
 
   openGraph: {
     type: "website",

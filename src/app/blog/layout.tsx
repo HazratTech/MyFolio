@@ -7,12 +7,6 @@ import { Metadata } from "next";
 
 export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
-  other: {
-    "google-adsense-account": "ca-pub-2489956198626091"
-  }
-};
-
 export default function BlogLayout({
     children,
 }: Readonly<{
