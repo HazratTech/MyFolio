@@ -3,7 +3,15 @@ import Script from "next/script";
 import { BlogNavbar } from "@/components/layout/BlogNavbar";
 import { BlogFooter } from "@/components/layout/BlogFooter";
 
+import { Metadata } from "next";
+
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  other: {
+    "google-adsense-account": "ca-pub-2489956198626091"
+  }
+};
 
 export default function BlogLayout({
     children,
@@ -12,6 +20,13 @@ export default function BlogLayout({
 }>) {
     return (
         <div className="dark flex flex-col min-h-screen bg-background text-foreground">
+            {/* AdSense Script */}
+            <Script
+                async
+                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2489956198626091"
+                crossOrigin="anonymous"
+                strategy="afterInteractive"
+            />
 
             {/* Custom Blog Navigation Bar */}
             <BlogNavbar />

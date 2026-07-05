@@ -32,6 +32,9 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "RelayWorks", url: "https://relayworks.dev" }],
   creator: "RelayWorks",
+  icons: {
+    icon: '/favicon-brand.ico',
+  },
 
   openGraph: {
     type: "website",
@@ -42,7 +45,7 @@ export const metadata: Metadata = {
     siteName: "RelayWorks",
     images: [
       {
-        url: "/logo.png",
+        url: "/logo-brand.png",
         width: 1200,
         height: 630,
         alt: "RelayWorks",
@@ -53,7 +56,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "RelayWorks | Custom Automation & Software Agency",
     description: "RelayWorks is an expert agency specializing in custom Discord Bots, Backend Development, and automated workflow solutions.",
-    images: ["/logo.png"],
+    images: ["/logo-brand.png"],
     creator: "@ihazratummar9",
   },
   robots: {

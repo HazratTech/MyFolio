@@ -35,7 +35,11 @@ export const Testimonials = () => {
     }, []);
 
     if (loading) {
-        return <div className="py-20 text-center">Loading testimonials...</div>;
+        return (
+            <section id="testimonials" className="py-20 bg-black/20 min-h-[600px] flex items-center justify-center">
+                <div className="text-muted-foreground">Loading testimonials...</div>
+            </section>
+        );
     }
 
     return (

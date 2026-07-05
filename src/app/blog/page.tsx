@@ -41,7 +41,7 @@ export async function generateMetadata({
             type: "website",
             images: [
                 {
-                    url: "/logo.png",
+                    url: "/logo-brand.png",
                     width: 1200,
                     height: 630,
                     alt: "RelayWorks Tech Blog",
@@ -52,7 +52,7 @@ export async function generateMetadata({
             card: "summary_large_image",
             title: "RelayWorks Blog | Automation & Software Engineering Tutorials",
             description: "Deep-dive guides, tutorials, and developer insights on Native Android (Kotlin, Compose), iOS, Discord bot development, Python API backends (FastAPI, Ktor), and software architecture.",
-            images: ["/logo.png"],
+            images: ["/logo-brand.png"],
         }
     };
 }

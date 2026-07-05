@@ -18,8 +18,9 @@ export const BlogFooter = async () => {
             <div className="container mx-auto px-6 max-w-7xl">
                 <div className="flex flex-col md:flex-row justify-between items-center pb-8 border-b border-white/5">
                     <div className="mb-6 md:mb-0 text-center md:text-left">
-                        <Link href="/blog" className="text-2xl font-bold font-heading tracking-tighter">
-                            Relay<span className="text-primary">Works</span><span className="text-sm font-normal text-muted-foreground ml-2">Blog</span>
+                        <Link href="/blog" className="hover:opacity-90 transition-opacity inline-flex items-center">
+                            <img src="/logo-brand.png" alt="RelayWorks" className="h-8 w-auto dark:brightness-0 dark:invert" />
+                            <span className="text-sm font-normal text-muted-foreground ml-3 mt-1 border-l border-white/20 pl-3">Blog</span>
                         </Link>
                         <p className="text-muted-foreground mt-2 text-sm max-w-md">
                             Deep-dive technical tutorials, articles, and guides on Android, iOS, Backend development, Discord bots, and software architecture.

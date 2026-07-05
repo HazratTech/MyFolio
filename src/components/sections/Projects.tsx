@@ -128,7 +128,11 @@ export const Projects = () => {
         : projects.filter(project => project.category === activeTab);
 
     if (loading) {
-        return <div className="py-20 text-center">Loading projects...</div>;
+        return (
+            <section id="projects" className="py-20 bg-black/20 min-h-[800px] flex items-center justify-center">
+                <div className="text-muted-foreground">Loading projects...</div>
+            </section>
+        );
     }
 
     return (

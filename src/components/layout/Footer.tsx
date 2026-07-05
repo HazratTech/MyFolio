@@ -17,8 +17,8 @@ export const Footer = async () => {
         <footer className="bg-background border-t border-white/10 py-12">
             <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
                 <div className="mb-6 md:mb-0">
-                    <Link href="/" className="text-2xl font-bold font-heading tracking-tighter">
-                        Relay<span className="text-primary">Works</span>
+                    <Link href="/" className="hover:opacity-90 transition-opacity inline-block">
+                        <img src="/logo-brand.png" alt="RelayWorks" className="h-8 w-auto dark:brightness-0 dark:invert" />
                     </Link>
                     <p className="text-muted-foreground mt-2 text-sm">
                         Building digital experiences that matter.

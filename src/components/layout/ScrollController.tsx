@@ -7,22 +7,41 @@ export const ScrollController = () => {
     const pathname = usePathname();
 
     useEffect(() => {
-        // If pathname is root, scroll to the top of the viewport
         if (pathname === "/" || pathname === "") {
             window.scrollTo({ top: 0, behavior: "smooth" });
             return;
         }
 
-        // Get the target section name from the URL path (e.g. /about -> about)
         const sectionId = pathname.replace("/", "");
         const element = document.getElementById(sectionId);
         
         if (element) {
-            // Add a micro-timeout to allow page transitions/layout changes to stabilize
-            const timer = setTimeout(() => {
+            let timeoutId: NodeJS.Timeout;
+            let resizeObserver: ResizeObserver;
+            const startTime = Date.now();
+
+            const scrollToElement = () => {
                 element.scrollIntoView({ behavior: "smooth", block: "start" });
-            }, 100);
-            return () => clearTimeout(timer);
+            };
+
+            // Initial scroll
+            timeoutId = setTimeout(scrollToElement, 100);
+
+            // Re-scroll if the body height changes within the first 3 seconds (due to API fetches)
+            resizeObserver = new ResizeObserver(() => {
+                if (Date.now() - startTime < 3000) {
+                    scrollToElement();
+                } else {
+                    resizeObserver.disconnect();
+                }
+            });
+
+            resizeObserver.observe(document.body);
+
+            return () => {
+                clearTimeout(timeoutId);
+                resizeObserver.disconnect();
+            };
         }
     }, [pathname]);
 
