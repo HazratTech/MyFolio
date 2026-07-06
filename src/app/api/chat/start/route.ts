@@ -5,10 +5,10 @@ import { ChatMessage } from "@/models/ChatMessage";
 
 export async function POST(req: Request) {
     try {
-        const { name, initialMessage } = await req.json();
+        const { name, email, initialMessage } = await req.json();
 
-        if (!name || !initialMessage) {
-            return NextResponse.json({ error: "Name and initial message are required." }, { status: 400 });
+        if (!name || !email || !initialMessage) {
+            return NextResponse.json({ error: "Name, email, and initial message are required." }, { status: 400 });
         }
 
         await dbConnect();
@@ -16,6 +16,7 @@ export async function POST(req: Request) {
         // 1. Create Thread in MongoDB
         const thread = await ChatThread.create({
             userName: name,
+            userEmail: email,
             status: "open",
         });
 
@@ -55,7 +56,7 @@ export async function POST(req: Request) {
                             "Content-Type": "application/json",
                         },
                         body: JSON.stringify({
-                            content: `**New Live Chat Started** <@475357995367137282>\n**User:** ${name}\n**Message:** ${initialMessage}`
+                            content: `**New Live Chat Started** <@475357995367137282>\n**User:** ${name}\n**Email:** ${email}\n**Message:** ${initialMessage}`
                         }),
                     });
                 } else {

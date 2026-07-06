@@ -13,6 +13,7 @@ export const LiveChatWidget = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [threadId, setThreadId] = useState<string | null>(null);
     const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
     const [messageInput, setMessageInput] = useState("");
     const [messages, setMessages] = useState<any[]>([]);
     const [isStarting, setIsStarting] = useState(false);
@@ -115,14 +116,14 @@ export const LiveChatWidget = () => {
 
     const handleStartChat = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!name.trim() || !messageInput.trim()) return;
+        if (!name.trim() || !email.trim() || !messageInput.trim()) return;
 
         setIsStarting(true);
         try {
             const res = await fetch("/api/chat/start", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, initialMessage: messageInput }),
+                body: JSON.stringify({ name, email, initialMessage: messageInput }),
             });
 
             if (res.ok) {
@@ -236,6 +237,16 @@ export const LiveChatWidget = () => {
                                                     value={name}
                                                     onChange={(e) => setName(e.target.value)}
                                                     placeholder="Your Name"
+                                                    required
+                                                    className="bg-black/20 border-[#2f3136] focus:border-[#5865F2] text-white text-sm h-10 placeholder:text-[#949ba4]"
+                                                />
+                                            </div>
+                                            <div>
+                                                <Input
+                                                    type="email"
+                                                    value={email}
+                                                    onChange={(e) => setEmail(e.target.value)}
+                                                    placeholder="Your Email"
                                                     required
                                                     className="bg-black/20 border-[#2f3136] focus:border-[#5865F2] text-white text-sm h-10 placeholder:text-[#949ba4]"
                                                 />
