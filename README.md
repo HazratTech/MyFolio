@@ -1,4 +1,4 @@
-# 🚀 Hazrat.dev - Portfolio Website
+# 🚀 RelayWorks - Portfolio Website
 
 ![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)
@@ -8,7 +8,7 @@
 
 A high-performance, visually stunning portfolio website designed to showcase my expertise as a **Native Android Developer**, **Backend Engineer**, and **Discord Bot Specialist**. Built with modern web technologies, this project emphasizes speed, SEO, and a premium user experience.
 
-🌐 **Live Demo:** [https://hazratdev.top](https://hazratdev.top)
+🌐 **Live Demo:** [https://relayworks.dev](https://relayworks.dev)
 
 ---
 

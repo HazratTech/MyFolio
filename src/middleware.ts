@@ -18,8 +18,7 @@ export async function middleware(request: NextRequest) {
         const session = token ? await verifyToken(token) : null;
 
         if (!session) {
-            const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || request.url;
-            return NextResponse.redirect(new URL('/admin/login', baseUrl));
+            return NextResponse.redirect(new URL('/admin/login', request.url));
         }
 
         // Sliding session: Extend cookie expiration

@@ -233,10 +233,10 @@ export const DiscordBotLanding = () => {
                                 <Bot className="w-3.5 h-3.5" /> Custom Discord Bot Development
                             </div>
                             <h1 className="text-4xl md:text-6xl font-black font-heading leading-tight tracking-tight">
-                                Custom Discord Bots Built for <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#5865F2] to-secondary">Your Community</span>
+                                Custom Discord Bot Development Built for <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#5865F2] to-secondary">Your Community</span>
                             </h1>
                             <p className="text-[#dbdee1] text-lg md:text-xl max-w-xl">
-                                Automate moderation, ticket support systems, custom verification, AI chatbots, webhooks, payments, and role upgrades with a bot built specifically for your server's workflow.
+                                Looking to <strong className="text-white">make a custom Discord bot</strong>? Hire an expert <strong className="text-white">Discord bot developer</strong> to automate moderation, support ticket systems, custom verification, and AI chatbots built specifically for your server.
                             </p>
 
                             <div className="flex flex-col sm:flex-row gap-4 pt-2">
@@ -371,13 +371,13 @@ export const DiscordBotLanding = () => {
                                 <div className="space-y-4">
                                     <div>
                                         <h2 className="text-3xl font-black text-white flex items-center gap-3">
-                                            👋 Meet Hazrat, Founder of RelayWorks.
+                                            👋 Meet Hazrat, Your Expert Discord Developer
                                         </h2>
                                         <p className="text-[#dbdee1] mt-3">
-                                            We've spent the last <strong>4+ years</strong> building custom Discord automation for gaming communities, SaaS companies, and membership platforms.
+                                            I've spent the last <strong>4+ years</strong> working as a professional <strong className="text-white">Discord bot developer</strong>, building <strong className="text-white">customizable bots for Discord</strong> server administrators.
                                         </p>
                                         <p className="text-[#dbdee1] mt-2">
-                                            Unlike generic agencies, you'll work directly with our leadership from planning to deployment.
+                                            Whether you want to <strong className="text-white">create your own bot on Discord</strong> or need complex API integrations, I offer robust <strong className="text-white">discord bot development</strong> services. You can read my latest guides on our <a href="/blog" className="text-[#5865F2] hover:underline font-bold">tech blog</a> or view my full <a href="/" className="text-[#5865F2] hover:underline font-bold">software portfolio</a>.
                                         </p>
                                     </div>
                                     <div className="flex flex-wrap gap-3 pt-2">
@@ -448,18 +448,18 @@ export const DiscordBotLanding = () => {
                                 <div className="absolute top-0 left-0 w-full h-1 bg-[#5865F2]" />
                                 <div className="flex justify-between items-center">
                                     <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                                        Custom Automation
+                                        Custom Bot Discord Automation
                                     </h3>
                                     <span className="bg-[#5865F2]/20 text-[#5865F2] text-xs font-bold px-2.5 py-1 rounded">After: 20 mins/day</span>
                                 </div>
                                 <ul className="space-y-3 text-[#dbdee1] text-sm pt-2">
                                     <li className="flex items-start gap-2">
                                         <Check className="w-4 h-4 text-[#5865F2] shrink-0 mt-0.5" />
-                                        <span className="text-white font-medium">OAuth2 captcha verification</span> <span className="text-[#949ba4]">blocks spambots automatically.</span>
+                                        <span className="text-white font-medium">Develop bot Discord features</span> <span className="text-[#949ba4]">specifically optimized for your community's active channels.</span>
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <Check className="w-4 h-4 text-[#5865F2] shrink-0 mt-0.5" />
-                                        <span className="text-white font-medium">OpenAI GPT chatbot</span> <span className="text-[#949ba4]">answers repetitive client questions instantly.</span>
+                                        <span className="text-white font-medium">OAuth2 captcha verification</span> <span className="text-[#949ba4]">to block spambots automatically.</span>
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <Check className="w-4 h-4 text-[#5865F2] shrink-0 mt-0.5" />
@@ -467,7 +467,7 @@ export const DiscordBotLanding = () => {
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <Check className="w-4 h-4 text-[#5865F2] shrink-0 mt-0.5" />
-                                        <span className="text-white font-medium">Single integrated bot dashboard</span> <span className="text-[#949ba4]">built for your exact needs.</span>
+                                        <span className="text-white font-medium">Single customizable Discord bot</span> <span className="text-[#949ba4]">built for your exact server commands.</span>
                                     </li>
                                 </ul>
                             </Card>
@@ -513,11 +513,11 @@ export const DiscordBotLanding = () => {
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {[
-                                { icon: Sparkles, name: "AI Chatbots & Integration", desc: "Integrate OpenAI models directly into your text channels to respond to user questions using your custom files." },
-                                { icon: Terminal, name: "Stripe & PayPal Payments", desc: "Sell premium server roles, automatically upgrading members and managing expiries seamlessly." },
-                                { icon: Lock, name: "OAuth2 Custom Verification", desc: "Ensure all members verify via web captcha, filtering out spam accounts before they can DM or scan channels." },
+                                { icon: Sparkles, name: "Custom Commands Discord Bot", desc: "Deploy customized bots with custom commands for Discord to automate user actions, search databases, or trigger complex workflows." },
+                                { icon: Terminal, name: "Stripe & PayPal Payments", desc: "Monetize your community. Sell premium roles via a secure custom bot for Discord with automatic webhook sync." },
+                                { icon: Lock, name: "OAuth2 Custom Verification", desc: "Ensure all members verify via web captcha. Block spambots natively before they can access your Discord custom commands." },
                                 { icon: MessageSquare, name: "Automated Ticket Systems", desc: "Organized support desk ticket triggers with transcript saving and staff dashboard alerts." },
-                                { icon: Bot, name: "Smart Auto-Moderation", desc: "Regex-based filters, image categorization scanners, link warnings, and automated user mutes." },
+                                { icon: Bot, name: "Smart Auto-Moderation", desc: "Regex-based filters, link warnings, and custom moderation commands built into your dedicated bot." },
                                 { icon: Webhook, name: "API & Webhook Integrations", desc: "Connect Discord directly with external APIs, databases, game servers, or custom website panels." }
                             ].map((service, idx) => (
                                 <Card key={idx} className="bg-[#1e1f22] border border-[#2f3136] hover:border-[#5865F2]/40 transition-all p-6 text-left space-y-3">
@@ -536,10 +536,10 @@ export const DiscordBotLanding = () => {
                 <section id="comparison" className="py-20 bg-[#111214]">
                     <div className="container mx-auto px-6 max-w-4xl text-center">
                         <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4 text-white">
-                            Why Choose a Custom Bot?
+                            Why Choose a Custom Discord Bot?
                         </h2>
                         <p className="text-[#dbdee1] max-w-xl mx-auto mb-12 text-sm">
-                            Public bots are heavily limited, charge monthly subscription fees, and display external branding. A custom bot is built specifically for your workflow.
+                            Generic bots are heavily limited, charge monthly subscriptions, and show external branding. Partnering with a dedicated <strong className="text-white">Discord developer</strong> to <strong className="text-white">make a custom Discord bot</strong> gives you total custom commands control.
                         </p>
 
                         <div className="overflow-x-auto rounded-xl border border-[#2f3136] bg-[#161719]">
@@ -1054,6 +1054,9 @@ export const DiscordBotLanding = () => {
 
                         <div className="space-y-4">
                             {[
+                                { q: "How to make a custom Discord bot for my server?", a: "To make a custom Discord bot, you need to register a developer app on the Discord portal, write the logic (usually in Python or TypeScript), and host it on a server. By hiring an experienced Discord developer, you get a professionally built, 24/7 online bot tailored to your exact needs without any coding stress." },
+                                { q: "What are custom commands on a Discord bot?", a: "Custom commands allow you to create interactions specific to your server's needs. You can trigger tasks like pulling stats, managing custom verification databases, or upgrading premium roles instantly. Generic public bots can't provide this level of personalized logic." },
+                                { q: "Why choose customizable bots for Discord over public ones?", a: "Choosing customizable bots for Discord ensures 100% white-labeled branding (your bot logo and name), custom commands tailored exactly to your workflows, zero monthly pricing model bottlenecks, and dedicated hosting for fast performance." },
                                 { q: "Do you host the bot for me?", a: "I configure the bot to run 24/7 on a Linux VPS server using PM2 manager. If you don't have hosting, I can guide you through setting up a server for free, or handle deployment for you." },
                                 { q: "What language and library do you write bots in?", a: "I write high-performance Discord bots in Python (using discord.py or nextcord) to guarantee execution speed and complete support for the latest Discord slash commands and interactions." },
                                 { q: "Do I get full ownership of the source code?", a: "Yes, 100%. Upon completion and final payment, you will receive all files, modules, and configurations. You own all rights to your bot's custom source code." },

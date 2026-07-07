@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import { DiscordBotLanding } from "@/components/sections/DiscordBotLanding";
 
 export const metadata: Metadata = {
-  title: "Custom Discord Bot Development Services | Hazrat Ummar Shaikh",
-  description: "Get custom Discord bots tailored specifically for your community. Automate moderation, ticket systems, payments, role management, verification, and AI chatbots. Hire me today for custom, scalable, and high-performance solutions.",
+  title: "Custom Discord Bot Developer & Development Services | RelayWorks",
+  description: "Want to make a custom Discord bot? Hire an expert Discord developer to create your own bot with custom commands. Professional discord bot development services.",
   alternates: {
     canonical: "/discord-bot",
   },
   openGraph: {
-    title: "Custom Discord Bot Development Services | Hazrat Ummar Shaikh",
-    description: "Get custom Discord bots tailored specifically for your community. Automate moderation, ticket systems, payments, role management, verification, and AI chatbots.",
+    title: "Custom Discord Bot Developer & Development Services | RelayWorks",
+    description: "Want to make a custom Discord bot? Hire an expert Discord developer to create your own bot with custom commands. Professional discord bot development services.",
     url: "https://relayworks.dev/discord-bot",
     images: ["/logo-brand.png"],
   }

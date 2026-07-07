@@ -180,8 +180,9 @@ export const LiveChatWidget = () => {
         }
     }, []);
 
-    // Hide chat on blog and legal pages
-    const isHiddenPath = pathname?.startsWith("/blog") || 
+    // Hide chat on admin, blog, and legal pages
+    const isHiddenPath = pathname?.startsWith("/admin") ||
+                         pathname?.startsWith("/blog") || 
                          pathname === "/privacy-policy" || 
                          pathname === "/terms-of-service" || 
                          pathname === "/cookie-policy";

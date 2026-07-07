@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /api
 
-Sitemap: https://hazratdev.top/sitemap.xml
+Sitemap: https://relayworks.dev/sitemap.xml
