@@ -23,28 +23,28 @@ interface CaseStudy {
 
 const caseStudies: CaseStudy[] = [
     {
-        name: "AeroGaming Community Bot",
-        industry: "Gaming Server (50,000+ members)",
-        problem: "Moderators spent 4+ hours daily manually verifying new joins, fighting raid bots, and assigning basic rules roles.",
-        solution: "Built a fully custom Discord bot featuring secure OAuth2 captcha verification, auto-role mapping, and anti-raid heuristics.",
-        features: ["OAuth2 Captcha Verification", "Automated Role Assignment", "Anti-Raid Auto-Mute", "Join Logs Panel"],
-        result: "Reduced manual moderation onboarding workload to 0 minutes. Blocked over 1,200 spam accounts on the first week."
+        name: "Nexa — AI-Powered Community Bot",
+        industry: "Multi-Server Community Management",
+        problem: "Server admins lacked a unified bot that could handle moderation, content filtering, and engagement — forcing them to rely on 3-4 separate bots with conflicting configurations.",
+        solution: "Built Nexa from scratch with a modular Python architecture: Google Perspective API for real-time toxicity scoring, Sightengine for image NSFW detection, a custom welcome card generator with Pillow, and a YAML-driven dynamic command system — all containerized with Docker and deployed via Jenkins CI/CD.",
+        features: ["Google Perspective API Toxicity Filter", "Sightengine Image Moderation", "Custom Welcome Card Generator", "OpenAI Integration", "Automod with Configurable Thresholds", "YouTube / Imgur / Pixabay Search", "MongoDB Guild Config Storage", "Docker + Jenkins CI/CD Pipeline"],
+        result: "90+ commits across 30+ modules. Single bot replaced 4 separate services, reducing server overhead and eliminating inter-bot permission conflicts entirely."
     },
     {
-        name: "NexusMarket Automation Bot",
-        industry: "E-Commerce / Premium Subscriptions",
-        problem: "Manually processing Stripe payments, upgrading user roles on checkout, and revoking roles on subscription cancellations.",
-        solution: "Developed a transaction-monitoring bot integrated directly with Stripe Webhooks to instantly manage paid customer roles.",
-        features: ["Stripe Webhook Sync", "Temporary Client Role Upgrade", "Automatic Expiry Warnings", "Invoice Alerts"],
-        result: "100% automated role delivery. Zero support tickets regarding missing roles, and noticeably improved customer retention."
+        name: "OP Shop — ARK PvP Marketplace Bot",
+        industry: "Gaming Marketplace SaaS (ARK: Survival Ascended)",
+        problem: "The ARK PvP community relied on manual Discord messages to process in-game item purchases, track reputation, and manage a dual-currency economy — resulting in frequent scams and zero accountability.",
+        solution: "Developed a Discord-native SaaS platform with a fully data-driven shop engine, dual-currency economy (Credits + Tokens), XP-based trust scoring, automated purchase ticket workflows, giveaway system, invite tracking, and a complete in-Discord admin panel — all backed by MongoDB with zero hardcoded configurations.",
+        features: ["Dynamic Shop Engine (CRUD via Discord)", "Dual-Currency Economy System", "XP & Trust Reputation Scoring", "Automated Purchase Ticket Flows", "Giveaway System with Weighted Draws", "Invite Tracker with Leaderboards", "Full Audit Logging", "In-Discord Admin Panel", "Sticky Messages Module"],
+        result: "55+ commits, 15+ modules, 34KB UI layer alone. Zero-config admin workflow — every category, item, and price is managed live via /shop-admin without bot restarts."
     },
     {
-        name: "DevSphere AI Assistant Bot",
-        industry: "Developer Onboarding Community",
-        problem: "Staff spent hours answering identical questions regarding API setups and developer documentation every single day.",
-        solution: "Created an intelligent chatbot bot powered by OpenAI API, fine-tuned with DevSphere's documentation to answer support questions natively.",
-        features: ["Context-Aware OpenAI Answers", "Smart Fallback to Live Staff", "Documentation Index Search", "Frequently Asked Questions Sync"],
-        result: "Resolved 67% of repetitive support questions instantly. Allowed staff to focus entirely on advanced code troubleshooting."
+        name: "Vinnie's Friend — PvP Mini-Games Bot",
+        industry: "Community Entertainment & Engagement",
+        problem: "A Discord community wanted competitive mini-games with real-time PvP challenges, but existing bots offered only single-player RNG with no matchmaking, turn tracking, or admin oversight.",
+        solution: "Built a custom turn-based PvP game engine supporting 3 mini-games (Dice, Coinflip, and more) with an async MatchManager featuring concurrency locks to prevent race conditions, interactive Discord button-based UI for challenges and gameplay, configurable best-of-N round systems, and admin controls for game management.",
+        features: ["3 PvP Mini-Games", "Async MatchManager with Concurrency Locks", "Interactive Button-Based UI", "Turn-Based Round System", "Admin Game Controls", "Channel-Restricted Game Zones", "Rich Embed Match Reports"],
+        result: "Clean service-oriented architecture with full separation of concerns. Match state managed in-memory with thread-safe async locks for high-concurrency support."
     }
 ];
 
@@ -764,13 +764,22 @@ export const DiscordBotLanding = () => {
                                             <div className="text-2xl font-black text-white">{study.result.split('.')[0]}</div>
                                             <p className="text-[#dbdee1] text-xs">{study.result.substring(study.result.indexOf('.') + 1).trim()}</p>
                                         </div>
-                                        <div className="bg-[#1e1f22] rounded-xl border border-[#2f3136] aspect-video flex flex-col items-center justify-center text-center p-4 relative group shadow-inner">
-                                            <svg className="w-8 h-8 text-[#949ba4] mb-2 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                            <p className="text-[#949ba4] text-xs font-medium">Add {study.name} Screenshot</p>
-                                        </div>
+                                        <a
+                                            href={
+                                                idx === 0 ? "https://github.com/HazratTech/Nexa" :
+                                                idx === 1 ? "https://github.com/ihazratummar/OPShop-Discord-Bot" :
+                                                "https://github.com/ihazratummar/Vinnies-Bot"
+                                            }
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="bg-[#1e1f22] rounded-xl border border-[#2f3136] hover:border-[#5865F2]/40 flex items-center justify-center gap-3 text-center p-5 relative group shadow-inner transition-all"
+                                        >
+                                            <svg className="w-5 h-5 text-[#949ba4] group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                                            <span className="text-[#949ba4] group-hover:text-white text-sm font-semibold transition-colors">View Source Code →</span>
+                                        </a>
                                     </div>
                                 </m.div>
-                            ))}s
+                            ))}
                         </div>
                     </div>
                 </section>
