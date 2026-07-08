@@ -87,13 +87,15 @@ export const SystemDashboardHero = () => {
     const getSparklinePath = () => {
         const width = 240;
         const height = 40;
-        const padding = 2;
-        const maxVal = 45;
-        const minVal = 15;
+        const padding = 4;
+
+        const maxVal = Math.max(...sparkline, 45);
+        const minVal = Math.min(...sparkline, 15);
+        const range = maxVal - minVal === 0 ? 1 : maxVal - minVal;
 
         const points = sparkline.map((val, idx) => {
             const x = (idx / (sparkline.length - 1)) * (width - padding * 2) + padding;
-            const y = height - ((val - minVal) / (maxVal - minVal)) * (height - padding * 2) - padding;
+            const y = height - ((val - minVal) / range) * (height - padding * 2) - padding;
             return `${x},${y}`;
         });
 

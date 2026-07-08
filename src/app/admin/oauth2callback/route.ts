@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
                 ip
             });
 
-            return NextResponse.redirect(new URL("/admin", request.url));
+            return NextResponse.redirect(new URL("/admin", origin));
         } else {
             await sendDiscordWebhook({
                 email: payload?.email || "Unknown",
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
                 success: false,
                 ip
             });
-            return NextResponse.redirect(new URL("/admin/unauthorized", request.url));
+            return NextResponse.redirect(new URL("/admin/unauthorized", origin));
         }
     } catch (error) {
         console.error("OAuth Error:", error);
