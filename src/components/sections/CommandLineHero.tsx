@@ -29,7 +29,7 @@ export const SystemDashboardHero = () => {
     const [latency, setLatency] = useState(24);
     const [activeSessions, setActiveSessions] = useState(148);
     const [completedJobs, setCompletedJobs] = useState(12840);
-    const [sparkline, setSparkline] = useState<number[]>([24, 28, 22, 25, 30, 24, 27, 23, 25, 24]);
+    const [sparkline, setSparkline] = useState<number[]>([]);
 
     // Logs simulation
     useEffect(() => {
@@ -45,6 +45,26 @@ export const SystemDashboardHero = () => {
         });
         setLogs(initialLogs);
 
+        // Prime the sparkline history with real initial latency
+        const primeLatency = async () => {
+            const start = performance.now();
+            let initialVal = 24;
+            try {
+                await fetch("https://api.onedropblood.top/", {
+                    method: "HEAD",
+                    mode: "no-cors",
+                    cache: "no-store",
+                });
+                initialVal = Math.round(performance.now() - start);
+            } catch {
+                initialVal = Math.floor(40 + Math.random() * 15);
+            }
+            setLatency(initialVal);
+            setSparkline(Array.from({ length: 10 }).map(() => initialVal + Math.floor(Math.random() * 6 - 3)));
+        };
+
+        primeLatency();
+
         let logId = 4;
         const logInterval = setInterval(async () => {
             const template = logTemplates[Math.floor(Math.random() * logTemplates.length)];
@@ -58,18 +78,24 @@ export const SystemDashboardHero = () => {
 
             // Measure real latency to https://api.onedropblood.top/
             const start = performance.now();
+            let duration = 24;
             try {
                 await fetch("https://api.onedropblood.top/", {
                     method: "HEAD",
                     mode: "no-cors",
                     cache: "no-store",
                 });
-                const duration = Math.round(performance.now() - start);
+                duration = Math.round(performance.now() - start);
                 setLatency(Math.min(Math.max(duration, 5), 999));
             } catch (err) {
-                // Fallback to random if server is unreachable
-                setLatency(Math.floor(40 + Math.random() * 15));
+                duration = Math.floor(40 + Math.random() * 15);
+                setLatency(duration);
             }
+
+            setSparkline(prev => {
+                if (prev.length === 0) return Array.from({ length: 10 }).map(() => duration + Math.floor(Math.random() * 6 - 3));
+                return [...prev.slice(1), duration];
+            });
 
             setActiveSessions(prev => prev + (Math.random() > 0.5 ? 1 : -1));
             setCompletedJobs(prev => prev + 1);
@@ -78,13 +104,9 @@ export const SystemDashboardHero = () => {
         return () => clearInterval(logInterval);
     }, []);
 
-    // Sparkline history updating
-    useEffect(() => {
-        setSparkline(prev => [...prev.slice(1), latency]);
-    }, [latency]);
-
     // Render path for SVG sparkline
     const getSparklinePath = () => {
+        if (sparkline.length === 0) return "M 0,20 L 240,20";
         const width = 240;
         const height = 40;
         const padding = 4;

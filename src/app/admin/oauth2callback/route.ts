@@ -22,7 +22,8 @@ export async function GET(request: NextRequest) {
 
         const ip = request.headers.get("x-forwarded-for") || request.ip || "Unknown";
 
-        if (payload?.email === "hazratummar9@gmail.com") {
+        const allowedEmails = ["hazratummar9@gmail.com", "ummarskh@gmail.com"];
+        if (payload?.email && allowedEmails.includes(payload.email)) {
             const token = await createToken(payload.email);
 
             cookies().set('admin_session', token, {

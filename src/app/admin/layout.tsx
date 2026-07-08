@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, FolderKanban, MessageSquare, LogOut, User, Menu, X, FileText, Command, Image as ImageIcon } from "lucide-react";
+import { LayoutDashboard, FolderKanban, MessageSquare, LogOut, User, Menu, X, FileText, Command, Image as ImageIcon, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
@@ -11,6 +11,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const pathname = usePathname();
     const router = useRouter();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
+    const [adminEmail, setAdminEmail] = useState("hazratummar9@gmail.com");
+
+    useEffect(() => {
+        if (pathname !== "/admin/login") {
+            fetch("/api/auth/me")
+                .then(res => res.json())
+                .then(data => {
+                    if (data.email) {
+                        setAdminEmail(data.email);
+                    }
+                })
+                .catch(() => {});
+        }
+    }, [pathname]);
 
     // Don't show layout on login page
     if (pathname === "/admin/login") {
@@ -30,13 +44,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { name: "Media", href: "/admin/media", icon: ImageIcon },
         { name: "Testimonials", href: "/admin/testimonials", icon: MessageSquare },
         { name: "Socials", href: "/admin/socials", icon: User },
+        { name: "View Live Site", href: "/", icon: Globe },
     ];
 
     const SidebarContent = () => (
         <div className="flex flex-col h-full">
             <div className="p-6 border-b border-white/10">
                 <Link href="/" className="text-2xl font-bold font-heading tracking-tighter">
-                    Hazrat<span className="text-primary">.dev</span>
+                    Relay<span className="text-primary">Works</span>
                 </Link>
                 <p className="text-xs text-muted-foreground mt-1">Admin Panel</p>
             </div>
@@ -48,6 +63,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         <Link
                             key={item.href}
                             href={item.href}
+                            target={item.href === "/" ? "_blank" : undefined}
+                            rel={item.href === "/" ? "noopener noreferrer" : undefined}
                             onClick={() => setIsMobileOpen(false)}
                             className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${isActive
                                 ? "bg-primary text-white shadow-lg shadow-primary/25"
@@ -68,7 +85,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     </div>
                     <div className="overflow-hidden">
                         <p className="text-sm font-medium truncate">Admin</p>
-                        <p className="text-xs text-muted-foreground truncate">hazratummar9@gmail.com</p>
+                        <p className="text-xs text-muted-foreground truncate">{adminEmail}</p>
                     </div>
                 </div>
                 <Button
@@ -88,7 +105,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             {/* Mobile Header & Sidebar */}
             <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-white/10 p-4 flex items-center justify-between">
                 <Link href="/" className="text-xl font-bold font-heading tracking-tighter">
-                    Hazrat<span className="text-primary">.dev</span>
+                    Relay<span className="text-primary">Works</span>
                 </Link>
                 <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
                     <SheetTrigger asChild>
