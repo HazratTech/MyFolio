@@ -1,19 +1,21 @@
-import { Hero } from "@/components/sections/Hero";
-import { About } from "@/components/sections/About";
-import { Projects } from "@/components/sections/Projects";
-import { Services } from "@/components/sections/Services";
-import { Testimonials } from "@/components/sections/Testimonials";
-import { Contact } from "@/components/sections/Contact";
+import { SystemDashboardHero } from "@/components/sections/CommandLineHero";
+import { ServiceShowcase } from "@/components/sections/ServiceShowcase";
+import { IntegrationBlueprint } from "@/components/sections/IntegrationBlueprint";
+import { CaseStudyTicker } from "@/components/sections/CaseStudyTicker";
+import { SocialProofWall } from "@/components/sections/SocialProofWall";
+import { TechDNA } from "@/components/sections/TechDNA";
+import { QuoteWizard } from "@/components/sections/QuoteWizard";
 
 export const LandingPage = () => {
   return (
-    <div className="flex flex-col gap-0 pb-0">
-      <Hero />
-      <About />
-      <Projects />
-      <Services />
-      <Testimonials />
-      <Contact />
+    <div className="flex flex-col gap-0 pb-0 bg-[#090a0f]">
+      <SystemDashboardHero />
+      <ServiceShowcase />
+      <IntegrationBlueprint />
+      <CaseStudyTicker />
+      <SocialProofWall />
+      <TechDNA />
+      <QuoteWizard />
     </div>
   );
 };

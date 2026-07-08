@@ -46,6 +46,14 @@ export const Navbar = () => {
                 element.scrollIntoView({ behavior: "smooth" });
                 setIsMobileMenuOpen(false);
             }
+        } else if (!isDiscordBotPage && href.startsWith("/#") && pathname === "/") {
+            e.preventDefault();
+            const targetId = href.replace("/#", "");
+            const element = document.getElementById(targetId);
+            if (element) {
+                element.scrollIntoView({ behavior: "smooth" });
+                setIsMobileMenuOpen(false);
+            }
         }
     };
 
