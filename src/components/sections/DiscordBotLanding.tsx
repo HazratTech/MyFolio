@@ -49,14 +49,6 @@ const caseStudies: CaseStudy[] = [
 ];
 
 export const DiscordBotLanding = () => {
-    // Force dark mode class on root for this landing page
-    useEffect(() => {
-        document.documentElement.classList.add("dark");
-        return () => {
-            document.documentElement.classList.remove("dark");
-        };
-    }, []);
-
     // Simulator states
     const [simulatorTab, setSimulatorTab] = useState<"verify" | "ticket" | "ai">("verify");
     const [messages, setMessages] = useState<Array<{ sender: "user" | "bot" | "system"; text: string; embed?: any; isCommand?: boolean }>>([]);
