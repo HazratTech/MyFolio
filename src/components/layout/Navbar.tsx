@@ -74,8 +74,11 @@ export const Navbar = () => {
             >
                 <div className="container mx-auto px-6 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <Link href="/" className="hover:opacity-90 transition-opacity flex items-center">
-                            <img src="/logo-brand.png" alt="RelayWorks" className={cn("h-8 w-auto dark:brightness-0 dark:invert", isDiscordBotPage && "brightness-0 invert")} />
+                        <Link href="/" className="hover:opacity-90 transition-opacity flex items-center gap-2">
+                            <img src="/logo-brand.png" alt="RelayWorks Logo" className="h-9 w-auto" />
+                            <span className="text-xl font-bold font-heading tracking-tighter text-white">
+                                Relay<span className="text-primary">Works</span>
+                            </span>
                         </Link>
                         <span className={cn("text-foreground/20", isDiscordBotPage && "text-white/20")}>|</span>
                         <Link href="/blog" className={cn(
