@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { GoogleAdSense } from "@/components/analytics/GoogleAdSense";
-import { FacebookPixel } from "@/components/analytics/FacebookPixel";
+import { FacebookPixelRouteTracker } from "@/components/analytics/FacebookPixel";
 import { CookieConsent } from "@/components/layout/CookieConsent";
 import { LiveChatWidget } from "@/components/chat/LiveChatWidget";
 import { cn } from "@/lib/utils";
@@ -175,7 +175,7 @@ export default function RootLayout({
           `
         }} />
         <GoogleAdSense />
-        <FacebookPixel />
+        <FacebookPixelRouteTracker />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
