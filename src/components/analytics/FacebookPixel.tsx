@@ -2,7 +2,6 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-import Script from "next/script";
 
 export const FacebookPixel = () => {
   const pathname = usePathname();
@@ -15,9 +14,7 @@ export const FacebookPixel = () => {
 
   return (
     <>
-      <Script
-        id="fb-pixel"
-        strategy="afterInteractive"
+      <script
         dangerouslySetInnerHTML={{
           __html: `
             !function(f,b,e,v,n,t,s)
