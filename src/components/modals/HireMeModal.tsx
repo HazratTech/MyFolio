@@ -73,7 +73,7 @@ export const HireMeModal = ({ children }: { children: React.ReactNode }) => {
             <DialogTrigger asChild>
                 {children}
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] bg-card border-white/10 text-foreground">
+            <DialogContent className="sm:max-w-[425px] bg-[#111218] border-white/10 text-foreground shadow-2xl">
                 <DialogHeader>
                     <DialogTitle className="text-2xl font-bold text-center">Hire Me</DialogTitle>
                 </DialogHeader>

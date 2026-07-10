@@ -76,7 +76,7 @@ export const ServiceDetailsModal = ({ children, serviceType }: { children: React
             <DialogTrigger asChild>
                 {children}
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[800px] w-[95vw] max-h-[90vh] bg-card/95 backdrop-blur-xl border-white/10 text-foreground p-0 overflow-hidden flex flex-col">
+            <DialogContent className="sm:max-w-[800px] w-[95vw] max-h-[90vh] bg-[#111218] border-white/10 text-foreground p-0 overflow-hidden flex flex-col shadow-2xl">
                 <div className="p-6 border-b border-white/10 bg-white/5 flex items-center gap-4 shrink-0">
                     <div className={`w-12 h-12 rounded-lg ${details.bg} flex items-center justify-center ${details.color} shrink-0`}>
                         <Icon className="w-6 h-6" />

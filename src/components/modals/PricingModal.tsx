@@ -206,7 +206,7 @@ export const PricingModal = ({ children, serviceType }: { children: React.ReactN
             <DialogTrigger asChild>
                 {children}
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[900px] bg-card/95 backdrop-blur-xl border-white/10 text-foreground p-0 overflow-hidden">
+            <DialogContent className="sm:max-w-[900px] bg-[#111218] border-white/10 text-foreground p-0 overflow-hidden shadow-2xl">
                 <div className="p-6 text-center border-b border-white/10 bg-white/5">
                     <DialogTitle className="text-3xl font-bold mb-2">Choose Your Plan</DialogTitle>
                     <p className="text-muted-foreground">Transparent pricing for {serviceType} Development.</p>
