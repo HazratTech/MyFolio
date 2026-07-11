@@ -206,6 +206,60 @@ export const DiscordBotLanding = () => {
         }
     };
 
+    // Quick Quote form states
+    const [quickFormData, setQuickFormData] = useState({
+        name: "",
+        contact: "",
+        idea: ""
+    });
+    const [isQuickSubmitting, setIsQuickSubmitting] = useState(false);
+    const [quickSubmitResult, setQuickSubmitResult] = useState<string | null>(null);
+
+    const handleQuickFormSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsQuickSubmitting(true);
+        setQuickSubmitResult(null);
+
+        const embed = {
+            title: "⚡ Quick 60s Discord Bot Lead",
+            color: 3066993, // Greenish color
+            fields: [
+                { name: "Name", value: quickFormData.name, inline: true },
+                { name: "Contact (Discord/Email)", value: quickFormData.contact, inline: true },
+                { name: "Bot Idea", value: quickFormData.idea }
+            ],
+            timestamp: new Date().toISOString()
+        };
+
+        try {
+            const response = await fetch("/api/contact", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ embeds: [embed] })
+            });
+
+            if (response.ok) {
+                setQuickSubmitResult("success");
+                setQuickFormData({
+                    name: "",
+                    contact: "",
+                    idea: ""
+                });
+                trackEvent("discord_bot_lead_submit", {
+                    type: "quick_quote"
+                });
+            } else {
+                setQuickSubmitResult("failed");
+            }
+        } catch (error) {
+            console.error("Quick Form submit failed:", error);
+            setQuickSubmitResult("failed");
+        } finally {
+            setIsQuickSubmitting(false);
+        }
+    };
+
+
     return (
         <LazyMotion features={domAnimation}>
             <div className="bg-[#0f1012] text-[#f2f3f5] min-h-screen">
@@ -240,19 +294,22 @@ export const DiscordBotLanding = () => {
                                     }}
                                     className="bg-primary hover:bg-primary/95 text-white font-bold px-8 py-6 text-lg rounded-xl shadow-[0_0_20px_rgba(59,130,246,0.4)]"
                                 >
-                                    🚀 Discuss My Project
+                                    🚀 Discuss Your Bot Idea
                                 </Button>
-                                <a
-                                    href="#quote-form"
-                                    onClick={() => trackEvent("hero_cta_click", { action: "discord_contact" })}
-                                    className="inline-flex items-center justify-center gap-2 font-bold px-8 py-4 text-lg border border-white/10 hover:bg-white/5 rounded-xl transition-all"
+                                <Button
+                                    onClick={() => {
+                                        window.dispatchEvent(new CustomEvent("openLiveChat"));
+                                        trackEvent("hero_cta_click", { action: "discord_chat_open" });
+                                    }}
+                                    variant="outline"
+                                    className="inline-flex items-center justify-center gap-2 font-bold px-8 py-6 text-lg border border-white/10 hover:bg-white/5 hover:text-white rounded-xl transition-all bg-transparent"
                                 >
                                     <img src="/discord.svg" alt="Discord" className="w-5 h-5" />
-                                    Message on Discord
-                                </a>
+                                    Chat Live in Discord UI
+                                </Button>
                             </div>
                             <div className="flex flex-wrap items-center gap-3 pt-2 text-xs font-medium text-[#949ba4]">
-                                <span className="flex items-center gap-1"><Check className="w-3.5 h-3.5 text-green-500" /> Replies within 24 hours</span>
+                                <span className="flex items-center gap-1"><Check className="w-3.5 h-3.5 text-green-500" /> Replies under 2 hours</span>
                                 <span className="flex items-center gap-1"><Check className="w-3.5 h-3.5 text-green-500" /> Free consultation</span>
                                 <span className="flex items-center gap-1"><Check className="w-3.5 h-3.5 text-green-500" /> Fixed pricing</span>
                                 <span className="flex items-center gap-1"><Check className="w-3.5 h-3.5 text-green-500" /> Source code included</span>
@@ -342,6 +399,86 @@ export const DiscordBotLanding = () => {
                         <div className="flex items-center gap-2">
                             <Check className="w-4 h-4 text-green-500 font-black" />
                             <span className="text-white">4+ Years Experience</span>
+                        </div>
+                    </div>
+                </section>
+
+                {/* 2.1 QUICK QUOTE FORM SECTION (CRO Optimization) */}
+                <section className="py-12 bg-[#0f1012] border-b border-white/5">
+                    <div className="container mx-auto px-6 max-w-4xl">
+                        <div className="bg-[#1e1f22] border border-[#2f3136] rounded-2xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-[#5865F2]" />
+                            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+                                <div className="space-y-3 text-left max-w-md">
+                                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-semibold text-emerald-400 uppercase tracking-wider">
+                                        ⚡ Fast Track
+                                    </div>
+                                    <h3 className="text-xl md:text-2xl font-bold font-heading text-white">
+                                        Get a Bot Quote in 60 Seconds
+                                    </h3>
+                                    <p className="text-xs md:text-sm text-[#949ba4] leading-relaxed">
+                                        No long forms. Simply share your name, how to contact you, and a brief description of what you need. I will reply within 2 hours.
+                                    </p>
+                                </div>
+                                <form onSubmit={handleQuickFormSubmit} className="w-full md:max-w-md space-y-4 text-left">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div className="space-y-1.5">
+                                            <label htmlFor="quick-name" className="text-[10px] font-semibold text-[#949ba4] uppercase tracking-wider">Name</label>
+                                            <Input
+                                                id="quick-name"
+                                                type="text"
+                                                placeholder="Your Name"
+                                                value={quickFormData.name}
+                                                onChange={(e) => setQuickFormData({ ...quickFormData, name: e.target.value })}
+                                                required
+                                                className="bg-[#2b2d31] border-white/10 text-white focus-visible:ring-[#5865F2] h-10 text-sm"
+                                            />
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <label htmlFor="quick-contact" className="text-[10px] font-semibold text-[#949ba4] uppercase tracking-wider">Discord or Email</label>
+                                            <Input
+                                                id="quick-contact"
+                                                type="text"
+                                                placeholder="username#0000 or email"
+                                                value={quickFormData.contact}
+                                                onChange={(e) => setQuickFormData({ ...quickFormData, contact: e.target.value })}
+                                                required
+                                                className="bg-[#2b2d31] border-white/10 text-white focus-visible:ring-[#5865F2] h-10 text-sm"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <label htmlFor="quick-idea" className="text-[10px] font-semibold text-[#949ba4] uppercase tracking-wider">Describe your bot idea in one line</label>
+                                        <Input
+                                            id="quick-idea"
+                                            type="text"
+                                            placeholder="e.g. ticket bot with custom buttons, ark game store integration..."
+                                            value={quickFormData.idea}
+                                            onChange={(e) => setQuickFormData({ ...quickFormData, idea: e.target.value })}
+                                            required
+                                            className="bg-[#2b2d31] border-white/10 text-white focus-visible:ring-[#5865F2] h-10 text-sm"
+                                        />
+                                    </div>
+                                    <Button
+                                        type="submit"
+                                        disabled={isQuickSubmitting}
+                                        className="w-full bg-[#5865F2] hover:bg-[#5865F2]/95 text-white font-bold h-11 text-sm rounded-lg"
+                                    >
+                                        {isQuickSubmitting ? "Sending Request..." : "⚡ Send Quick Request"}
+                                    </Button>
+
+                                    {quickSubmitResult === "success" && (
+                                        <p className="text-emerald-400 text-xs font-semibold text-center mt-2">
+                                            ✓ Sent successfully! I'll contact you shortly.
+                                        </p>
+                                    )}
+                                    {quickSubmitResult === "failed" && (
+                                        <p className="text-red-400 text-xs font-semibold text-center mt-2">
+                                            ✗ Failed to send. Please try again or chat live.
+                                        </p>
+                                    )}
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -1079,18 +1216,15 @@ export const DiscordBotLanding = () => {
                                         </h3>
                                         <ChevronDown className={`w-4 h-4 text-[#949ba4] transition-transform ${openFaq === idx ? "rotate-180" : ""}`} />
                                     </div>
-                                    <AnimatePresence>
-                                        {openFaq === idx && (
-                                            <m.div
-                                                initial={{ height: 0, opacity: 0 }}
-                                                animate={{ height: "auto", opacity: 1 }}
-                                                exit={{ height: 0, opacity: 0 }}
-                                                className="overflow-hidden mt-2 text-[#dbdee1] text-sm leading-relaxed pl-7 text-left"
-                                            >
-                                                {faq.a}
-                                            </m.div>
-                                        )}
-                                    </AnimatePresence>
+                                    <div
+                                        className={`overflow-hidden transition-all duration-300 ease-in-out pl-7 text-left ${
+                                            openFaq === idx ? "max-h-[500px] opacity-100 mt-2" : "max-h-0 opacity-0 pointer-events-none"
+                                        }`}
+                                    >
+                                        <p className="text-[#dbdee1] text-sm leading-relaxed pb-2">
+                                            {faq.a}
+                                        </p>
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -1105,7 +1239,7 @@ export const DiscordBotLanding = () => {
                                 Tell Me About Your Bot Idea
                             </h2>
                             <p className="text-[#dbdee1] max-w-md mx-auto text-sm">
-                                Fill out our quick quote form to pre-qualify your project requirements and receive a transparent development quote within 24 hours.
+                                Fill out our quick quote form to pre-qualify your project requirements and receive a transparent development quote within 2 hours.
                             </p>
                         </div>
 
@@ -1226,7 +1360,7 @@ export const DiscordBotLanding = () => {
 
                                 {submitResult === "success" && (
                                     <p className="text-green-500 font-semibold text-center text-sm">
-                                        ✔ Request sent successfully! I will contact you on Discord/email within 24 hours.
+                                        ✔ Request sent successfully! I will contact you on Discord/email within 2 hours.
                                     </p>
                                 )}
                                 {submitResult === "failed" && (

@@ -19,14 +19,36 @@ export function hasAnalyticsConsent(): boolean {
 
 export function trackEvent(eventName: string, params?: Record<string, any>) {
     if (typeof window === "undefined") return;
-    if (!hasAnalyticsConsent()) return;
     
-    const gtag = (window as any).gtag;
-    if (typeof gtag === "function") {
-        gtag("event", eventName, params);
-    } else {
-        // Fallback: If analytics is consent-approved but gtag script is still loading, push directly to dataLayer
-        const dataLayer = (window as any).dataLayer || [];
-        dataLayer.push({ event: eventName, ...params });
+    // Google Analytics and Facebook tracking
+    const hasConsent = hasAnalyticsConsent();
+    
+    // Track Google Analytics if consent is given
+    if (hasConsent) {
+        const gtag = (window as any).gtag;
+        if (typeof gtag === "function") {
+            gtag("event", eventName, params);
+        } else {
+            const dataLayer = (window as any).dataLayer || [];
+            dataLayer.push({ event: eventName, ...params });
+        }
+    }
+
+    // Track Meta/Facebook Pixel if initialized
+    const fbq = (window as any).fbq;
+    if (typeof fbq === "function") {
+        const leadEvents = ["discord_bot_lead_submit", "contact_form_submit", "hire_me_submit", "quote_wizard_submit"];
+        if (leadEvents.includes(eventName)) {
+            // Map actual successful form submissions to standard 'Lead' event
+            fbq("track", "Lead", {
+                content_category: "Form Submission",
+                content_name: eventName,
+                value: params?.value || 0,
+                currency: params?.currency || "USD"
+            });
+        } else {
+            // Track other interactions as custom events
+            fbq("trackCustom", eventName, params);
+        }
     }
 }

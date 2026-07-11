@@ -25,6 +25,17 @@ export const LiveChatWidget = () => {
     const isOpenRef = useRef(isOpen);
     const lastMessageCount = useRef(0);
 
+    // Custom window event listener to programmatically open the chat
+    useEffect(() => {
+        const handleOpenChat = () => {
+            setIsOpen(true);
+            setShowTooltip(false);
+            localStorage.setItem("has_seen_chat_tooltip", "true");
+        };
+        window.addEventListener("openLiveChat", handleOpenChat);
+        return () => window.removeEventListener("openLiveChat", handleOpenChat);
+    }, []);
+
     // Check first-time visitor for CTA tooltip
     useEffect(() => {
         const hasSeenTooltip = localStorage.getItem("has_seen_chat_tooltip");
