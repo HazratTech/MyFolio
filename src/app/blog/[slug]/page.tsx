@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import PostCard from "@/components/blog/PostCard";
 import ReadingProgressBar from "@/components/blog/ReadingProgressBar";
+import BlogComments from "@/components/blog/BlogComments";
 
 async function getPost(slug: string, isPreview: boolean = false) {
     await dbConnect();
@@ -95,13 +96,33 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
         "@type": "BlogPosting",
         "headline": post.title,
         "image": post.coverImage ? [post.coverImage] : [],
-        "datePublished": post.publishedAt,
-        "dateModified": post.updatedAt,
-        "author": [{
+        "datePublished": post.publishedAt || post.createdAt,
+        "dateModified": post.updatedAt || post.publishedAt || post.createdAt,
+        "author": {
             "@type": "Person",
+            "name": "Hazrat Ummar Shaikh",
+            "jobTitle": "Founder & Lead Developer",
+            "worksFor": {
+                "@type": "Organization",
+                "name": "RelayWorks",
+                "url": "https://relayworks.dev"
+            },
+            "sameAs": [
+                "https://github.com/ihazratummar",
+                "https://www.linkedin.com/in/hazrat-ummar-shaikh/",
+                "https://x.com/ihazratummar9"
+            ]
+        },
+        "publisher": {
+            "@type": "Organization",
             "name": "RelayWorks",
-            "url": "https://relayworks.dev"
-        }]
+            "url": "https://relayworks.dev",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://relayworks.dev/logo-brand.png"
+            }
+        },
+        "description": post.excerpt || post.content.replace(/<[^>]*>/g, "").substring(0, 160)
     };
 
     const publishDate = new Date(post.publishedAt || post.createdAt).toLocaleDateString('en-US', {
@@ -244,6 +265,9 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
                         </p>
                     </div>
                 </div>
+
+                {/* Comments Section */}
+                <BlogComments postId={post._id.toString()} />
             </article>
 
             {/* ─── RELATED POSTS ─── */}

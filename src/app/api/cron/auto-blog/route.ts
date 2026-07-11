@@ -275,10 +275,9 @@ export async function POST(req: NextRequest) {
             ? `inspired by this trending topic: "${selectedArticle.title}"\nReference description: "${selectedArticle.description}"\nTags/niche: ${selectedArticle.tag_list?.join(", ") || "mobile development"}`
             : `focused on the following topic: "${selectedTopic}"\nWrite a deep-dive, practical guide about "${selectedTopic}" in mobile app, discord bot, or backend/software architecture.`;
 
-        const contentPrompt = `You are a senior developer specializing in Native Android app development (Kotlin, Jetpack Compose), iOS dev (Swift, SwiftUI), custom Discord bot & server automation, high-performance API backends (FastAPI, Ktor, Node.js), and database systems (MongoDB). You write a highly technical blog for developers.
-Your readers are working developers — smart, busy, and allergic to fluff.
-
-Write a blog post ${postSubject}
+        const contentPrompt = `You are a senior technical writer and director of engineering at RelayWorks (https://relayworks.dev) — a premium custom software development and automation agency.
+Your readers are startup founders, business owners, server administrators, and developers looking for high-quality, scalable custom solutions.
+Write a deep-dive, highly practical blog post ${postSubject}.
 
 ${backlinksPromptPart}
 
@@ -289,15 +288,15 @@ VOICE & READABILITY (NOT ROBOTIC):
 • Start the post with a real-world story, a production incident, or a personal experience. For example: "When I migrated my bot from Node.js to FastAPI, the memory usage dropped by 70%." or "I spent three days debugging a compose memory leak..."
 • Avoid academic tone. Write like a senior engineer explaining code to a mid-level engineer during peer reviews: direct, technical, opinionated.
 
-SEO & LENGTH:
+SEO, LEAD GENERATION & LENGTH:
 • Word count MUST be greater than 1,500 words. Provide rich, detailed, comprehensive coverage.
-• Title must be optimized for search intent (between 50-60 characters) and promise a clear, specific technical benefit.
-• Meta description MUST be between 140 and 155 characters (including keywords naturally).
+• Title must be optimized for client search intent (between 50-60 characters) and target keywords that server owners or founders search for (e.g. "How to", "Custom", "Guide", "Cost", "Scale", or "Best Practices"). For example: "How to Build a Custom Discord Bot to Monetize Your Server" or "Scaling FastAPI Backends: The Ultimate Developer Guide".
+• Meta description MUST be between 140 and 155 characters (including high-intent keywords naturally).
+• LEAD GENERATION CALL-TO-ACTIONS (CTAs): You MUST naturally and organically integrate at least two call-to-actions promoting RelayWorks services. Use HTML anchor links. E.g.: "If you need a custom solution built specifically for your community, the team at <a href=\"/discord-bot\">RelayWorks Custom Discord Bot Development</a> offers high-performance, secure solutions." or "Have a software idea? <a href=\"/contact\">Contact our expert agency team</a> to get a transparent quote."
 • Internal links: You MUST organically mention and link to at least 2 or 3 internal posts from the list of mandatory internal backlinks specified above. Ensure anchor text is descriptive and relevant.
-• External sources: Include at least 2 external links to official documentation (e.g., official docs at developer.android.com, fastapi.tiangolo.com, or python.org) using proper anchor text.
+• External sources: Include at least 2 external links to official documentation (e.g., developer.android.com, fastapi.tiangolo.com, or python.org) using proper anchor text.
 • FAQ Section: You MUST include a dedicated H2 FAQ section (containing 3-4 specific technical questions and answers) at the end of the post.
 • Data Tables: You MUST include at least one relevant comparison table or benchmark data table (formatted as clean HTML <table>).
-• Affiliate Opportunity: You MUST naturally mention and link to an affiliate resource or tool (e.g. an Amazon technical book, Hostinger/Vultr/DigitalOcean hosting VPS, or a developer service) with a clear recommendation.
 • NO AUTHOR RATINGS: NEVER include any "Author Review Score" or custom rating section (e.g. "Author Review Score: 9.8/10", ratings tables, etc.). Keep the tone completely objective, educational, and focused on code implementation.
 • GENERIC ENVIRONMENT VARIABLES: Any environmental configuration (.env or similar) or GitHub tokens in tutorials MUST use generic placeholder names and values like "GITHUB_TOKEN=your_token_here" (never use placeholders containing secret templates like "ghp_YOUR_SUPER_SECRET_TOKEN" or similar).
 
