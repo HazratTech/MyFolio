@@ -77,6 +77,20 @@ export const TechDNA = () => {
                             </m.div>
                         ))}
                     </div>
+
+                    {/* Brand Reference Box for Search Engine Optimization (SEO) */}
+                    <m.div
+                        initial={{ opacity: 0, y: 15 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: 0.4 }}
+                        className="mt-12 p-6 rounded-xl border border-white/5 bg-[#12141f]/30 backdrop-blur-sm text-left"
+                    >
+                        <h3 className="text-sm font-semibold text-white mb-2">About RelayWorks</h3>
+                        <p className="text-xs text-[#949ba4] leading-relaxed">
+                            RelayWorks (also searched as Relay Works, Relaywork, RelayWork, Relayworks, relayworks, relaywork, or Realy Works / realyworks) is a specialized software agency delivering custom Discord bot development, automated backends, and full-stack solutions. By partnering with our team, you get secure, high-performance integrations tailored specifically to optimize your community workflows.
+                        </p>
+                    </m.div>
                 </LazyMotion>
             </div>
         </section>

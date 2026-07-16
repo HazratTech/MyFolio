@@ -16,11 +16,18 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
   },
-  title: "RelayWorks | Custom Automation & Software Agency",
-  description: "RelayWorks is an expert agency specializing in custom Discord Bots, Backend Development, and automated workflow solutions. Founded by Hazrat Ummar Shaikh.",
+  title: "RelayWorks | Custom Software & Automation Agency",
+  description: "Welcome to RelayWorks (also known as Relay Works, Relaywork, or Realy Works). We are a custom software, backend API, and Discord bot development agency. Founded by Hazrat Ummar Shaikh.",
   keywords: [
     "RelayWorks",
-    "Relay Works",
+    "realyworks",
+    "Relayworks",
+    "relayworks",
+    "Realy Works",
+    "relay works",
+    "relaywork",
+    "RelayWork",
+    "Relaywork",
     "Discord Bot Agency",
     "Custom Discord Bots",
     "Backend Development Agency",
@@ -42,8 +49,8 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://relayworks.dev",
-    title: "RelayWorks | Custom Automation & Software Agency",
-    description: "RelayWorks is an expert agency specializing in custom Discord Bots, Backend Development, and automated workflow solutions.",
+    title: "RelayWorks | Custom Software & Automation Agency",
+    description: "Welcome to RelayWorks (also known as Relay Works, Relaywork, or Realy Works). We are a custom software, backend API, and Discord bot development agency.",
     siteName: "RelayWorks",
     images: [
       {
@@ -56,8 +63,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "RelayWorks | Custom Automation & Software Agency",
-    description: "RelayWorks is an expert agency specializing in custom Discord Bots, Backend Development, and automated workflow solutions.",
+    title: "RelayWorks | Custom Software & Automation Agency",
+    description: "Welcome to RelayWorks (also known as Relay Works, Relaywork, or Realy Works). We are a custom software, backend API, and Discord bot development agency.",
     images: ["/logo-brand.png"],
     creator: "@ihazratummar9",
   },
@@ -78,6 +85,17 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "RelayWorks",
+  alternateName: [
+    "Relay Works",
+    "realyworks",
+    "Relayworks",
+    "relayworks",
+    "Realy Works",
+    "relay works",
+    "relaywork",
+    "RelayWork",
+    "Relaywork"
+  ],
   url: "https://relayworks.dev",
   sameAs: [
     "https://github.com/ihazratummar",

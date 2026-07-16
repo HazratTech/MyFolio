@@ -5,9 +5,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from dotenv import load_dotenv
 import datetime
 
-# Try loading from local .env first, fallback to Next.js .env.local
 load_dotenv()
-load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env.local'))
 
 TOKEN = os.getenv('DISCORD_BOT_TOKEN')
 MONGO_URI = os.getenv('MONGODB_URI')
@@ -18,8 +16,10 @@ if not TOKEN or not MONGO_URI:
 
 # Setup MongoDB
 mongo_client = AsyncIOMotorClient(MONGO_URI)
-# Explicitly use 'myfolio' DB as defined in Next.js src/lib/db.ts
-db = mongo_client['myfolio']
+db = mongo_client.get_default_database()
+if db.name == 'test':
+    # Fallback if DB name not in URI
+    db = mongo_client['myfolio'] # Adjust if needed based on Next.js setup
 
 chat_threads = db['chatthreads']
 chat_messages = db['chatmessages']
