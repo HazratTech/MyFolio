@@ -107,7 +107,7 @@ async function generateAndUpload(
                 body: JSON.stringify({
                     prompt,
                     image_size: "landscape_16_9",
-                    num_inference_steps: 4,
+                    num_inference_steps: 8,
                     num_images: 1,
                     enable_safety_checker: true,
                     sync_mode: true
@@ -257,77 +257,57 @@ export async function POST(req: NextRequest) {
             }
         }
 
-        // Fetch recent posts for internal backlinks focus
-        const availableBacklinks = recentPosts.slice(0, 15).map((p: any) => ({
-            title: p.title,
-            link: `/blog/${p.slug}`
-        }));
-
-        const backlinksPromptPart = availableBacklinks.length > 0
-            ? `\n━━━━━ MANDATORY INTERNAL BACKLINKS (SEO FOCUS) ━━━━━\n` +
-              `You MUST naturally and organically link to at least 2 or 3 of the following existing blog posts on this site using their exact URLs (using standard HTML anchor tags like <a href="/blog/slug">Anchor Text</a>):\n` +
-              availableBacklinks.map((b: any) => `- URL: "${b.link}" (Post Title: "${b.title}")`).join("\n") + "\n" +
-              `Ensure the anchor text is highly relevant, flows naturally within the sentence context, and improves SEO backlinks.\n`
-            : "";
+        // NOTE: Internal backlinks removed — they caused 20+ broken 404 links.
+        // The AI was fabricating or mangling slugs. Only safe static CTAs are allowed.
 
         // ── 3. Generate Content with Gemini ───────────────────────────────────
         const postSubject = selectedArticle
             ? `inspired by this trending topic: "${selectedArticle.title}"\nReference description: "${selectedArticle.description}"\nTags/niche: ${selectedArticle.tag_list?.join(", ") || "mobile development"}`
             : `focused on the following topic: "${selectedTopic}"\nWrite a deep-dive, practical guide about "${selectedTopic}" in mobile app, discord bot, or backend/software architecture.`;
 
-        const contentPrompt = `You are a senior technical writer and director of engineering at RelayWorks (https://relayworks.dev) — a premium custom software development and automation agency.
-Your readers are startup founders, business owners, server administrators, and developers looking for high-quality, scalable custom solutions.
-Write a deep-dive, highly practical blog post ${postSubject}.
+        const contentPrompt = `You are a technical writer at RelayWorks (https://relayworks.dev), a custom software development and automation agency.
+Write a thorough, well-researched blog post ${postSubject}.
 
-${backlinksPromptPart}
+━━━━━ ACCURACY & INTEGRITY ━━━━━
+• NEVER fabricate statistics, benchmarks, performance numbers, or survey results. If you don't know an exact number, don't invent one.
+• Only reference facts that can be verified in official documentation. When citing a tool's capability, link to its official docs.
+• Do NOT claim personal experience or production incidents — write in a neutral, authoritative third-person voice.
+• Avoid generic AI phrases: "Let's dive in", "Game changer", "In today's fast-paced world", "In conclusion", "Let's talk about", "Forget the fluff".
 
-━━━━━ CONTENT RULES ━━━━━
-VOICE & READABILITY (NOT ROBOTIC):
-• NEVER write generic, boilerplate transitions, or overuse obvious AI phrases (like "Let's dive in", "Game changer", "Forget the fluff", "Let's talk...", "In conclusion", "As a developer", "In today's fast-paced world").
-• Write in first person ("I've seen this...", "When I built...", "In my production experience").
-• Start the post with a real-world story, a production incident, or a personal experience. For example: "When I migrated my bot from Node.js to FastAPI, the memory usage dropped by 70%." or "I spent three days debugging a compose memory leak..."
-• Avoid academic tone. Write like a senior engineer explaining code to a mid-level engineer during peer reviews: direct, technical, opinionated.
-
-SEO, LEAD GENERATION & LENGTH:
-• Word count MUST be greater than 1,500 words. Provide rich, detailed, comprehensive coverage.
-• Title must be optimized for client search intent (between 50-60 characters) and target keywords that server owners or founders search for (e.g. "How to", "Custom", "Guide", "Cost", "Scale", or "Best Practices"). For example: "How to Build a Custom Discord Bot to Monetize Your Server" or "Scaling FastAPI Backends: The Ultimate Developer Guide".
-• Meta description MUST be between 140 and 155 characters (including high-intent keywords naturally).
-• LEAD GENERATION CALL-TO-ACTIONS (CTAs): You MUST naturally and organically integrate at least two call-to-actions promoting RelayWorks services. Use HTML anchor links. E.g.: "If you need a custom solution built specifically for your community, the team at <a href=\"/discord-bot\">RelayWorks Custom Discord Bot Development</a> offers high-performance, secure solutions." or "Have a software idea? <a href=\"/contact\">Contact our expert agency team</a> to get a transparent quote."
-• Internal links: You MUST organically mention and link to at least 2 or 3 internal posts from the list of mandatory internal backlinks specified above. Ensure anchor text is descriptive and relevant.
-• External sources: Include at least 2 external links to official documentation (e.g., developer.android.com, fastapi.tiangolo.com, or python.org) using proper anchor text.
-• FAQ Section: You MUST include a dedicated H2 FAQ section (containing 3-4 specific technical questions and answers) at the end of the post.
-• Data Tables: You MUST include at least one relevant comparison table or benchmark data table (formatted as clean HTML <table>).
-• NO AUTHOR RATINGS: NEVER include any "Author Review Score" or custom rating section (e.g. "Author Review Score: 9.8/10", ratings tables, etc.). Keep the tone completely objective, educational, and focused on code implementation.
-• GENERIC ENVIRONMENT VARIABLES: Any environmental configuration (.env or similar) or GitHub tokens in tutorials MUST use generic placeholder names and values like "GITHUB_TOKEN=your_token_here" (never use placeholders containing secret templates like "ghp_YOUR_SUPER_SECRET_TOKEN" or similar).
-
+━━━━━ CONTENT QUALITY ━━━━━
+• Word count MUST exceed 1,500 words with substantive, well-organized technical depth.
+• Title: 50-60 characters, optimized for search intent (use patterns like "How to", "Guide", "Best Practices", "vs", "Custom").
+• Meta description: 140-155 characters with natural keyword placement.
+• Include working code examples where relevant. Code must be correct and runnable.
+• Include at least 2 external links to official documentation (e.g., developer.android.com, docs.python.org, fastapi.tiangolo.com).
+• INTERNAL LINKS: Do NOT link to any /blog/* URLs. Only use these two safe CTA links:
+  - <a href="/discord-bot">RelayWorks Custom Bot Development</a>
+  - <a href="/contact">Contact RelayWorks</a>
+  Integrate exactly 2 CTAs naturally within the article body.
+• Environment variables in code examples must use generic placeholders (e.g., YOUR_TOKEN_HERE).
+• NO author review scores, ratings tables, or subjective rating sections.
 
 ━━━━━ FORMAT ━━━━━
 • Return ONLY valid JSON matching the schema. Content must be HTML (not markdown).
-• CRITICAL CODE BLOCK FORMATTING: Inside HTML <pre><code> blocks, you MUST use actual escaped newline characters (\\n) and proper indentation to separate code lines. Do NOT write all code on a single line or collapse spacing. Every single line of code, import, comment, or statement must end with a \\n character so that it parses as a newline. For example, a code block must be returned in the JSON string as: "<pre><code>import os\\n\\ndef main():\\n    print(\\"Hello\\")</code></pre>"
-• Use <table>, <thead>, <tbody>, <tr>, <th>, <td> tags for tables.
-• Use <p> for paragraphs, <h2> / <h3> for headings, <ul><li> for lists, <strong> for emphasis.
-• Place [IMAGE: ...] markers BETWEEN block elements, NEVER nested inside any <p> tag. (e.g., place them immediately before a <h2> tag or between paragraphs)
+• CRITICAL CODE BLOCK FORMATTING: Inside HTML <pre><code> blocks, use escaped newline characters (\\n) to separate code lines. Do NOT write all code on a single line. Example: "<pre><code>import os\\n\\ndef main():\\n    print(\\"Hello\\")</code></pre>"
+• Use <p> for paragraphs, <h2>/<h3> for headings, <ul><li> for lists, <strong> for emphasis.
+• Place [IMAGE: ...] markers BETWEEN block elements, NEVER inside <p> tags.
 
-━━━━━ IMAGE PLACEMENT & STYLE ━━━━━
-You MUST insert exactly 3 image markers into the content.
-Format: [IMAGE: <highly specific prompt>]
-The image prompts must be:
-• DO NOT generate abstract geometric shapes (cubes, spheres, boxes). They look generic and out-of-context.
-• The prompts MUST describe a highly specific, context-relevant illustration that relates directly to the article's topic.
-• Style: "Isometric 3D rendering", "detailed high-tech concept illustration", "cyberpunk workspace aesthetic", "vibrant neon cyan and purple accents", "clean dark mode UI presentation style", "studio lighting", "highly detailed 3D digital art".
-- For example, if the article is about Discord bots, describe a stylized futuristic robot wearing headphones, typing on a holographic terminal displaying messages, in a neon-lit server room.
-- If it is about Python high-performance, describe a glowing metallic python coiled around a high-speed engine turbine, with binary code flows in the background.
-- If it is about Android development, describe a stylized glowing green Android mascot assembly line installing puzzle pieces onto a mobile phone screen in a sleek studio room.
-• ABSOLUTELY NO TEXT, LABELS, LETTERS, OR WORDS in the image. The image generator cannot spell.
+━━━━━ IMAGE MARKERS ━━━━━
+Insert exactly 3 image markers: [IMAGE: <description>]
+Image descriptions must be:
+• Concrete and literally relevant to the surrounding section content — not abstract shapes.
+• Style: "Detailed 3D rendering", "high-tech concept illustration", "clean dark studio lighting", "vibrant neon accents".
+• ABSOLUTELY NO TEXT, LABELS, LETTERS, OR WORDS in the image description.
 
 ━━━━━ SCHEMA ━━━━━
 {
-  "title": "SEO-optimised post title",
+  "title": "SEO-optimised post title (50-60 chars)",
   "category": "One of: Android, iOS, Backend, Discord Bots, Architecture",
-  "excerpt": "2-sentence excerpt (max 160 chars) that hooks the reader",
-  "metaDescription": "155-char meta description with keyword",
-  "coverImagePrompt": "Highly specific, thematic cover image prompt (matching Style guidelines, e.g. 'Isometric 3D rendering of...'), no text, high quality, 16:9",
-  "content": "Full HTML content with exactly 3 [IMAGE: prompt] markers embedded",
+  "excerpt": "2-sentence excerpt (max 160 chars)",
+  "metaDescription": "140-155 char meta description",
+  "coverImagePrompt": "Specific thematic cover image prompt, no text, 16:9",
+  "content": "Full HTML content with exactly 3 [IMAGE: ...] markers",
   "imageSlots": [
     { "placeholder": "[IMAGE: exact text as in content]", "prompt": "exact same prompt" },
     { "placeholder": "[IMAGE: exact text as in content]", "prompt": "exact same prompt" },
@@ -342,7 +322,7 @@ The image prompts must be:
         for (let attempt = 1; attempt <= 3; attempt++) {
             try {
                 const response = await ai.models.generateContent({
-                    model: "gemini-2.5-flash",
+                    model: "gemini-2.5-pro",
                     contents: contentPrompt,
                     config: {
                         responseMimeType: "application/json",

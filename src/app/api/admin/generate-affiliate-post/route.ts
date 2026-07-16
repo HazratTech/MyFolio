@@ -121,7 +121,7 @@ async function generateAndUpload(
                     body: JSON.stringify({
                         prompt,
                         image_size: "landscape_16_9",
-                        num_inference_steps: 4,
+                        num_inference_steps: 8,
                         num_images: 1,
                         enable_safety_checker: true,
                         sync_mode: true
@@ -209,24 +209,8 @@ export async function POST(req: NextRequest) {
               `Do NOT change or hallucinate these URLs. Embed them naturally using relevant anchor text in pros/cons, comparison tables, and call-to-actions.\n`
             : "";
 
-        // Fetch recent posts for internal backlinks focus
-        const recentPostsForLinks = await Post.find()
-            .sort({ createdAt: -1 })
-            .limit(15)
-            .select("title slug")
-            .lean();
-
-        const availableBacklinks = recentPostsForLinks.map((p: any) => ({
-            title: p.title,
-            link: `/blog/${p.slug}`
-        }));
-
-        const backlinksPromptPart = availableBacklinks.length > 0
-            ? `\n━━━━━ MANDATORY INTERNAL BACKLINKS (SEO FOCUS) ━━━━━\n` +
-              `You MUST naturally and organically link to at least 2 of the following existing blog posts on this site using their exact URLs (using standard HTML anchor tags like <a href="/blog/slug">Anchor Text</a>):\n` +
-              availableBacklinks.map((b: any) => `- URL: "${b.link}" (Post Title: "${b.title}")`).join("\n") + "\n" +
-              `Ensure the anchor text is highly relevant, flows naturally within the sentence context, and improves SEO backlinks.\n`
-            : "";
+        // NOTE: Internal backlinks removed — they caused broken 404 links.
+        // Only safe static CTAs (/discord-bot, /contact) are allowed.
 
         // Extract brand name helper
         const extractBrandName = (urlStr: string): string | null => {
@@ -335,16 +319,24 @@ Write a deep-dive, practical, and highly engaging blog post about: "${prompt}"
 
 ${targetAudiencePart}
 ${linksPromptPart}
-${backlinksPromptPart}
+
 ${brandsPromptPart}
+
+━━━━━ ACCURACY & INTEGRITY ━━━━━
+• NEVER fabricate statistics, benchmarks, performance numbers, or survey results.
+• Only reference facts verifiable in official documentation.
+• Do NOT claim personal experience or production incidents — use neutral, authoritative voice.
+• INTERNAL LINKS: Do NOT link to any /blog/* URLs. Only use these two safe CTA links:
+  - <a href="/discord-bot">RelayWorks Custom Bot Development</a>
+  - <a href="/contact">Contact RelayWorks</a>
 
 ━━━━━ CONTENT RULES ━━━━━
 • Word count MUST be greater than 1,200 words.
-• Title must be optimized for search intent (between 50-60 characters) promising a technical/practical benefit.
+• Title must be optimized for search intent (50-60 characters).
 • Meta description MUST be between 140 and 155 characters.
 • Place exactly 2 inline image placeholders: [IMAGE: prompt] and 1 cover image.
 ${coverImageRule}
-• The inline image prompts should be highly related to the product/service and describe a detailed modern isometric or 3D high-tech concept illustration with dark mode UI, vibrant colors, and no text.
+• Image prompts must be concrete and literally relevant to the section content — not abstract shapes. No text in images.
 
 ━━━━━ FORMAT ━━━━━
 • Return ONLY valid JSON matching the schema. Content must be HTML (not markdown).
@@ -372,7 +364,7 @@ ${coverImageRule}
         for (let attempt = 1; attempt <= 3; attempt++) {
             try {
                 const response = await ai.models.generateContent({
-                    model: "gemini-2.5-flash",
+                    model: "gemini-2.5-pro",
                     contents: contentPrompt,
                     config: {
                         responseMimeType: "application/json",

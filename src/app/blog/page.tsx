@@ -28,15 +28,31 @@ export async function generateMetadata({
     const canonicalPath = queryString ? `/blog?${queryString}` : '/blog';
     const absoluteUrl = `https://relayworks.dev${canonicalPath}`;
 
+    let title = "RelayWorks Blog | Automation & Software Engineering Tutorials";
+    let description = "Deep-dive guides, tutorials, and developer insights on Native Android (Kotlin, Compose), iOS, Discord bot development, Python API backends (FastAPI, Ktor), and software architecture.";
+
+    if (category) {
+        title = `${category} Tutorials & Guides | RelayWorks Blog`;
+        description = `Browse the latest guides, tutorials, and developer insights on ${category} on the RelayWorks Blog.`;
+    } else if (search) {
+        title = `Search Results for "${search}" | RelayWorks Blog`;
+        description = `Find article writeups, tutorials, and guides matching the search term "${search}" on the RelayWorks Blog.`;
+    }
+
+    if (page > 1) {
+        title = `${title.split(" | ")[0]} - Page ${page} | RelayWorks Blog`;
+        description = `${description} (Page ${page})`;
+    }
+
     return {
-        title: "RelayWorks Blog | Automation & Software Engineering Tutorials",
-        description: "Deep-dive guides, tutorials, and developer insights on Native Android (Kotlin, Compose), iOS, Discord bot development, Python API backends (FastAPI, Ktor), and software architecture.",
+        title,
+        description,
         alternates: {
             canonical: canonicalPath,
         },
         openGraph: {
-            title: "RelayWorks Blog | Automation & Software Engineering Tutorials",
-            description: "Deep-dive guides, tutorials, and developer insights on Native Android (Kotlin, Compose), iOS, Discord bot development, Python API backends (FastAPI, Ktor), and software architecture.",
+            title,
+            description,
             url: absoluteUrl,
             type: "website",
             images: [
@@ -50,8 +66,8 @@ export async function generateMetadata({
         },
         twitter: {
             card: "summary_large_image",
-            title: "RelayWorks Blog | Automation & Software Engineering Tutorials",
-            description: "Deep-dive guides, tutorials, and developer insights on Native Android (Kotlin, Compose), iOS, Discord bot development, Python API backends (FastAPI, Ktor), and software architecture.",
+            title,
+            description,
             images: ["/logo-brand.png"],
         }
     };
