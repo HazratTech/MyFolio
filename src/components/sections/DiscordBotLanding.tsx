@@ -491,7 +491,7 @@ export const DiscordBotLanding = () => {
                             <div className="flex flex-col md:flex-row items-center gap-8 text-left">
                                 <div className="shrink-0 relative">
                                     <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-[#2b2d31] overflow-hidden shadow-xl z-10 relative bg-[#2b2d31]">
-                                        <img src="https://github.com/ihazratummar.png" alt="Hazrat Ummar" className="w-full h-full object-cover" />
+                                        <img src="/images/founder.jpg" alt="Hazrat Ummar" className="w-full h-full object-cover" />
                                     </div>
                                     <div className="absolute -bottom-2 -right-2 bg-[#232428] border border-white/10 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-lg z-20">
                                         <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" /> Online

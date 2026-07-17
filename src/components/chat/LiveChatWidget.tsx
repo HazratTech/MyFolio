@@ -364,7 +364,7 @@ export const LiveChatWidget = () => {
                             {/* Avatar */}
                             <div className="relative shrink-0">
                                 <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-[#2b2d31]">
-                                    <img src="https://github.com/ihazratummar.png" alt="RelayWorks Founder" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                    <img src="/images/founder.jpg" alt="RelayWorks Founder" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                                 </div>
                                 <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-[#1e1f22] rounded-full shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse" />
                             </div>

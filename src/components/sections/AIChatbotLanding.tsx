@@ -89,10 +89,16 @@ const demoSteps: DemoStep[] = [
 ];
 
 const stats = [
-    { value: "160+", label: "businesses and clients" },
-    { value: "200+", label: "custom projects delivered" },
-    { value: "24+", label: "verified reviews" },
-    { value: "4+", label: "years building automations" },
+    { value: "200+", label: "total Fiverr orders" },
+    { value: "160+", label: "5-star ratings" },
+    { value: "24", label: "exclusive chatbot reviews" },
+];
+
+const recentProjects = [
+    { name: "Veridex Discord Bot", url: "https://github.com/HazratTech/Veridex-Discord-Bot" },
+    { name: "OPShop Discord Bot", url: "https://github.com/ihazratummar/OPShop-Discord-Bot" },
+    { name: "Mission Control Bot", url: "https://github.com/ihazratummar/Old-Mission-Control-Discord-Bot" },
+    { name: "YT Video Generator", url: "https://github.com/ihazratummar/YoutubeVideoGeneratorDiscordBot" },
 ];
 
 const problems = [
@@ -238,6 +244,14 @@ const faqs = [
     {
         q: "Will I get the source code?",
         a: "Yes. Source code can be included, and the system can be built so you are not locked into a fragile no-code setup.",
+    },
+    {
+        q: "How much does a custom chatbot cost?",
+        a: "Projects start from $250 for simple deployments. Full business automations with CRM sync and complex logic are scoped after a discovery call. We'll give you an exact quote on the consultation.",
+    },
+    {
+        q: "What if it doesn't work as expected?",
+        a: "Every chatbot is thoroughly tested against your real FAQs and edge cases before launch. I also include 30 days of free tuning after go-live. If it's not performing, I fix it at no extra cost.",
     },
 ];
 
@@ -510,19 +524,10 @@ function QuickQuoteForm() {
                 <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="h-12 flex-1 rounded-xl bg-cyan-400 font-bold text-slate-950 hover:bg-cyan-300"
+                    className="h-12 w-full rounded-xl bg-cyan-400 font-bold text-slate-950 hover:bg-cyan-300"
                 >
                     {isSubmitting ? "Sending..." : "Book Free Consultation"}
                     {!isSubmitting && <ArrowRight className="ml-2 h-4 w-4" />}
-                </Button>
-                <Button
-                    type="button"
-                    onClick={() => openLiveChat("quick_quote_form")}
-                    variant="outline"
-                    className="h-12 flex-1 rounded-xl border-white/10 bg-white/[0.04] font-bold text-white hover:bg-white/10 hover:text-white"
-                >
-                    <MessageSquare className="mr-2 h-4 w-4" />
-                    Chat Live
                 </Button>
             </div>
             {result === "success" && (
@@ -658,6 +663,24 @@ export const AIChatbotLanding = () => {
                     </m.div>
                 </section>
 
+                <section className="border-b border-white/10 bg-[#0b1726] px-6 py-16">
+                    <div className="container mx-auto max-w-5xl">
+                        <div className="mb-10 text-center">
+                            <h2 className="font-heading text-2xl font-black text-white">Recent Open-Source & Client Work</h2>
+                            <p className="mt-2 text-slate-400">Review my actual code and deployed systems.</p>
+                        </div>
+                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                            {recentProjects.map((project) => (
+                                <a key={project.name} href={project.url} target="_blank" rel="noopener noreferrer" className="group rounded-xl border border-white/10 bg-slate-950/40 p-5 transition-colors hover:border-cyan-400/50 hover:bg-cyan-400/5">
+                                    <GitBranch className="mb-4 h-6 w-6 text-cyan-300" />
+                                    <h3 className="font-bold text-white group-hover:text-cyan-300">{project.name}</h3>
+                                    <p className="mt-2 flex items-center text-xs font-bold text-slate-500">View Repository <ArrowRight className="ml-1 h-3 w-3 transition-transform group-hover:translate-x-1" /></p>
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
                 <section id="problems" className="px-6 py-20 md:py-28">
                     <div className="container mx-auto">
                         <SectionHeading
@@ -729,7 +752,7 @@ export const AIChatbotLanding = () => {
                     </div>
                 </section>
 
-                <section id="quote-form" className="px-6 py-20 md:py-28">
+                <section id="quote-form" className="px-6 py-10 md:py-16">
                     <div className="container mx-auto max-w-3xl">
                         <m.div
                             initial={{ opacity: 0, y: 20 }}
@@ -767,15 +790,15 @@ export const AIChatbotLanding = () => {
                         />
                         <div className="mt-12 grid gap-5 md:grid-cols-3 lg:grid-cols-6">
                             {[
-                                "Discovery",
-                                "Conversation design",
-                                "Knowledge setup",
-                                "Integrations",
-                                "Testing",
-                                "Launch and support",
+                                { title: "Discovery", desc: "We learn your workflow and pain points" },
+                                { title: "Conversation design", desc: "Map out what the chatbot should say" },
+                                { title: "Knowledge setup", desc: "Train it on your FAQs, docs, and policies" },
+                                { title: "Integrations", desc: "Connect to your CRM, calendar, and tools" },
+                                { title: "Testing", desc: "Test every edge case before going live" },
+                                { title: "Launch and support", desc: "Go live with ongoing support included" },
                             ].map((step, index) => (
                                 <m.div
-                                    key={step}
+                                    key={step.title}
                                     initial={{ opacity: 0, y: 20 }}
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true, amount: 0.2 }}
@@ -783,7 +806,8 @@ export const AIChatbotLanding = () => {
                                     className="rounded-2xl border border-white/10 bg-white/[0.045] p-5"
                                 >
                                     <span className="font-heading text-3xl font-black text-cyan-300">{index + 1}</span>
-                                    <h3 className="mt-4 font-heading text-lg font-black text-white">{step}</h3>
+                                    <h3 className="mt-4 font-heading text-lg font-black text-white">{step.title}</h3>
+                                    <p className="mt-2 text-sm leading-6 text-slate-400">{step.desc}</p>
                                 </m.div>
                             ))}
                         </div>
@@ -794,7 +818,7 @@ export const AIChatbotLanding = () => {
                     <div className="container mx-auto">
                         <SectionHeading
                             eyebrow="Testimonials"
-                            title="Built With Founder-Level Attention"
+                            title="What Our Clients Say"
                         />
                         <div className="mt-12 grid gap-5 lg:grid-cols-3">
                             {testimonials.map((testimonial: any, index: number) => (
@@ -814,16 +838,52 @@ export const AIChatbotLanding = () => {
                                         {testimonial.content || testimonial.message || testimonial.review || "Great communication, clean delivery, and a custom solution that matched the workflow."}
                                     </p>
                                     <div className="mt-5 flex items-center gap-3">
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-400/10 text-cyan-300">
-                                            <UserCheck className="h-5 w-5" />
-                                        </div>
+                                        {testimonial.image ? (
+                                            <img src={testimonial.image} alt={testimonial.name} className="h-10 w-10 rounded-full object-cover border border-white/10" />
+                                        ) : (
+                                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-400/10 text-cyan-300">
+                                                <UserCheck className="h-5 w-5" />
+                                            </div>
+                                        )}
                                         <div>
-                                            <p className="text-sm font-bold text-white">{testimonial.name || "Verified Client"}</p>
+                                            <p className="flex items-center gap-2 text-sm font-bold text-white">
+                                                {testimonial.name || "Verified Client"}
+                                                <span className="inline-flex items-center gap-1 rounded bg-green-500/10 px-1.5 py-0.5 text-[10px] font-bold text-green-400">
+                                                    <CheckCircle2 className="h-3 w-3" /> Fiverr Verified
+                                                </span>
+                                            </p>
                                             <p className="text-xs text-slate-400">{testimonial.role || testimonial.company || "RelayWorks client"}</p>
                                         </div>
                                     </div>
                                 </m.div>
                             ))}
+                        </div>
+                    </div>
+                </section>
+
+                <section className="px-6 py-20 md:py-28">
+                    <div className="container mx-auto max-w-4xl rounded-3xl border border-white/10 bg-slate-950/35 p-8 md:p-12">
+                        <div className="flex flex-col items-center gap-8 md:flex-row md:items-start md:gap-12">
+                            <div className="relative h-32 w-32 shrink-0 md:h-40 md:w-40">
+                                <img src="/images/founder.jpg" alt="Hazrat Ummar Shaikh" className="h-full w-full rounded-full border-2 border-cyan-400/30 object-cover" />
+                                <div className="absolute -bottom-2 -right-2 flex h-10 w-10 items-center justify-center rounded-full border-4 border-[#0b1726] bg-cyan-400 text-slate-950">
+                                    <BadgeCheck className="h-5 w-5" />
+                                </div>
+                            </div>
+                            <div className="text-center md:text-left">
+                                <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-cyan-300">
+                                    The Builder
+                                </div>
+                                <h3 className="font-heading text-2xl font-black text-white md:text-4xl">Hazrat Ummar Shaikh</h3>
+                                <p className="mt-4 text-base leading-7 text-slate-300">
+                                    I&apos;ve built 200+ automation projects for businesses across the US, UK, and Middle East. Every chatbot is built by me personally — no outsourcing. I focus on creating systems that capture leads, save hours of manual work, and actually move the needle for your business.
+                                </p>
+                                <div className="mt-6 flex flex-wrap justify-center gap-3 md:justify-start">
+                                    <a href="https://www.fiverr.com/hazratummar" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg bg-green-500/10 px-4 py-2 text-sm font-bold text-green-400 hover:bg-green-500/20">
+                                        <CheckCircle2 className="h-4 w-4" /> View 160+ Fiverr Reviews
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -873,19 +933,13 @@ export const AIChatbotLanding = () => {
                         <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-300">
                             Start with one workflow: support, lead capture, booking, CRM updates, or internal assistance. Then expand once it proves value.
                         </p>
-                        <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
+                        <div className="mt-8 flex justify-center">
                             <Button
                                 onClick={() => document.getElementById("quote-form")?.scrollIntoView({ behavior: "smooth" })}
-                                className="h-13 rounded-xl bg-cyan-400 px-7 font-black text-slate-950 hover:bg-cyan-300"
+                                className="h-13 rounded-xl bg-cyan-400 px-10 font-black text-slate-950 hover:bg-cyan-300"
                             >
                                 Book Free Consultation
-                            </Button>
-                            <Button
-                                onClick={() => openLiveChat("final_cta")}
-                                variant="outline"
-                                className="h-13 rounded-xl border-white/10 bg-white/[0.04] px-7 font-black text-white hover:bg-white/10 hover:text-white"
-                            >
-                                Chat Live
+                                <ArrowRight className="ml-2 h-5 w-5" />
                             </Button>
                         </div>
                     </div>
