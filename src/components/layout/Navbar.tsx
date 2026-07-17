@@ -24,9 +24,9 @@ export const Navbar = () => {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    const isDiscordBotPage = pathname === "/discord-bot";
-    const links = isDiscordBotPage
-        ? [
+    const landingNavLinks =
+        pathname === "/discord-bot"
+            ? [
               { name: "Problems", href: "#problems" },
               { name: "Services", href: "#services" },
               { name: "Comparison", href: "#comparison" },
@@ -35,10 +35,19 @@ export const Navbar = () => {
               { name: "Pricing", href: "#pricing" },
               { name: "FAQ", href: "#faq" },
           ]
-        : navLinks;
+            : pathname === "/ai-chatbot-development"
+                  ? [
+                      { name: "Problems", href: "#problems" },
+                      { name: "Get Quote", href: "#quote-form" },
+                      { name: "How It Works", href: "#process" },
+                      { name: "FAQ", href: "#faq" },
+                  ]
+                : null;
+    const isLandingPage = !!landingNavLinks;
+    const links = landingNavLinks ?? navLinks;
 
     const handleNavLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-        if (isDiscordBotPage && href.startsWith("#")) {
+        if (isLandingPage && href.startsWith("#")) {
             e.preventDefault();
             const targetId = href.replace("#", "");
             const element = document.getElementById(targetId);
@@ -46,7 +55,7 @@ export const Navbar = () => {
                 element.scrollIntoView({ behavior: "smooth" });
                 setIsMobileMenuOpen(false);
             }
-        } else if (!isDiscordBotPage && href.startsWith("/#") && pathname === "/") {
+        } else if (!isLandingPage && href.startsWith("/#") && pathname === "/") {
             e.preventDefault();
             const targetId = href.replace("/#", "");
             const element = document.getElementById(targetId);
@@ -66,7 +75,7 @@ export const Navbar = () => {
                 className={cn(
                     "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
                     isScrolled
-                        ? isDiscordBotPage
+                        ? isLandingPage
                             ? "bg-[#111214]/90 backdrop-blur-md border-b border-white/10 py-4"
                             : "bg-background/80 backdrop-blur-md border-b border-white/10 py-4"
                         : "bg-transparent py-6"
@@ -80,10 +89,10 @@ export const Navbar = () => {
                                 Relay<span className="text-primary">Works</span>
                             </span>
                         </Link>
-                        <span className={cn("text-foreground/20", isDiscordBotPage && "text-white/20")}>|</span>
+                        <span className={cn("text-foreground/20", isLandingPage && "text-white/20")}>|</span>
                         <Link href="/blog" className={cn(
                             "flex items-center gap-1.5 text-sm border px-2.5 py-0.5 rounded-full font-medium",
-                            isDiscordBotPage 
+                            isLandingPage
                                 ? "bg-[#5865F2]/10 text-[#5865F2] border-[#5865F2]/20" 
                                 : "bg-primary/10 text-primary border-primary/20"
                         )}>
@@ -98,13 +107,13 @@ export const Navbar = () => {
                             <Link
                                 key={index}
                                 href={link.href}
-                                scroll={!isDiscordBotPage}
+                                scroll={!isLandingPage}
                                 onClick={(e) => handleNavLinkClick(e, link.href)}
                                 className={cn(
                                     "text-sm font-medium transition-colors relative group",
-                                    (isDiscordBotPage ? false : pathname === link.href) 
+                                    (isLandingPage ? false : pathname === link.href)
                                         ? "text-primary" 
-                                        : isDiscordBotPage
+                                        : isLandingPage
                                             ? "text-[#dbdee1] hover:text-[#5865F2]"
                                             : "text-muted-foreground hover:text-primary"
                                 )}
@@ -112,20 +121,32 @@ export const Navbar = () => {
                                 {link.name}
                                 <span className={cn(
                                     "absolute -bottom-1 left-0 h-0.5 bg-primary transition-all group-hover:w-full",
-                                    (isDiscordBotPage ? false : pathname === link.href) ? "w-full" : "w-0"
+                                    (isLandingPage ? false : pathname === link.href) ? "w-full" : "w-0"
                                 )} />
                             </Link>
                         ))}
-                        <HireMeModal>
-                            <Button variant="default" className="bg-primary hover:bg-primary/90 text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]">
-                                Hire Me
+                        {isLandingPage ? (
+                            <Button 
+                                onClick={() => {
+                                    document.getElementById("quote-form")?.scrollIntoView({ behavior: "smooth" });
+                                }}
+                                variant="default" 
+                                className="bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold shadow-[0_0_15px_rgba(34,211,238,0.4)] border-none"
+                            >
+                                Free Consultation
                             </Button>
-                        </HireMeModal>
+                        ) : (
+                            <HireMeModal>
+                                <Button variant="default" className="bg-primary hover:bg-primary/90 text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+                                    Hire Me
+                                </Button>
+                            </HireMeModal>
+                        )}
                     </div>
 
                     {/* Mobile Menu Toggle */}
                     <button
-                        className={cn("md:hidden", isDiscordBotPage ? "text-[#dbdee1]" : "text-foreground")}
+                        className={cn("md:hidden", isLandingPage ? "text-[#dbdee1]" : "text-foreground")}
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         aria-label="Toggle menu"
                     >
@@ -143,7 +164,7 @@ export const Navbar = () => {
                         exit={{ opacity: 0, y: -20 }}
                         className={cn(
                             "fixed inset-0 z-40 pt-24 px-6 md:hidden",
-                            isDiscordBotPage ? "bg-[#111214]/95" : "bg-background/95 backdrop-blur-xl"
+                            isLandingPage ? "bg-[#111214]/95" : "bg-background/95 backdrop-blur-xl"
                         )}
                     >
                         <div className="flex flex-col space-y-6">
@@ -151,13 +172,13 @@ export const Navbar = () => {
                                 <Link
                                     key={index}
                                     href={link.href}
-                                    scroll={!isDiscordBotPage}
+                                    scroll={!isLandingPage}
                                     onClick={(e) => handleNavLinkClick(e, link.href)}
                                     className={cn(
                                         "text-2xl font-bold transition-colors",
-                                        (isDiscordBotPage ? false : pathname === link.href) 
+                                        (isLandingPage ? false : pathname === link.href)
                                             ? "text-primary" 
-                                            : isDiscordBotPage
+                                            : isLandingPage
                                                 ? "text-[#dbdee1] hover:text-[#5865F2]"
                                                 : "text-foreground hover:text-primary"
                                     )}
@@ -165,11 +186,23 @@ export const Navbar = () => {
                                     {link.name}
                                 </Link>
                             ))}
-                            <HireMeModal>
-                                <Button className="w-full bg-primary hover:bg-primary/90 text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]">
-                                    Hire Me
+                            {isLandingPage ? (
+                                <Button 
+                                    onClick={() => {
+                                        document.getElementById("quote-form")?.scrollIntoView({ behavior: "smooth" });
+                                        setIsMobileMenuOpen(false);
+                                    }}
+                                    className="w-full bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold shadow-[0_0_15px_rgba(34,211,238,0.4)] border-none"
+                                >
+                                    Free Consultation
                                 </Button>
-                            </HireMeModal>
+                            ) : (
+                                <HireMeModal>
+                                    <Button className="w-full bg-primary hover:bg-primary/90 text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+                                        Hire Me
+                                    </Button>
+                                </HireMeModal>
+                            )}
                         </div>
                     </m.div>
                 )}

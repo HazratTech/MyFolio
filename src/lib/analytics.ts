@@ -37,7 +37,7 @@ export function trackEvent(eventName: string, params?: Record<string, any>) {
     // Track Meta/Facebook Pixel if initialized
     const fbq = (window as any).fbq;
     if (typeof fbq === "function") {
-        const leadEvents = ["discord_bot_lead_submit", "contact_form_submit", "hire_me_submit", "quote_wizard_submit"];
+        const leadEvents = ["discord_bot_lead_submit", "ai_chatbot_lead_submit", "contact_form_submit", "hire_me_submit", "quote_wizard_submit"];
         if (leadEvents.includes(eventName)) {
             // Map actual successful form submissions to standard 'Lead' event
             fbq("track", "Lead", {
