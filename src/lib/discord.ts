@@ -100,3 +100,57 @@ export async function sendCronFailureNotification(error: any) {
         console.error("Failed to send Discord cron error webhook:", err);
     }
 }
+
+export interface SocialMediaContent {
+    twitter: string;
+    linkedin: string;
+    facebook: string;
+}
+
+export async function sendSocialMediaWebhook(
+    content: SocialMediaContent,
+    postTitle: string,
+    postUrl: string,
+    coverImage: string | null
+) {
+    const webhookUrl = process.env.DISCORD_POST_WEBHOOK;
+    if (!webhookUrl) {
+        console.warn("DISCORD_POST_WEBHOOK is not set, skipping social media broadcast.");
+        return;
+    }
+
+    const embeds = [
+        {
+            title: "🐦 Twitter Post",
+            description: `\`\`\`text\n${content.twitter}\n\`\`\`\n**Length:** ${content.twitter.length}/280 chars`,
+            color: 0x1DA1F2,
+            url: postUrl
+        },
+        {
+            title: "💼 LinkedIn Post",
+            description: `\`\`\`text\n${content.linkedin}\n\`\`\``,
+            color: 0x0A66C2,
+            url: postUrl
+        },
+        {
+            title: "📘 Facebook Post",
+            description: `\`\`\`text\n${content.facebook}\n\`\`\``,
+            color: 0x1877F2,
+            url: postUrl,
+            image: coverImage ? { url: coverImage } : undefined
+        }
+    ];
+
+    try {
+        await fetch(webhookUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                content: `🚀 **New Blog Generated!** Here are your social media drafts for:\n**${postTitle}**\n${postUrl}`,
+                embeds: embeds
+            })
+        });
+    } catch (err) {
+        console.error("Failed to send social media Discord webhook:", err);
+    }
+}

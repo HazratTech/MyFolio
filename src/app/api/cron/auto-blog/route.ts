@@ -5,7 +5,7 @@ import Post from "@/models/Post";
 import Category from "@/models/Category";
 import Media from "@/models/Media";
 import AutoBlogConfig from "@/models/AutoBlogConfig";
-import { sendCronFailureNotification } from "@/lib/discord";
+import { sendCronFailureNotification, sendSocialMediaWebhook } from "@/lib/discord";
 
 export const maxDuration = 120; // Vercel limit for hobby plan; upgrade for longer
 
@@ -658,6 +658,56 @@ Image descriptions must be:
             readingTime,
             views: 0,
         });
+
+        // ── 10. Generate Social Media Posts ────────────────────────────────────
+        try {
+            const socialPrompt = `You are a developer sharing a new technical blog post you just wrote.
+Write 3 social media posts (Twitter, LinkedIn, Facebook) to promote it.
+
+Blog Title: "${aiData.title}"
+Blog Excerpt: "${aiData.excerpt}"
+Tags: ${aiData.tags.join(", ")}
+
+RULES:
+1. NO AI SLOP. Do NOT use words like "Delve", "Game-changer", "Unlock", "In today's digital landscape", "Crucial", "Vital", "Revolutionize".
+2. TONE: Human, authentic, developer-to-developer. Slightly casual but professional. No extreme hype. Do NOT sound like a robotic marketer.
+3. TWITTER: MUST be under 280 characters. Short, punchy, maybe 1-2 hashtags max.
+4. LINKEDIN: Professional but conversational. Can be longer. Use line breaks.
+5. FACEBOOK: Casual, friendly tone.
+
+Return a JSON object with exactly these keys: "twitter", "linkedin", "facebook".
+Values must be plain text strings (no markdown bold/italics needed).`;
+
+            const socialResponse = await ai.models.generateContent({
+                model: "gemini-2.5-pro",
+                contents: socialPrompt,
+                config: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: Type.OBJECT,
+                        properties: {
+                            twitter: { type: Type.STRING },
+                            linkedin: { type: Type.STRING },
+                            facebook: { type: Type.STRING },
+                        },
+                        required: ["twitter", "linkedin", "facebook"],
+                    },
+                },
+            });
+
+            if (socialResponse && socialResponse.text) {
+                const socialData = JSON.parse(socialResponse.text);
+                await sendSocialMediaWebhook(
+                    socialData,
+                    newPost.title,
+                    `https://relayworks.dev/blog/${newPost.slug}`,
+                    newPost.coverImage
+                );
+            }
+        } catch (socialErr) {
+            console.error("Failed to generate/send social media posts:", socialErr);
+            // Non-fatal, do not throw.
+        }
 
         return NextResponse.json({
             success: true,
