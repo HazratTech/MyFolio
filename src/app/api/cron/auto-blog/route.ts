@@ -275,7 +275,9 @@ Write a thorough, well-researched blog post ${postSubject}.
 • Do NOT claim personal experience or production incidents — write in a neutral, authoritative third-person voice.
 • Avoid generic AI phrases: "Let's dive in", "Game changer", "In today's fast-paced world", "In conclusion", "Let's talk about", "Forget the fluff".
 
-━━━━━ CONTENT QUALITY ━━━━━
+━━━━━ CONTENT QUALITY & TONE ━━━━━
+• NO CHEESY MARKETING OR SALES PITCHES. Do NOT write promotional copy, overly hype RelayWorks, or sound like a marketer. The blog must read like an authentic, highly technical, and objective engineering guide written by a software developer for other software developers.
+• The CTAs (RelayWorks bot development / contact links) must be integrated naturally and subtly at the end of relevant sections, without aggressive sales text.
 • Word count MUST exceed 1,500 words with substantive, well-organized technical depth.
 • Title: 50-60 characters, optimized for search intent (use patterns like "How to", "Guide", "Best Practices", "vs", "Custom").
 • Meta description: 140-155 characters with natural keyword placement.
@@ -297,9 +299,10 @@ Write a thorough, well-researched blog post ${postSubject}.
 ━━━━━ IMAGE MARKERS ━━━━━
 Insert exactly 3 image markers: [IMAGE: <description>]
 Image descriptions must be:
-• Concrete and literally relevant to the surrounding section content — not abstract shapes.
-• Style: "Detailed 3D rendering", "high-tech concept illustration", "clean dark studio lighting", "vibrant neon accents".
-• ABSOLUTELY NO TEXT, LABELS, LETTERS, OR WORDS in the image description.
+• Concrete and literally relevant to the surrounding section content.
+• Style: "Premium 3D isometric render", "sleek modern technology concept asset", "rendered in Blender", "vibrant colorful neon accents (cyan, purple, pink)", "high contrast, deep rich dark background". Avoid dull grey gradients, washed out or muddy lighting.
+• CRITICAL: NEVER describe flowcharts, diagrams, schemas, charts, graphs, mockups of dashboards, or UI elements. These always generate gibberish, broken text. Instead, use metaphorical objects (e.g., a glowing 3D shield for security, glossy database cylinders for storage, glowing fiber optic lines for networking).
+• ABSOLUTELY NO TEXT, LABELS, LETTERS, NUMBERS, OR WORDS in the image description.
 
 ━━━━━ SCHEMA ━━━━━
 {
@@ -323,7 +326,7 @@ Image descriptions must be:
         for (let attempt = 1; attempt <= 3; attempt++) {
             try {
                 const response = await ai.models.generateContent({
-                    model: "gemini-2.5-pro",
+                    model: "gemini-2.5-flash",
                     contents: contentPrompt,
                     config: {
                         responseMimeType: "application/json",
@@ -487,7 +490,7 @@ Image descriptions must be:
         const unusedResults = inlineResults.slice(replacedCount);
         if (unusedResults.length > 0) {
             console.log(`Failsafe: Injecting ${unusedResults.length} unused generated inline images...`);
-            
+
             // Find all H2 and H3 tags
             const headingRegex = /<(h2|h3)[^>]*>([\s\S]*?)<\/\1>/gi;
             const headings: Array<{ tag: string; text: string; index: number; length: number }> = [];
@@ -605,7 +608,7 @@ Image descriptions must be:
                 clean = clean.replace(/(mkdir\s+[^\s]+)\s*(cd\s+[^\s]+)/gi, "$1\n$2");
                 clean = clean.replace(/(cd\s+[^\s]+)\s*(pip\s+install\s+|python3\s+|source\s+)/gi, "$1\n$2");
                 clean = clean.replace(/(python3\s+-m\s+venv\s+[^\s]+)\s*(source\s+)/gi, "$1\n$2");
-                
+
                 // Restore Python imports and startup code
                 clean = clean.replace(/(from\s+[^\s]+\s+import\s+[^\s]+)\s*(from\s+|import\s+)/g, "$1\n$2");
                 clean = clean.replace(/(import\s+[^\s]+)\s*(from\s+|import\s+)/g, "$1\n$2");
@@ -679,7 +682,7 @@ Return a JSON object with exactly these keys: "twitter", "linkedin", "facebook".
 Values must be plain text strings (no markdown bold/italics needed).`;
 
             const socialResponse = await ai.models.generateContent({
-                model: "gemini-2.5-pro",
+                model: "gemini-2.5-flash",
                 contents: socialPrompt,
                 config: {
                     responseMimeType: "application/json",

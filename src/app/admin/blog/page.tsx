@@ -84,7 +84,7 @@ export default function BlogAdminPage() {
             clearInterval(interval);
 
             if (!res.ok) {
-                throw new Error(data.error || data.details || "Failed to generate post");
+                throw new Error(data.details || data.error || "Failed to generate post");
             }
 
             setGenStep(steps.length); // complete

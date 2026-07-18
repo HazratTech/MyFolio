@@ -112,7 +112,7 @@ async function generateAndUpload(
                 filename = `${filenamePrefix}-${Date.now()}.png`;
             } else {
                 if (!process.env.FAL_KEY) throw new Error("FAL_KEY not configured");
-                const falRes = await fetch("https://fal.run/fal-ai/flux/schnell", {
+                const falRes = await fetch("https://fal.run/fal-ai/flux/dev", {
                     method: "POST",
                     headers: {
                         "Authorization": `Key ${process.env.FAL_KEY}`,
@@ -121,7 +121,8 @@ async function generateAndUpload(
                     body: JSON.stringify({
                         prompt,
                         image_size: "landscape_16_9",
-                        num_inference_steps: 8,
+                        num_inference_steps: 28,
+                        guidance_scale: 3.5,
                         num_images: 1,
                         enable_safety_checker: true,
                         sync_mode: true
@@ -197,16 +198,16 @@ export async function POST(req: NextRequest) {
         // Parse affiliate links into an array
         const linksList = affiliateLinks
             ? affiliateLinks
-                  .split("\n")
-                  .map((line: string) => line.trim())
-                  .filter(Boolean)
+                .split("\n")
+                .map((line: string) => line.trim())
+                .filter(Boolean)
             : [];
 
-        const linksPromptPart = linksList.length > 0 
+        const linksPromptPart = linksList.length > 0
             ? `\n━━━━━ MANDATORY AFFILIATE LINKS ━━━━━\n` +
-              `You MUST naturally and organically include the following exact URLs in the post content:\n` +
-              linksList.map((link: string) => `- ${link}`).join("\n") + "\n" +
-              `Do NOT change or hallucinate these URLs. Embed them naturally using relevant anchor text in pros/cons, comparison tables, and call-to-actions.\n`
+            `You MUST naturally and organically include the following exact URLs in the post content:\n` +
+            linksList.map((link: string) => `- ${link}`).join("\n") + "\n" +
+            `Do NOT change or hallucinate these URLs. Embed them naturally using relevant anchor text in pros/cons, comparison tables, and call-to-actions.\n`
             : "";
 
         // NOTE: Internal backlinks removed — they caused broken 404 links.
@@ -235,8 +236,8 @@ export async function POST(req: NextRequest) {
 
         const brandsPromptPart = uniqueBrands.length > 0
             ? `\n━━━━━ AFFILIATE PRODUCTS / BRANDS VISUALS (COVER IMAGE ONLY) ━━━━━\n` +
-              `For the cover image prompt (coverImagePrompt), you MUST describe a product visual mockup or brand presentation showing the actual dashboard, website landing page, or product interface of one of these brands: ${uniqueBrands.join(", ")}.\n` +
-              `Example prompt format: "A realistic premium product mockup of [BrandName] homepage displayed on a sleek laptop screen, vibrant accents, dark mode workspace, no text."\n`
+            `For the cover image prompt (coverImagePrompt), you MUST describe a product visual mockup or brand presentation showing the actual dashboard, website landing page, or product interface of one of these brands: ${uniqueBrands.join(", ")}.\n` +
+            `Example prompt format: "A realistic premium product mockup of [BrandName] homepage displayed on a sleek laptop screen, vibrant accents, dark mode workspace, no text."\n`
             : "";
 
         // Analyze target audience based on prompt and category
@@ -245,22 +246,22 @@ export async function POST(req: NextRequest) {
         let targetAudienceDescription = "Write in an informative, authoritative, and helpful style.";
 
         // Determine if it is about hosting or developer tooling (VPS, server, database, hosting, etc.)
-        const isHostingOrDevOps = promptLower.includes("host") || 
-                                  promptLower.includes("vps") || 
-                                  promptLower.includes("server") || 
-                                  promptLower.includes("deploy") || 
-                                  promptLower.includes("infrastructure") || 
-                                  promptLower.includes("docker") ||
-                                  promptLower.includes("kubernetes");
+        const isHostingOrDevOps = promptLower.includes("host") ||
+            promptLower.includes("vps") ||
+            promptLower.includes("server") ||
+            promptLower.includes("deploy") ||
+            promptLower.includes("infrastructure") ||
+            promptLower.includes("docker") ||
+            promptLower.includes("kubernetes");
 
         // Determine if it is about building / hiring / client services
-        const isBuildingOrServices = promptLower.includes("build") || 
-                                     promptLower.includes("create") || 
-                                     promptLower.includes("how to make") || 
-                                     promptLower.includes("hire") || 
-                                     promptLower.includes("develop a") || 
-                                     promptLower.includes("service") || 
-                                     promptLower.includes("cost to");
+        const isBuildingOrServices = promptLower.includes("build") ||
+            promptLower.includes("create") ||
+            promptLower.includes("how to make") ||
+            promptLower.includes("hire") ||
+            promptLower.includes("develop a") ||
+            promptLower.includes("service") ||
+            promptLower.includes("cost to");
 
         // Determine category specifics
         const isDiscordBot = promptLower.includes("discord") || promptLower.includes("bot");
@@ -311,8 +312,8 @@ export async function POST(req: NextRequest) {
             `• Tone & Focus: ${targetAudienceDescription}\n`;
 
         const coverImageRule = uniqueBrands.length > 0
-            ? `• The cover image prompt (coverImagePrompt) MUST describe a realistic product visual/dashboard mockup for a promoted brand (such as ${uniqueBrands.join(", ")}) as detailed above.`
-            : `• The cover image prompt (coverImagePrompt) should be a highly specific, thematic cover image prompt describing a modern isometric 3D developer workspace, dashboard concept, or high-tech system diagram, with dark background, neon accents, and no text.`;
+            ? `• The cover image prompt (coverImagePrompt) MUST describe a premium, metaphorical 3D illustration representing the theme of ${uniqueBrands.join(", ")} (e.g. a glossy 3D chrome logo or glowing conceptual hardware representing the service). Do NOT describe a dashboard mockup or interface, as that results in gibberish text.`
+            : `• The cover image prompt (coverImagePrompt) should be a highly specific, thematic cover image prompt describing a sleek, premium isometric 3D developer workspace layout (e.g. a sleek laptop displaying a colorful glowing gradient, surrounding futuristic glossy tech widgets) with dark background, neon accents, and absolutely no text, screens with text, schemas, diagrams, or flowcharts.`;
 
         const contentPrompt = `${personaPart}
 Write a deep-dive, practical, and highly engaging blog post about: "${prompt}"
@@ -330,13 +331,18 @@ ${brandsPromptPart}
   - <a href="/discord-bot">RelayWorks Custom Bot Development</a>
   - <a href="/contact">Contact RelayWorks</a>
 
-━━━━━ CONTENT RULES ━━━━━
+━━━━━ CONTENT RULES & TONE ━━━━━
+• NO CHEESY MARKETING OR SALES PITCHES. Do NOT write promotional copy, overly hype RelayWorks, or sound like a marketer. The blog must read like an authentic, highly technical, and objective engineering guide written by a software developer for other software developers.
+• Integrate the CTAs subtly and naturally at the end of relevant sections, without aggressive sales text.
 • Word count MUST be greater than 1,200 words.
 • Title must be optimized for search intent (50-60 characters).
 • Meta description MUST be between 140 and 155 characters.
 • Place exactly 2 inline image placeholders: [IMAGE: prompt] and 1 cover image.
 ${coverImageRule}
-• Image prompts must be concrete and literally relevant to the section content — not abstract shapes. No text in images.
+• Image prompts must be concrete and literally relevant to the surrounding section content.
+• Image Style: The prompts generated for the placeholders MUST describe: "Sleek, modern 3D isometric render", "premium technology concept asset", "rendered in Blender", "vibrant colorful neon accents (cyan, purple, pink)", "high contrast, deep rich dark background". Avoid dull grey gradients, washed out or muddy lighting.
+• CRITICAL: Image prompts must NEVER describe flowcharts, diagrams, schemas, charts, graphs, mockups of dashboards, or UI elements. These always generate gibberish, broken text. Instead, use metaphorical objects (e.g., a glowing 3D shield for security, glossy database cylinders for storage, glowing fiber optic lines for networking).
+• ABSOLUTELY NO TEXT, LABELS, LETTERS, NUMBERS, OR WORDS in the image prompts.
 
 ━━━━━ FORMAT ━━━━━
 • Return ONLY valid JSON matching the schema. Content must be HTML (not markdown).
@@ -364,7 +370,7 @@ ${coverImageRule}
         for (let attempt = 1; attempt <= 3; attempt++) {
             try {
                 const response = await ai.models.generateContent({
-                    model: "gemini-2.5-pro",
+                    model: "gemini-2.5-flash",
                     contents: contentPrompt,
                     config: {
                         responseMimeType: "application/json",
@@ -435,11 +441,11 @@ ${coverImageRule}
   <p class="mb-4">Get started or buy the products mentioned in this review using the official links below:</p>
   <ul class="list-disc pl-5 space-y-2">
     ${missingLinks
-        .map(
-            (link: string) =>
-                `<li><a href="${link}" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline font-semibold">${link}</a></li>`
-        )
-        .join("")}
+                        .map(
+                            (link: string) =>
+                                `<li><a href="${link}" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline font-semibold">${link}</a></li>`
+                        )
+                        .join("")}
   </ul>
 </div>`;
                 finalContent += ctaHtml;
