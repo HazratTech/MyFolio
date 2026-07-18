@@ -98,7 +98,7 @@ async function generateAndUpload(
 
     for (let attempt = 1; attempt <= retries; attempt++) {
         try {
-            const falRes = await fetch("https://fal.run/fal-ai/flux/schnell", {
+            const falRes = await fetch("https://fal.run/fal-ai/flux/dev", {
                 method: "POST",
                 headers: {
                     "Authorization": `Key ${process.env.FAL_KEY}`,
@@ -107,7 +107,8 @@ async function generateAndUpload(
                 body: JSON.stringify({
                     prompt,
                     image_size: "landscape_16_9",
-                    num_inference_steps: 8,
+                    num_inference_steps: 28,
+                    guidance_scale: 3.5,
                     num_images: 1,
                     enable_safety_checker: true,
                     sync_mode: true
