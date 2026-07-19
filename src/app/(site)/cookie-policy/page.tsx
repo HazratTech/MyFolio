@@ -1,4 +1,13 @@
 import React from "react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Cookie Policy | RelayWorks",
+    description: "Read our cookie policy to understand how we use cookies and tracking technologies to improve your experience.",
+    alternates: {
+        canonical: '/cookie-policy',
+    }
+};
 
 export default function CookiePolicy() {
     return (

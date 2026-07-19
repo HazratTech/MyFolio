@@ -1,4 +1,13 @@
 import React from "react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Privacy Policy | RelayWorks",
+    description: "Read our privacy policy to understand how RelayWorks collects, uses, protects, and handles your personal data.",
+    alternates: {
+        canonical: '/privacy-policy',
+    }
+};
 
 export default function PrivacyPolicy() {
     return (

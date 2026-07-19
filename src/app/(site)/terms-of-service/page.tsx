@@ -1,4 +1,13 @@
 import React from "react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Terms of Service | RelayWorks",
+    description: "Read the official terms and conditions for using the RelayWorks website, services, and developer tools.",
+    alternates: {
+        canonical: '/terms-of-service',
+    }
+};
 
 export default function TermsOfService() {
     return (

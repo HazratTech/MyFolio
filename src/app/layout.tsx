@@ -13,9 +13,7 @@ const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://relayworks.dev"),
-  alternates: {
-    canonical: '/',
-  },
+
   title: "RelayWorks | Custom Software & Automation Agency",
   description: "Welcome to RelayWorks (also known as Relay Works, Relaywork, or Realy Works). We are a custom software, backend API, and Discord bot development agency. Founded by Hazrat Ummar Shaikh.",
   keywords: [
