@@ -1,18 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import dbConnect from "@/lib/db";
 import Post from "@/models/Post";
 import Category from "@/models/Category";
-import Media from "@/models/Media";
 import { verifyToken } from "@/lib/session";
+import {
+    respectRPM,
+    countWords,
+    runResearchAgent,
+    runStrategistAgent,
+    runWriterAgent,
+    runEditorAgent,
+    runSEOAgent,
+    runVisualCreatorAgent
+} from "@/lib/blog-engine";
 
-export const maxDuration = 120; // Vercel limit for hobby plan
+export const maxDuration = 300; // 5 minutes for 6-agent pipeline
 
-const STORAGE_API_URL = "https://api-minio-storage.hazratdev.top";
-const BUCKET = "myfolio";
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── Auth Helper ─────────────────────────────────────────────────────────────
 
 async function checkAuth() {
     const token = cookies().get('admin_session')?.value;
@@ -22,159 +28,9 @@ async function checkAuth() {
     return !!session;
 }
 
-/** Upload a raw Buffer directly to MinIO via presigned URL */
-async function uploadBuffer(
-    buffer: Buffer,
-    mimeType: string,
-    filename: string
-): Promise<{ url: string; key: string }> {
-    const apiKey = process.env.STORAGE_API_KEY;
-    if (!apiKey) throw new Error("STORAGE_API_KEY not configured");
-
-    const initRes = await fetch(`${STORAGE_API_URL}/upload/init`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: apiKey },
-        body: JSON.stringify({
-            filename,
-            file_type: mimeType,
-            file_size: buffer.length,
-            bucket: BUCKET,
-        }),
-    });
-    if (!initRes.ok) throw new Error(`MinIO init failed: ${await initRes.text()}`);
-    const { upload_url, object_key } = await initRes.json();
-
-    const putRes = await fetch(upload_url, {
-        method: "PUT",
-        headers: { "Content-Type": mimeType },
-        body: buffer as any,
-    });
-    if (!putRes.ok) throw new Error(`MinIO PUT failed: ${await putRes.text()}`);
-
-    const completeRes = await fetch(`${STORAGE_API_URL}/upload/complete`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: apiKey },
-        body: JSON.stringify({
-            object_key,
-            file_size: buffer.length,
-            file_type: mimeType,
-            bucket: BUCKET,
-        }),
-    });
-    if (!completeRes.ok) throw new Error(`MinIO complete failed: ${await completeRes.text()}`);
-
-    const completeData = await completeRes.json();
-    return { url: completeData.final_url, key: object_key };
-}
-
-/** Generate an image using either OpenAI gpt-image-1 or Fal.ai and upload to MinIO. */
-async function generateAndUpload(
-    prompt: string,
-    filenamePrefix: string,
-    altText: string,
-    width = 1024,
-    height = 1024,
-    provider: "openai" | "fal" = "fal",
-    retries = 3
-): Promise<{ url: string; key: string } | null> {
-    for (let attempt = 1; attempt <= retries; attempt++) {
-        try {
-            let buffer: Buffer;
-            let mimeType: string;
-            let filename: string;
-
-            if (provider === "openai") {
-                if (!process.env.OPEN_AI_KEY) throw new Error("OPEN_AI_KEY not configured");
-                const openAiRes = await fetch("https://api.openai.com/v1/images/generations", {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${process.env.OPEN_AI_KEY}`,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        model: "gpt-image-1",
-                        prompt,
-                        n: 1,
-                        size: "1024x1024"
-                    })
-                });
-
-                if (!openAiRes.ok) {
-                    throw new Error(`OpenAI gpt-image-1 failed: status ${openAiRes.status}: ${await openAiRes.text()}`);
-                }
-
-                const openAiData = await openAiRes.json();
-                const imageBase64 = openAiData.data[0].b64_json;
-                if (!imageBase64) throw new Error("b64_json not found in OpenAI response");
-
-                buffer = Buffer.from(imageBase64, "base64");
-                mimeType = "image/png";
-                filename = `${filenamePrefix}-${Date.now()}.png`;
-            } else {
-                if (!process.env.FAL_KEY) throw new Error("FAL_KEY not configured");
-                const falRes = await fetch("https://fal.run/fal-ai/flux/dev", {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Key ${process.env.FAL_KEY}`,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        prompt,
-                        image_size: "landscape_16_9",
-                        num_inference_steps: 28,
-                        guidance_scale: 3.5,
-                        num_images: 1,
-                        enable_safety_checker: true,
-                        sync_mode: true
-                    })
-                });
-
-                if (!falRes.ok) {
-                    throw new Error(`Fal.ai fetch failed with status ${falRes.status}: ${await falRes.text()}`);
-                }
-
-                const falData = await falRes.json();
-                const imageUrl = falData.images[0].url;
-
-                const imageRes = await fetch(imageUrl);
-                if (!imageRes.ok) throw new Error("Failed to download image from Fal.ai URL");
-
-                const arrayBuffer = await imageRes.arrayBuffer();
-                buffer = Buffer.from(arrayBuffer);
-                mimeType = imageRes.headers.get("content-type") || "image/jpeg";
-                filename = `${filenamePrefix}-${Date.now()}.jpg`;
-            }
-
-            const { url, key } = await uploadBuffer(buffer, mimeType, filename);
-
-            await Media.create({
-                filename,
-                url,
-                key,
-                mimeType,
-                size: buffer.length,
-                altText,
-                dimensions: { width, height },
-            });
-
-            return { url, key };
-        } catch (err) {
-            console.error(
-                `generateAndUpload attempt ${attempt} failed for "${filenamePrefix}" using ${provider}:`,
-                err instanceof Error ? err.message : String(err)
-            );
-            if (attempt === retries) return null;
-            await new Promise((resolve) => setTimeout(resolve, attempt * 3000));
-        }
-    }
-    return null;
-}
-
-function countWords(html: string): number {
-    return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim().split(" ").length;
-}
-
-// ─── Main Handler ─────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════════
+//  MAIN HANDLER
+// ═══════════════════════════════════════════════════════════════════════════════
 
 export async function POST(req: NextRequest) {
     try {
@@ -192,346 +48,146 @@ export async function POST(req: NextRequest) {
         if (!process.env.GEMINI_API_KEY) {
             return NextResponse.json({ error: "GEMINI_API_KEY not configured" }, { status: 500 });
         }
+        if (!process.env.OPEN_AI_KEY) {
+            return NextResponse.json({ error: "OPEN_AI_KEY not configured" }, { status: 500 });
+        }
 
         const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-        // Parse affiliate links into an array
+        // Parse affiliate links
         const linksList = affiliateLinks
-            ? affiliateLinks
-                .split("\n")
-                .map((line: string) => line.trim())
-                .filter(Boolean)
+            ? affiliateLinks.split("\n").map((line: string) => line.trim()).filter(Boolean)
             : [];
 
-        const linksPromptPart = linksList.length > 0
-            ? `\n━━━━━ MANDATORY AFFILIATE LINKS ━━━━━\n` +
-            `You MUST naturally and organically include the following exact URLs in the post content:\n` +
-            linksList.map((link: string) => `- ${link}`).join("\n") + "\n" +
-            `Do NOT change or hallucinate these URLs. Embed them naturally using relevant anchor text in pros/cons, comparison tables, and call-to-actions.\n`
-            : "";
+        const linksContext = linksList.length > 0
+            ? `Affiliate links to naturally embed: ${linksList.join(", ")}`
+            : "No affiliate links — this is a general informative post.";
 
-        // NOTE: Internal backlinks removed — they caused broken 404 links.
-        // Only safe static CTAs (/discord-bot, /contact) are allowed.
+        console.log("═══════════════════════════════════════════════════");
+        console.log(`🚀 6-Agent Pipeline (Custom) for: "${prompt}"`);
+        console.log("═══════════════════════════════════════════════════");
 
-        // Extract brand name helper
-        const extractBrandName = (urlStr: string): string | null => {
-            try {
-                const url = new URL(urlStr);
-                const hostname = url.hostname.replace("www.", "");
-                const parts = hostname.split(".");
-                if (parts.length > 0) {
-                    const name = parts[0];
-                    return name.charAt(0).toUpperCase() + name.slice(1);
-                }
-                return null;
-            } catch {
-                return null;
-            }
-        };
-
-        const brands = linksList
-            .map((link: string) => extractBrandName(link))
-            .filter(Boolean) as string[];
-        const uniqueBrands = Array.from(new Set(brands));
-
-        const brandsPromptPart = uniqueBrands.length > 0
-            ? `\n━━━━━ AFFILIATE PRODUCTS / BRANDS VISUALS (COVER IMAGE ONLY) ━━━━━\n` +
-            `For the cover image prompt (coverImagePrompt), you MUST describe a product visual mockup or brand presentation showing the actual dashboard, website landing page, or product interface of one of these brands: ${uniqueBrands.join(", ")}.\n` +
-            `Example prompt format: "A realistic premium product mockup of [BrandName] homepage displayed on a sleek laptop screen, vibrant accents, dark mode workspace, no text."\n`
-            : "";
-
-        // Analyze target audience based on prompt and category
-        const promptLower = prompt.toLowerCase();
-        let targetAudience = "developers and general tech enthusiasts";
-        let targetAudienceDescription = "Write in an informative, authoritative, and helpful style.";
-
-        // Determine if it is about hosting or developer tooling (VPS, server, database, hosting, etc.)
-        const isHostingOrDevOps = promptLower.includes("host") ||
-            promptLower.includes("vps") ||
-            promptLower.includes("server") ||
-            promptLower.includes("deploy") ||
-            promptLower.includes("infrastructure") ||
-            promptLower.includes("docker") ||
-            promptLower.includes("kubernetes");
-
-        // Determine if it is about building / hiring / client services
-        const isBuildingOrServices = promptLower.includes("build") ||
-            promptLower.includes("create") ||
-            promptLower.includes("how to make") ||
-            promptLower.includes("hire") ||
-            promptLower.includes("develop a") ||
-            promptLower.includes("service") ||
-            promptLower.includes("cost to");
-
-        // Determine category specifics
-        const isDiscordBot = promptLower.includes("discord") || promptLower.includes("bot");
-        const isAndroidOrApp = promptLower.includes("android") || promptLower.includes("app") || promptLower.includes("mobile") || promptLower.includes("ios");
-        const isBackend = promptLower.includes("backend") || promptLower.includes("api") || promptLower.includes("database") || promptLower.includes("sql") || promptLower.includes("nosql");
-
-        if (linksList.length > 0) {
-            // Affiliate posts context
-            if (isHostingOrDevOps) {
-                targetAudience = "Developers, DevOps engineers, and system administrators";
-                targetAudienceDescription = "Focus heavily on technical details, performance benchmarks, uptime, API access, SSH keys, CLI commands, cost-efficiency, and developer experience. Speak developer-to-developer.";
-            } else if (isBuildingOrServices) {
-                targetAudience = "Customers, product managers, and business owners looking to build products";
-                targetAudienceDescription = "Focus on the end-user value, cost to build, features, ROI, timeline, and how to get started (e.g. android app development, discord bot development, or hiring professional developers). Explain concepts clearly without getting bogged down in low-level code unless necessary to show capability.";
-            } else if (isBackend) {
-                targetAudience = "Both developers (looking for technical implementation details) and business owners (looking for scalable backend architecture solutions)";
-                targetAudienceDescription = "Strike a balance: explain the architectural advantages, scalability, and security for the business audience, while providing clean examples or benchmark comparisons for the developers.";
-            } else if (isDiscordBot) {
-                targetAudience = "Discord server owners, community managers, and developers seeking bot solutions";
-                targetAudienceDescription = "Focus on features, customization, ease of hosting, bot performance, and how a well-built bot enhances community engagement.";
-            } else if (isAndroidOrApp) {
-                targetAudience = "Business owners wanting to launch apps and developers building them";
-                targetAudienceDescription = "Highlight user experience (UX), development speed, security, and market viability for the business/customer, combined with tech stack benefits for devs.";
-            }
-        } else {
-            // General informative content
-            if (isBuildingOrServices) {
-                targetAudience = "Customers, clients, and aspiring product builders";
-                targetAudienceDescription = "Focus on guides, project architecture choices, hiring guidelines (like hiring a mobile app or Discord bot developer), and standard development practices.";
-            } else if (isHostingOrDevOps) {
-                targetAudience = "Developers and tech professionals";
-                targetAudienceDescription = "Keep it deeply technical, focused on benchmarks, infrastructure config, code examples, and tooling comparisons.";
-            } else if (isBackend) {
-                targetAudience = "Developers and technical stakeholders";
-                targetAudienceDescription = "Provide deep architectural analysis, API design best practices, code snippets, and performance testing data.";
-            } else {
-                targetAudience = "General developers and technical readers";
-                targetAudienceDescription = "Keep it educational, structured, clean, and focus on practical engineering.";
-            }
-        }
-
-        const personaPart = linksList.length > 0
-            ? `You are a high-performing affiliate copywriter and senior developer. Your tone should be honest, authoritative, and direct, but completely optimized to drive clicks to the affiliate links. Avoid obvious robotic fluff (e.g. "let's dive in", "forget the fluff").`
-            : `You are a senior software engineer and technical writer. Your tone should be honest, authoritative, educational, and direct, focused on technical clarity, deep explanations, and professional best practices. Avoid obvious robotic introduction/outro fluff.`;
-
-        const targetAudiencePart = `\n━━━━━ TARGET AUDIENCE ━━━━━\n` +
-            `• Target Audience: ${targetAudience}\n` +
-            `• Tone & Focus: ${targetAudienceDescription}\n`;
-
-        const coverImageRule = uniqueBrands.length > 0
-            ? `• The cover image prompt (coverImagePrompt) MUST describe a premium, metaphorical 3D illustration representing the theme of ${uniqueBrands.join(", ")} (e.g. a glossy 3D chrome logo or glowing conceptual hardware representing the service). Do NOT describe a dashboard mockup or interface, as that results in gibberish text.`
-            : `• The cover image prompt (coverImagePrompt) should be a highly specific, thematic cover image prompt describing a sleek, premium isometric 3D developer workspace layout (e.g. a sleek laptop displaying a colorful glowing gradient, surrounding futuristic glossy tech widgets) with dark background, neon accents, and absolutely no text, screens with text, schemas, diagrams, or flowcharts.`;
-
-        const contentPrompt = `${personaPart}
-Write a deep-dive, practical, and highly engaging blog post about: "${prompt}"
-
-${targetAudiencePart}
-${linksPromptPart}
-
-${brandsPromptPart}
-
-━━━━━ ACCURACY & INTEGRITY ━━━━━
-• NEVER fabricate statistics, benchmarks, performance numbers, or survey results.
-• Only reference facts verifiable in official documentation.
-• Do NOT claim personal experience or production incidents — use neutral, authoritative voice.
-• INTERNAL LINKS: Do NOT link to any /blog/* URLs. Only use these two safe CTA links:
-  - <a href="/discord-bot">RelayWorks Custom Bot Development</a>
-  - <a href="/contact">Contact RelayWorks</a>
-
-━━━━━ CONTENT RULES & TONE ━━━━━
-• NO CHEESY MARKETING OR SALES PITCHES. Do NOT write promotional copy, overly hype RelayWorks, or sound like a marketer. The blog must read like an authentic, highly technical, and objective engineering guide written by a software developer for other software developers.
-• Integrate the CTAs subtly and naturally at the end of relevant sections, without aggressive sales text.
-• Word count MUST be greater than 1,200 words.
-• Title must be optimized for search intent (50-60 characters).
-• Meta description MUST be between 140 and 155 characters.
-• Place exactly 2 inline image placeholders: [IMAGE: prompt] and 1 cover image.
-${coverImageRule}
-• Image prompts must be concrete and literally relevant to the surrounding section content.
-• Image Style: The prompts generated for the placeholders MUST describe: "Sleek, modern 3D isometric render", "premium technology concept asset", "rendered in Blender", "vibrant colorful neon accents (cyan, purple, pink)", "high contrast, deep rich dark background". Avoid dull grey gradients, washed out or muddy lighting.
-• CRITICAL: Image prompts must NEVER describe flowcharts, diagrams, schemas, charts, graphs, mockups of dashboards, or UI elements. These always generate gibberish, broken text. Instead, use metaphorical objects (e.g., a glowing 3D shield for security, glossy database cylinders for storage, glowing fiber optic lines for networking).
-• ABSOLUTELY NO TEXT, LABELS, LETTERS, NUMBERS, OR WORDS in the image prompts.
-
-━━━━━ FORMAT ━━━━━
-• Return ONLY valid JSON matching the schema. Content must be HTML (not markdown).
-• Use <table>, <thead>, <tbody>, <tr>, <th>, <td> tags for comparison/benchmark tables.
-
-━━━━━ SCHEMA ━━━━━
-{
-  "title": "SEO-optimised post title",
-  "category": "One of: Android, iOS, Backend, Discord Bots, Architecture",
-  "excerpt": "2-sentence excerpt (max 160 chars)",
-  "metaDescription": "155-char meta description with keyword",
-  "coverImagePrompt": "Highly specific, thematic cover image prompt (isometric 3D style, dark workspace, neon accents, no text)",
-  "content": "Full HTML content with exactly 2 [IMAGE: prompt] markers embedded",
-  "imageSlots": [
-    { "placeholder": "[IMAGE: exact text as in content]", "prompt": "exact same prompt" },
-    { "placeholder": "[IMAGE: exact text as in content]", "prompt": "exact same prompt" }
-  ],
-  "tags": ["tag1", "tag2"],
-  "readingTime": 6
-}
-`;
-
-        let aiResponse = null;
-        let geminiError = null;
+        // ── AGENT 1: Research (Gemini Flash) ──────────────────────────────
+        let research: any;
         for (let attempt = 1; attempt <= 3; attempt++) {
             try {
-                const response = await ai.models.generateContent({
-                    model: "gemini-2.5-flash",
-                    contents: contentPrompt,
-                    config: {
-                        responseMimeType: "application/json",
-                        responseSchema: {
-                            type: Type.OBJECT,
-                            properties: {
-                                title: { type: Type.STRING },
-                                category: { type: Type.STRING },
-                                excerpt: { type: Type.STRING },
-                                metaDescription: { type: Type.STRING },
-                                coverImagePrompt: { type: Type.STRING },
-                                content: { type: Type.STRING },
-                                imageSlots: {
-                                    type: Type.ARRAY,
-                                    minItems: 2,
-                                    maxItems: 2,
-                                    items: {
-                                        type: Type.OBJECT,
-                                        properties: {
-                                            placeholder: { type: Type.STRING },
-                                            prompt: { type: Type.STRING },
-                                        },
-                                        required: ["placeholder", "prompt"],
-                                    },
-                                },
-                                tags: { type: Type.ARRAY, items: { type: Type.STRING } },
-                                readingTime: { type: Type.INTEGER },
-                            },
-                            required: [
-                                "title", "category", "excerpt", "metaDescription", "coverImagePrompt",
-                                "content", "imageSlots", "tags", "readingTime",
-                            ],
-                        },
-                    },
-                });
-                if (response && response.text) {
-                    aiResponse = response;
-                    break;
-                }
+                research = await runResearchAgent(ai, prompt, linksContext);
+                break;
             } catch (err) {
-                console.warn(`Gemini attempt ${attempt} failed:`, err instanceof Error ? err.message : String(err));
-                geminiError = err;
-                if (attempt < 3) {
-                    const errMsg = err instanceof Error ? err.message : String(err);
-                    const isTransient = errMsg.includes("429") || errMsg.includes("RESOURCE_EXHAUSTED") || errMsg.includes("503") || errMsg.includes("UNAVAILABLE");
-                    const delay = isTransient ? 15000 : attempt * 4000;
-                    console.log(`Waiting ${delay}ms before retrying Gemini...`);
-                    await new Promise((resolve) => setTimeout(resolve, delay));
-                }
+                console.warn(`Research Agent attempt ${attempt}:`, err instanceof Error ? err.message : String(err));
+                if (attempt === 3) throw err;
+                await respectRPM(8000);
             }
         }
 
-        if (!aiResponse || !aiResponse.text) {
-            throw geminiError || new Error("Failed to generate content from Gemini");
+        await respectRPM();
+
+        // ── AGENT 2: Strategist (Gemini Flash) ───────────────────────────
+        let strategy: any;
+        for (let attempt = 1; attempt <= 3; attempt++) {
+            try {
+                strategy = await runStrategistAgent(ai, research, prompt, linksContext, linksList);
+                break;
+            } catch (err) {
+                console.warn(`Strategist attempt ${attempt}:`, err instanceof Error ? err.message : String(err));
+                if (attempt === 3) throw err;
+                await respectRPM(8000);
+            }
         }
 
-        const aiData = JSON.parse(aiResponse.text);
-        let finalContent: string = aiData.content;
+        await respectRPM();
 
-        // Failsafe affiliate link validation
+        // ── AGENT 3: Writer (Gemini Flash) ────────────────────────────────
+        let writerContent = "";
+        for (let attempt = 1; attempt <= 3; attempt++) {
+            try {
+                writerContent = await runWriterAgent(ai, research, strategy, linksList);
+                break;
+            } catch (err) {
+                console.warn(`Writer attempt ${attempt}:`, err instanceof Error ? err.message : String(err));
+                if (attempt === 3) throw err;
+                await respectRPM(8000);
+            }
+        }
+
+        const writerReadingTime = Math.ceil(countWords(writerContent) / 230);
+        const imageSlots = strategy.sections
+            .filter((s: any) => s.visualType === "photo")
+            .map((s: any) => ({
+                placeholder: `[IMAGE: ${s.visualDescription}]`,
+                prompt: s.visualDescription
+            }));
+
+        // ── AGENT 4: Editor (GPT-4o-mini) ─────────────────────────────────
+        let editorOutput: any;
+        try {
+            editorOutput = await runEditorAgent(writerContent, strategy, research);
+            console.log(`   Editor Score: ${editorOutput.editorScore}/100`);
+        } catch (err) {
+            console.warn("Editor failed, using writer output:", err instanceof Error ? err.message : String(err));
+            editorOutput = { content: writerContent, editorScore: 60 };
+        }
+
+        // ── AGENT 5: SEO Optimizer (GPT-4o-mini) ─────────────────────────
+        let seoOutput: any;
+        try {
+            seoOutput = await runSEOAgent(editorOutput.content, strategy, research);
+            console.log(`   SEO Score: ${seoOutput.seoScore}/100`);
+        } catch (err) {
+            console.warn("SEO Agent failed:", err instanceof Error ? err.message : String(err));
+            seoOutput = {
+                title: strategy.title,
+                metaDescription: strategy.metaDescription,
+                content: editorOutput.content,
+                faqSchema: [],
+                seoScore: 50
+            };
+        }
+
+        const finalTitle = seoOutput.title || strategy.title;
+        let finalContent = seoOutput.content || editorOutput.content;
+
+        // Failsafe: Append missing affiliate links
         if (linksList.length > 0) {
             const missingLinks = linksList.filter((link: string) => !finalContent.includes(link));
             if (missingLinks.length > 0) {
-                // Append a beautiful CTA recommendation box at the end of the post
-                const ctaHtml = `
-<div class="bg-primary/10 border border-primary/20 p-6 rounded-2xl my-8">
+                finalContent += `\n<div class="bg-primary/10 border border-primary/20 p-6 rounded-2xl my-8">
   <h3 class="text-xl font-bold mb-2">Recommended Official Resources</h3>
-  <p class="mb-4">Get started or buy the products mentioned in this review using the official links below:</p>
   <ul class="list-disc pl-5 space-y-2">
-    ${missingLinks
-                        .map(
-                            (link: string) =>
-                                `<li><a href="${link}" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline font-semibold">${link}</a></li>`
-                        )
-                        .join("")}
+    ${missingLinks.map((link: string) => `<li><a href="${link}" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline font-semibold">${link}</a></li>`).join("")}
   </ul>
 </div>`;
-                finalContent += ctaHtml;
             }
         }
 
-        // Trigger cover and inline image generation
-        const coverPromise = generateAndUpload(
-            aiData.coverImagePrompt,
-            "cover",
-            aiData.title,
-            1200,
-            630,
-            "fal"
+        await respectRPM();
+
+        // ── AGENT 6: Visual Creator (Fal.ai → validate → OpenAI) ──────────
+        const { content: contentWithImages, coverResult } = await runVisualCreatorAgent(
+            ai,
+            finalContent,
+            strategy.coverImagePrompt,
+            imageSlots,
+            finalTitle,
+            `${finalTitle} - ${strategy.excerpt}`
         );
 
-        const slots: Array<{ placeholder: string; prompt: string }> = aiData.imageSlots || [];
-        const inlinePromises = slots.map((slot, index) => {
-            return new Promise<{ slot: typeof slot; result: any }>((resolve) => {
-                setTimeout(async () => {
-                    const result = await generateAndUpload(
-                        slot.prompt,
-                        `inline-${index}`,
-                        slot.prompt.slice(0, 100),
-                        1200,
-                        675,
-                        "fal"
-                    );
-                    resolve({ slot, result });
-                }, (index + 1) * 5000);
-            });
-        });
+        // ── Post-Processing: Clean up HTML ────────────────────────────────
+        let cleanedContent = contentWithImages;
 
-        const [coverResult, ...inlineResults] = await Promise.all([
-            coverPromise,
-            ...inlinePromises,
-        ]);
+        cleanedContent = cleanedContent.replace(/<p>\s*<(h2|h3)[^>]*>([\s\S]*?)<\/\1>\s*<\/p>/gi,
+            (_m: string, tag: string, inner: string) => `<${tag}>${inner}</${tag}>`);
+        cleanedContent = cleanedContent.replace(/<p>\s*<pre[^>]*>([\s\S]*?)<\/pre>\s*<\/p>/gi,
+            (_m: string, inner: string) => `<pre>${inner}</pre>`);
+        cleanedContent = cleanedContent.replace(/<p>\s*<div[^>]*>([\s\S]*?)<\/div>\s*<\/p>/gi,
+            (match: string) => match.replace(/^<p>\s*/, "").replace(/\s*<\/p>$/, ""));
+        cleanedContent = cleanedContent.replace(/<p>\s*<\/p>/gi, "");
 
-        // Inject Inline Images
-        let replacedCount = 0;
-        while (true) {
-            const markerRegex = /\[IMAGE:[^\]]*\]/i;
-            const match = markerRegex.exec(finalContent);
-            if (!match) break;
+        // ── Save Post ─────────────────────────────────────────────────────
+        const words = countWords(cleanedContent);
+        const readingTime = writerReadingTime || Math.ceil(words / 230);
 
-            const marker = match[0];
-            const matchIndex = match.index;
-            const resultObj = inlineResults[replacedCount];
-
-            let replacement = "";
-            if (resultObj && resultObj.result) {
-                const figureHtml = `\n<figure class="blog-image">
-  <img src="${resultObj.result.url}" alt="${resultObj.slot.prompt.slice(0, 120)}" loading="lazy" />
-</figure>\n`;
-
-                const before = finalContent.substring(0, matchIndex);
-                const lastOpenP = before.lastIndexOf("<p");
-                const lastCloseP = before.lastIndexOf("</p>");
-                const insideP = lastOpenP > lastCloseP;
-
-                if (insideP) {
-                    replacement = `</p>${figureHtml}<p>`;
-                } else {
-                    replacement = figureHtml;
-                }
-            }
-
-            finalContent = finalContent.substring(0, matchIndex) + replacement + finalContent.substring(matchIndex + marker.length);
-            replacedCount++;
-        }
-
-        finalContent = finalContent.replace(/\[IMAGE:[^\]]*\]/g, "");
-
-        // Clean up invalid tags
-        finalContent = finalContent.replace(/<p>\s*<(h2|h3)[^>]*>([\s\S]*?)<\/\1>\s*<\/p>/gi, (match, tag, innerHtml) => {
-            return `<${tag}>${innerHtml}</${tag}>`;
-        });
-        finalContent = finalContent.replace(/<p>\s*<pre[^>]*>([\s\S]*?)<\/pre>\s*<\/p>/gi, (match, innerHtml) => {
-            return `<pre>${innerHtml}</pre>`;
-        });
-        finalContent = finalContent.replace(/<p>\s*<\/p>/gi, "");
-
-        const words = countWords(finalContent);
-        const readingTime = aiData.readingTime || Math.ceil(words / 230);
-
-        let baseSlug = aiData.title
+        let baseSlug = finalTitle
             .toLowerCase()
             .replace(/[^a-z0-9]+/g, "-")
             .replace(/(^-|-$)+/g, "");
@@ -542,7 +198,7 @@ ${coverImageRule}
             counter++;
         }
 
-        const mainCategory = aiData.category || "Backend";
+        const mainCategory = strategy.category || "Backend";
         let categoryDoc = await Category.findOne({ name: mainCategory });
         if (!categoryDoc) {
             categoryDoc = await Category.create({
@@ -552,31 +208,40 @@ ${coverImageRule}
         }
 
         const newPost = await Post.create({
-            title: aiData.title,
+            title: finalTitle,
             slug,
-            excerpt: aiData.excerpt,
-            content: finalContent,
+            excerpt: strategy.excerpt,
+            content: cleanedContent,
             coverImage: coverResult?.url || null,
             coverImageKey: coverResult?.key || null,
             category: mainCategory,
-            tags: aiData.tags,
+            tags: strategy.tags,
             status: "published",
             publishedAt: new Date(),
             readingTime,
             views: 0,
         });
 
+        console.log("═══════════════════════════════════════════════════");
+        console.log(`✅ 6-Agent Custom Pipeline COMPLETE: "${finalTitle}"`);
+        console.log(`   Words: ${words} | Editor: ${editorOutput.editorScore}/100 | SEO: ${seoOutput.seoScore}/100`);
+        console.log("═══════════════════════════════════════════════════");
+
         return NextResponse.json({
             success: true,
             slug: newPost.slug,
             title: newPost.title,
             coverImage: coverResult?.url,
+            wordCount: words,
+            editorScore: editorOutput.editorScore,
+            seoScore: seoOutput.seoScore,
+            pipeline: "6-agent-v1",
         });
     } catch (error) {
-        console.error("Custom content generation failed:", error);
+        console.error("Custom content 6-agent pipeline failed:", error);
         return NextResponse.json(
             {
-                error: "Failed to generate custom affiliate content",
+                error: "Failed to generate custom content",
                 details: error instanceof Error ? error.message : String(error),
             },
             { status: 500 }

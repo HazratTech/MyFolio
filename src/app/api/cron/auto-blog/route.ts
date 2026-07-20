@@ -3,66 +3,21 @@ import { GoogleGenAI, Type } from "@google/genai";
 import dbConnect from "@/lib/db";
 import Post from "@/models/Post";
 import Category from "@/models/Category";
-import Media from "@/models/Media";
 import AutoBlogConfig from "@/models/AutoBlogConfig";
 import { sendCronFailureNotification, sendSocialMediaWebhook } from "@/lib/discord";
+import {
+    respectRPM,
+    countWords,
+    runResearchAgent,
+    runStrategistAgent,
+    runWriterAgent,
+    runEditorAgent,
+    runSEOAgent,
+    runVisualCreatorAgent
+} from "@/lib/blog-engine";
 
-export const maxDuration = 120; // Vercel limit for hobby plan; upgrade for longer
+export const maxDuration = 300; // 5 minutes for 6-agent pipeline
 
-const STORAGE_API_URL = "https://api-minio-storage.hazratdev.top";
-const BUCKET = "myfolio";
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-/** Upload a raw Buffer directly to MinIO via presigned URL */
-async function uploadBuffer(
-    buffer: Buffer,
-    mimeType: string,
-    filename: string
-): Promise<{ url: string; key: string }> {
-    const apiKey = process.env.STORAGE_API_KEY;
-    if (!apiKey) throw new Error("STORAGE_API_KEY not configured");
-
-    // 1. Init — get presigned PUT url + object key
-    const initRes = await fetch(`${STORAGE_API_URL}/upload/init`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: apiKey },
-        body: JSON.stringify({
-            filename,
-            file_type: mimeType,
-            file_size: buffer.length,
-            bucket: BUCKET,
-        }),
-    });
-    if (!initRes.ok) throw new Error(`MinIO init failed: ${await initRes.text()}`);
-    const { upload_url, object_key } = await initRes.json();
-
-    // 2. PUT to presigned URL
-    const putRes = await fetch(upload_url, {
-        method: "PUT",
-        headers: { "Content-Type": mimeType },
-        body: buffer as any,
-    });
-    if (!putRes.ok) throw new Error(`MinIO PUT failed: ${await putRes.text()}`);
-
-    // 3. Complete
-    const completeRes = await fetch(`${STORAGE_API_URL}/upload/complete`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: apiKey },
-        body: JSON.stringify({
-            object_key,
-            file_size: buffer.length,
-            file_type: mimeType,
-            bucket: BUCKET,
-        }),
-    });
-    if (!completeRes.ok) throw new Error(`MinIO complete failed: ${await completeRes.text()}`);
-
-    const completeData = await completeRes.json();
-    return { url: completeData.final_url, key: object_key };
-}
-
-/** Seed default categories if they do not exist */
 async function seedDefaultCategories() {
     const defaults = [
         { name: "Android", description: "Native Android App Development tutorials using Kotlin and Jetpack Compose." },
@@ -85,94 +40,8 @@ async function seedDefaultCategories() {
     }
 }
 
-/** Generate an image with Pollinations AI (free, no key) and upload to MinIO. */
-async function generateAndUpload(
-    prompt: string,
-    filenamePrefix: string,
-    altText: string,
-    width = 1200,
-    height = 630,
-    retries = 5
-): Promise<{ url: string; key: string } | null> {
-    if (!process.env.FAL_KEY) throw new Error("FAL_KEY not configured");
-
-    for (let attempt = 1; attempt <= retries; attempt++) {
-        try {
-            const falRes = await fetch("https://fal.run/fal-ai/flux/dev", {
-                method: "POST",
-                headers: {
-                    "Authorization": `Key ${process.env.FAL_KEY}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    prompt,
-                    image_size: "landscape_16_9",
-                    num_inference_steps: 28,
-                    guidance_scale: 3.5,
-                    num_images: 1,
-                    enable_safety_checker: true,
-                    sync_mode: true
-                })
-            });
-
-            if (!falRes.ok) {
-                throw new Error(`Fal.ai fetch failed with status ${falRes.status}: ${await falRes.text()}`);
-            }
-
-            const falData = await falRes.json();
-            const imageUrl = falData.images[0].url;
-
-            // Download image from Fal.ai to upload to MinIO
-            const imageRes = await fetch(imageUrl);
-            if (!imageRes.ok) throw new Error("Failed to download image from Fal.ai URL");
-
-            const arrayBuffer = await imageRes.arrayBuffer();
-            const buffer = Buffer.from(arrayBuffer);
-            const mimeType = imageRes.headers.get("content-type") || "image/jpeg";
-            const filename = `${filenamePrefix}-${Date.now()}.jpg`;
-
-            const { url, key } = await uploadBuffer(buffer, mimeType, filename);
-
-            // Register in Media DB
-            await Media.create({
-                filename,
-                url,
-                key,
-                mimeType,
-                size: buffer.length,
-                altText,
-                dimensions: { width, height },
-            });
-
-            return { url, key };
-        } catch (err) {
-            console.warn(
-                `generateAndUpload attempt ${attempt} failed for "${filenamePrefix}":`,
-                err instanceof Error ? err.message : String(err)
-            );
-            if (attempt === retries) {
-                console.error(`generateAndUpload: all ${retries} attempts failed for "${filenamePrefix}".`);
-                return null;
-            }
-            // Wait with a small delay before retrying (exponential backoff + random jitter)
-            const jitter = Math.random() * 2000;
-            await new Promise((resolve) => setTimeout(resolve, attempt * 4000 + jitter));
-        }
-    }
-    return null;
-}
-
-
-/** Count words in an HTML string (strips tags first) */
-function countWords(html: string): number {
-    return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim().split(" ").length;
-}
-
-// ─── Main Handler ─────────────────────────────────────────────────────────────
-
 export async function POST(req: NextRequest) {
     try {
-        // Auth check
         const authHeader = req.headers.get("authorization");
         if (
             process.env.CRON_SECRET &&
@@ -187,10 +56,13 @@ export async function POST(req: NextRequest) {
         if (!process.env.GEMINI_API_KEY) {
             return NextResponse.json({ error: "GEMINI_API_KEY not configured" }, { status: 500 });
         }
+        if (!process.env.OPEN_AI_KEY) {
+            return NextResponse.json({ error: "OPEN_AI_KEY not configured for Editor/SEO agents" }, { status: 500 });
+        }
 
         const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-        // ── 1. Fetch AutoBlogConfig and filter trends ────────────────────────
+        // ── Find a fresh, relevant topic ──────────────────────────────────────
         let allowedTopics = [
             "android", "kotlin", "compose", "android os", "ios dev", "ios", "swift", "swiftui",
             "fastapi", "ktor", "mongodb", "discord bot", "discord server", "backend", "api",
@@ -201,7 +73,7 @@ export async function POST(req: NextRequest) {
         const configDoc = await AutoBlogConfig.findOne({ key: "auto-blog" });
         if (configDoc) {
             isConfigActive = configDoc.isActive ?? true;
-            if (configDoc.allowedTopics && configDoc.allowedTopics.length > 0) {
+            if (configDoc.allowedTopics?.length > 0) {
                 allowedTopics = configDoc.allowedTopics.map((t: string) => t.toLowerCase());
             }
         }
@@ -210,12 +82,10 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: "Auto-blog cron is disabled in settings." });
         }
 
-        // Fetch Trending Topics from Dev.to
         const devToRes = await fetch("https://dev.to/api/articles?top=1&per_page=30");
         if (!devToRes.ok) throw new Error("Failed to fetch dev.to trends");
         const articles = await devToRes.json();
 
-        // ── 2. Find a fresh, relevant topic ───────────────────────────────────
         const recentPosts = await Post.find()
             .sort({ createdAt: -1 })
             .limit(100)
@@ -226,406 +96,170 @@ export async function POST(req: NextRequest) {
         let selectedArticle: any = null;
         let selectedTopic: string = "";
 
-        // Try to match a trending Dev.to article
         for (const article of articles) {
             const isCovered = existingTitles.some(
                 (t: string) =>
                     t.includes(article.title.toLowerCase()) ||
                     article.title.toLowerCase().includes(t)
             );
-
-            // Check relevance. If "off topic" is configured, accept any tech trend
             const isOffTopicAllowed = allowedTopics.includes("off topic");
             const isRelevant = isOffTopicAllowed || article.tag_list?.some((tag: string) =>
                 allowedTopics.includes(tag.toLowerCase())
             );
-
             if (!isCovered && isRelevant) {
                 selectedArticle = article;
                 break;
             }
         }
 
-        // Fallback: If no trending Dev.to article matched allowed topics, generate one directly
         if (!selectedArticle) {
-            console.log("No matching Dev.to trends found. Generating directly from allowed topics...");
+            console.log("No matching Dev.to trends. Generating from allowed topics...");
             const topicsToChoose = allowedTopics.filter(t => t !== "off topic");
-            if (topicsToChoose.length > 0) {
-                const randomIndex = Math.floor(Math.random() * topicsToChoose.length);
-                selectedTopic = topicsToChoose[randomIndex];
-            } else {
-                selectedTopic = "mobile app development";
-            }
+            selectedTopic = topicsToChoose.length > 0
+                ? topicsToChoose[Math.floor(Math.random() * topicsToChoose.length)]
+                : "mobile app development";
         }
 
-        // NOTE: Internal backlinks removed — they caused 20+ broken 404 links.
-        // The AI was fabricating or mangling slugs. Only safe static CTAs are allowed.
+        const topicString = selectedArticle
+            ? `"${selectedArticle.title}" (tags: ${selectedArticle.tag_list?.join(", ") || "technology"})`
+            : `"${selectedTopic}"`;
 
-        // ── 3. Generate Content with Gemini ───────────────────────────────────
-        const postSubject = selectedArticle
-            ? `inspired by this trending topic: "${selectedArticle.title}"\nReference description: "${selectedArticle.description}"\nTags/niche: ${selectedArticle.tag_list?.join(", ") || "mobile development"}`
-            : `focused on the following topic: "${selectedTopic}"\nWrite a deep-dive, practical guide about "${selectedTopic}" in mobile app, discord bot, or backend/software architecture.`;
+        const articleContext = selectedArticle
+            ? `Trending on Dev.to: "${selectedArticle.title}". Description: "${selectedArticle.description}". Tags: ${selectedArticle.tag_list?.join(", ")}.`
+            : `Topic: "${selectedTopic}". Write a deep-dive practical guide.`;
 
-        const contentPrompt = `You are a technical writer at RelayWorks (https://relayworks.dev), a custom software development and automation agency.
-Write a thorough, well-researched blog post ${postSubject}.
+        // ══════════════════════════════════════════════════════════════════════
+        console.log("═══════════════════════════════════════════════════");
+        console.log(`🚀 6-Agent Pipeline for: ${topicString}`);
+        console.log("═══════════════════════════════════════════════════");
 
-━━━━━ ACCURACY & INTEGRITY ━━━━━
-• NEVER fabricate statistics, benchmarks, performance numbers, or survey results. If you don't know an exact number, don't invent one.
-• Only reference facts that can be verified in official documentation. When citing a tool's capability, link to its official docs.
-• Do NOT claim personal experience or production incidents — write in a neutral, authoritative third-person voice.
-• Avoid generic AI phrases: "Let's dive in", "Game changer", "In today's fast-paced world", "In conclusion", "Let's talk about", "Forget the fluff".
-
-━━━━━ CONTENT QUALITY & TONE ━━━━━
-• NO CHEESY MARKETING OR SALES PITCHES. Do NOT write promotional copy, overly hype RelayWorks, or sound like a marketer. The blog must read like an authentic, highly technical, and objective engineering guide written by a software developer for other software developers.
-• The CTAs (RelayWorks bot development / contact links) must be integrated naturally and subtly at the end of relevant sections, without aggressive sales text.
-• Word count MUST exceed 1,500 words with substantive, well-organized technical depth.
-• Title: 50-60 characters, optimized for search intent (use patterns like "How to", "Guide", "Best Practices", "vs", "Custom").
-• Meta description: 140-155 characters with natural keyword placement.
-• Include working code examples where relevant. Code must be correct and runnable.
-• Include at least 2 external links to official documentation (e.g., developer.android.com, docs.python.org, fastapi.tiangolo.com).
-• INTERNAL LINKS: Do NOT link to any /blog/* URLs. Only use these two safe CTA links:
-  - <a href="/discord-bot">RelayWorks Custom Bot Development</a>
-  - <a href="/contact">Contact RelayWorks</a>
-  Integrate exactly 2 CTAs naturally within the article body.
-• Environment variables in code examples must use generic placeholders (e.g., YOUR_TOKEN_HERE).
-• NO author review scores, ratings tables, or subjective rating sections.
-
-━━━━━ FORMAT ━━━━━
-• Return ONLY valid JSON matching the schema. Content must be HTML (not markdown).
-• CRITICAL CODE BLOCK FORMATTING: Inside HTML <pre><code> blocks, use escaped newline characters (\\n) to separate code lines. Do NOT write all code on a single line. Example: "<pre><code>import os\\n\\ndef main():\\n    print(\\"Hello\\")</code></pre>"
-• Use <p> for paragraphs, <h2>/<h3> for headings, <ul><li> for lists, <strong> for emphasis.
-• Place [IMAGE: ...] markers BETWEEN block elements, NEVER inside <p> tags.
-
-━━━━━ IMAGE MARKERS ━━━━━
-Insert exactly 3 image markers: [IMAGE: <description>]
-Image descriptions must be:
-• Concrete and literally relevant to the surrounding section content.
-• Style: "Premium 3D isometric render", "sleek modern technology concept asset", "rendered in Blender", "vibrant colorful neon accents (cyan, purple, pink)", "high contrast, deep rich dark background". Avoid dull grey gradients, washed out or muddy lighting.
-• CRITICAL: NEVER describe flowcharts, diagrams, schemas, charts, graphs, mockups of dashboards, or UI elements. These always generate gibberish, broken text. Instead, use metaphorical objects (e.g., a glowing 3D shield for security, glossy database cylinders for storage, glowing fiber optic lines for networking).
-• ABSOLUTELY NO TEXT, LABELS, LETTERS, NUMBERS, OR WORDS in the image description.
-
-━━━━━ SCHEMA ━━━━━
-{
-  "title": "SEO-optimised post title (50-60 chars)",
-  "category": "One of: Android, iOS, Backend, Discord Bots, Architecture",
-  "excerpt": "2-sentence excerpt (max 160 chars)",
-  "metaDescription": "140-155 char meta description",
-  "coverImagePrompt": "Specific thematic cover image prompt, no text, 16:9",
-  "content": "Full HTML content with exactly 3 [IMAGE: ...] markers",
-  "imageSlots": [
-    { "placeholder": "[IMAGE: exact text as in content]", "prompt": "exact same prompt" },
-    { "placeholder": "[IMAGE: exact text as in content]", "prompt": "exact same prompt" },
-    { "placeholder": "[IMAGE: exact text as in content]", "prompt": "exact same prompt" }
-  ],
-  "tags": ["tag1", "tag2", "tag3"],
-  "readingTime": 8
-}`;
-
-        let aiResponse = null;
-        let geminiError = null;
+        // ── AGENT 1: Research (Gemini Flash) ──────────────────────────────
+        let research: any;
         for (let attempt = 1; attempt <= 3; attempt++) {
             try {
-                const response = await ai.models.generateContent({
-                    model: "gemini-2.5-flash",
-                    contents: contentPrompt,
-                    config: {
-                        responseMimeType: "application/json",
-                        responseSchema: {
-                            type: Type.OBJECT,
-                            properties: {
-                                title: { type: Type.STRING },
-                                category: { type: Type.STRING },
-                                excerpt: { type: Type.STRING },
-                                metaDescription: { type: Type.STRING },
-                                coverImagePrompt: { type: Type.STRING },
-                                content: { type: Type.STRING },
-                                imageSlots: {
-                                    type: Type.ARRAY,
-                                    minItems: 3,
-                                    maxItems: 3,
-                                    items: {
-                                        type: Type.OBJECT,
-                                        properties: {
-                                            placeholder: { type: Type.STRING },
-                                            prompt: { type: Type.STRING },
-                                        },
-                                        required: ["placeholder", "prompt"],
-                                    },
-                                },
-                                tags: { type: Type.ARRAY, items: { type: Type.STRING } },
-                                readingTime: { type: Type.INTEGER },
-                            },
-                            required: [
-                                "title", "category", "excerpt", "metaDescription", "coverImagePrompt",
-                                "content", "imageSlots", "tags", "readingTime",
-                            ],
-                        },
-                    },
-                });
-                if (response && response.text) {
-                    aiResponse = response;
-                    break;
-                }
+                research = await runResearchAgent(ai, topicString, articleContext);
+                break;
             } catch (err) {
-                console.warn(`Gemini attempt ${attempt} failed:`, err instanceof Error ? err.message : String(err));
-                geminiError = err;
-                if (attempt < 3) {
-                    const errMsg = err instanceof Error ? err.message : String(err);
-                    const isRateLimit = errMsg.includes("429") || errMsg.includes("RESOURCE_EXHAUSTED") || errMsg.includes("quota");
-                    const delay = isRateLimit ? 25000 : attempt * 4000;
-                    console.log(`Waiting ${delay}ms before retrying Gemini...`);
-                    await new Promise((resolve) => setTimeout(resolve, delay));
-                }
+                console.warn(`Research Agent attempt ${attempt}:`, err instanceof Error ? err.message : String(err));
+                if (attempt === 3) throw err;
+                await respectRPM(8000);
             }
         }
 
-        if (!aiResponse || !aiResponse.text) {
-            throw new Error(`Gemini content generation failed after 3 attempts. Last error: ${geminiError instanceof Error ? geminiError.message : String(geminiError)}`);
-        }
+        await respectRPM();
 
-        const aiData = JSON.parse(aiResponse.text);
-
-        // ── 4. Generate Cover Image & Inline Images in Parallel ───────────────
-        console.log("Triggering image generation in parallel...");
-        const coverPromise = generateAndUpload(
-            aiData.coverImagePrompt,
-            "cover",
-            aiData.title,
-            1200,
-            630
-        ).then(async (res) => {
-            if (!res) {
-                console.warn("Cover image failed with original prompt. Trying fallback...");
-                const fallbackPrompt = `Abstract software engineering network nodes, coding background, clean vector illustration, dark blue tones, 16:9`;
-                return generateAndUpload(
-                    fallbackPrompt,
-                    "cover-fallback",
-                    aiData.title,
-                    1200,
-                    630,
-                    2
-                );
-            }
-            return res;
-        });
-
-        const slots: Array<{ placeholder: string; prompt: string }> = aiData.imageSlots || [];
-        const inlinePromises = slots.map((slot, index) => {
-            console.log(`Triggering inline image: ${slot.prompt.slice(0, 60)}...`);
-            // Stagger start delay: index 0 starts in 7s, index 1 in 14s, index 2 in 21s etc.
-            const staggerDelay = (index + 1) * 7000;
-            return new Promise<{ slot: typeof slot; result: any }>((resolve) => {
-                setTimeout(async () => {
-                    let result = await generateAndUpload(
-                        slot.prompt,
-                        `inline-${index}`,
-                        slot.prompt.slice(0, 100),
-                        1200,
-                        675
-                    );
-                    if (!result) {
-                        console.warn(`Inline image ${index} failed with original prompt. Trying fallback...`);
-                        const fallbackPrompt = `Abstract developer workstation tech workspace, glowing code on screen, clean vector style, dark blue tones, no text`;
-                        result = await generateAndUpload(
-                            fallbackPrompt,
-                            `inline-${index}-fallback`,
-                            "Developer workstation abstract illustration",
-                            1200,
-                            675,
-                            2
-                        );
-                    }
-                    resolve({ slot, result });
-                }, staggerDelay);
-            });
-        });
-
-        const [coverResult, ...inlineResults] = await Promise.all([
-            coverPromise,
-            ...inlinePromises,
-        ]);
-
-        // ── 5. Inject Inline Images ───────────────────────────────────────────
-        let finalContent: string = aiData.content;
-
-        // First, replace any explicit [IMAGE: ...] markers in the content sequentially
-        let replacedCount = 0;
-        while (true) {
-            const markerRegex = /\[IMAGE:[^\]]*\]/i;
-            const match = markerRegex.exec(finalContent);
-            if (!match) break;
-
-            const marker = match[0];
-            const matchIndex = match.index;
-            const resultObj = inlineResults[replacedCount];
-
-            let replacement = "";
-            if (resultObj && resultObj.result) {
-                const figureHtml = `\n<figure class="blog-image">
-  <img src="${resultObj.result.url}" alt="${resultObj.slot.prompt.slice(0, 120)}" loading="lazy" />
-</figure>\n`;
-
-                // If marker is inside a <p> tag, split the <p> tag to prevent invalid nesting
-                const before = finalContent.substring(0, matchIndex);
-                const lastOpenP = before.lastIndexOf("<p");
-                const lastCloseP = before.lastIndexOf("</p>");
-                const insideP = lastOpenP > lastCloseP;
-
-                if (insideP) {
-                    replacement = `</p>${figureHtml}<p>`;
-                } else {
-                    replacement = figureHtml;
-                }
-            }
-
-            finalContent = finalContent.substring(0, matchIndex) + replacement + finalContent.substring(matchIndex + marker.length);
-            replacedCount++;
-        }
-
-        // Clean up any remaining [IMAGE: ...] markers just in case
-        finalContent = finalContent.replace(/\[IMAGE:[^\]]*\]/g, "");
-
-        // Failsafe Fallback: If Gemini generated fewer markers in the HTML content than the inline images we generated,
-        // inject the remaining unused images at logical heading transitions (before h2 or h3 elements)
-        const unusedResults = inlineResults.slice(replacedCount);
-        if (unusedResults.length > 0) {
-            console.log(`Failsafe: Injecting ${unusedResults.length} unused generated inline images...`);
-
-            // Find all H2 and H3 tags
-            const headingRegex = /<(h2|h3)[^>]*>([\s\S]*?)<\/\1>/gi;
-            const headings: Array<{ tag: string; text: string; index: number; length: number }> = [];
-            let hMatch;
-            while ((hMatch = headingRegex.exec(finalContent)) !== null) {
-                headings.push({
-                    tag: hMatch[1].toLowerCase(),
-                    text: hMatch[2],
-                    index: hMatch.index,
-                    length: hMatch[0].length
-                });
-            }
-
-            if (headings.length > 0) {
-                // Select heading indices to place the unused images before them
-                const targetHeadingIndices: number[] = [];
-                if (headings.length <= unusedResults.length) {
-                    for (let k = 0; k < headings.length; k++) {
-                        targetHeadingIndices.push(k);
-                    }
-                } else {
-                    // Spread the images evenly across headings
-                    for (let k = 0; k < unusedResults.length; k++) {
-                        const idx = Math.floor(((k + 0.5) / unusedResults.length) * headings.length);
-                        targetHeadingIndices.push(idx);
-                    }
-                }
-
-                // Sort target heading indices descending to insert from right-to-left without shifting indices
-                targetHeadingIndices.sort((a, b) => b - a);
-
-                for (let k = 0; k < targetHeadingIndices.length; k++) {
-                    const headingIdx = targetHeadingIndices[k];
-                    const heading = headings[headingIdx];
-                    const resultObjToUse = unusedResults[unusedResults.length - 1 - k];
-
-                    if (resultObjToUse && resultObjToUse.result) {
-                        const figureHtml = `\n<figure class="blog-image">
-  <img src="${resultObjToUse.result.url}" alt="${resultObjToUse.slot.prompt.slice(0, 120)}" loading="lazy" />
-</figure>\n`;
-                        finalContent = finalContent.substring(0, heading.index) + figureHtml + finalContent.substring(heading.index);
-                    }
-                }
-            } else {
-                // If no headings, fall back to paragraphs
-                const pRegex = /<p[^>]*>/gi;
-                const paragraphs: Array<{ index: number; length: number }> = [];
-                let pMatch;
-                while ((pMatch = pRegex.exec(finalContent)) !== null) {
-                    paragraphs.push({
-                        index: pMatch.index,
-                        length: pMatch[0].length
-                    });
-                }
-
-                if (paragraphs.length > 0) {
-                    const targetPIndices: number[] = [];
-                    if (paragraphs.length <= unusedResults.length) {
-                        for (let k = 0; k < paragraphs.length; k++) {
-                            targetPIndices.push(k);
-                        }
-                    } else {
-                        for (let k = 0; k < unusedResults.length; k++) {
-                            const idx = Math.floor(((k + 0.5) / unusedResults.length) * paragraphs.length);
-                            targetPIndices.push(idx);
-                        }
-                    }
-
-                    targetPIndices.sort((a, b) => b - a);
-
-                    for (let k = 0; k < targetPIndices.length; k++) {
-                        const pIdx = targetPIndices[k];
-                        const pTag = paragraphs[pIdx];
-                        const resultObjToUse = unusedResults[unusedResults.length - 1 - k];
-
-                        if (resultObjToUse && resultObjToUse.result) {
-                            const figureHtml = `\n<figure class="blog-image">
-  <img src="${resultObjToUse.result.url}" alt="${resultObjToUse.slot.prompt.slice(0, 120)}" loading="lazy" />
-</figure>\n`;
-                            finalContent = finalContent.substring(0, pTag.index) + figureHtml + finalContent.substring(pTag.index);
-                        }
-                    }
-                } else {
-                    // Append as a last resort
-                    for (const resultObjToUse of unusedResults) {
-                        if (resultObjToUse && resultObjToUse.result) {
-                            const figureHtml = `\n<figure class="blog-image">
-  <img src="${resultObjToUse.result.url}" alt="${resultObjToUse.slot.prompt.slice(0, 120)}" loading="lazy" />
-</figure>\n`;
-                            finalContent += figureHtml;
-                        }
-                    }
-                }
+        // ── AGENT 2: Strategy (Gemini Flash) ──────────────────────────────
+        let strategy: any;
+        for (let attempt = 1; attempt <= 3; attempt++) {
+            try {
+                strategy = await runStrategistAgent(ai, research, topicString, "No affiliate links.");
+                break;
+            } catch (err) {
+                console.warn(`Strategist attempt ${attempt}:`, err instanceof Error ? err.message : String(err));
+                if (attempt === 3) throw err;
+                await respectRPM(8000);
             }
         }
 
-        // Clean up invalid nested elements wrapping headings/pre/figures and empty tags
-        finalContent = finalContent.replace(/<p>\s*<(h2|h3)[^>]*>([\s\S]*?)<\/\1>\s*<\/p>/gi, (match, tag, innerHtml) => {
-            return `<${tag}>${innerHtml}</${tag}>`;
-        });
-        finalContent = finalContent.replace(/<p>\s*<pre[^>]*>([\s\S]*?)<\/pre>\s*<\/p>/gi, (match, innerHtml) => {
-            return `<pre>${innerHtml}</pre>`;
-        });
-        finalContent = finalContent.replace(/<p>\s*<figure[^>]*>([\s\S]*?)<\/figure>\s*<\/p>/gi, (match, innerHtml) => {
-            return `<figure class="blog-image">${innerHtml}</figure>`;
-        });
-        finalContent = finalContent.replace(/<p>\s*<\/p>/gi, "");
-        finalContent = finalContent.replace(/<p>&nbsp;<\/p>/gi, "");
+        await respectRPM();
 
-        // Failsafe: Clean up squashed code blocks if the AI model outputted them on a single line
-        finalContent = finalContent.replace(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/gi, (match, code) => {
+        // ── AGENT 3: Writer (Gemini Flash) ────────────────────────────────
+        let writerContent = "";
+        for (let attempt = 1; attempt <= 3; attempt++) {
+            try {
+                writerContent = await runWriterAgent(ai, research, strategy);
+                break;
+            } catch (err) {
+                console.warn(`Writer attempt ${attempt}:`, err instanceof Error ? err.message : String(err));
+                if (attempt === 3) throw err;
+                await respectRPM(8000);
+            }
+        }
+
+        const writerReadingTime = Math.ceil(countWords(writerContent) / 230);
+        const imageSlots = strategy.sections
+            .filter((s: any) => s.visualType === "photo")
+            .map((s: any) => ({
+                placeholder: `[IMAGE: ${s.visualDescription}]`,
+                prompt: s.visualDescription
+            }));
+
+        // ── AGENT 4: Editor (GPT-4o-mini) ─────────────────────────────────
+        let editorOutput: any;
+        try {
+            editorOutput = await runEditorAgent(writerContent, strategy, research);
+            console.log(`   Editor Score: ${editorOutput.editorScore}/100`);
+            console.log(`   Changes: ${editorOutput.changesLog?.slice(0, 3).join(", ") || "none"}`);
+        } catch (err) {
+            console.warn("Editor failed, using raw writer output:", err instanceof Error ? err.message : String(err));
+            editorOutput = { content: writerContent, editorScore: 60, changesLog: ["Editor skipped"] };
+        }
+
+        // ── AGENT 5: SEO Optimizer (GPT-4o-mini) ─────────────────────────
+        let seoOutput: any;
+        try {
+            seoOutput = await runSEOAgent(editorOutput.content, strategy, research);
+            console.log(`   SEO Score: ${seoOutput.seoScore}/100`);
+            console.log(`   Optimizations: ${seoOutput.optimizations?.slice(0, 3).join(", ") || "none"}`);
+        } catch (err) {
+            console.warn("SEO Agent failed, using editor output:", err instanceof Error ? err.message : String(err));
+            seoOutput = {
+                title: strategy.title,
+                metaDescription: strategy.metaDescription,
+                content: editorOutput.content,
+                faqSchema: [],
+                seoScore: 50,
+                optimizations: ["SEO skipped"]
+            };
+        }
+
+        const finalTitle = seoOutput.title || strategy.title;
+        const finalMeta = seoOutput.metaDescription || strategy.metaDescription;
+        const contentBeforeImages = seoOutput.content || editorOutput.content;
+
+        await respectRPM();
+
+        // ── AGENT 6: Visual Creator (Fal.ai → Validate → OpenAI) ──────────
+        const { content: contentWithImages, coverResult } = await runVisualCreatorAgent(
+            ai,
+            contentBeforeImages,
+            strategy.coverImagePrompt,
+            imageSlots,
+            finalTitle,
+            `${finalTitle} - ${strategy.excerpt}`
+        );
+
+        // ── Post-Processing: Clean up HTML ────────────────────────────────
+        let cleanedContent = contentWithImages;
+
+        cleanedContent = cleanedContent.replace(/<p>\s*<(h2|h3)[^>]*>([\s\S]*?)<\/\1>\s*<\/p>/gi,
+            (_m, tag, inner) => `<${tag}>${inner}</${tag}>`);
+        cleanedContent = cleanedContent.replace(/<p>\s*<pre[^>]*>([\s\S]*?)<\/pre>\s*<\/p>/gi,
+            (_m, inner) => `<pre>${inner}</pre>`);
+        cleanedContent = cleanedContent.replace(/<p>\s*<figure[^>]*>([\s\S]*?)<\/figure>\s*<\/p>/gi,
+            (_m, inner) => `<figure class="blog-image">${inner}</figure>`);
+        cleanedContent = cleanedContent.replace(/<p>\s*<div[^>]*>([\s\S]*?)<\/div>\s*<\/p>/gi,
+            (match) => match.replace(/^<p>\s*/, "").replace(/\s*<\/p>$/, ""));
+        cleanedContent = cleanedContent.replace(/<p>\s*<\/p>/gi, "");
+        cleanedContent = cleanedContent.replace(/<p>&nbsp;<\/p>/gi, "");
+
+        // Fix squashed code blocks
+        cleanedContent = cleanedContent.replace(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/gi, (_m, code) => {
             let clean = code.trim();
             if (!clean.includes('\n') && !clean.includes('\r')) {
-                // Restore bash setup newlines
-                clean = clean.replace(/(mkdir\s+[^\s]+)\s*(cd\s+[^\s]+)/gi, "$1\n$2");
-                clean = clean.replace(/(cd\s+[^\s]+)\s*(pip\s+install\s+|python3\s+|source\s+)/gi, "$1\n$2");
-                clean = clean.replace(/(python3\s+-m\s+venv\s+[^\s]+)\s*(source\s+)/gi, "$1\n$2");
-
-                // Restore Python imports and startup code
                 clean = clean.replace(/(from\s+[^\s]+\s+import\s+[^\s]+)\s*(from\s+|import\s+)/g, "$1\n$2");
                 clean = clean.replace(/(import\s+[^\s]+)\s*(from\s+|import\s+)/g, "$1\n$2");
-                clean = clean.replace(/(load_dotenv\(\))\s*(app\s*=)/g, "$1\n$2");
-                clean = clean.replace(/(GITHUB_TOKEN\s*=\s*[^\s]+)\s*(if\s*not)/g, "$1\n$2");
             }
-            // Auto-correct any squashed dependency typos
             clean = clean.replace(/httpxpydantic/g, "httpx pydantic");
             return `<pre><code>${clean}</code></pre>`;
         });
 
-        // ── 6. Calculate reading time if not provided ──────────────────────────
-        const words = countWords(finalContent);
-        const readingTime = aiData.readingTime || Math.ceil(words / 230);
+        // ── Calculate reading time ────────────────────────────────────────
+        const words = countWords(cleanedContent);
+        const readingTime = writerReadingTime || Math.ceil(words / 230);
 
-        // ── 7. Build slug ──────────────────────────────────────────────────────
-        let baseSlug = aiData.title
+        // ── Build slug ────────────────────────────────────────────────────
+        let baseSlug = finalTitle
             .toLowerCase()
             .replace(/[^a-z0-9]+/g, "-")
             .replace(/(^-|-$)+/g, "");
@@ -636,8 +270,8 @@ Image descriptions must be:
             counter++;
         }
 
-        // ── 8. Get or create category ──────────────────────────────────────────
-        const mainCategory = aiData.category || "Development";
+        // ── Get or create category ────────────────────────────────────────
+        const mainCategory = strategy.category || "Development";
         let categoryDoc = await Category.findOne({ name: mainCategory });
         if (!categoryDoc) {
             categoryDoc = await Category.create({
@@ -646,44 +280,42 @@ Image descriptions must be:
             });
         }
 
-        // ── 9. Save Post ───────────────────────────────────────────────────────
+        // ── Save Post ─────────────────────────────────────────────────────
         const newPost = await Post.create({
-            title: aiData.title,
+            title: finalTitle,
             slug,
-            excerpt: aiData.excerpt,
-            content: finalContent,
+            excerpt: strategy.excerpt,
+            content: cleanedContent,
             coverImage: coverResult?.url || null,
             coverImageKey: coverResult?.key || null,
             category: mainCategory,
-            tags: aiData.tags,
+            tags: strategy.tags,
             status: "published",
             publishedAt: new Date(),
             readingTime,
             views: 0,
         });
 
-        // ── 10. Generate Social Media Posts ────────────────────────────────────
+        // ── Social Media Posts (Gemini Flash) ─────────────────────────────
+        await respectRPM();
         try {
-            const socialPrompt = `You are a developer sharing a new technical blog post you just wrote.
-Write 3 social media posts (Twitter, LinkedIn, Facebook) to promote it.
-
-Blog Title: "${aiData.title}"
-Blog Excerpt: "${aiData.excerpt}"
-Tags: ${aiData.tags.join(", ")}
-
-RULES:
-1. NO AI SLOP. Do NOT use words like "Delve", "Game-changer", "Unlock", "In today's digital landscape", "Crucial", "Vital", "Revolutionize".
-2. TONE: Human, authentic, developer-to-developer. Slightly casual but professional. No extreme hype. Do NOT sound like a robotic marketer.
-3. TWITTER: MUST be under 280 characters. Short, punchy, maybe 1-2 hashtags max.
-4. LINKEDIN: Professional but conversational. Can be longer. Use line breaks.
-5. FACEBOOK: Casual, friendly tone.
-
-Return a JSON object with exactly these keys: "twitter", "linkedin", "facebook".
-Values must be plain text strings (no markdown bold/italics needed).`;
-
             const socialResponse = await ai.models.generateContent({
                 model: "gemini-2.5-flash",
-                contents: socialPrompt,
+                contents: `You are a developer sharing a new technical blog post.
+Write 3 social media posts (Twitter, LinkedIn, Facebook).
+
+Blog Title: "${finalTitle}"
+Blog Excerpt: "${strategy.excerpt}"
+Tags: ${strategy.tags.join(", ")}
+
+RULES:
+1. NO AI SLOP. No "Delve", "Game-changer", "Unlock", "Crucial", "Vital".
+2. Human, developer-to-developer tone.
+3. TWITTER: Under 280 chars, 1-2 hashtags max.
+4. LINKEDIN: Professional, use line breaks.
+5. FACEBOOK: Casual, friendly.
+
+Return JSON: {"twitter": "...", "linkedin": "...", "facebook": "..."}`,
                 config: {
                     responseMimeType: "application/json",
                     responseSchema: {
@@ -698,7 +330,7 @@ Values must be plain text strings (no markdown bold/italics needed).`;
                 },
             });
 
-            if (socialResponse && socialResponse.text) {
+            if (socialResponse?.text) {
                 const socialData = JSON.parse(socialResponse.text);
                 await sendSocialMediaWebhook(
                     socialData,
@@ -708,9 +340,15 @@ Values must be plain text strings (no markdown bold/italics needed).`;
                 );
             }
         } catch (socialErr) {
-            console.error("Failed to generate/send social media posts:", socialErr);
-            // Non-fatal, do not throw.
+            console.error("Social media generation failed:", socialErr);
         }
+
+        console.log("═══════════════════════════════════════════════════");
+        console.log(`✅ 6-Agent Pipeline COMPLETE: "${finalTitle}"`);
+        console.log(`   Words: ${words} | Reading: ${readingTime}min`);
+        console.log(`   Editor: ${editorOutput.editorScore}/100 | SEO: ${seoOutput.seoScore}/100`);
+        console.log(`   Photos: ${imageSlots.length} inline + 1 cover`);
+        console.log("═══════════════════════════════════════════════════");
 
         return NextResponse.json({
             success: true,
@@ -718,15 +356,19 @@ Values must be plain text strings (no markdown bold/italics needed).`;
             title: newPost.title,
             readingTime,
             wordCount: words,
-            inlineImagesGenerated: inlineResults.filter(r => r.result !== null).length,
+            editorScore: editorOutput.editorScore,
+            seoScore: seoOutput.seoScore,
+            inlineImagesGenerated: imageSlots.length,
             coverImage: coverResult?.url || "failed",
+            faqSchema: seoOutput.faqSchema || [],
+            pipeline: "6-agent-v1",
         });
     } catch (error) {
-        console.error("Auto-blog cron failed:", error);
+        console.error("Auto-blog 6-agent pipeline failed:", error);
         await sendCronFailureNotification(error);
         return NextResponse.json(
             {
-                error: "Failed to run auto-blog cron",
+                error: "Failed to run auto-blog 6-agent pipeline",
                 details: error instanceof Error ? error.message : String(error),
             },
             { status: 500 }

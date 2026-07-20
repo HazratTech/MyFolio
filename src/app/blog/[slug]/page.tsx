@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import PostCard from "@/components/blog/PostCard";
 import ReadingProgressBar from "@/components/blog/ReadingProgressBar";
 import BlogComments from "@/components/blog/BlogComments";
+import MermaidRenderer from "@/components/blog/MermaidRenderer";
 
 async function getPost(slug: string, isPreview: boolean = false) {
     await dbConnect();
@@ -210,6 +211,7 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
                     className="blog-prose"
                     dangerouslySetInnerHTML={{ __html: post.content }}
                 />
+                <MermaidRenderer />
 
                 {/* Tags Section */}
                 {post.tags && post.tags.length > 0 && (
