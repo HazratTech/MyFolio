@@ -1,4 +1,6 @@
-import { LandingPage } from "@/components/layout/LandingPage";
+import { About } from "@/components/sections/About";
+import { TechDNA } from "@/components/sections/TechDNA";
+import { SocialProofWall } from "@/components/sections/SocialProofWall";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,5 +12,11 @@ export const metadata: Metadata = {
 };
 
 export default function AboutPage() {
-    return <LandingPage />;
+    return (
+        <div className="flex flex-col gap-0 pb-0 bg-[#090a0f]">
+            <About />
+            <TechDNA />
+            <SocialProofWall />
+        </div>
+    );
 }

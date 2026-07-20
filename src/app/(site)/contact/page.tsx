@@ -1,4 +1,4 @@
-import { LandingPage } from "@/components/layout/LandingPage";
+import { Contact } from "@/components/sections/Contact";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,5 +10,9 @@ export const metadata: Metadata = {
 };
 
 export default function ContactPage() {
-    return <LandingPage />;
+    return (
+        <div className="flex flex-col gap-0 pb-0 bg-[#090a0f]">
+            <Contact />
+        </div>
+    );
 }

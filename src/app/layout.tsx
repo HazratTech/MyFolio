@@ -83,6 +83,8 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "RelayWorks",
+  logo: "https://relayworks.dev/logo-brand.png",
+  image: "https://relayworks.dev/logo-brand.png",
   alternateName: [
     "Relay Works",
     "realyworks",

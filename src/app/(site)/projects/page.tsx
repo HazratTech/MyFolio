@@ -1,4 +1,5 @@
-import { LandingPage } from "@/components/layout/LandingPage";
+import { Projects } from "@/components/sections/Projects";
+import { CaseStudyTicker } from "@/components/sections/CaseStudyTicker";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,5 +11,10 @@ export const metadata: Metadata = {
 };
 
 export default function ProjectsPage() {
-    return <LandingPage />;
+    return (
+        <div className="flex flex-col gap-0 pb-0 bg-[#090a0f]">
+            <Projects />
+            <CaseStudyTicker />
+        </div>
+    );
 }
