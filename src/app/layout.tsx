@@ -52,10 +52,10 @@ export const metadata: Metadata = {
     siteName: "RelayWorks",
     images: [
       {
-        url: "/logo-brand.png",
+        url: "https://relayworks.dev/og-banner.png",
         width: 1200,
         height: 630,
-        alt: "RelayWorks",
+        alt: "RelayWorks | Custom Software & Automation Agency",
       },
     ],
   },
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "RelayWorks | Custom Software & Automation Agency",
     description: "Welcome to RelayWorks (also known as Relay Works, Relaywork, or Realy Works). We are a custom software, backend API, and Discord bot development agency.",
-    images: ["/logo-brand.png"],
+    images: ["https://relayworks.dev/og-banner.png"],
     creator: "@ihazratummar9",
   },
   robots: {

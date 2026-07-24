@@ -41,6 +41,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
         return { title: "Post Not Found" };
     }
 
+    let imageUrl = post.coverImage || "https://relayworks.dev/og-banner.png";
+    if (imageUrl && !imageUrl.startsWith("http")) {
+        imageUrl = `https://relayworks.dev${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
+    }
+
     return {
         title: `${post.title} | RelayWorks`,
         description: post.excerpt || post.content.substring(0, 160),
@@ -50,16 +55,24 @@ export async function generateMetadata({ params }: { params: { slug: string } })
         openGraph: {
             title: post.title,
             description: post.excerpt,
+            url: `https://relayworks.dev/blog/${params.slug}`,
             type: "article",
             publishedTime: post.publishedAt?.toString(),
             authors: ["RelayWorks"],
-            images: post.coverImage ? [post.coverImage] : [],
+            images: [
+                {
+                    url: imageUrl,
+                    width: 1200,
+                    height: 630,
+                    alt: post.title,
+                },
+            ],
         },
         twitter: {
             card: "summary_large_image",
             title: post.title,
             description: post.excerpt,
-            images: post.coverImage ? [post.coverImage] : [],
+            images: [imageUrl],
         }
     };
 }

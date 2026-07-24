@@ -28,14 +28,21 @@ export const metadata: Metadata = {
         description:
             "Build custom AI chatbots that answer customers instantly, qualify leads, book appointments, and automate workflows across your website, WhatsApp, Discord, and Telegram.",
         url: "https://relayworks.dev/ai-chatbot-development",
-        images: ["/logo-brand.png"],
+        images: [
+            {
+                url: "https://relayworks.dev/og-banner.png",
+                width: 1200,
+                height: 630,
+                alt: "AI Chatbot Development Services | RelayWorks",
+            },
+        ],
     },
     twitter: {
         card: "summary_large_image",
         title: "AI Chatbot Development Services | RelayWorks",
         description:
             "Custom AI chatbot development for support automation, lead generation, booking, CRM sync, and workflow automation.",
-        images: ["/logo-brand.png"],
+        images: ["https://relayworks.dev/og-banner.png"],
     },
 };
 
