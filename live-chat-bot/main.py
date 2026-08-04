@@ -16,10 +16,14 @@ if not TOKEN or not MONGO_URI:
 
 # Setup MongoDB
 mongo_client = AsyncIOMotorClient(MONGO_URI)
-db = mongo_client.get_default_database()
-if db.name == 'test':
-    # Fallback if DB name not in URI
-    db = mongo_client['myfolio'] # Adjust if needed based on Next.js setup
+try:
+    db = mongo_client.get_default_database()
+except Exception:
+    db = mongo_client['myfolio']
+
+if not db or db.name == 'test':
+    # Fallback if DB name not in URI or defaults to test
+    db = mongo_client['myfolio']
 
 chat_threads = db['chatthreads']
 chat_messages = db['chatmessages']

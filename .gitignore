@@ -77,3 +77,4 @@ errors.md
 fix.md
 .gitignore
 /live-chat-bot/venv
+*__pycache__
