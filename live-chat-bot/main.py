@@ -21,7 +21,7 @@ try:
 except Exception:
     db = mongo_client['myfolio']
 
-if not db or db.name == 'test':
+if db is None or db.name == 'test':
     # Fallback if DB name not in URI or defaults to test
     db = mongo_client['myfolio']
 
