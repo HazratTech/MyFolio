@@ -51,7 +51,7 @@ export const SystemDashboardHero = () => {
             let initialVal = 24;
             try {
                 await fetch("https://api.onedropblood.top/", {
-                    method: "HEAD",
+                    method: "GET",
                     mode: "no-cors",
                     cache: "no-store",
                 });
@@ -81,7 +81,7 @@ export const SystemDashboardHero = () => {
             let duration = 24;
             try {
                 await fetch("https://api.onedropblood.top/", {
-                    method: "HEAD",
+                    method: "GET",
                     mode: "no-cors",
                     cache: "no-store",
                 });
