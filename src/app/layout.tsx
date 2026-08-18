@@ -13,26 +13,26 @@ const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://relayworks.dev"),
-
-  title: "RelayWorks | Custom Software & Automation Agency",
-  description: "Welcome to RelayWorks (also known as Relay Works, Relaywork, or Realy Works). We are a custom software, backend API, and Discord bot development agency. Founded by Hazrat Ummar Shaikh.",
+  alternates: {
+    canonical: "https://relayworks.dev",
+  },
+  title: "RelayWorks | Custom Software, Discord Bot & AI Development Agency",
+  description: "RelayWorks is a custom software development agency specializing in Discord bots, native mobile apps (Android & iOS), high-performance backend APIs (FastAPI & Ktor), and AI chatbots. Founded by Hazrat Ummar Shaikh.",
   keywords: [
     "RelayWorks",
-    "realyworks",
-    "Relayworks",
-    "relayworks",
-    "Realy Works",
-    "relay works",
+    "RelayWorks dev",
+    "relayworks.dev",
+    "Relay Works",
     "relaywork",
-    "RelayWork",
-    "Relaywork",
+    "Custom Discord Bot Developer",
     "Discord Bot Agency",
-    "Custom Discord Bots",
+    "Hire Discord Bot Developer",
+    "AI Chatbot Development Services",
+    "Android App Development Agency",
     "Backend Development Agency",
-    "Workflow Automation",
-    "Hazrat Ummar Shaikh",
     "FastAPI Developer",
-    "Ktor Developer"
+    "Ktor Developer",
+    "Hazrat Ummar Shaikh"
   ],
   authors: [{ name: "RelayWorks", url: "https://relayworks.dev" }],
   creator: "RelayWorks",
@@ -47,8 +47,8 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://relayworks.dev",
-    title: "RelayWorks | Custom Software & Automation Agency",
-    description: "Welcome to RelayWorks (also known as Relay Works, Relaywork, or Realy Works). We are a custom software, backend API, and Discord bot development agency.",
+    title: "RelayWorks | Custom Software, Discord Bot & AI Development Agency",
+    description: "RelayWorks is a custom software development agency specializing in Discord bots, native mobile apps, backend APIs, and AI chatbots. Founded by Hazrat Ummar Shaikh.",
     siteName: "RelayWorks",
     images: [
       {
@@ -61,8 +61,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "RelayWorks | Custom Software & Automation Agency",
-    description: "Welcome to RelayWorks (also known as Relay Works, Relaywork, or Realy Works). We are a custom software, backend API, and Discord bot development agency.",
+    title: "RelayWorks | Custom Software, Discord Bot & AI Development Agency",
+    description: "RelayWorks is a custom software development agency specializing in Discord bots, native mobile apps, backend APIs, and AI chatbots.",
     images: ["https://relayworks.dev/og-banner.png"],
     creator: "@ihazratummar9",
   },
@@ -81,56 +81,90 @@ export const metadata: Metadata = {
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "RelayWorks",
-  logo: "https://relayworks.dev/logo-brand.png",
-  image: "https://relayworks.dev/logo-brand.png",
-  alternateName: [
-    "Relay Works",
-    "realyworks",
-    "Relayworks",
-    "relayworks",
-    "Realy Works",
-    "relay works",
-    "relaywork",
-    "RelayWork",
-    "Relaywork"
-  ],
-  url: "https://relayworks.dev",
-  sameAs: [
-    "https://github.com/ihazratummar",
-    "https://www.linkedin.com/in/hazrat-ummar-shaikh/",
-    "https://x.com/ihazratummar9",
-    "https://www.instagram.com/hazratummar/"
-  ],
-  description: "Custom automation and software agency.",
-  founder: {
-    "@type": "Person",
-    name: "Hazrat Ummar Shaikh"
-  },
-  knowsAbout: [
-    "Backend Development",
-    "FastAPI",
-    "Ktor",
-    "MongoDB",
-    "Discord Bot Development",
-    "Workflow Automation"
-  ],
-  offers: [
+  "@graph": [
     {
-      "@type": "Offer",
-      "itemOffered": {
-        "@type": "Service",
-        "name": "Discord Bot Development",
-        "description": "Custom Discord bots with advanced features, moderation tools, and API integrations."
+      "@type": "WebSite",
+      "@id": "https://relayworks.dev/#website",
+      "url": "https://relayworks.dev",
+      "name": "RelayWorks",
+      "description": "Custom Software, Discord Bots, and AI Automation Agency",
+      "publisher": {
+        "@id": "https://relayworks.dev/#organization"
       }
     },
     {
-      "@type": "Offer",
-      "itemOffered": {
-        "@type": "Service",
-        "name": "Backend Development",
-        "description": "Robust and scalable backend systems using FastAPI, KTOR, and MongoDB."
+      "@type": "ProfessionalService",
+      "@id": "https://relayworks.dev/#organization",
+      "name": "RelayWorks",
+      "alternateName": [
+        "Relay Works",
+        "relayworks.dev",
+        "Relaywork",
+        "RelayWork",
+        "realyworks"
+      ],
+      "url": "https://relayworks.dev",
+      "logo": "https://relayworks.dev/logo-brand.png",
+      "image": "https://relayworks.dev/og-banner.png",
+      "description": "Custom software development agency specializing in custom Discord bots, mobile apps, backend architectures, and AI chatbots.",
+      "founder": {
+        "@type": "Person",
+        "name": "Hazrat Ummar Shaikh",
+        "jobTitle": "Lead Software Engineer & Founder",
+        "sameAs": [
+          "https://github.com/ihazratummar",
+          "https://www.linkedin.com/in/hazrat-ummar-shaikh/",
+          "https://x.com/ihazratummar9"
+        ]
+      },
+      "sameAs": [
+        "https://github.com/ihazratummar",
+        "https://www.linkedin.com/in/hazrat-ummar-shaikh/",
+        "https://x.com/ihazratummar9",
+        "https://www.instagram.com/hazratummar/"
+      ],
+      "knowsAbout": [
+        "Discord Bot Development",
+        "Python",
+        "FastAPI",
+        "Ktor",
+        "Android App Development",
+        "iOS App Development",
+        "AI Chatbots",
+        "MongoDB"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Software Development Services",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Custom Discord Bot Development",
+              "url": "https://relayworks.dev/discord-bot",
+              "description": "Custom Discord bots with ticket systems, verification, economy, and AI integration."
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "AI Chatbot Development",
+              "url": "https://relayworks.dev/ai-chatbot-development",
+              "description": "Custom AI chatbots for customer support, lead qualification, and CRM automation."
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Backend & API Development",
+              "url": "https://relayworks.dev/services",
+              "description": "Scalable REST & WebSocket APIs using FastAPI, Ktor, and MongoDB."
+            }
+          }
+        ]
       }
     }
   ]
