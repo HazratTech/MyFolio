@@ -1,16 +1,22 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
-import { Menu, X, ArrowLeft, BookOpen, User } from "lucide-react";
+import { 
+    Menu, X, BookOpen, ChevronDown, Bot, Sparkles, Smartphone, Server, ArrowRight 
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { servicesNavigationList, ServiceNavItem } from "@/data/services-data";
 
 export const BlogNavbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false);
+    const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(true);
+    const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const pathname = usePathname();
 
     useEffect(() => {
@@ -22,11 +28,34 @@ export const BlogNavbar = () => {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    const navLinks = [
-        { name: "Blog Home", href: "/blog" },
-        { name: "Portfolio", href: "/" },
-        { name: "Contact Me", href: "/contact" }
-    ];
+    useEffect(() => {
+        setIsMobileMenuOpen(false);
+        setIsServicesDropdownOpen(false);
+    }, [pathname]);
+
+    const handleMouseEnter = () => {
+        if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
+        setIsServicesDropdownOpen(true);
+    };
+
+    const handleMouseLeave = () => {
+        dropdownTimeoutRef.current = setTimeout(() => {
+            setIsServicesDropdownOpen(false);
+        }, 150);
+    };
+
+    const getServiceIcon = (type: ServiceNavItem["iconType"]) => {
+        switch (type) {
+            case "bot":
+                return <Bot className="w-5 h-5 text-[#5865F2]" />;
+            case "sparkles":
+                return <Sparkles className="w-5 h-5 text-cyan-400" />;
+            case "smartphone":
+                return <Smartphone className="w-5 h-5 text-emerald-400" />;
+            case "server":
+                return <Server className="w-5 h-5 text-purple-400" />;
+        }
+    };
 
     return (
         <LazyMotion features={domAnimation}>
@@ -37,89 +66,244 @@ export const BlogNavbar = () => {
                 className={cn(
                     "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
                     isScrolled
-                        ? "bg-background/80 backdrop-blur-md border-b border-white/10 py-4"
+                        ? "bg-background/80 backdrop-blur-md border-b border-white/10 py-4 shadow-xl"
                         : "bg-transparent py-6"
                 )}
             >
                 <div className="container mx-auto px-6 flex items-center justify-between max-w-7xl">
                     <div className="flex items-center gap-3">
-                        <Link href="/" className="hover:opacity-90 transition-opacity flex items-center gap-2">
-                            <img src="/logo-brand.png" alt="RelayWorks Logo" className="h-9 w-auto" />
-                            <span className="text-xl font-bold font-heading tracking-tighter text-white">
-                                Relay<span className="text-primary">Works</span>
-                            </span>
+                        <Link href="/" className="hover:opacity-90 transition-opacity flex items-center">
+                            <img src="/logo-brand.png" alt="RelayWorks Logo" className="h-8 w-auto object-contain" />
                         </Link>
                         <span className="text-white/20">|</span>
-                        <Link href="/blog" className="flex items-center gap-1.5 text-sm bg-primary/10 text-primary border border-primary/20 px-2.5 py-0.5 rounded-full font-medium">
-                            <BookOpen className="w-3.5 h-3.5" />
+                        <Link href="/blog" className="flex items-center gap-1.5 text-xs bg-primary/10 text-primary border border-primary/20 px-2.5 py-0.5 rounded-full font-semibold">
+                            <BookOpen className="w-3 h-3" />
                             Blog
                         </Link>
                     </div>
 
                     {/* Desktop Menu */}
-                    <div className="hidden md:flex items-center space-x-8">
-                        {navLinks.map((link, index) => (
-                            <Link
-                                key={index}
-                                href={link.href}
-                                className={cn(
-                                    "text-sm font-medium transition-colors relative group",
-                                    pathname === link.href ? "text-primary" : "text-muted-foreground hover:text-white"
-                                )}
+                    <div className="hidden md:flex items-center gap-6 lg:gap-8">
+                        <Link
+                            href="/"
+                            className="text-sm font-medium text-[#dbdee1] hover:text-primary transition-colors py-1 px-1"
+                        >
+                            Home
+                        </Link>
+
+                        {/* Services Mega Dropdown Trigger */}
+                        <div 
+                            className="relative py-2"
+                            onMouseEnter={handleMouseEnter}
+                            onMouseLeave={handleMouseLeave}
+                        >
+                            <button
+                                className="flex items-center gap-1.5 text-sm font-medium text-[#dbdee1] hover:text-primary py-1 px-1 outline-none"
+                                onClick={() => setIsServicesDropdownOpen(!isServicesDropdownOpen)}
+                                aria-expanded={isServicesDropdownOpen}
                             >
-                                {link.name}
-                                <span className={cn(
-                                    "absolute -bottom-1 left-0 h-0.5 bg-primary transition-all group-hover:w-full",
-                                    pathname === link.href ? "w-full" : "w-0"
+                                <span>Services</span>
+                                <ChevronDown className={cn(
+                                    "w-4 h-4 transition-transform duration-200 text-muted-foreground",
+                                    isServicesDropdownOpen && "rotate-180 text-primary"
                                 )} />
-                            </Link>
-                        ))}
-                        
-                        <Link href="/">
-                            <Button size="sm" variant="outline" className="border-white/10 hover:bg-white/5 gap-1.5">
-                                <ArrowLeft className="w-3.5 h-3.5" />
-                                Portfolio
+                            </button>
+
+                            {/* Dropdown Menu Container */}
+                            <AnimatePresence>
+                                {isServicesDropdownOpen && (
+                                    <div 
+                                        style={{ width: "580px" }}
+                                        className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50 pointer-events-auto"
+                                    >
+                                        <m.div
+                                            initial={{ opacity: 0, y: 6 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: 6 }}
+                                            transition={{ duration: 0.15, ease: "easeOut" }}
+                                            style={{ backgroundColor: "#0c1017" }}
+                                            className="w-full border border-slate-800 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.95)] p-4"
+                                        >
+                                            <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground px-2 pt-1 pb-2 flex items-center justify-between border-b border-white/10 mb-3">
+                                                <span>Specialized Agency Services</span>
+                                                <span className="text-primary text-[10px] font-semibold">Built for Scale</span>
+                                            </div>
+
+                                            <div className="grid grid-cols-2 gap-2.5">
+                                                {servicesNavigationList.map((service, idx) => (
+                                                    <Link
+                                                        key={idx}
+                                                        href={service.href}
+                                                        className="group flex items-start gap-3 p-3 rounded-xl bg-slate-900/50 hover:bg-slate-800/80 border border-white/5 hover:border-primary/40 transition-all duration-200"
+                                                    >
+                                                        <div className="p-2 rounded-lg bg-white/5 border border-white/10 group-hover:scale-105 transition-transform flex-shrink-0 mt-0.5">
+                                                            {getServiceIcon(service.iconType)}
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <div className="flex items-center gap-1.5 mb-1 flex-wrap">
+                                                                <span className="text-sm font-semibold text-white group-hover:text-primary transition-colors">
+                                                                    {service.title}
+                                                                </span>
+                                                                {service.badge && (
+                                                                    <span className={cn(
+                                                                        "text-[9px] font-bold px-1.5 py-0.2 rounded-full border uppercase tracking-wider flex-shrink-0",
+                                                                        service.badgeColor
+                                                                    )}>
+                                                                        {service.badge}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                                                                {service.description}
+                                                            </p>
+                                                        </div>
+                                                    </Link>
+                                                ))}
+                                            </div>
+
+                                            <div className="mt-3 pt-3 border-t border-white/10 flex items-center justify-between px-2 text-xs">
+                                                <span className="text-muted-foreground">Need custom development?</span>
+                                                <Link
+                                                    href="/services"
+                                                    className="text-primary hover:text-primary/80 font-semibold flex items-center gap-1 group"
+                                                >
+                                                    <span>View all capabilities</span>
+                                                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                                                </Link>
+                                            </div>
+                                        </m.div>
+                                    </div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+
+                        <Link
+                            href="/about"
+                            className="text-sm font-medium text-[#dbdee1] hover:text-primary transition-colors py-1 px-1"
+                        >
+                            About
+                        </Link>
+                        <Link
+                            href="/#contact"
+                            className="text-sm font-medium text-[#dbdee1] hover:text-primary transition-colors py-1 px-1"
+                        >
+                            Contact
+                        </Link>
+
+                        <Link href="/contact">
+                            <Button size="sm" className="bg-primary hover:bg-primary/90 text-white font-semibold text-xs px-4 h-9">
+                                Get a Quote
                             </Button>
                         </Link>
                     </div>
 
                     {/* Mobile Menu Toggle */}
                     <button
-                        className="md:hidden text-foreground bg-white/5 border border-white/10 p-2 rounded-lg"
+                        className="md:hidden text-[#dbdee1] p-2 hover:text-white"
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         aria-label="Toggle menu"
                     >
-                        {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                        {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                     </button>
                 </div>
             </m.nav>
 
-            {/* Mobile Menu Overlay */}
+            {/* Mobile Menu Drawer */}
             <AnimatePresence>
                 {isMobileMenuOpen && (
                     <m.div
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
-                        className="fixed inset-0 z-40 bg-background/95 backdrop-blur-xl pt-24 px-6 md:hidden"
+                        className="fixed inset-0 z-40 pt-24 pb-8 px-6 md:hidden bg-[#0a0d14]/98 backdrop-blur-2xl overflow-y-auto"
                     >
-                        <div className="flex flex-col space-y-6">
-                            {navLinks.map((link, index) => (
-                                <Link
-                                    key={index}
-                                    href={link.href}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className="text-2xl font-bold text-foreground hover:text-primary transition-colors"
-                                >
-                                    {link.name}
-                                </Link>
-                            ))}
-                            <div className="h-px bg-white/10 my-4" />
-                            <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
-                                <Button className="w-full bg-primary hover:bg-primary/90 text-white">
-                                    Visit Portfolio
-                                </Button>
+                        <div className="flex flex-col space-y-4">
+                            <Link
+                                href="/"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="text-lg font-bold text-white py-2 border-b border-white/5"
+                            >
+                                Home
                             </Link>
+
+                            {/* Mobile Services Accordion */}
+                            <div className="py-2 border-b border-white/5">
+                                <button
+                                    onClick={() => setIsMobileServicesOpen(!isMobileServicesOpen)}
+                                    className="flex items-center justify-between w-full text-lg font-bold text-white py-1"
+                                >
+                                    <span>Services</span>
+                                    <ChevronDown className={cn(
+                                        "w-5 h-5 transition-transform text-muted-foreground",
+                                        isMobileServicesOpen && "rotate-180 text-primary"
+                                    )} />
+                                </button>
+
+                                {isMobileServicesOpen && (
+                                    <div className="mt-3 pl-2 flex flex-col space-y-2.5">
+                                        {servicesNavigationList.map((service, index) => (
+                                            <Link
+                                                key={index}
+                                                href={service.href}
+                                                onClick={() => setIsMobileMenuOpen(false)}
+                                                className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.03] border border-white/5 hover:border-primary/30 transition-all"
+                                            >
+                                                <div className="p-2 rounded-lg bg-white/5">
+                                                    {getServiceIcon(service.iconType)}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-sm font-bold text-white truncate">
+                                                            {service.title}
+                                                        </span>
+                                                        {service.badge && (
+                                                            <span className={cn(
+                                                                "text-[8px] font-bold px-1.5 py-0.2 rounded-full border",
+                                                                service.badgeColor
+                                                            )}>
+                                                                {service.badge}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <p className="text-[11px] text-muted-foreground line-clamp-1">
+                                                        {service.description}
+                                                    </p>
+                                                </div>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            <Link
+                                href="/about"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="text-lg font-bold text-white py-2 border-b border-white/5"
+                            >
+                                About
+                            </Link>
+                            <Link
+                                href="/blog"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="text-lg font-bold text-primary py-2 border-b border-white/5"
+                            >
+                                Blog
+                            </Link>
+                            <Link
+                                href="/contact"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="text-lg font-bold text-white py-2 border-b border-white/5"
+                            >
+                                Contact
+                            </Link>
+
+                            <div className="pt-4">
+                                <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)}>
+                                    <Button className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-6 text-base shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+                                        Get a Quote
+                                    </Button>
+                                </Link>
+                            </div>
                         </div>
                     </m.div>
                 )}

@@ -7,6 +7,8 @@ import { CookieConsent } from "@/components/layout/CookieConsent";
 import { LiveChatWidget } from "@/components/chat/LiveChatWidget";
 import { cn } from "@/lib/utils";
 import Script from "next/script";
+import { Suspense } from "react";
+import { TopProgressBar } from "@/components/layout/TopProgressBar";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
@@ -215,6 +217,9 @@ export default function RootLayout({
         }} />
         <GoogleAdSense />
         <FacebookPixelRouteTracker />
+        <Suspense fallback={null}>
+          <TopProgressBar />
+        </Suspense>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

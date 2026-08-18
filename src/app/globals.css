@@ -524,3 +524,11 @@
   border-color: rgba(99, 102, 241, 0.3);
   box-shadow: 0 4px 24px rgba(99, 102, 241, 0.08);
 }
+
+/* Suppress any default Mermaid syntax error overlays */
+#dmermaid,
+[id^="dmermaid"],
+.mermaid-error,
+svg[aria-roledescription="error"] {
+  display: none !important;
+}

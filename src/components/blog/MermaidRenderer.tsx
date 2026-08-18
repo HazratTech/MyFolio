@@ -5,7 +5,7 @@ import { useEffect } from "react";
 /**
  * MermaidRenderer — Initializes Mermaid.js on blog pages.
  * Finds all <div class="mermaid"> blocks and renders them as SVG diagrams.
- * Uses dynamic import to avoid SSR issues.
+ * Uses suppressErrorRendering and pre-parsing to ensure no syntax errors ever pollute the DOM.
  */
 export default function MermaidRenderer() {
     useEffect(() => {
@@ -19,6 +19,7 @@ export default function MermaidRenderer() {
                 const mermaid = (await import("mermaid")).default;
                 mermaid.initialize({
                     startOnLoad: false,
+                    suppressErrorRendering: true, // Prevents Mermaid from injecting error SVGs into document.body
                     theme: "dark",
                     themeVariables: {
                         darkMode: true,
@@ -38,9 +39,9 @@ export default function MermaidRenderer() {
                         nodeTextColor: "#e2e8f0",
                     },
                     flowchart: {
-                        htmlLabels: false, // Use native SVG labels to prevent HTML clipping
+                        htmlLabels: false,
                         curve: "basis",
-                        padding: 20, // Increase padding inside nodes
+                        padding: 20,
                     },
                     sequence: {
                         actorMargin: 50,
@@ -60,24 +61,45 @@ export default function MermaidRenderer() {
                     if (!code || el.getAttribute("data-processed") === "true") continue;
 
                     try {
-                        const { svg } = await mermaid.render(`mermaid-svg-${i}`, code);
+                        // Pre-validate syntax first to prevent global DOM error injection
+                        const isValid = await mermaid.parse(code, { suppressErrors: true });
+                        if (!isValid) {
+                            el.innerHTML = `<pre style="background:#1e293b;color:#94a3b8;padding:1rem;border-radius:8px;overflow-x:auto;font-size:0.85rem;border:1px solid #334155"><code>${code}</code></pre>`;
+                            el.setAttribute("data-processed", "true");
+                            continue;
+                        }
+
+                        const id = `mermaid-svg-${Date.now()}-${i}`;
+                        const { svg } = await mermaid.render(id, code);
                         el.innerHTML = svg;
                         el.setAttribute("data-processed", "true");
                     } catch (err) {
-                        console.warn(`Mermaid render failed for block ${i}:`, err);
-                        // Show the raw code in a styled fallback
+                        console.warn(`Mermaid render skipped for block ${i}:`, err);
+                        // Show raw code as clean fallback
                         el.innerHTML = `<pre style="background:#1e293b;color:#94a3b8;padding:1rem;border-radius:8px;overflow-x:auto;font-size:0.85rem;border:1px solid #334155"><code>${code}</code></pre>`;
                         el.setAttribute("data-processed", "true");
+
+                        // Remove any stray error elements injected by Mermaid
+                        document.querySelectorAll('[id^="dmermaid"]').forEach((errEl) => errEl.remove());
                     }
                 }
             } catch (err) {
                 console.warn("Mermaid.js failed to load:", err);
+            } finally {
+                // Ensure all stray Mermaid error elements are purged
+                if (typeof document !== "undefined") {
+                    document.querySelectorAll('[id^="dmermaid"]').forEach((errEl) => errEl.remove());
+                }
             }
         };
 
-        // Small delay to ensure DOM content is ready
         const timer = setTimeout(renderMermaid, 300);
-        return () => clearTimeout(timer);
+        return () => {
+            clearTimeout(timer);
+            if (typeof document !== "undefined") {
+                document.querySelectorAll('[id^="dmermaid"]').forEach((errEl) => errEl.remove());
+            }
+        };
     }, []);
 
     return null;

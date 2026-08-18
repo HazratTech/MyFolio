@@ -2,21 +2,21 @@ import { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
     return {
-        name: 'RelayWorks | Custom Automation & Software Agency',
+        name: 'RelayWorks | Custom Software, Discord Bot & AI Development Agency',
         short_name: 'RelayWorks',
-        description: 'RelayWorks is an expert agency specializing in custom Discord Bots, Backend Development, and automated workflow solutions.',
+        description: 'RelayWorks is a custom software agency specializing in Discord bots, mobile apps, backend APIs, and AI chatbots.',
         start_url: '/',
         display: 'standalone',
-        background_color: '#000000',
-        theme_color: '#000000',
+        background_color: '#090a0f',
+        theme_color: '#3b82f6',
         icons: [
             {
-                src: '/icon.png',
+                src: '/logo-brand.png',
                 sizes: '192x192',
                 type: 'image/png',
             },
             {
-                src: '/icon.png',
+                src: '/logo-brand.png',
                 sizes: '512x512',
                 type: 'image/png',
             },
