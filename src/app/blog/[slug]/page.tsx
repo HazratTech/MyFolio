@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import dbConnect from "@/lib/db";
 import Post from "@/models/Post";
-import { Calendar, Eye, Clock, ArrowLeft, Tag, User } from "lucide-react";
+import { Calendar, Eye, Clock, ArrowLeft, ArrowRight, Tag, User } from "lucide-react";
 import ViewCounter from "@/components/blog/ViewCounter";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -90,19 +90,34 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
     const categoryLower = (post.category || "").toLowerCase();
     let ctaTitle = "Need a Professional Mobile & Backend Developer?";
     let ctaDescription = "I build premium native mobile apps (Android, iOS) and high-performance backend systems (FastAPI, Ktor). Let's collaborate on your next project!";
+    let ctaHref = "/services";
+    let ctaBtnText = "Explore Services";
 
     if (categoryLower.includes("android")) {
         ctaTitle = "Need Help with Native Android Development?";
         ctaDescription = "I build high-performance Native Android apps using Kotlin, Jetpack Compose, and modern architecture. Let's collaborate to build a premium mobile experience!";
+        ctaHref = "/mobile-app-development";
+        ctaBtnText = "Explore Mobile Development";
     } else if (categoryLower.includes("discord")) {
-        ctaTitle = "Need Help with Custom Discord Bots or Server Automation?";
-        ctaDescription = "I design and develop custom, highly scalable Discord bots and server automation systems with rich API integrations. Let's build something interactive!";
+        ctaTitle = "Looking for a Custom Discord Bot Developer?";
+        ctaDescription = "I engineer custom, highly scalable Discord bots, verification systems, and ticket automation with 99.9% uptime. Let's build your custom bot!";
+        ctaHref = "/discord-bot";
+        ctaBtnText = "View Discord Bot Services";
+    } else if (categoryLower.includes("ai") || categoryLower.includes("chatbot") || categoryLower.includes("mcp")) {
+        ctaTitle = "Need Custom AI Chatbot or AI Agent Development?";
+        ctaDescription = "I build intelligent AI chatbots and automation agents for customer support, lead qualification, and CRM sync. Let's automate your workflows!";
+        ctaHref = "/ai-chatbot-development";
+        ctaBtnText = "View AI Chatbot Services";
     } else if (categoryLower.includes("backend") || categoryLower.includes("api") || categoryLower.includes("database")) {
         ctaTitle = "Need Help with Custom APIs or Backend Systems?";
         ctaDescription = "I build robust, secure, and scalable backend services, databases, and microservices using FastAPI, Ktor, Node.js, and MongoDB. Let's build your server infrastructure!";
+        ctaHref = "/services";
+        ctaBtnText = "View Backend & API Services";
     } else if (categoryLower.includes("ios") || categoryLower.includes("swift")) {
         ctaTitle = "Need Help with iOS App Development?";
         ctaDescription = "I build modern, fluid, and high-performance native iOS applications using Swift and SwiftUI. Let's collaborate to launch your iOS app!";
+        ctaHref = "/mobile-app-development";
+        ctaBtnText = "Explore iOS App Services";
     }
 
     const jsonLd = {
@@ -254,14 +269,15 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
                         {ctaDescription}
                     </p>
                     <div className="flex flex-wrap gap-4 justify-center relative z-10">
-                        <Link href="/contact">
-                            <Button className="bg-primary hover:bg-primary/95 text-white font-medium rounded-xl px-5 shadow-lg shadow-primary/20">
-                                Work With Me
+                        <Link href={ctaHref}>
+                            <Button className="bg-primary hover:bg-primary/95 text-white font-semibold rounded-xl px-6 shadow-lg shadow-primary/20 flex items-center gap-2">
+                                <span>{ctaBtnText}</span>
+                                <ArrowRight className="w-4 h-4" />
                             </Button>
                         </Link>
-                        <Link href="/">
+                        <Link href="/contact">
                             <Button variant="outline" className="bg-white/5 border-white/10 hover:bg-white/10 text-white font-medium rounded-xl px-5">
-                                View Portfolio
+                                Book Free Consultation
                             </Button>
                         </Link>
                     </div>

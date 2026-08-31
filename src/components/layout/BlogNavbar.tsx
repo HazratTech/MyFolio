@@ -72,8 +72,11 @@ export const BlogNavbar = () => {
             >
                 <div className="container mx-auto px-6 flex items-center justify-between max-w-7xl">
                     <div className="flex items-center gap-3">
-                        <Link href="/" className="hover:opacity-90 transition-opacity flex items-center">
-                            <img src="/logo-brand.png" alt="RelayWorks Logo" className="h-8 w-auto object-contain" />
+                        <Link href="/" className="hover:opacity-90 transition-opacity flex items-center gap-2.5">
+                            <img src="/icon.png" alt="RelayWorks Logo" className="h-7 w-7 object-contain" />
+                            <span className="text-xl font-bold font-heading tracking-tighter text-white">
+                                Relay<span className="text-primary">Works</span>
+                            </span>
                         </Link>
                         <span className="text-white/20">|</span>
                         <Link href="/blog" className="flex items-center gap-1.5 text-xs bg-primary/10 text-primary border border-primary/20 px-2.5 py-0.5 rounded-full font-semibold">

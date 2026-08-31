@@ -18,6 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         '/blog',
         '/discord-bot',
         '/ai-chatbot-development',
+        '/mobile-app-development',
         '/cookie-policy',
         '/privacy-policy',
         '/terms-of-service'

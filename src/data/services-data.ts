@@ -27,7 +27,7 @@ export const servicesNavigationList: ServiceNavItem[] = [
     {
         title: "Native Mobile Apps",
         description: "High-performance Android (Kotlin/Compose) & iOS apps.",
-        href: "/services",
+        href: "/mobile-app-development",
         badge: "Mobile",
         iconType: "smartphone",
         badgeColor: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
