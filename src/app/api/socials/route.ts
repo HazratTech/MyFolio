@@ -7,7 +7,11 @@ export async function GET() {
     await dbConnect();
     try {
         const socials = await Social.find({});
-        return NextResponse.json(socials);
+        return NextResponse.json(socials, {
+            headers: {
+                'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+            },
+        });
     } catch (error) {
         return NextResponse.json({ success: false, error: 'Failed to fetch socials' }, { status: 500 });
     }

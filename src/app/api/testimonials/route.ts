@@ -7,7 +7,11 @@ export async function GET() {
     await dbConnect();
     try {
         const testimonials = await Testimonial.find({});
-        return NextResponse.json(testimonials);
+        return NextResponse.json(testimonials, {
+            headers: {
+                'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+            },
+        });
     } catch (error) {
         return NextResponse.json({ success: false, error: 'Failed to fetch testimonials' }, { status: 500 });
     }

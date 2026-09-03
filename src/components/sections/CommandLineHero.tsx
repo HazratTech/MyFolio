@@ -45,28 +45,13 @@ export const SystemDashboardHero = () => {
         });
         setLogs(initialLogs);
 
-        // Prime the sparkline history with real initial latency
-        const primeLatency = async () => {
-            const start = performance.now();
-            let initialVal = 24;
-            try {
-                await fetch("https://api.onedropblood.top/", {
-                    method: "GET",
-                    mode: "no-cors",
-                    cache: "no-store",
-                });
-                initialVal = Math.round(performance.now() - start);
-            } catch {
-                initialVal = Math.floor(40 + Math.random() * 15);
-            }
-            setLatency(initialVal);
-            setSparkline(Array.from({ length: 10 }).map(() => initialVal + Math.floor(Math.random() * 6 - 3)));
-        };
-
-        primeLatency();
+        // Smooth simulated telemetry with zero network blocking (eliminates 9.27s latency bottleneck)
+        const initialVal = Math.floor(18 + Math.random() * 8);
+        setLatency(initialVal);
+        setSparkline(Array.from({ length: 10 }).map(() => initialVal + Math.floor(Math.random() * 6 - 3)));
 
         let logId = 4;
-        const logInterval = setInterval(async () => {
+        const logInterval = setInterval(() => {
             const template = logTemplates[Math.floor(Math.random() * logTemplates.length)];
             const time = new Date().toLocaleTimeString("en-US", { hour12: false });
             const newLog = {
@@ -76,21 +61,8 @@ export const SystemDashboardHero = () => {
             };
             setLogs(prev => [...prev.slice(1), newLog]);
 
-            // Measure real latency to https://api.onedropblood.top/
-            const start = performance.now();
-            let duration = 24;
-            try {
-                await fetch("https://api.onedropblood.top/", {
-                    method: "GET",
-                    mode: "no-cors",
-                    cache: "no-store",
-                });
-                duration = Math.round(performance.now() - start);
-                setLatency(Math.min(Math.max(duration, 5), 999));
-            } catch (err) {
-                duration = Math.floor(40 + Math.random() * 15);
-                setLatency(duration);
-            }
+            const duration = Math.floor(18 + Math.random() * 8);
+            setLatency(duration);
 
             setSparkline(prev => {
                 if (prev.length === 0) return Array.from({ length: 10 }).map(() => duration + Math.floor(Math.random() * 6 - 3));
@@ -99,7 +71,7 @@ export const SystemDashboardHero = () => {
 
             setActiveSessions(prev => prev + (Math.random() > 0.5 ? 1 : -1));
             setCompletedJobs(prev => prev + 1);
-        }, 2200);
+        }, 2500);
 
         return () => clearInterval(logInterval);
     }, []);

@@ -7,6 +7,7 @@ import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
 import { 
     Menu, X, BookOpen, ChevronDown, Bot, Sparkles, Smartphone, Server, ArrowRight 
 } from "lucide-react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { servicesNavigationList, ServiceNavItem } from "@/data/services-data";
@@ -73,7 +74,7 @@ export const BlogNavbar = () => {
                 <div className="container mx-auto px-6 flex items-center justify-between max-w-7xl">
                     <div className="flex items-center gap-3">
                         <Link href="/" className="hover:opacity-90 transition-opacity flex items-center gap-2.5">
-                            <img src="/icon.png" alt="RelayWorks Logo" className="h-7 w-7 object-contain" />
+                            <Image src="/icon.png" alt="RelayWorks Logo" width={28} height={28} className="h-7 w-7 object-contain" priority />
                             <span className="text-xl font-bold font-heading tracking-tighter text-white">
                                 Relay<span className="text-primary">Works</span>
                             </span>

@@ -15,7 +15,11 @@ export async function GET() {
             return { ...project.toObject(), commentCount: count };
         }));
 
-        return NextResponse.json(projectsWithCounts);
+        return NextResponse.json(projectsWithCounts, {
+            headers: {
+                'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+            },
+        });
     } catch (error) {
         return NextResponse.json({ success: false, error: 'Failed to fetch projects' }, { status: 500 });
     }

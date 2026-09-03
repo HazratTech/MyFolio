@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import dbConnect from "@/lib/db";
 import Social from "@/models/Social";
 import { getIcon } from "@/lib/utils/icons";
@@ -18,7 +19,7 @@ export const Footer = async () => {
             <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
                 <div className="mb-6 md:mb-0">
                     <Link href="/" className="hover:opacity-90 transition-opacity flex items-center gap-2.5 mb-2">
-                        <img src="/icon.png" alt="RelayWorks Logo" className="h-7 w-7 object-contain" />
+                        <Image src="/icon.png" alt="RelayWorks Logo" width={28} height={28} className="h-7 w-7 object-contain" />
                         <span className="text-xl font-bold font-heading tracking-tighter text-white">
                             Relay<span className="text-primary">Works</span>
                         </span>

@@ -205,9 +205,11 @@ export const MobileAppLanding = () => {
                         {/* Senior Engineer Credibility Bar */}
                         <div className="p-4 md:p-5 rounded-2xl bg-slate-900/60 border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div className="flex items-center gap-3.5">
-                                <img
+                                <Image
                                     src="/images/founder.jpg"
                                     alt="Hazrat Ummar Shaikh"
+                                    width={48}
+                                    height={48}
                                     className="w-12 h-12 rounded-full object-cover border-2 border-primary/50 shrink-0"
                                 />
                                 <div>
