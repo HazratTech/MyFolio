@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
-import { MessageSquare, X, Send, User, Bot, Loader2 } from "lucide-react";
+import { MessageSquare, X, Send, User, Bot, Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -174,10 +174,8 @@ export const LiveChatWidget = () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ threadId, content: contentToSend }),
             });
-            // The polling will fetch the real message with DB ID shortly
         } catch (error) {
             console.error("Error sending message:", error);
-            // Revert optimistic update on failure could be handled here
         } finally {
             setIsSending(false);
         }
@@ -212,45 +210,58 @@ export const LiveChatWidget = () => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
-                        className="fixed bottom-20 right-6 w-[350px] max-w-[calc(100vw-3rem)] bg-[#1e1f22] border border-white/10 shadow-2xl rounded-2xl overflow-hidden z-50 flex flex-col h-[500px] max-h-[70vh]"
+                        className="fixed bottom-20 right-6 w-[360px] max-w-[calc(100vw-3rem)] bg-white border border-slate-200 shadow-[0_25px_60px_rgba(0,0,0,0.18)] rounded-3xl overflow-hidden z-50 flex flex-col h-[520px] max-h-[72vh]"
                     >
                         {/* Header */}
-                        <div className="bg-[#5865F2] p-4 flex justify-between items-center text-white shrink-0 shadow-md relative z-10">
+                        <div 
+                            style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                            className="p-4 flex justify-between items-center shrink-0 shadow-sm relative z-10"
+                        >
                             <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center shrink-0">
-                                    <Bot className="w-4 h-4 text-white" />
+                                <div className="relative">
+                                    <div className="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center shrink-0 border border-white/20">
+                                        <MessageSquare className="w-4 h-4 text-white" />
+                                    </div>
+                                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 border-2 border-blue-600 rounded-full" />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-sm leading-tight">Live Support</h3>
-                                    <p className="text-white/80 text-[11px]">We usually reply in a few minutes</p>
+                                    <h3 className="font-bold text-sm leading-tight text-white flex items-center gap-1.5">
+                                        Direct Studio Support
+                                    </h3>
+                                    <p className="text-blue-100 text-[11px] font-medium">Replies typically within minutes</p>
                                 </div>
                             </div>
                             <button
                                 onClick={handleToggle}
-                                className="text-white/80 hover:text-white transition-colors p-1 rounded-md hover:bg-white/10"
+                                className="text-white/80 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-white/15"
+                                aria-label="Close Chat"
                             >
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
 
                         {/* Content Area */}
-                        <div className="flex-1 bg-[#313338] overflow-y-auto p-4 flex flex-col gap-4 relative custom-scrollbar">
+                        <div className="flex-1 bg-[#fafaf9] overflow-y-auto p-4 flex flex-col gap-4 relative custom-scrollbar">
                             {!threadId ? (
                                 /* Onboarding Form */
                                 <div className="h-full flex flex-col justify-center">
-                                    <div className="bg-[#2b2d31] p-5 rounded-xl border border-white/5 shadow-inner">
-                                        <h4 className="text-white font-semibold mb-2 text-center text-sm">Welcome! Let's get started.</h4>
-                                        <p className="text-[#dbdee1] text-xs mb-5 text-center leading-relaxed">
-                                            Please provide your name and your question to start chatting with RelayWorks.
+                                    <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+                                        <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200 mb-2.5 w-fit">
+                                            <Sparkles className="w-3 h-3 text-blue-600" />
+                                            <span>Live Builder Connect</span>
+                                        </div>
+                                        <h4 className="text-slate-950 font-bold font-heading mb-1 text-base">Welcome! Let&apos;s get started.</h4>
+                                        <p className="text-slate-600 text-xs mb-4 leading-relaxed">
+                                            Provide your details and inquiry to start a direct session with RelayWorks.
                                         </p>
-                                        <form onSubmit={handleStartChat} className="space-y-4">
+                                        <form onSubmit={handleStartChat} className="space-y-3">
                                             <div>
                                                 <Input
                                                     value={name}
                                                     onChange={(e) => setName(e.target.value)}
                                                     placeholder="Your Name"
                                                     required
-                                                    className="bg-black/20 border-[#2f3136] focus:border-[#5865F2] text-white text-sm h-10 placeholder:text-[#949ba4]"
+                                                    className="bg-slate-50 border-slate-200 focus:bg-white focus:border-blue-500 text-slate-900 text-sm h-10 placeholder:text-slate-400 rounded-xl"
                                                 />
                                             </div>
                                             <div>
@@ -260,7 +271,7 @@ export const LiveChatWidget = () => {
                                                     onChange={(e) => setEmail(e.target.value)}
                                                     placeholder="Your Email"
                                                     required
-                                                    className="bg-black/20 border-[#2f3136] focus:border-[#5865F2] text-white text-sm h-10 placeholder:text-[#949ba4]"
+                                                    className="bg-slate-50 border-slate-200 focus:bg-white focus:border-blue-500 text-slate-900 text-sm h-10 placeholder:text-slate-400 rounded-xl"
                                                 />
                                             </div>
                                             <div>
@@ -269,15 +280,23 @@ export const LiveChatWidget = () => {
                                                     onChange={(e) => setMessageInput(e.target.value)}
                                                     placeholder="How can I help you?"
                                                     required
-                                                    className="bg-black/20 border-[#2f3136] focus:border-[#5865F2] text-white text-sm h-10 placeholder:text-[#949ba4]"
+                                                    className="bg-slate-50 border-slate-200 focus:bg-white focus:border-blue-500 text-slate-900 text-sm h-10 placeholder:text-slate-400 rounded-xl"
                                                 />
                                             </div>
                                             <Button
                                                 type="submit"
                                                 disabled={isStarting}
-                                                className="w-full bg-[#5865F2] hover:bg-[#5865F2]/90 text-white font-semibold shadow-md"
+                                                style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                                                className="w-full hover:opacity-90 text-white font-bold h-11 rounded-xl shadow-xs transition-opacity text-sm"
                                             >
-                                                {isStarting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Start Chat"}
+                                                {isStarting ? (
+                                                    <div className="flex items-center justify-center gap-2">
+                                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                                        <span>Connecting...</span>
+                                                    </div>
+                                                ) : (
+                                                    "Start Chat"
+                                                )}
                                             </Button>
                                         </form>
                                     </div>
@@ -286,7 +305,7 @@ export const LiveChatWidget = () => {
                                 /* Chat Messages */
                                 <>
                                     {messages.length === 0 && (
-                                        <div className="flex-1 flex items-center justify-center text-[#949ba4] text-xs">
+                                        <div className="flex-1 flex items-center justify-center text-slate-400 text-xs">
                                             Loading messages...
                                         </div>
                                     )}
@@ -299,22 +318,22 @@ export const LiveChatWidget = () => {
                                         >
                                             <div className="flex items-end gap-2">
                                                 {msg.sender === "admin" && (
-                                                    <div className="w-6 h-6 rounded-full bg-[#5865F2] flex items-center justify-center shrink-0 mb-1">
-                                                        <span className="text-[10px] font-bold text-white">H</span>
+                                                    <div className="w-6 h-6 rounded-full overflow-hidden border border-slate-200 shrink-0 mb-1">
+                                                        <img src="/images/founder.jpg" alt="Hazrat" className="w-full h-full object-cover" />
                                                     </div>
                                                 )}
                                                 <div
-                                                    className={`px-3.5 py-2 rounded-2xl text-sm ${
+                                                    className={`px-3.5 py-2 rounded-2xl text-sm leading-relaxed ${
                                                         msg.sender === "user"
-                                                            ? "bg-[#5865F2] text-white rounded-br-sm"
-                                                            : "bg-[#2b2d31] text-[#dbdee1] border border-white/5 rounded-bl-sm"
+                                                            ? "text-white rounded-br-xs shadow-2xs"
+                                                            : "bg-white text-slate-800 border border-slate-200/80 rounded-bl-xs shadow-2xs"
                                                     }`}
-                                                    style={{ wordBreak: 'break-word' }}
+                                                    style={msg.sender === "user" ? { backgroundColor: "#2563eb", wordBreak: 'break-word' } : { wordBreak: 'break-word' }}
                                                 >
                                                     {msg.content}
                                                 </div>
                                             </div>
-                                            <span className="text-[10px] text-[#949ba4] mt-1 px-1">
+                                            <span className="text-[10px] text-slate-400 mt-1 px-1 font-mono">
                                                 {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                             </span>
                                         </div>
@@ -326,20 +345,21 @@ export const LiveChatWidget = () => {
 
                         {/* Input Area (Only if chatting) */}
                         {threadId && (
-                            <div className="bg-[#2b2d31] p-3 border-t border-black/20 shrink-0">
+                            <div className="bg-white p-3 border-t border-slate-200 shrink-0">
                                 <form onSubmit={handleSendMessage} className="flex gap-2">
                                     <Input
                                         value={messageInput}
                                         onChange={(e) => setMessageInput(e.target.value)}
-                                        placeholder="Type a message..."
+                                        placeholder="Type your message..."
                                         disabled={isSending}
-                                        className="bg-[#383a40] border-none focus-visible:ring-1 focus-visible:ring-[#5865F2] text-white text-sm h-10 placeholder:text-[#949ba4]"
+                                        className="bg-slate-50 border-slate-200 focus:bg-white focus:border-blue-500 text-slate-900 text-sm h-10 placeholder:text-slate-400 rounded-xl"
                                     />
                                     <Button
                                         type="submit"
                                         disabled={isSending || !messageInput.trim()}
                                         size="icon"
-                                        className="bg-[#5865F2] hover:bg-[#5865F2]/90 text-white shrink-0 h-10 w-10 rounded-xl"
+                                        style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                                        className="hover:opacity-90 text-white shrink-0 h-10 w-10 rounded-xl shadow-xs transition-opacity"
                                     >
                                         <Send className="w-4 h-4 ml-0.5" />
                                     </Button>
@@ -358,23 +378,23 @@ export const LiveChatWidget = () => {
                             initial={{ opacity: 0, y: 10, scale: 0.95 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                            className="absolute bottom-[4.5rem] right-0 bg-[#1e1f22]/95 backdrop-blur-xl border border-white/10 p-3 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex items-center gap-3 cursor-pointer group w-[260px] origin-bottom-right"
+                            className="absolute bottom-[4.5rem] right-0 bg-white border border-slate-200 p-3 rounded-2xl shadow-[0_10px_35px_rgba(0,0,0,0.12)] flex items-center gap-3 cursor-pointer group w-[270px] origin-bottom-right"
                             onClick={handleToggle}
                         >
                             {/* Avatar */}
                             <div className="relative shrink-0">
-                                <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-[#2b2d31]">
-                                    <img src="/images/founder.jpg" alt="RelayWorks Founder" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-slate-200">
+                                    <img src="/images/founder.jpg" alt="RelayWorks Founder" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                                 </div>
-                                <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-[#1e1f22] rounded-full shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse" />
+                                <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full shadow-xs animate-pulse" />
                             </div>
                             
                             {/* Text */}
                             <div className="flex-1 flex flex-col justify-center">
-                                <p className="text-[13px] font-bold text-white leading-tight flex items-center gap-1.5">
-                                    Have a question? <span className="text-[9px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-sm uppercase tracking-wider font-black">Live</span>
+                                <p className="text-xs font-bold text-slate-950 leading-tight flex items-center gap-1.5">
+                                    Have a question? <span className="text-[9px] bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.5 rounded-full uppercase tracking-wider font-bold">Live</span>
                                 </p>
-                                <p className="text-[11px] text-[#dbdee1] mt-0.5 leading-snug">Chat directly with Hazrat (Founder of RelayWorks).</p>
+                                <p className="text-[11px] text-slate-600 mt-0.5 leading-snug">Chat directly with Hazrat (Studio Founder).</p>
                             </div>
 
                             {/* Close cross for the tooltip */}
@@ -384,25 +404,28 @@ export const LiveChatWidget = () => {
                                     setShowTooltip(false);
                                     localStorage.setItem("has_seen_chat_tooltip", "true");
                                 }}
-                                className="absolute -top-2 -right-2 w-6 h-6 bg-[#2b2d31] hover:bg-[#383a40] text-[#949ba4] hover:text-white rounded-full flex items-center justify-center border border-white/10 transition-colors shadow-lg z-10"
+                                className="absolute -top-2 -right-2 w-5 h-5 bg-white hover:bg-slate-100 text-slate-400 hover:text-slate-700 rounded-full flex items-center justify-center border border-slate-200 transition-colors shadow-xs z-10"
+                                aria-label="Close tooltip"
                             >
-                                <X className="w-3.5 h-3.5" />
+                                <X className="w-3 h-3" />
                             </button>
 
                             {/* Triangle pointer to the bottom */}
-                            <div className="absolute -bottom-1.5 right-[1.125rem] w-3.5 h-3.5 bg-[#1e1f22] border-b border-r border-white/10 rotate-45 rounded-br-sm" />
+                            <div className="absolute -bottom-1.5 right-[1.125rem] w-3 h-3 bg-white border-b border-r border-slate-200 rotate-45" />
                         </m.div>
                     )}
                 </AnimatePresence>
 
                 <button
                     onClick={handleToggle}
-                    className="relative w-14 h-14 bg-[#5865F2] hover:bg-[#5865F2]/90 text-white rounded-full flex items-center justify-center shadow-[0_4px_20px_rgba(88,101,242,0.4)] transition-transform hover:scale-105 shrink-0"
+                    style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                    className="relative w-14 h-14 hover:opacity-90 text-white rounded-full flex items-center justify-center shadow-[0_8px_30px_rgba(37,99,235,0.4)] transition-all hover:scale-105 shrink-0"
+                    aria-label="Toggle Live Chat Support"
                 >
                     {unreadCount > 0 && (
                         <span 
                             style={{ position: 'absolute', top: '-4px', right: '-4px' }}
-                            className="bg-red-500 text-white text-[11px] font-bold w-6 h-6 flex items-center justify-center rounded-full border-2 border-[#1e1f22] shadow-sm z-50"
+                            className="bg-red-500 text-white text-[11px] font-bold w-6 h-6 flex items-center justify-center rounded-full border-2 border-white shadow-sm z-50"
                         >
                             {unreadCount}
                         </span>
@@ -410,7 +433,7 @@ export const LiveChatWidget = () => {
                     {isOpen ? (
                         <X className="w-6 h-6" />
                     ) : (
-                        <img src="/discord.svg" alt="Chat" className="w-6 h-6" />
+                        <MessageSquare className="w-6 h-6" />
                     )}
                 </button>
             </div>
@@ -422,7 +445,7 @@ export const LiveChatWidget = () => {
                     background: transparent;
                 }
                 .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: #1e1f22;
+                    background: #cbd5e1;
                     border-radius: 10px;
                 }
             `}</style>

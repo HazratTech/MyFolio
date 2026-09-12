@@ -99,12 +99,6 @@ const jsonLd = {
                     },
                 ],
             },
-            aggregateRating: {
-                "@type": "AggregateRating",
-                ratingValue: "5.0",
-                reviewCount: "24",
-                bestRating: "5",
-            },
         },
         {
             "@type": "BreadcrumbList",

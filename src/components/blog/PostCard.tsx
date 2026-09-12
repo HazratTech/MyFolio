@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, Eye, ArrowRight } from "lucide-react";
+import { Calendar, Eye, ArrowRight, FileText } from "lucide-react";
 import { IPost } from "@/models/Post";
 import { getCleanSlug } from "@/lib/utils";
 
@@ -18,9 +18,9 @@ export default function PostCard({ post }: PostCardProps) {
     });
 
     return (
-        <Card className="bg-white/[0.02] backdrop-blur-md border border-white/5 overflow-hidden hover:border-primary/30 hover:bg-white/[0.04] hover:shadow-[0_0_30px_rgba(59,130,246,0.1)] transition-all duration-500 group h-full flex flex-col rounded-2xl">
+        <Card className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden hover:border-blue-300 hover:shadow-[0_12px_30px_rgba(37,99,235,0.08)] transition-all duration-300 group h-full flex flex-col">
             {/* Thumbnail Wrapper */}
-            <div className="relative h-52 w-full overflow-hidden bg-white/[0.02] border-b border-white/5">
+            <div className="relative h-52 w-full overflow-hidden bg-slate-100 border-b border-slate-100">
                 {post.coverImage ? (
                     <>
                         <Image
@@ -30,26 +30,26 @@ export default function PostCard({ post }: PostCardProps) {
                             className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-60" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent opacity-60" />
                     </>
                 ) : (
-                    <div className="flex items-center justify-center h-full bg-gradient-to-br from-primary/10 via-background to-secondary/10 text-muted-foreground">
-                        <span className="text-4xl filter grayscale">📝</span>
+                    <div className="flex items-center justify-center h-full bg-blue-50/50 text-blue-600">
+                        <FileText className="w-10 h-10 stroke-[1.5]" />
                     </div>
                 )}
                 
                 {/* Category tag */}
-                <div className="absolute top-4 left-4 z-10">
-                    <Badge className="bg-primary/20 text-primary border border-primary/30 backdrop-blur-md hover:bg-primary hover:text-white transition-all text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                <div className="absolute top-3.5 left-3.5 z-10">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/95 text-blue-700 border border-slate-200/80 shadow-xs backdrop-blur-sm">
                         {post.category || "Development"}
-                    </Badge>
+                    </span>
                 </div>
             </div>
 
             {/* Title / Header */}
-            <CardHeader className="pb-3 pt-5 px-6">
+            <CardHeader className="pb-2 pt-5 px-6">
                 <Link href={`/blog/${getCleanSlug(post.slug)}`} className="block">
-                    <h3 className="text-lg font-bold font-heading leading-snug tracking-tight text-white/95 group-hover:text-primary transition-colors duration-300 line-clamp-2">
+                    <h3 className="text-lg font-bold font-heading leading-snug tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors duration-200 line-clamp-2">
                         {post.title}
                     </h3>
                 </Link>
@@ -57,39 +57,42 @@ export default function PostCard({ post }: PostCardProps) {
 
             {/* Card Body */}
             <CardContent className="flex-grow pb-4 px-6">
-                <p className="text-muted-foreground/80 text-sm leading-relaxed line-clamp-3 mb-5">
+                <p className="text-slate-600 text-sm leading-relaxed line-clamp-3 mb-4">
                     {post.excerpt || post.content.replace(/<[^>]*>?/gm, "").substring(0, 150) + "..."}
                 </p>
 
                 {/* Tags */}
                 <div className="flex flex-wrap gap-1.5 mt-auto">
                     {post.tags?.slice(0, 3).map((tag: string) => (
-                        <Badge key={tag} variant="outline" className="text-[10px] uppercase tracking-wider font-mono bg-white/[0.02] border-white/5 hover:border-white/20 text-muted-foreground/90 rounded-md">
+                        <span 
+                            key={tag} 
+                            className="text-[10px] font-mono uppercase tracking-wider bg-slate-50 border border-slate-200 text-slate-600 hover:text-blue-600 hover:border-blue-200 px-2 py-0.5 rounded-md transition-colors"
+                        >
                             #{tag}
-                        </Badge>
+                        </span>
                     ))}
                 </div>
             </CardContent>
 
             {/* Card Footer */}
-            <CardFooter className="border-t border-white/5 mx-6 py-4 px-0 text-xs text-muted-foreground/60 flex justify-between items-center mt-auto">
-                <div className="flex gap-4">
+            <CardFooter className="border-t border-slate-100 mx-6 py-3.5 px-0 text-xs text-slate-500 flex justify-between items-center mt-auto font-sans">
+                <div className="flex gap-4 items-center">
                     <span className="flex items-center gap-1.5">
-                        <Calendar className="w-3.5 h-3.5 text-primary/70" />
+                        <Calendar className="w-3.5 h-3.5 text-slate-400" />
                         {formattedDate}
                     </span>
                     {post.views >= 1000 && (
                         <span className="flex items-center gap-1.5">
-                            <Eye className="w-3.5 h-3.5 text-primary/70" />
+                            <Eye className="w-3.5 h-3.5 text-slate-400" />
                             {post.views}
                         </span>
                     )}
                 </div>
                 <Link 
                     href={`/blog/${getCleanSlug(post.slug)}`} 
-                    className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors font-semibold group-hover:gap-1.5 transition-all duration-300"
+                    className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 transition-colors font-semibold group-hover:gap-1.5 duration-200"
                 >
-                    Read More 
+                    <span>Read Article</span>
                     <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
                 </Link>
             </CardFooter>

@@ -232,6 +232,7 @@ export const Contact = () => {
                                                 <option value="Discord Bot">Discord Bot</option>
                                                 <option value="Mobile App">Mobile App</option>
                                                 <option value="Backend Dev">Backend Dev</option>
+                                                <option value="AI Chatbot">AI Chatbot</option>
                                             </select>
                                         </div>
                                         <div className="space-y-2">
@@ -278,5 +279,4 @@ export const Contact = () => {
         </section>
     );
 };
-
 

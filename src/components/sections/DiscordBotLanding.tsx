@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import {
-    Bot, Check, X, ShieldAlert, Sparkles, MessageSquare, Terminal,
-    Webhook, Clock, Award, Star, ArrowRight, Send, HelpCircle, ChevronDown, CheckCircle2, Lock, Eye
+    Bot, Check, X, Sparkles, MessageSquare, Terminal,
+    Webhook, Clock, Star, ArrowRight, Send, HelpCircle, ChevronDown, CheckCircle2, Lock, ExternalLink
 } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
 
@@ -49,6 +49,14 @@ const caseStudies: CaseStudy[] = [
 ];
 
 export const DiscordBotLanding = () => {
+    // Dynamic Light Theme Mount Effect
+    useEffect(() => {
+        document.documentElement.classList.remove("dark");
+        return () => {
+            document.documentElement.classList.add("dark");
+        };
+    }, []);
+
     // Simulator states
     const [simulatorTab, setSimulatorTab] = useState<"verify" | "ticket" | "ai">("verify");
     const [messages, setMessages] = useState<Array<{ sender: "user" | "bot" | "system"; text: string; embed?: any; isCommand?: boolean }>>([]);
@@ -78,7 +86,6 @@ export const DiscordBotLanding = () => {
                 const res = await fetch("/api/testimonials");
                 if (res.ok) {
                     const data = await res.json();
-                    // Filter reviews that are relevant to bots if possible, otherwise display them
                     setReviews(data);
                 }
             } catch (err) {
@@ -100,11 +107,11 @@ export const DiscordBotLanding = () => {
                     { sender: "user", text: "/verify", isCommand: true },
                     {
                         sender: "bot", text: "Click the button below to complete security verification and unlock the server:", embed: {
-                            title: "🔐 Server Security Verification",
+                            title: "Server Security Verification",
                             description: "To prevent spam and raid bots, please verify your account. Clicking verify will grant you access to all channels.",
-                            color: "#5865F2",
+                            color: "#2563eb",
                             fields: [
-                                { name: "Step 1", value: "Click the green 'Verify Me' button below." },
+                                { name: "Step 1", value: "Click the 'Verify Me' button below." },
                                 { name: "Step 2", value: "Check your direct messages if prompted." }
                             ],
                             actions: true
@@ -116,12 +123,12 @@ export const DiscordBotLanding = () => {
                     { sender: "user", text: "/ticket open subject: Account Billing Help", isCommand: true },
                     {
                         sender: "bot", text: "Creating your private support channel...", embed: {
-                            title: "🎟️ Support Ticket Created",
+                            title: "Support Ticket Created",
                             description: "Your support request has been registered successfully. A private channel has been created for your issue.",
-                            color: "#5865F2",
+                            color: "#2563eb",
                             fields: [
-                                { name: "Support Channel", value: "🔓 #ticket-0024" },
-                                { name: "Estimated Response", value: "⚡ Less than 10 minutes" }
+                                { name: "Support Channel", value: "#ticket-0024" },
+                                { name: "Estimated Response", value: "Less than 10 minutes" }
                             ]
                         }
                     }
@@ -129,7 +136,7 @@ export const DiscordBotLanding = () => {
             } else if (simulatorTab === "ai") {
                 setMessages([
                     { sender: "user", text: "/ask-ai how do I deploy my first bot?", isCommand: true },
-                    { sender: "bot", text: "Thinking... 🧠" }
+                    { sender: "bot", text: "Analyzing query and formulating response..." }
                 ]);
 
                 setTimeout(() => {
@@ -137,13 +144,13 @@ export const DiscordBotLanding = () => {
                         { sender: "user", text: "/ask-ai how do I deploy my first bot?", isCommand: true },
                         {
                             sender: "bot", text: "", embed: {
-                                title: "🤖 Dev Assistant AI Response",
-                                description: "To deploy your Discord bot, I recommend hosting on a Linux VPS using PM2 to keep it online 24/7. Here are the quick commands:",
-                                color: "#5865F2",
+                                title: "Developer Assistant Response",
+                                description: "To deploy your Discord bot, host on a Linux VPS using PM2 to keep it online 24/7. Core execution steps:",
+                                color: "#2563eb",
                                 fields: [
                                     { name: "1. Install PM2", value: "```bash\nnpm install pm2 -g\n```" },
                                     { name: "2. Start Bot", value: "```bash\npm2 start index.js --name \"my-bot\"\n```" },
-                                    { name: "3. Monitor status", value: "Check status using `pm2 status` or logs using `pm2 logs`." }
+                                    { name: "3. Monitor Status", value: "Check status via `pm2 status` or stream logs using `pm2 logs`." }
                                 ]
                             }
                         }
@@ -161,8 +168,8 @@ export const DiscordBotLanding = () => {
         setSubmitResult(null);
 
         const embed = {
-            title: "🔥 New Discord Bot Lead",
-            color: 5814783, // Discord blue-ish/cyan color
+            title: "New Discord Bot Lead",
+            color: 2450411, // Royal blue
             fields: [
                 { name: "Name", value: formData.name, inline: true },
                 { name: "Email", value: formData.email, inline: true },
@@ -221,8 +228,8 @@ export const DiscordBotLanding = () => {
         setQuickSubmitResult(null);
 
         const embed = {
-            title: "⚡ Quick 60s Discord Bot Lead",
-            color: 3066993, // Greenish color
+            title: "Quick 60s Discord Bot Lead",
+            color: 2450411,
             fields: [
                 { name: "Name", value: quickFormData.name, inline: true },
                 { name: "Contact (Discord/Email)", value: quickFormData.contact, inline: true },
@@ -259,30 +266,36 @@ export const DiscordBotLanding = () => {
         }
     };
 
-
     return (
         <LazyMotion features={domAnimation}>
-            <div className="bg-[#0f1012] text-[#f2f3f5] min-h-screen">
+            <div className="bg-[#fafaf9] text-slate-900 min-h-screen selection:bg-blue-600 selection:text-white">
+                
                 {/* 1. HERO SECTION */}
-                <section className="relative pt-28 pb-20 md:pt-36 md:pb-32 overflow-hidden bg-gradient-to-b from-[#111214] to-[#0f1012]">
-                    <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#5865F2]/10 rounded-full blur-[160px] -z-10" />
-                    <div className="absolute bottom-[10%] right-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[140px] -z-10" />
-
-                    <div className="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <section 
+                    className="relative pt-28 pb-20 md:pt-36 md:pb-28 overflow-hidden bg-white border-b border-slate-200/80"
+                    style={{ 
+                        backgroundImage: "radial-gradient(#cbd5e1 1px, transparent 1px)", 
+                        backgroundSize: "24px 24px" 
+                    }}
+                >
+                    <div className="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
                         <m.div
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6 }}
                             className="lg:col-span-6 space-y-6 text-left"
                         >
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#5865F2]/10 border border-[#5865F2]/20 text-xs font-semibold text-[#5865F2] uppercase tracking-wider">
-                                <Bot className="w-3.5 h-3.5" /> Custom Discord Bot Development
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-xs font-semibold text-blue-700 uppercase tracking-wider shadow-xs">
+                                <Bot className="w-3.5 h-3.5 text-blue-600" />
+                                <span>Custom Discord Bot Engineering</span>
                             </div>
-                            <h1 className="text-4xl md:text-6xl font-black font-heading leading-tight tracking-tight">
-                                Custom Discord Bot Development Built for <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#5865F2] to-secondary">Your Community</span>
+
+                            <h1 className="text-4xl md:text-6xl font-black font-heading leading-tight tracking-tight text-slate-950">
+                                High-Performance Discord Bots Engineered for <span style={{ color: "#2563eb" }}>Your Community</span>
                             </h1>
-                            <p className="text-[#dbdee1] text-lg md:text-xl max-w-xl">
-                                Looking to <strong className="text-white">make a custom Discord bot</strong>? Hire an expert <strong className="text-white">Discord bot developer</strong> to automate moderation, support ticket systems, custom verification, and AI chatbots built specifically for your server.
+
+                            <p className="text-slate-600 text-lg md:text-xl max-w-xl leading-relaxed">
+                                Commission high-performance Discord automation systems. Tailor-made moderation, ticket queues, OAuth2 captcha verification, and AI assistants with 100% source code ownership.
                             </p>
 
                             <div className="flex flex-col sm:flex-row gap-4 pt-2">
@@ -292,27 +305,31 @@ export const DiscordBotLanding = () => {
                                         el?.scrollIntoView({ behavior: "smooth" });
                                         trackEvent("hero_cta_click", { action: "get_quote" });
                                     }}
-                                    className="bg-primary hover:bg-primary/95 text-white font-bold px-8 py-6 text-lg rounded-xl shadow-[0_0_20px_rgba(59,130,246,0.4)]"
+                                    style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                                    className="hover:opacity-90 font-bold px-8 h-[52px] text-base rounded-xl shadow-sm transition-all"
                                 >
-                                    🚀 Discuss Your Bot Idea
+                                    <span>Discuss Your Bot Architecture</span>
+                                    <ArrowRight className="w-4 h-4 ml-2" />
                                 </Button>
+                                
                                 <Button
                                     onClick={() => {
                                         window.dispatchEvent(new CustomEvent("openLiveChat"));
                                         trackEvent("hero_cta_click", { action: "discord_chat_open" });
                                     }}
                                     variant="outline"
-                                    className="inline-flex items-center justify-center gap-2 font-bold px-8 py-6 text-lg border border-white/10 hover:bg-white/5 hover:text-white rounded-xl transition-all bg-transparent"
+                                    className="inline-flex items-center justify-center gap-2.5 font-bold px-8 h-[52px] text-base border border-slate-300 text-slate-800 bg-white hover:bg-slate-50 rounded-xl transition-all shadow-xs"
                                 >
                                     <img src="/discord.svg" alt="Discord" className="w-5 h-5" />
-                                    Chat Live in Discord UI
+                                    <span>Live Chat in Discord UI</span>
                                 </Button>
                             </div>
-                            <div className="flex flex-wrap items-center gap-3 pt-2 text-xs font-medium text-[#949ba4]">
-                                <span className="flex items-center gap-1"><Check className="w-3.5 h-3.5 text-green-500" /> Replies under 2 hours</span>
-                                <span className="flex items-center gap-1"><Check className="w-3.5 h-3.5 text-green-500" /> Free consultation</span>
-                                <span className="flex items-center gap-1"><Check className="w-3.5 h-3.5 text-green-500" /> Fixed pricing</span>
-                                <span className="flex items-center gap-1"><Check className="w-3.5 h-3.5 text-green-500" /> Source code included</span>
+
+                            <div className="flex flex-wrap items-center gap-4 pt-2 text-xs font-semibold text-slate-600">
+                                <span className="flex items-center gap-1.5"><Check className="w-4 h-4 text-emerald-600" /> Replies under 2 hours</span>
+                                <span className="flex items-center gap-1.5"><Check className="w-4 h-4 text-emerald-600" /> Free technical consultation</span>
+                                <span className="flex items-center gap-1.5"><Check className="w-4 h-4 text-emerald-600" /> Fixed sprint pricing</span>
+                                <span className="flex items-center gap-1.5"><Check className="w-4 h-4 text-emerald-600" /> 100% Source code handover</span>
                             </div>
                         </m.div>
 
@@ -323,59 +340,64 @@ export const DiscordBotLanding = () => {
                             transition={{ duration: 0.6, delay: 0.2 }}
                             className="lg:col-span-6 relative"
                         >
-                            <div className="relative mx-auto max-w-[500px] aspect-video bg-[#1e1f22] border border-white/10 rounded-2xl p-4 shadow-[0_20px_50px_rgba(0,0,0,0.6)] overflow-hidden">
+                            <div className="relative mx-auto max-w-[520px] aspect-video bg-white border border-slate-200 rounded-2xl p-5 shadow-lg overflow-hidden">
                                 {/* Discord Header Simulation */}
-                                <div className="flex items-center gap-2 pb-3 border-b border-[#1f2023] text-xs text-[#949ba4]">
-                                    <div className="w-3 h-3 rounded-full bg-red-500/80" />
-                                    <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
-                                    <div className="w-3 h-3 rounded-full bg-green-500/80" />
-                                    <span className="ml-4 font-semibold text-[#f2f3f5]"># general-bot-dashboard</span>
+                                <div className="flex items-center justify-between pb-3 border-b border-slate-200 text-xs text-slate-500">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-2.5 h-2.5 rounded-full bg-rose-400" />
+                                        <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+                                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+                                        <span className="ml-3 font-semibold text-slate-900"># production-gateway-metrics</span>
+                                    </div>
+                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                        Active Node
+                                    </span>
                                 </div>
 
                                 {/* Simulated Bot Stats Card */}
-                                <div className="text-center mb-1 mt-3">
-                                    <span className="text-xs font-semibold text-[#949ba4] uppercase tracking-wider">Example bot dashboard</span>
-                                </div>
-                                <div className="grid grid-cols-3 gap-3 pt-2">
-                                    <div className="bg-[#2b2d31] p-3 rounded-lg border border-white/5">
-                                        <div className="text-xs text-[#949ba4]">Uptime</div>
-                                        <div className="text-lg font-bold text-green-400">99.99%</div>
+                                <div className="grid grid-cols-3 gap-3 pt-3">
+                                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                        <div className="text-[11px] text-slate-500 font-medium">Uptime SLA</div>
+                                        <div className="text-lg font-black text-emerald-600">99.99%</div>
                                     </div>
-                                    <div className="bg-[#2b2d31] p-3 rounded-lg border border-white/5">
-                                        <div className="text-xs text-[#949ba4]">Gateway Latency</div>
-                                        <div className="text-lg font-bold text-[#5865F2]">14 ms</div>
+                                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                        <div className="text-[11px] text-slate-500 font-medium">Gateway Latency</div>
+                                        <div className="text-lg font-black" style={{ color: "#2563eb" }}>14 ms</div>
                                     </div>
-                                    <div className="bg-[#2b2d31] p-3 rounded-lg border border-white/5">
-                                        <div className="text-xs text-[#949ba4]">Tasks Executed</div>
-                                        <div className="text-lg font-bold text-white">458,912</div>
+                                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                        <div className="text-[11px] text-slate-500 font-medium">Events Handled</div>
+                                        <div className="text-lg font-black text-slate-900">458,912</div>
                                     </div>
                                 </div>
 
                                 {/* Graph Mockup */}
-                                <div className="mt-4 bg-[#2b2d31] rounded-lg p-3 border border-white/5 h-[100px] flex flex-col justify-between">
-                                    <div className="text-xs font-semibold text-[#949ba4] flex justify-between">
-                                        <span>Active API Requests / Minute</span>
-                                        <span className="text-green-400 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" /> Live</span>
+                                <div className="mt-4 bg-slate-50 rounded-xl p-3.5 border border-slate-200 h-[105px] flex flex-col justify-between">
+                                    <div className="text-xs font-semibold text-slate-700 flex justify-between items-center">
+                                        <span>Active API Invocations / Min</span>
+                                        <span className="text-emerald-700 text-[11px] flex items-center gap-1 font-bold">
+                                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" /> Live Stream
+                                        </span>
                                     </div>
-                                    <div className="flex items-end gap-1.5 h-12 pt-2 px-1">
-                                        <div className="w-full bg-[#5865F2]/40 rounded-t-sm h-[30%]" />
-                                        <div className="w-full bg-[#5865F2]/40 rounded-t-sm h-[45%]" />
-                                        <div className="w-full bg-[#5865F2]/40 rounded-t-sm h-[60%]" />
-                                        <div className="w-full bg-[#5865F2]/40 rounded-t-sm h-[50%]" />
-                                        <div className="w-full bg-[#5865F2]/70 rounded-t-sm h-[75%]" />
-                                        <div className="w-full bg-[#5865F2] rounded-t-sm h-[95%]" />
-                                        <div className="w-full bg-[#5865F2]/90 rounded-t-sm h-[85%]" />
+                                    <div className="flex items-end gap-2 h-12 pt-2 px-1">
+                                        <div className="w-full bg-blue-200 rounded-t-sm h-[30%]" />
+                                        <div className="w-full bg-blue-200 rounded-t-sm h-[45%]" />
+                                        <div className="w-full bg-blue-300 rounded-t-sm h-[60%]" />
+                                        <div className="w-full bg-blue-300 rounded-t-sm h-[50%]" />
+                                        <div className="w-full bg-blue-400 rounded-t-sm h-[75%]" />
+                                        <div className="w-full bg-blue-600 rounded-t-sm h-[95%]" />
+                                        <div className="w-full bg-blue-500 rounded-t-sm h-[85%]" />
                                     </div>
                                 </div>
                             </div>
+
                             {/* Accent badge floating */}
-                            <div className="absolute -bottom-4 -left-4 bg-[#232428] border border-white/10 p-3 rounded-xl flex items-center gap-3 shadow-xl">
-                                <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center text-green-500">
+                            <div className="absolute -bottom-4 -left-4 bg-white border border-slate-200 p-3.5 rounded-2xl flex items-center gap-3 shadow-md">
+                                <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center">
                                     <CheckCircle2 className="w-5 h-5" />
                                 </div>
                                 <div className="text-left">
-                                    <div className="text-xs text-[#949ba4]">Verification System</div>
-                                    <div className="text-xs font-bold text-white">Active & Secure</div>
+                                    <div className="text-xs text-slate-500 font-medium">OAuth2 Gatekeeper</div>
+                                    <div className="text-xs font-bold text-slate-900">Verified & Hardened</div>
                                 </div>
                             </div>
                         </m.div>
@@ -383,47 +405,53 @@ export const DiscordBotLanding = () => {
                 </section>
 
                 {/* 2. TRUST BAR */}
-                <section className="py-8 bg-[#18191c] border-y border-white/5 relative z-10 -mt-4">
-                    <div className="container mx-auto px-6 flex flex-wrap justify-around items-center gap-6 text-[#949ba4] font-medium text-sm md:text-base">
+                <section className="py-6 bg-[#fafaf9] border-b border-slate-200 relative z-10">
+                    <div className="container mx-auto px-6 flex flex-wrap justify-around items-center gap-6 text-slate-600 font-medium text-xs md:text-sm">
                         <div className="flex items-center gap-2">
-                            <span className="flex text-yellow-500"><Star className="w-4 h-4 fill-yellow-500" /><Star className="w-4 h-4 fill-yellow-500" /><Star className="w-4 h-4 fill-yellow-500" /><Star className="w-4 h-4 fill-yellow-500" /><Star className="w-4 h-4 fill-yellow-500" /></span>
-                            <span className="text-white font-bold">24+ Verified Bot Reviews</span>
-                        </div>
-                        <div className="flex items-center justify-center gap-2">
-                            <Check className="w-5 h-5 text-green-500" />
-                            <span className="text-white">Trusted by 160+ Clients</span> (202+ Orders)
-                        </div>
-                        <div className="flex items-center gap-2 text-white">
-                            <span>Clients in 🇺🇸 USA 🇩🇪 Germany 🇦🇹 Austria</span>
+                            <span className="flex text-amber-400">
+                                <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                                <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                                <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                                <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                                <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                            </span>
+                            <span className="text-slate-900 font-bold">24+ Verified Bot Reviews</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Check className="w-4 h-4 text-green-500 font-black" />
-                            <span className="text-white">4+ Years Experience</span>
+                            <Check className="w-4 h-4 text-emerald-600" />
+                            <span className="text-slate-900 font-bold">160+ Commercial Clients</span> (202+ Orders Delivered)
+                        </div>
+                        <div className="flex items-center gap-2 text-slate-700 font-semibold">
+                            <span>Clients Across US, Germany, Austria & UK</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-emerald-600" />
+                            <span className="text-slate-900 font-bold">4+ Years Engineering Experience</span>
                         </div>
                     </div>
                 </section>
 
                 {/* 2.1 QUICK QUOTE FORM SECTION (CRO Optimization) */}
-                <section className="py-12 bg-[#0f1012] border-b border-white/5">
+                <section className="py-12 bg-white border-b border-slate-200/80">
                     <div className="container mx-auto px-6 max-w-4xl">
-                        <div className="bg-[#1e1f22] border border-[#2f3136] rounded-2xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
-                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-[#5865F2]" />
+                        <div className="bg-[#fafaf9] border border-slate-200 rounded-3xl p-6 md:p-8 shadow-sm relative overflow-hidden">
                             <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-                                <div className="space-y-3 text-left max-w-md">
-                                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-semibold text-emerald-400 uppercase tracking-wider">
-                                        ⚡ Fast Track
+                                <div className="space-y-2 text-left max-w-md">
+                                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-xs font-semibold text-blue-700 uppercase tracking-wider">
+                                        <Clock className="w-3.5 h-3.5 text-blue-600" />
+                                        <span>Direct Engineer Intake</span>
                                     </div>
-                                    <h3 className="text-xl md:text-2xl font-bold font-heading text-white">
-                                        Get a Bot Quote in 60 Seconds
-                                    </h3>
-                                    <p className="text-xs md:text-sm text-[#949ba4] leading-relaxed">
-                                        No long forms. Simply share your name, how to contact you, and a brief description of what you need. I will reply within 2 hours.
+                                    <h2 className="text-xl md:text-2xl font-bold font-heading text-slate-950">
+                                        Get a Bot Scope & Quote in 60 Seconds
+                                    </h2>
+                                    <p className="text-xs md:text-sm text-slate-600 leading-relaxed">
+                                        No long forms. Share your name, contact handle, and core requirement. Hazrat will reply with an architectural breakdown within 2 hours.
                                     </p>
                                 </div>
-                                <form onSubmit={handleQuickFormSubmit} className="w-full md:max-w-md space-y-4 text-left">
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div className="space-y-1.5">
-                                            <label htmlFor="quick-name" className="text-[10px] font-semibold text-[#949ba4] uppercase tracking-wider">Name</label>
+                                <form onSubmit={handleQuickFormSubmit} className="w-full md:max-w-md space-y-3 text-left">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div className="space-y-1">
+                                            <label htmlFor="quick-name" className="text-[10px] font-bold text-slate-700 uppercase tracking-wider">Name</label>
                                             <Input
                                                 id="quick-name"
                                                 type="text"
@@ -431,50 +459,51 @@ export const DiscordBotLanding = () => {
                                                 value={quickFormData.name}
                                                 onChange={(e) => setQuickFormData({ ...quickFormData, name: e.target.value })}
                                                 required
-                                                className="bg-[#2b2d31] border-white/10 text-white focus-visible:ring-[#5865F2] h-10 text-sm"
+                                                className="bg-white border-slate-300 text-slate-900 focus-visible:ring-blue-600 h-10 text-xs rounded-xl"
                                             />
                                         </div>
-                                        <div className="space-y-1.5">
-                                            <label htmlFor="quick-contact" className="text-[10px] font-semibold text-[#949ba4] uppercase tracking-wider">Discord or Email</label>
+                                        <div className="space-y-1">
+                                            <label htmlFor="quick-contact" className="text-[10px] font-bold text-slate-700 uppercase tracking-wider">Discord or Email</label>
                                             <Input
                                                 id="quick-contact"
                                                 type="text"
-                                                placeholder="username#0000 or email"
+                                                placeholder="handle or email"
                                                 value={quickFormData.contact}
                                                 onChange={(e) => setQuickFormData({ ...quickFormData, contact: e.target.value })}
                                                 required
-                                                className="bg-[#2b2d31] border-white/10 text-white focus-visible:ring-[#5865F2] h-10 text-sm"
+                                                className="bg-white border-slate-300 text-slate-900 focus-visible:ring-blue-600 h-10 text-xs rounded-xl"
                                             />
                                         </div>
                                     </div>
-                                    <div className="space-y-1.5">
-                                        <label htmlFor="quick-idea" className="text-[10px] font-semibold text-[#949ba4] uppercase tracking-wider">Describe your bot idea in one line</label>
+                                    <div className="space-y-1">
+                                        <label htmlFor="quick-idea" className="text-[10px] font-bold text-slate-700 uppercase tracking-wider">Bot Overview</label>
                                         <Input
                                             id="quick-idea"
                                             type="text"
-                                            placeholder="e.g. ticket bot with custom buttons, ark game store integration..."
+                                            placeholder="e.g. ticket queue with Stripe payment role syncing..."
                                             value={quickFormData.idea}
                                             onChange={(e) => setQuickFormData({ ...quickFormData, idea: e.target.value })}
                                             required
-                                            className="bg-[#2b2d31] border-white/10 text-white focus-visible:ring-[#5865F2] h-10 text-sm"
+                                            className="bg-white border-slate-300 text-slate-900 focus-visible:ring-blue-600 h-10 text-xs rounded-xl"
                                         />
                                     </div>
                                     <Button
                                         type="submit"
                                         disabled={isQuickSubmitting}
-                                        className="w-full bg-[#5865F2] hover:bg-[#5865F2]/95 text-white font-bold h-11 text-sm rounded-lg"
+                                        style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                                        className="w-full hover:opacity-90 font-bold h-10 text-xs rounded-xl shadow-sm transition-opacity"
                                     >
-                                        {isQuickSubmitting ? "Sending Request..." : "⚡ Send Quick Request"}
+                                        {isQuickSubmitting ? "Sending Request..." : "Request Technical Scope"}
                                     </Button>
 
                                     {quickSubmitResult === "success" && (
-                                        <p className="text-emerald-400 text-xs font-semibold text-center mt-2">
-                                            ✓ Sent successfully! I'll contact you shortly.
+                                        <p className="text-emerald-700 bg-emerald-50 border border-emerald-200 p-2 rounded-xl text-xs font-semibold text-center mt-2">
+                                            ✔ Inquiry received! Hazrat will review and reach out shortly.
                                         </p>
                                     )}
                                     {quickSubmitResult === "failed" && (
-                                        <p className="text-red-400 text-xs font-semibold text-center mt-2">
-                                            ✗ Failed to send. Please try again or chat live.
+                                        <p className="text-rose-700 bg-rose-50 border border-rose-200 p-2 rounded-xl text-xs font-semibold text-center mt-2">
+                                            ✗ Failed to send. Please contact hazratummar9@gmail.com directly.
                                         </p>
                                     )}
                                 </form>
@@ -484,40 +513,39 @@ export const DiscordBotLanding = () => {
                 </section>
 
                 {/* 2.5 MEET YOUR DEVELOPER */}
-                <section id="developer" className="py-20 bg-[#0f1012]">
+                <section id="developer" className="py-20 bg-[#fafaf9] border-b border-slate-200/80">
                     <div className="container mx-auto px-6 max-w-4xl text-center">
-                        <div className="bg-[#1e1f22] border border-[#2f3136] rounded-2xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
-                            <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#5865F2] to-secondary" />
+                        <div className="bg-white border border-slate-200 rounded-3xl p-8 md:p-12 shadow-sm relative overflow-hidden">
                             <div className="flex flex-col md:flex-row items-center gap-8 text-left">
                                 <div className="shrink-0 relative">
-                                    <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-[#2b2d31] overflow-hidden shadow-xl z-10 relative bg-[#2b2d31]">
-                                        <img src="/images/founder.jpg" alt="Hazrat Ummar" className="w-full h-full object-cover" />
+                                    <div className="w-32 h-32 md:w-40 md:h-40 rounded-2xl border-4 border-slate-100 overflow-hidden shadow-md z-10 relative bg-slate-100">
+                                        <img src="/images/founder.jpg" alt="Hazrat Ummar Shaikh" className="w-full h-full object-cover" />
                                     </div>
-                                    <div className="absolute -bottom-2 -right-2 bg-[#232428] border border-white/10 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-lg z-20">
-                                        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" /> Online
+                                    <div className="absolute -bottom-2 -right-2 bg-white border border-slate-200 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-sm z-20 text-slate-800">
+                                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" /> Available
                                     </div>
                                 </div>
                                 <div className="space-y-4">
                                     <div>
-                                        <h2 className="text-3xl font-black text-white flex items-center gap-3">
-                                            👋 Meet Hazrat, Your Expert Discord Developer
+                                        <h2 className="text-2xl md:text-3xl font-black text-slate-950 font-heading">
+                                            Meet Hazrat Ummar Shaikh, Lead Bot Engineer
                                         </h2>
-                                        <p className="text-[#dbdee1] mt-3">
-                                            I've spent the last <strong>4+ years</strong> working as a professional <strong className="text-white">Discord bot developer</strong>, building <strong className="text-white">customizable bots for Discord</strong> server administrators.
+                                        <p className="text-slate-600 mt-2.5 text-sm leading-relaxed">
+                                            Over the past <strong>4+ years</strong>, I have specialized as a dedicated software engineer constructing custom Discord automation platforms, high-throughput webhook routers, and payment gatekeepers.
                                         </p>
-                                        <p className="text-[#dbdee1] mt-2">
-                                            Whether you want to <strong className="text-white">create your own bot on Discord</strong> or need complex API integrations, I offer robust <strong className="text-white">discord bot development</strong> services. You can read my latest guides on our <a href="/blog" className="text-[#5865F2] hover:underline font-bold">tech blog</a> or view my full <a href="/" className="text-[#5865F2] hover:underline font-bold">software portfolio</a>.
+                                        <p className="text-slate-600 mt-2 text-sm leading-relaxed">
+                                            Every bot is engineered with modular Cogs, async SQLite/PostgreSQL/MongoDB backends, and full Linux VPS deployment setups. Explore my architectural deep dives on the <a href="/blog" className="text-blue-600 font-bold hover:underline">technical blog</a> or inspect my public work on <a href="https://github.com/ihazratummar" target="_blank" rel="noreferrer" className="text-blue-600 font-bold hover:underline">GitHub</a>.
                                         </p>
                                     </div>
-                                    <div className="flex flex-wrap gap-3 pt-2">
-                                        <span className="bg-[#2b2d31] border border-white/5 px-3 py-1.5 rounded-lg text-xs font-medium text-white flex items-center gap-2">
-                                            <span className="text-lg">🌍</span> Based in India
+                                    <div className="flex flex-wrap gap-2.5 pt-1">
+                                        <span className="bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-800 flex items-center gap-1.5">
+                                            <span>Studio Lead</span>
                                         </span>
-                                        <span className="bg-[#2b2d31] border border-white/5 px-3 py-1.5 rounded-lg text-xs font-medium text-white flex items-center gap-2">
-                                            <Clock className="w-3.5 h-3.5 text-blue-400" /> &lt; 24h Response
+                                        <span className="bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-800 flex items-center gap-1.5">
+                                            <Clock className="w-3.5 h-3.5 text-blue-600" /> &lt; 2h Response SLA
                                         </span>
-                                        <span className="bg-[#2b2d31] border border-white/5 px-3 py-1.5 rounded-lg text-xs font-medium text-white flex items-center gap-2">
-                                            <Star className="w-3.5 h-3.5 text-yellow-500" /> 160+ Happy Clients
+                                        <span className="bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-800 flex items-center gap-1.5">
+                                            <Star className="w-3.5 h-3.5 text-amber-500" /> 160+ Verified Projects
                                         </span>
                                     </div>
                                 </div>
@@ -527,7 +555,7 @@ export const DiscordBotLanding = () => {
                 </section>
 
                 {/* 3. PROBLEM SECTION */}
-                <section id="problems" className="py-20 bg-[#111214] relative">
+                <section id="problems" className="py-20 bg-white border-b border-slate-200/80">
                     <div className="container mx-auto px-6 max-w-5xl text-center">
                         <m.div
                             initial={{ opacity: 0, y: 20 }}
@@ -536,125 +564,129 @@ export const DiscordBotLanding = () => {
                             transition={{ duration: 0.5 }}
                             className="mb-12"
                         >
-                            <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4 text-white">
-                                Stop Wasting Time Managing Server Tasks Manually
+                            <h2 className="text-3xl md:text-4xl font-black font-heading mb-4 text-slate-950">
+                                Eliminate Manual Moderation & Fragmented Bot Setups
                             </h2>
-                            <p className="text-[#dbdee1] max-w-2xl mx-auto">
-                                Running a successful community is hard work. If your moderators spend their whole day running basic actions, you are losing members and efficiency.
+                            <p className="text-slate-600 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
+                                Running a large Discord community is demanding. When your team spends hours manually handling tickets, role assignment, and spam raids, community engagement suffers.
                             </p>
                         </m.div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 text-left">
-                            <Card className="bg-[#1e1f22] border border-[#2f3136] p-6 space-y-4 relative overflow-hidden">
-                                <div className="absolute top-0 left-0 w-full h-1 bg-red-500/50" />
+                            <Card className="bg-white border border-rose-200 p-6 space-y-4 rounded-2xl shadow-sm relative overflow-hidden">
                                 <div className="flex justify-between items-center">
-                                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                                        The Old Way
+                                    <h3 className="text-lg font-bold text-slate-950">
+                                        The Fragmented Way
                                     </h3>
-                                    <span className="bg-red-500/10 text-red-400 text-xs font-bold px-2.5 py-1 rounded">Before: 4+ hours/day</span>
+                                    <span className="bg-rose-50 text-rose-700 border border-rose-200 text-xs font-bold px-2.5 py-1 rounded-full">
+                                        Before: 4+ hrs / day
+                                    </span>
                                 </div>
-                                <ul className="space-y-3 text-[#dbdee1] text-sm pt-2">
-                                    <li className="flex items-start gap-2">
-                                        <X className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
-                                        <span className="text-[#949ba4]">Manually fighting spam accounts and verification bypass raids.</span>
+                                <ul className="space-y-3 text-slate-600 text-sm pt-2">
+                                    <li className="flex items-start gap-2.5">
+                                        <X className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+                                        <span>Manually fighting spam accounts and verification bypass raids.</span>
                                     </li>
-                                    <li className="flex items-start gap-2">
-                                        <X className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
-                                        <span className="text-[#949ba4]">Answering the exact same support questions manually, 24/7.</span>
+                                    <li className="flex items-start gap-2.5">
+                                        <X className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+                                        <span>Answering repetitive support questions manually 24 hours a day.</span>
                                     </li>
-                                    <li className="flex items-start gap-2">
-                                        <X className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
-                                        <span className="text-[#949ba4]">Manually assigning roles to premium users after receiving payments.</span>
+                                    <li className="flex items-start gap-2.5">
+                                        <X className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+                                        <span>Manually verifying PayPal/Stripe receipts and hand-assigning roles.</span>
                                     </li>
-                                    <li className="flex items-start gap-2">
-                                        <X className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
-                                        <span className="text-[#949ba4]">Disjointed tools and external dashboard tabs that don't talk.</span>
+                                    <li className="flex items-start gap-2.5">
+                                        <X className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+                                        <span>Relying on 4-6 different public bots with conflicting permissions.</span>
                                     </li>
                                 </ul>
                             </Card>
 
-                            <Card className="bg-[#1e1f22] border border-[#5865F2]/30 p-6 space-y-4 relative overflow-hidden shadow-[0_0_15px_rgba(88,101,242,0.1)]">
-                                <div className="absolute top-0 left-0 w-full h-1 bg-[#5865F2]" />
+                            <Card className="bg-white border-2 border-blue-600 p-6 space-y-4 rounded-2xl shadow-md relative overflow-hidden">
                                 <div className="flex justify-between items-center">
-                                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                                        Custom Bot Discord Automation
+                                    <h3 className="text-lg font-bold text-slate-950">
+                                        Custom RelayWorks Automation
                                     </h3>
-                                    <span className="bg-[#5865F2]/20 text-[#5865F2] text-xs font-bold px-2.5 py-1 rounded">After: 20 mins/day</span>
+                                    <span className="bg-blue-50 text-blue-700 border border-blue-200 text-xs font-bold px-2.5 py-1 rounded-full">
+                                        After: Fully Autonomous
+                                    </span>
                                 </div>
-                                <ul className="space-y-3 text-[#dbdee1] text-sm pt-2">
-                                    <li className="flex items-start gap-2">
-                                        <Check className="w-4 h-4 text-[#5865F2] shrink-0 mt-0.5" />
-                                        <span className="text-white font-medium">Develop bot Discord features</span> <span className="text-[#949ba4]">specifically optimized for your community's active channels.</span>
+                                <ul className="space-y-3 text-slate-700 text-sm pt-2 font-medium">
+                                    <li className="flex items-start gap-2.5">
+                                        <Check className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                                        <span>Deterministic automated bot features built specifically for your server.</span>
                                     </li>
-                                    <li className="flex items-start gap-2">
-                                        <Check className="w-4 h-4 text-[#5865F2] shrink-0 mt-0.5" />
-                                        <span className="text-white font-medium">OAuth2 captcha verification</span> <span className="text-[#949ba4]">to block spambots automatically.</span>
+                                    <li className="flex items-start gap-2.5">
+                                        <Check className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                                        <span>OAuth2 captcha verification that blocks raid scripts natively.</span>
                                     </li>
-                                    <li className="flex items-start gap-2">
-                                        <Check className="w-4 h-4 text-[#5865F2] shrink-0 mt-0.5" />
-                                        <span className="text-white font-medium">Automatic role Sync</span> <span className="text-[#949ba4]">tied directly to Stripe or PayPal webhooks.</span>
+                                    <li className="flex items-start gap-2.5">
+                                        <Check className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                                        <span>Instantaneous role sync triggered directly by Stripe or PayPal webhooks.</span>
                                     </li>
-                                    <li className="flex items-start gap-2">
-                                        <Check className="w-4 h-4 text-[#5865F2] shrink-0 mt-0.5" />
-                                        <span className="text-white font-medium">Single customizable Discord bot</span> <span className="text-[#949ba4]">built for your exact server commands.</span>
+                                    <li className="flex items-start gap-2.5">
+                                        <Check className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                                        <span>Unified, single white-label bot carrying your community branding.</span>
                                     </li>
                                 </ul>
                             </Card>
                         </div>
 
                         {/* WHO THIS IS FOR / ISNT FOR */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16 text-left border-t border-white/5 pt-16">
-                            <div>
-                                <div className="inline-block bg-green-500/10 text-green-400 font-bold px-3 py-1 rounded-full text-xs mb-4">Perfect Fit</div>
-                                <h3 className="text-2xl font-bold text-white mb-6">Who This Is For</h3>
-                                <ul className="space-y-4 text-sm text-white font-medium">
-                                    <li className="flex items-center gap-3"><Check className="w-5 h-5 text-green-500 shrink-0" /> Gaming Communities</li>
-                                    <li className="flex items-center gap-3"><Check className="w-5 h-5 text-green-500 shrink-0" /> SaaS Products</li>
-                                    <li className="flex items-center gap-3"><Check className="w-5 h-5 text-green-500 shrink-0" /> Patreon Servers</li>
-                                    <li className="flex items-center gap-3"><Check className="w-5 h-5 text-green-500 shrink-0" /> Paid Courses & Masterminds</li>
-                                    <li className="flex items-center gap-3"><Check className="w-5 h-5 text-green-500 shrink-0" /> Startups</li>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16 text-left border-t border-slate-200 pt-16">
+                            <div className="bg-[#fafaf9] border border-slate-200 p-8 rounded-3xl shadow-xs">
+                                <div className="inline-block bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold px-3 py-1 rounded-full text-xs mb-4">
+                                    Ideal Match
+                                </div>
+                                <h3 className="text-2xl font-black text-slate-950 font-heading mb-6">Who This Is For</h3>
+                                <ul className="space-y-3.5 text-sm text-slate-700 font-medium">
+                                    <li className="flex items-center gap-3"><Check className="w-4 h-4 text-emerald-600 shrink-0" /> Gaming Communities & In-Game Marketplaces</li>
+                                    <li className="flex items-center gap-3"><Check className="w-4 h-4 text-emerald-600 shrink-0" /> B2B SaaS Customer Communities & Support Desks</li>
+                                    <li className="flex items-center gap-3"><Check className="w-4 h-4 text-emerald-600 shrink-0" /> Paid Subscription Courses & Exclusive Masterminds</li>
+                                    <li className="flex items-center gap-3"><Check className="w-4 h-4 text-emerald-600 shrink-0" /> Creators, Streamers & Patreon Server Owners</li>
                                 </ul>
                             </div>
-                            <div className="bg-[#161719] p-8 rounded-2xl border border-red-500/10">
-                                <div className="inline-block bg-red-500/10 text-red-400 font-bold px-3 py-1 rounded-full text-xs mb-4">Not A Good Fit</div>
-                                <h3 className="text-2xl font-bold text-white mb-6">Who This Isn't For</h3>
-                                <ul className="space-y-4 text-sm text-[#949ba4]">
-                                    <li className="flex items-center gap-3"><X className="w-5 h-5 text-red-500 shrink-0" /> Looking for a $20 pre-made bot</li>
-                                    <li className="flex items-center gap-3"><X className="w-5 h-5 text-red-500 shrink-0" /> Need delivery by tomorrow</li>
-                                    <li className="flex items-center gap-3"><X className="w-5 h-5 text-red-500 shrink-0" /> Just want a generic, unbranded bot</li>
-                                </ul>
-                                <div className="mt-8 pt-6 border-t border-white/5">
-                                    <p className="text-white font-semibold text-sm flex items-center gap-2">
-                                        <CheckCircle2 className="w-4 h-4 text-green-500" /> Perfect if you need custom automation.
-                                    </p>
+                            
+                            <div className="bg-[#fafaf9] border border-slate-200 p-8 rounded-3xl shadow-xs">
+                                <div className="inline-block bg-slate-100 text-slate-600 border border-slate-300 font-bold px-3 py-1 rounded-full text-xs mb-4">
+                                    Not Suitable
                                 </div>
+                                <h3 className="text-2xl font-black text-slate-950 font-heading mb-6">Who This Isn&apos;t For</h3>
+                                <ul className="space-y-3.5 text-sm text-slate-500">
+                                    <li className="flex items-center gap-3"><X className="w-4 h-4 text-slate-400 shrink-0" /> Servers seeking a $20 copy-paste pre-made bot</li>
+                                    <li className="flex items-center gap-3"><X className="w-4 h-4 text-slate-400 shrink-0" /> Teams requiring rushed 24-hour delivery without testing</li>
+                                    <li className="flex items-center gap-3"><X className="w-4 h-4 text-slate-400 shrink-0" /> Communities content with generic third-party branding</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
                 </section>
 
                 {/* 4. SERVICES CARDS */}
-                <section id="services" className="py-20 bg-[#0f1012]">
+                <section id="services" className="py-20 bg-[#fafaf9] border-b border-slate-200/80">
                     <div className="container mx-auto px-6 text-center max-w-5xl">
-                        <h2 className="text-3xl md:text-4xl font-bold font-heading mb-12 text-white">
-                            Advanced Bot Capabilities Built For You
+                        <h2 className="text-3xl md:text-4xl font-black font-heading mb-4 text-slate-950">
+                            Custom Engineering Capabilities
                         </h2>
+                        <p className="text-slate-600 text-sm md:text-base max-w-xl mx-auto mb-12">
+                            Production-grade systems built around your specific Discord workflows.
+                        </p>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {[
-                                { icon: Sparkles, name: "Custom Commands Discord Bot", desc: "Deploy customized bots with custom commands for Discord to automate user actions, search databases, or trigger complex workflows." },
-                                { icon: Terminal, name: "Stripe & PayPal Payments", desc: "Monetize your community. Sell premium roles via a secure custom bot for Discord with automatic webhook sync." },
-                                { icon: Lock, name: "OAuth2 Custom Verification", desc: "Ensure all members verify via web captcha. Block spambots natively before they can access your Discord custom commands." },
-                                { icon: MessageSquare, name: "Automated Ticket Systems", desc: "Organized support desk ticket triggers with transcript saving and staff dashboard alerts." },
-                                { icon: Bot, name: "Smart Auto-Moderation", desc: "Regex-based filters, link warnings, and custom moderation commands built into your dedicated bot." },
-                                { icon: Webhook, name: "API & Webhook Integrations", desc: "Connect Discord directly with external APIs, databases, game servers, or custom website panels." }
+                                { icon: Sparkles, name: "Custom Slash Commands", desc: "Deploy tailored commands to automate user actions, query live databases, and trigger business workflows." },
+                                { icon: Terminal, name: "Stripe & PayPal Webhooks", desc: "Monetize your server with automated billing, recurring subscription checks, and instant role provisioning." },
+                                { icon: Lock, name: "OAuth2 Gatekeeper Verification", desc: "Require web-based captcha verification to completely neutralize automated raid scripts before entry." },
+                                { icon: MessageSquare, name: "Interactive Ticket Desks", desc: "Button-driven ticket channels with full HTML/TXT transcript backups and staff alerting mechanisms." },
+                                { icon: Bot, name: "AI Assistants & Moderation", desc: "Integrate fine-tuned OpenAI or Claude models with customized knowledge bases to answer member queries 24/7." },
+                                { icon: Webhook, name: "External API & Game Integrations", desc: "Bridge Discord directly to external databases, Minecraft/ARK servers, or custom web administrative dashboards." }
                             ].map((service, idx) => (
-                                <Card key={idx} className="bg-[#1e1f22] border border-[#2f3136] hover:border-[#5865F2]/40 transition-all p-6 text-left space-y-3">
-                                    <div className="w-10 h-10 rounded-lg bg-[#5865F2]/10 text-[#5865F2] flex items-center justify-center">
+                                <Card key={idx} className="bg-white border border-slate-200 hover:shadow-md transition-all p-6 text-left space-y-3 rounded-2xl">
+                                    <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-200/60">
                                         <service.icon className="w-5 h-5" />
                                     </div>
-                                    <h3 className="font-bold text-lg text-white">{service.name}</h3>
-                                    <p className="text-[#dbdee1] text-sm">{service.desc}</p>
+                                    <h3 className="font-bold text-base text-slate-950">{service.name}</h3>
+                                    <p className="text-slate-600 text-xs leading-relaxed">{service.desc}</p>
                                 </Card>
                             ))}
                         </div>
@@ -662,49 +694,49 @@ export const DiscordBotLanding = () => {
                 </section>
 
                 {/* 5. COMPARISON SECTION */}
-                <section id="comparison" className="py-20 bg-[#111214]">
+                <section id="comparison" className="py-20 bg-white border-b border-slate-200/80">
                     <div className="container mx-auto px-6 max-w-4xl text-center">
-                        <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4 text-white">
-                            Why Choose a Custom Discord Bot?
+                        <h2 className="text-3xl md:text-4xl font-black font-heading mb-4 text-slate-950">
+                            Why Commission a Custom Discord Bot?
                         </h2>
-                        <p className="text-[#dbdee1] max-w-xl mx-auto mb-12 text-sm">
-                            Generic bots are heavily limited, charge monthly subscriptions, and show external branding. Partnering with a dedicated <strong className="text-white">Discord developer</strong> to <strong className="text-white">make a custom Discord bot</strong> gives you total custom commands control.
+                        <p className="text-slate-600 max-w-xl mx-auto mb-12 text-sm">
+                            Public SaaS bots are heavily constrained, lock core features behind monthly subscriptions, and advertise external branding. A bespoke bot delivers complete autonomy.
                         </p>
 
-                        <div className="overflow-x-auto rounded-xl border border-[#2f3136] bg-[#161719]">
+                        <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
                             <table className="w-full text-left border-collapse">
                                 <thead>
-                                    <tr className="border-b border-[#2f3136] bg-white/5">
-                                        <th className="p-4 font-bold text-white">Feature</th>
-                                        <th className="p-4 font-bold text-red-400">Existing Public Bots</th>
-                                        <th className="p-4 font-bold text-green-400">Your Custom Bot</th>
+                                    <tr className="border-b border-slate-200 bg-slate-50">
+                                        <th className="p-4 font-bold text-xs uppercase tracking-wider text-slate-700">Feature</th>
+                                        <th className="p-4 font-bold text-xs uppercase tracking-wider text-rose-600">Standard Public Bots</th>
+                                        <th className="p-4 font-bold text-xs uppercase tracking-wider text-blue-600">RelayWorks Custom Bot</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-white/5 text-sm text-[#dbdee1]">
+                                <tbody className="divide-y divide-slate-100 text-xs md:text-sm text-slate-700">
                                     <tr>
-                                        <td className="p-4 font-semibold text-white">Branding</td>
-                                        <td className="p-4 text-[#949ba4]">Displays their logo, status text, and links</td>
-                                        <td className="p-4 text-white">100% white-labeled (your logo, name, status)</td>
+                                        <td className="p-4 font-semibold text-slate-900">Brand Identity</td>
+                                        <td className="p-4 text-slate-500">Displays their logo, branding, and links</td>
+                                        <td className="p-4 text-slate-900 font-semibold">100% white-labeled with your studio branding</td>
                                     </tr>
                                     <tr>
-                                        <td className="p-4 font-semibold text-white">Pricing Model</td>
-                                        <td className="p-4 text-[#949ba4]">Monthly subscription plans per server</td>
-                                        <td className="p-4 text-white">One-time payment structure, zero monthly fees</td>
+                                        <td className="p-4 font-semibold text-slate-900">Cost Structure</td>
+                                        <td className="p-4 text-slate-500">Recurring monthly subscription fee per server</td>
+                                        <td className="p-4 text-slate-900 font-semibold">One-time development sprint; zero bot license fees</td>
                                     </tr>
                                     <tr>
-                                        <td className="p-4 font-semibold text-white">Integrations</td>
-                                        <td className="p-4 text-[#949ba4]">Pre-defined options only</td>
-                                        <td className="p-4 text-white">Connects to Stripe, OpenAI, your database, or game APIs</td>
+                                        <td className="p-4 font-semibold text-slate-900">Custom Integrations</td>
+                                        <td className="p-4 text-slate-500">Locked to pre-defined templates</td>
+                                        <td className="p-4 text-slate-900 font-semibold">Connects to your custom databases, APIs, or Stripe</td>
                                     </tr>
                                     <tr>
-                                        <td className="p-4 font-semibold text-white">Scalability</td>
-                                        <td className="p-4 text-[#949ba4]">Share servers with thousands, causing lag spikes</td>
-                                        <td className="p-4 text-white">Dedicated hosting ensures rapid, instantaneous response</td>
+                                        <td className="p-4 font-semibold text-slate-900">Performance & Hosting</td>
+                                        <td className="p-4 text-slate-500">Shared multi-tenant clusters prone to lag</td>
+                                        <td className="p-4 text-slate-900 font-semibold">Dedicated VPS hosting ensuring instant responses</td>
                                     </tr>
                                     <tr>
-                                        <td className="p-4 font-semibold text-white">Feature Requests</td>
-                                        <td className="p-4 text-[#949ba4]">Not possible</td>
-                                        <td className="p-4 text-white">Add or edit features exactly as your community grows</td>
+                                        <td className="p-4 font-semibold text-slate-900">Feature Customization</td>
+                                        <td className="p-4 text-slate-500">Impossible; feature requests ignored</td>
+                                        <td className="p-4 text-slate-900 font-semibold">Expand and tailor commands as your community scales</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -712,113 +744,118 @@ export const DiscordBotLanding = () => {
                     </div>
                 </section>
 
-
                 {/* 6. INTERACTIVE SIMULATOR */}
-                <section id="demo" className="py-20 bg-[#0f1012]">
+                <section id="demo" className="py-20 bg-[#fafaf9] border-b border-slate-200/80">
                     <div className="container mx-auto px-6 max-w-4xl text-center">
-                        <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4 text-white">
-                            Test Drive The Bot Commands
+                        <h2 className="text-3xl md:text-4xl font-black font-heading mb-4 text-slate-950">
+                            Interactive Bot Command Sandbox
                         </h2>
-                        <p className="text-[#dbdee1] mb-10 max-w-lg mx-auto text-sm">
-                            Click a command button below to see the bot process request inputs inside our simulated Discord channel.
+                        <p className="text-slate-600 mb-8 max-w-lg mx-auto text-sm">
+                            Click a command below to simulate how the bot processes slash commands inside an active Discord interface.
                         </p>
 
-                        <div className="flex flex-wrap justify-center gap-3 mb-6">
+                        <div className="flex flex-wrap justify-center gap-3 mb-8">
                             <Button
                                 onClick={() => { setSimulatorTab("verify"); trackEvent("simulator_tab_click", { tab: "verify" }); }}
-                                className={simulatorTab === "verify" ? "bg-[#5865F2] text-white hover:bg-[#5865F2]/90 font-bold" : "bg-white/5 text-[#dbdee1] hover:bg-white/10 font-bold"}
+                                style={simulatorTab === "verify" ? { backgroundColor: "#2563eb", color: "#ffffff" } : {}}
+                                className={simulatorTab === "verify" ? "font-bold h-10 px-5 rounded-xl shadow-xs" : "bg-white border border-slate-300 text-slate-800 hover:bg-slate-50 font-semibold h-10 px-5 rounded-xl shadow-xs"}
                             >
-                                🔐 /verify
+                                /verify
                             </Button>
                             <Button
                                 onClick={() => { setSimulatorTab("ticket"); trackEvent("simulator_tab_click", { tab: "ticket" }); }}
-                                className={simulatorTab === "ticket" ? "bg-[#5865F2] text-white hover:bg-[#5865F2]/90 font-bold" : "bg-white/5 text-[#dbdee1] hover:bg-white/10 font-bold"}
+                                style={simulatorTab === "ticket" ? { backgroundColor: "#2563eb", color: "#ffffff" } : {}}
+                                className={simulatorTab === "ticket" ? "font-bold h-10 px-5 rounded-xl shadow-xs" : "bg-white border border-slate-300 text-slate-800 hover:bg-slate-50 font-semibold h-10 px-5 rounded-xl shadow-xs"}
                             >
-                                🎟️ /ticket open
+                                /ticket open
                             </Button>
                             <Button
                                 onClick={() => { setSimulatorTab("ai"); trackEvent("simulator_tab_click", { tab: "ai" }); }}
-                                className={simulatorTab === "ai" ? "bg-[#5865F2] text-white hover:bg-[#5865F2]/90 font-bold" : "bg-white/5 text-[#dbdee1] hover:bg-white/10 font-bold"}
+                                style={simulatorTab === "ai" ? { backgroundColor: "#2563eb", color: "#ffffff" } : {}}
+                                className={simulatorTab === "ai" ? "font-bold h-10 px-5 rounded-xl shadow-xs" : "bg-white border border-slate-300 text-slate-800 hover:bg-slate-50 font-semibold h-10 px-5 rounded-xl shadow-xs"}
                             >
-                                🤖 /ask-ai
+                                /ask-ai
                             </Button>
                         </div>
 
                         {/* Discord Chat window simulation */}
-                        <div className="bg-[#313338] rounded-xl border border-[#2f3136] overflow-hidden text-left shadow-2xl">
+                        <div className="bg-[#f2f3f5] rounded-2xl border border-slate-300 overflow-hidden text-left shadow-md">
                             {/* Discord Channel Header */}
-                            <div className="bg-[#2b2d31] px-4 py-3 border-b border-black/20 flex items-center gap-2">
-                                <span className="text-[#949ba4] font-bold">#</span>
-                                <span className="text-white font-bold text-sm">bot-testing-sandbox</span>
+                            <div className="bg-[#e3e5e8] px-4 py-3 border-b border-slate-300 flex items-center justify-between">
+                                <div className="flex items-center gap-2 text-slate-700 font-bold text-sm">
+                                    <span className="text-slate-500 font-black">#</span>
+                                    <span>sandbox-bot-testing</span>
+                                </div>
+                                <span className="text-[11px] font-semibold text-slate-500">Live Gateway</span>
                             </div>
 
                             {/* Chat Messages container */}
-                            <div className="p-6 space-y-6 min-h-[300px]">
+                            <div className="p-6 space-y-6 min-h-[280px]">
                                 {isTyping ? (
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-[#5865F2]/20 flex items-center justify-center text-[#5865F2] font-black">🤖</div>
-                                        <div className="text-[#949ba4] text-xs italic">Bot is typing...</div>
+                                        <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-black text-xs">
+                                            <Bot className="w-4 h-4" />
+                                        </div>
+                                        <div className="text-slate-500 text-xs italic">CustomBot is typing...</div>
                                     </div>
                                 ) : (
                                     messages.map((msg, i) => (
                                         <div key={i} className="flex gap-4 items-start">
-                                            {/* Avatar */}
-                                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${msg.sender === "user" ? "bg-orange-500/20 text-orange-400" : "bg-[#5865F2]/20 text-[#5865F2]"
-                                                }`}>
-                                                {msg.sender === "user" ? "U" : "BOT"}
+                                            <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${
+                                                msg.sender === "user" ? "bg-amber-100 text-amber-800" : "bg-blue-100 text-blue-800"
+                                            }`}>
+                                                {msg.sender === "user" ? "USR" : "BOT"}
                                             </div>
 
-                                            {/* Text Content */}
                                             <div className="space-y-1.5 flex-1">
                                                 <div className="flex items-center gap-2">
-                                                    <span className="font-bold text-sm text-[#f2f3f5]">
-                                                        {msg.sender === "user" ? "User#1234" : "CustomBot"}
+                                                    <span className="font-bold text-sm text-slate-900">
+                                                        {msg.sender === "user" ? "ClientAdmin#0001" : "RelayBot"}
                                                     </span>
                                                     {msg.sender === "bot" && (
-                                                        <span className="bg-[#5865F2] text-[10px] text-white px-1.5 py-0.5 rounded font-black uppercase">Bot</span>
+                                                        <span style={{ backgroundColor: "#2563eb", color: "#ffffff" }} className="text-[9px] px-1.5 py-0.5 rounded font-black uppercase tracking-wider">
+                                                            Bot
+                                                        </span>
                                                     )}
-                                                    <span className="text-[10px] text-[#949ba4]">Today at {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                                    <span className="text-[10px] text-slate-400">Today at {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                                 </div>
 
                                                 {msg.text && (
-                                                    <p className={msg.isCommand ? "text-[#00aff4] font-semibold text-sm" : "text-[#dbdee1] text-sm"}>
+                                                    <p className={msg.isCommand ? "text-blue-700 font-semibold text-xs" : "text-slate-700 text-xs leading-relaxed"}>
                                                         {msg.text}
                                                     </p>
                                                 )}
 
-                                                {/* Discord Rich Embed emulation */}
                                                 {msg.embed && (
-                                                    <div className="border-l-4 border-[#5865F2] bg-[#2b2d31] p-4 rounded-r-lg max-w-[520px] space-y-3 mt-2 shadow-md">
-                                                        <div className="font-bold text-white text-base">{msg.embed.title}</div>
-                                                        <div className="text-sm text-[#dbdee1]">{msg.embed.description}</div>
+                                                    <div className="border-l-4 border-blue-600 bg-white p-4 rounded-r-xl max-w-[520px] space-y-3 mt-2 shadow-xs">
+                                                        <div className="font-bold text-slate-950 text-sm">{msg.embed.title}</div>
+                                                        <div className="text-xs text-slate-600 leading-relaxed">{msg.embed.description}</div>
 
                                                         {msg.embed.fields && (
                                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                                                                 {msg.embed.fields.map((f: any, fIdx: number) => (
                                                                     <div key={fIdx} className="space-y-1">
-                                                                        <div className="text-xs font-bold text-[#f2f3f5]">{f.name}</div>
-                                                                        <div className="text-sm text-[#dbdee1] dangerously-set" dangerouslySetInnerHTML={{ __html: f.value }} />
+                                                                        <div className="text-[11px] font-bold text-slate-900">{f.name}</div>
+                                                                        <div className="text-xs text-slate-600" dangerouslySetInnerHTML={{ __html: f.value }} />
                                                                     </div>
                                                                 ))}
                                                             </div>
                                                         )}
 
                                                         {msg.embed.actions && (
-                                                            <div className="flex gap-2 pt-3">
+                                                            <div className="flex gap-2 pt-2">
                                                                 <Button
                                                                     onClick={() => {
                                                                         setMessages(prev => [
                                                                             ...prev,
-                                                                            { sender: "system", text: "✅ Security Challenge Passed! Welcome to the server." }
+                                                                            { sender: "system", text: "Security challenge passed. Welcome to the server." }
                                                                         ]);
                                                                         trackEvent("simulator_action_click", { action: "verify_success" });
                                                                     }}
-                                                                    className="bg-[#248046] hover:bg-[#1a6535] text-white font-semibold text-xs px-3 py-1.5 h-8 rounded"
+                                                                    style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                                                                    className="hover:opacity-90 font-semibold text-xs px-3.5 h-8 rounded-lg"
                                                                 >
                                                                     Verify Me
-                                                                </Button>
-                                                                <Button className="bg-[#4e5058] hover:bg-[#6d6f78] text-white font-semibold text-xs px-3 py-1.5 h-8 rounded">
-                                                                    Cancel
                                                                 </Button>
                                                             </div>
                                                         )}
@@ -834,65 +871,69 @@ export const DiscordBotLanding = () => {
                 </section>
 
                 {/* 7. PORTFOLIO CASE STUDIES */}
-                <section id="portfolio" className="py-20 bg-[#111214]">
+                <section id="portfolio" className="py-20 bg-white border-b border-slate-200/80">
                     <div className="container mx-auto px-6 max-w-5xl">
                         <div className="text-center mb-16">
-                            <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4 text-white">
-                                Proven Discord Case Studies
+                            <h2 className="text-3xl md:text-4xl font-black font-heading mb-4 text-slate-950">
+                                Proven Discord Engineering Case Studies
                             </h2>
-                            <p className="text-[#dbdee1] max-w-xl mx-auto text-sm">
-                                Explore how custom automation solved major moderation bottlenecks and payment collection issues for real server administrators.
+                            <p className="text-slate-600 max-w-xl mx-auto text-sm">
+                                Review how custom automation solved critical moderation, economy, and matchmaking challenges for real communities.
                             </p>
                         </div>
 
-                        <div className="space-y-12">
+                        <div className="space-y-8">
                             {caseStudies.map((study, idx) => (
                                 <m.div
                                     key={idx}
-                                    initial={{ opacity: 0, y: 30 }}
+                                    initial={{ opacity: 0, y: 20 }}
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ duration: 0.5, delay: idx * 0.1 }}
-                                    className="p-6 md:p-8 bg-[#161719] border border-[#2f3136] hover:border-primary/20 transition-all rounded-2xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center"
+                                    className="p-6 md:p-8 bg-[#fafaf9] border border-slate-200 hover:shadow-md transition-all rounded-3xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center"
                                 >
                                     <div className="lg:col-span-8 space-y-4">
                                         <div className="flex flex-wrap items-center gap-3">
-                                            <span className="text-xs bg-[#5865F2]/10 border border-[#5865F2]/20 text-[#5865F2] px-2.5 py-0.5 rounded-full font-bold">
+                                            <span className="text-xs bg-blue-50 border border-blue-200 text-blue-700 px-2.5 py-0.5 rounded-full font-bold">
                                                 {study.industry}
                                             </span>
-                                            <span className="text-white font-bold text-xl">{study.name}</span>
+                                            <h3 className="text-slate-950 font-bold text-lg md:text-xl font-heading">{study.name}</h3>
                                         </div>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
-                                            <div className="space-y-1">
-                                                <div className="text-red-400 font-bold flex items-center gap-1.5">
-                                                    <X className="w-4 h-4 text-red-400" /> The Problem
+                                        
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                                            <div className="space-y-1 bg-white p-4 rounded-xl border border-slate-200">
+                                                <div className="text-rose-700 font-bold text-xs flex items-center gap-1.5 uppercase tracking-wider">
+                                                    <X className="w-3.5 h-3.5 text-rose-500" /> The Problem
                                                 </div>
-                                                <p className="text-[#dbdee1] text-xs">{study.problem}</p>
+                                                <p className="text-slate-600 text-xs leading-relaxed">{study.problem}</p>
                                             </div>
-                                            <div className="space-y-1">
-                                                <div className="text-green-400 font-bold flex items-center gap-1.5">
-                                                    <Check className="w-4 h-4 text-green-400" /> The Solution
+                                            <div className="space-y-1 bg-white p-4 rounded-xl border border-slate-200">
+                                                <div className="text-emerald-700 font-bold text-xs flex items-center gap-1.5 uppercase tracking-wider">
+                                                    <Check className="w-3.5 h-3.5 text-emerald-600" /> The Solution
                                                 </div>
-                                                <p className="text-[#dbdee1] text-xs">{study.solution}</p>
+                                                <p className="text-slate-600 text-xs leading-relaxed">{study.solution}</p>
                                             </div>
                                         </div>
+
                                         <div className="pt-2">
-                                            <div className="text-xs font-bold text-[#dbdee1] mb-2 uppercase tracking-wide">Key Features Implemented</div>
+                                            <div className="text-[11px] font-bold text-slate-500 mb-2 uppercase tracking-wide">Key Modules Implemented</div>
                                             <div className="flex flex-wrap gap-2">
                                                 {study.features.map((feat, fIdx) => (
-                                                    <span key={fIdx} className="text-xs bg-white/5 border border-white/10 px-2 py-1 rounded text-[#dbdee1]">
+                                                    <span key={fIdx} className="text-xs bg-white border border-slate-200 px-2.5 py-1 rounded-md text-slate-700 font-medium">
                                                         {feat}
                                                     </span>
                                                 ))}
                                             </div>
                                         </div>
                                     </div>
+
                                     <div className="lg:col-span-4 self-stretch flex flex-col gap-4 justify-center">
-                                        <div className="bg-[#2b2d31] p-6 rounded-xl border border-white/5 text-center space-y-2">
-                                            <div className="text-xs font-semibold text-[#5865F2] uppercase tracking-wide">Results Accomplished</div>
-                                            <div className="text-2xl font-black text-white">{study.result.split('.')[0]}</div>
-                                            <p className="text-[#dbdee1] text-xs">{study.result.substring(study.result.indexOf('.') + 1).trim()}</p>
+                                        <div className="bg-white p-6 rounded-2xl border border-slate-200 text-center space-y-2 shadow-xs">
+                                            <div className="text-xs font-bold text-blue-600 uppercase tracking-wide">Result Achieved</div>
+                                            <div className="text-2xl font-black text-slate-950">{study.result.split('.')[0]}</div>
+                                            <p className="text-slate-600 text-xs leading-relaxed">{study.result.substring(study.result.indexOf('.') + 1).trim()}</p>
                                         </div>
+
                                         <a
                                             href={
                                                 idx === 0 ? "https://github.com/HazratTech/Nexa" :
@@ -901,10 +942,10 @@ export const DiscordBotLanding = () => {
                                             }
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="bg-[#1e1f22] rounded-xl border border-[#2f3136] hover:border-[#5865F2]/40 flex items-center justify-center gap-3 text-center p-5 relative group shadow-inner transition-all"
+                                            className="bg-white rounded-xl border border-slate-300 hover:border-slate-400 flex items-center justify-center gap-2.5 text-center p-3.5 shadow-xs transition-colors group"
                                         >
-                                            <svg className="w-5 h-5 text-[#949ba4] group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                                            <span className="text-[#949ba4] group-hover:text-white text-sm font-semibold transition-colors">View Source Code →</span>
+                                            <ExternalLink className="w-4 h-4 text-slate-500 group-hover:text-slate-900" />
+                                            <span className="text-slate-800 group-hover:text-slate-950 text-xs font-bold">Inspect Source Code ↗</span>
                                         </a>
                                     </div>
                                 </m.div>
@@ -913,15 +954,15 @@ export const DiscordBotLanding = () => {
                     </div>
                 </section>
 
-                {/* REAL SCREENSHOTS GALLERY SECTION */}
-                <section id="screenshots" className="py-20 bg-[#0f1012] border-t border-white/5">
+                {/* 8. SCREENSHOTS GALLERY */}
+                <section id="screenshots" className="py-20 bg-[#fafaf9] border-b border-slate-200/80">
                     <div className="container mx-auto px-6 max-w-5xl text-center space-y-12">
-                        <div className="space-y-4">
-                            <h2 className="text-3xl md:text-4xl font-bold font-heading text-white">
-                                Inside Look: Bot Control Panels & Commands
+                        <div className="space-y-3">
+                            <h2 className="text-3xl md:text-4xl font-black font-heading text-slate-950">
+                                Real Production Interfaces & Control Panels
                             </h2>
-                            <p className="text-[#dbdee1] max-w-xl mx-auto text-sm">
-                                Real screenshots from active projects. Fully custom web dashboards, system log structures, and Discord interfaces designed for my clients.
+                            <p className="text-slate-600 max-w-xl mx-auto text-sm">
+                                Actual screenshots from deployed production bots: web admin panels, verification flows, and operational analytics.
                             </p>
                         </div>
 
@@ -943,17 +984,17 @@ export const DiscordBotLanding = () => {
                                     url: "https://minio-api.hazratdev.top/692ad2d770e2d6c86034e690-myfolio-38e4028f/uploads/2026/06/8442f1ae-68a7-49b0-8879-131dd1ee9151"
                                 }
                             ].map((img, idx) => (
-                                <div key={idx} className="bg-[#1e1f22] rounded-xl overflow-hidden border border-[#2f3136] group hover:border-[#5865F2]/40 transition-all flex flex-col justify-between text-left shadow-lg">
-                                    <div className="relative aspect-video w-full overflow-hidden bg-black/40">
+                                <div key={idx} className="bg-white rounded-2xl overflow-hidden border border-slate-200 hover:shadow-md transition-all flex flex-col justify-between text-left shadow-xs">
+                                    <div className="relative aspect-video w-full overflow-hidden bg-slate-100">
                                         <img
                                             src={img.url}
                                             alt={img.title}
-                                            className="w-full h-full object-cover group-hover:scale-102 transition-all duration-300"
+                                            className="w-full h-full object-cover"
                                         />
                                     </div>
-                                    <div className="p-5 space-y-2">
-                                        <h3 className="font-bold text-sm text-white">{img.title}</h3>
-                                        <p className="text-xs text-[#949ba4] leading-relaxed">{img.desc}</p>
+                                    <div className="p-5 space-y-1.5">
+                                        <h3 className="font-bold text-sm text-slate-950">{img.title}</h3>
+                                        <p className="text-xs text-slate-600 leading-relaxed">{img.desc}</p>
                                     </div>
                                 </div>
                             ))}
@@ -961,30 +1002,30 @@ export const DiscordBotLanding = () => {
                     </div>
                 </section>
 
-                {/* 8. WHY CHOOSE RELAYWORKS */}
-                <section className="py-20 bg-[#0f1012] border-t border-white/5">
+                {/* 9. WHY CHOOSE RELAYWORKS */}
+                <section className="py-20 bg-white border-b border-slate-200/80">
                     <div className="container mx-auto px-6 max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                        <div className="space-y-6">
-                            <h2 className="text-3xl md:text-4xl font-bold font-heading text-white">
-                                Why Choose RelayWorks For Your Bot?
+                        <div className="space-y-6 text-left">
+                            <h2 className="text-3xl md:text-4xl font-black font-heading text-slate-950">
+                                Why Partner with RelayWorks for Your Bot?
                             </h2>
-                            <p className="text-[#dbdee1] text-sm">
-                                We are not just copy-paste developers. We build production-grade automation systems using clean, scalable code that responds instantly to user activity.
+                            <p className="text-slate-600 text-sm md:text-base leading-relaxed">
+                                We avoid fragile, unmaintained templates. Every system is engineered in clean, async Python or TypeScript designed to withstand high gateway traffic spikes.
                             </p>
                             <div className="space-y-4">
                                 {[
-                                    { title: "Production Scale Architect", desc: "Bots are built with optimal performance models, handling high gateway loads without lag spikes." },
-                                    { title: "Third-Party API Expert", desc: "Integrate Stripe, PayPal, OpenAI, Minecraft, Steam, or databases seamlessly into chat nodes." },
-                                    { title: "Direct Streamlined Support", desc: "Clean codebase configuration with detailed launch setups, PM2 configurations, and instructions." },
-                                    { title: "Safe Code Ownership", desc: "You receive 100% of the compiled Python/TypeScript source files upon delivery with complete control." }
+                                    { title: "High-Throughput Gateway Reliability", desc: "Designed with async match managers, thread-safe locks, and optimal gateway handling." },
+                                    { title: "Third-Party API Integration", desc: "Native linking to Stripe, PayPal, OpenAI, PostgreSQL, or game servers." },
+                                    { title: "Turnkey Deployment & PM2 Setup", desc: "Delivered with complete systemd/PM2 service configs and step-by-step documentation." },
+                                    { title: "100% Clean Code Ownership", desc: "You receive full copyright and complete source code repository access upon project sign-off." }
                                 ].map((item, idx) => (
-                                    <div key={idx} className="flex gap-3">
-                                        <div className="w-5 h-5 rounded-full bg-green-500/10 flex items-center justify-center text-green-400 shrink-0 mt-0.5">
+                                    <div key={idx} className="flex gap-3.5">
+                                        <div className="w-5 h-5 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700 shrink-0 mt-0.5">
                                             <Check className="w-3.5 h-3.5" />
                                         </div>
-                                        <div className="text-left space-y-1">
-                                            <div className="font-bold text-white text-sm">{item.title}</div>
-                                            <div className="text-[#949ba4] text-xs">{item.desc}</div>
+                                        <div className="space-y-0.5">
+                                            <div className="font-bold text-slate-900 text-sm">{item.title}</div>
+                                            <div className="text-slate-600 text-xs leading-relaxed">{item.desc}</div>
                                         </div>
                                     </div>
                                 ))}
@@ -992,61 +1033,59 @@ export const DiscordBotLanding = () => {
                         </div>
 
                         {/* Interactive UI Display */}
-                        <div className="relative bg-[#1e1f22] rounded-2xl border border-white/10 p-6 space-y-4 shadow-xl">
-                            <div className="flex items-center justify-between text-xs text-[#949ba4] border-b border-white/5 pb-4">
-                                <span className="font-bold text-white">🚀 RelayWorks Bot Configuration</span>
-                                <span className="text-green-400 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" /> Active</span>
+                        <div className="relative bg-slate-950 rounded-2xl border border-slate-800 p-6 space-y-4 shadow-xl text-left">
+                            <div className="flex items-center justify-between text-xs text-slate-400 border-b border-slate-800 pb-3">
+                                <span className="font-mono font-bold text-slate-200">relayworks-gateway.py</span>
+                                <span className="text-emerald-400 flex items-center gap-1.5 text-[11px] font-bold">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Operational
+                                </span>
                             </div>
-                            <div className="space-y-3 font-mono text-xs text-[#5865F2] text-left">
-                                <p className="text-[#949ba4]"># Initializing bot modules...</p>
-                                <p className="text-green-400">✔ Database connection successful: MongoDB Atlas</p>
-                                <p className="text-green-400">✔ Stripe Webhook endpoint listening on port 8000</p>
-                                <p className="text-green-400">✔ OpenAI assistant fine-tuning context loaded</p>
-                                <p className="text-[#a6accd]">Bot fully configured. Registering 24 slash commands...</p>
+                            <div className="space-y-2 font-mono text-xs text-slate-300">
+                                <p className="text-slate-500"># Initializing modular cogs...</p>
+                                <p className="text-emerald-400">✔ Database connection successful: MongoDB Atlas</p>
+                                <p className="text-emerald-400">✔ Stripe Webhook router listening on port 8000</p>
+                                <p className="text-emerald-400">✔ OpenAI contextual guardrails loaded</p>
+                                <p className="text-blue-400">✔ 28 slash commands synchronized with Discord API</p>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                {/* 9. TESTIMONIALS (REAL DATABASE INTEGRATION) */}
-                <section className="py-20 bg-[#111214]">
+                {/* 10. TESTIMONIALS */}
+                <section className="py-20 bg-[#fafaf9] border-b border-slate-200/80">
                     <div className="container mx-auto px-6 max-w-5xl">
                         <div className="text-center mb-16">
-                            <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4 text-white">
-                                Stories From Server Administrators
+                            <h2 className="text-3xl md:text-4xl font-black font-heading mb-4 text-slate-950">
+                                Verified Server Owner Feedback
                             </h2>
-                            <p className="text-[#dbdee1] max-w-lg mx-auto text-sm">
-                                Real reviews fetched directly from RelayWorks client database.
+                            <p className="text-slate-600 max-w-lg mx-auto text-sm">
+                                Direct reviews from Discord community administrators and founders.
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {(reviews.length > 0 ? reviews.filter(r => r.content.toLowerCase().includes("bot") || r.content.toLowerCase().includes("discord") || r.role.toLowerCase().includes("bot") || reviews.length <= 4) : [
                                 { name: "sgtgonzo", role: "United States", content: "Amazing work! Speedy and meticulous. Answered all my questions, explained and demonstrated how my bot worked, outstanding job.", rating: 5 },
-                                { name: "afcumerma", role: "United States", content: "Hazrat created a custom \"mission creation\" bot for my Discord community of 600+ members, specifically for the Star Citizen space MMO.", rating: 5 },
+                                { name: "afcumerma", role: "United States", content: "Hazrat created a custom mission creation bot for my Discord community of 600+ members, specifically for the Star Citizen space MMO.", rating: 5 },
                                 { name: "frescher", role: "Germany", content: "Working with Hazrat was a pleasure. He asked many questions about the details to make sure I got the functionality that I need. Clear recommendation!", rating: 5 },
                                 { name: "samswa", role: "Austria", content: "Did a great job setting up a custom bot in our discord server! 10/10", rating: 5 }
-                            ]).slice(0, 6).map((review, idx) => (
-                                <div key={idx} className="bg-[#2b2d31] border-l-4 border-l-[#5865F2] border-y border-r border-[#2f3136] hover:border-r-[#5865F2]/40 transition-all rounded-r-xl p-6 relative group text-left shadow-md">
-                                    <div className="flex gap-1 mb-4">
+                            ]).slice(0, 4).map((review, idx) => (
+                                <div key={idx} className="bg-white border-l-4 border-l-blue-600 border border-slate-200 rounded-r-2xl p-6 text-left shadow-xs space-y-4">
+                                    <div className="flex gap-1">
                                         {[...Array(review.rating || 5)].map((_, i) => (
-                                            <Star key={i} className="w-4 h-4 fill-yellow-500 text-yellow-500" />
+                                            <Star key={i} className="w-4 h-4 fill-amber-500 text-amber-500" />
                                         ))}
                                     </div>
-                                    <p className="text-[#dbdee1] italic text-sm mb-6 leading-relaxed">
-                                        "{review.content}"
+                                    <p className="text-slate-700 italic text-sm leading-relaxed">
+                                        &ldquo;{review.content}&rdquo;
                                     </p>
-                                    <div className="flex items-center gap-3 pt-4 border-t border-white/5">
-                                        <div className="w-9 h-9 rounded-full bg-[#5865F2] flex items-center justify-center text-white font-bold text-sm shrink-0 overflow-hidden">
-                                            {review.image ? (
-                                                <img src={review.image} alt={review.name} className="w-full h-full object-cover" />
-                                            ) : (
-                                                review.name.charAt(0).toUpperCase()
-                                            )}
+                                    <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
+                                        <div style={{ backgroundColor: "#2563eb", color: "#ffffff" }} className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0">
+                                            {review.name.charAt(0).toUpperCase()}
                                         </div>
                                         <div>
-                                            <div className="font-bold text-sm text-white">{review.name}</div>
-                                            <div className="text-xs text-[#949ba4]">{review.role}</div>
+                                            <div className="font-bold text-xs text-slate-900">{review.name}</div>
+                                            <div className="text-[11px] text-slate-500">{review.role}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -1055,77 +1094,82 @@ export const DiscordBotLanding = () => {
                     </div>
                 </section>
 
-                {/* 10. PRICING GUIDANCE */}
-                <section id="pricing" className="py-20 bg-[#0f1012]">
+                {/* 11. PRICING GUIDANCE */}
+                <section id="pricing" className="py-20 bg-white border-b border-slate-200/80">
                     <div className="container mx-auto px-6 max-w-5xl text-center">
-                        <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4 text-white">
-                            Simple, Value-Driven Pricing
+                        <h2 className="text-3xl md:text-4xl font-black font-heading mb-4 text-slate-950">
+                            Transparent Milestone Sprints
                         </h2>
-                        <p className="text-[#dbdee1] max-w-xl mx-auto mb-12 text-sm">
-                            Invest in custom automation that drives engagement, saves moderation labor, and automates payment delivery. No recurring subscription fees.
+                        <p className="text-slate-600 max-w-xl mx-auto mb-12 text-sm">
+                            Fixed-price project scopes with milestone delivery. No ongoing bot subscription fees.
                         </p>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
                             {[
                                 {
-                                    name: "Basic Bot",
-                                    price: "$100",
-                                    desc: "Perfect for simple server administration, automated moderation, or social media webhook links.",
+                                    name: "Starter Utility Bot",
+                                    price: "$149",
+                                    desc: "Ideal for basic server moderation, custom slash commands, and welcome verification.",
                                     features: [
                                         "Automated moderation filters",
-                                        "Basic custom command lists",
-                                        "Welcome banners & role setups",
-                                        "Deployment documentation included"
+                                        "Custom slash command suite",
+                                        "Welcome canvas image generation",
+                                        "Linux PM2 setup guide"
                                     ]
                                 },
                                 {
                                     name: "Advanced Automation",
-                                    price: "$300",
-                                    desc: "Great for billing automations, custom ticket queues, leveling mechanisms, and advanced logs panels.",
+                                    price: "$349",
+                                    desc: "Complete community operations with billing, tickets, and external database sync.",
                                     features: [
-                                        "Stripe / PayPal payment syncing",
-                                        "Interactive ticket setups",
-                                        "Advanced verification systems",
-                                        "30 days of active support",
-                                        "Complete source code ownership"
+                                        "Stripe / PayPal webhook role sync",
+                                        "Interactive ticket queue with transcripts",
+                                        "OAuth2 captcha verification system",
+                                        "30 days warranty & active support",
+                                        "100% full source code ownership"
                                     ],
                                     popular: true
                                 },
                                 {
-                                    name: "Enterprise / AI Bot",
-                                    price: "Contact Me",
-                                    desc: "Fully customized systems integrated with external databases, OpenAI chatbots, or custom server panels.",
+                                    name: "Enterprise / AI Architecture",
+                                    price: "$750+",
+                                    desc: "Complex architectures linked with private databases, AI assistants, or web panels.",
                                     features: [
                                         "OpenAI contextual fine-tuning",
-                                        "External API / Database linking",
-                                        "Full white-label administration panel",
-                                        "Long-term SLA server support",
-                                        "Optimized VPS server setup"
+                                        "External REST API / PostgreSQL linking",
+                                        "Web-based admin control panel",
+                                        "High-throughput load optimization",
+                                        "Turnkey server deployment"
                                     ]
                                 }
                             ].map((tier, idx) => (
-                                <Card key={idx} className={`bg-[#1e1f22] border border-[#2f3136] p-6 flex flex-col justify-between relative shadow-lg ${tier.popular ? "border-primary/40 ring-1 ring-primary/30" : ""
-                                    }`}>
+                                <Card 
+                                    key={idx} 
+                                    className={`bg-white border p-6 flex flex-col justify-between rounded-2xl relative shadow-sm ${
+                                        tier.popular ? "border-2 border-blue-600 shadow-md" : "border-slate-200"
+                                    }`}
+                                >
                                     {tier.popular && (
-                                        <span className="absolute top-[-12px] left-6 bg-primary text-white text-[10px] uppercase font-black px-2.5 py-0.5 rounded-full tracking-wider">
+                                        <span 
+                                            style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                                            className="absolute top-[-12px] left-6 text-white text-[10px] uppercase font-black px-3 py-0.5 rounded-full tracking-wider shadow-xs"
+                                        >
                                             Most Popular
                                         </span>
                                     )}
                                     <div className="space-y-4">
                                         <div>
-                                            <h3 className="font-bold text-lg text-white">{tier.name}</h3>
-                                            <p className="text-[#949ba4] text-xs mt-1">{tier.desc}</p>
+                                            <h3 className="font-bold text-lg text-slate-950 font-heading">{tier.name}</h3>
+                                            <p className="text-slate-500 text-xs mt-1 leading-relaxed">{tier.desc}</p>
                                         </div>
-                                        <div className="py-2 border-y border-white/5">
-                                            <span className="text-xs text-[#949ba4]">
-                                                {tier.price === "Contact Me" ? "Pricing Model" : "Starting from"}
-                                            </span>
-                                            <div className="text-3xl font-black text-white mt-1">{tier.price}</div>
+                                        <div className="py-2 border-y border-slate-100">
+                                            <span className="text-[11px] text-slate-500 font-semibold uppercase tracking-wider">Fixed Sprint Fee</span>
+                                            <div className="text-3xl font-black text-slate-950 mt-0.5">{tier.price}</div>
                                         </div>
-                                        <ul className="space-y-2.5 text-xs text-[#dbdee1]">
+                                        <ul className="space-y-2.5 text-xs text-slate-700">
                                             {tier.features.map((feat, fIdx) => (
                                                 <li key={fIdx} className="flex items-center gap-2">
-                                                    <Check className="w-3.5 h-3.5 text-green-500 shrink-0" />
+                                                    <Check className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                                                     <span>{feat}</span>
                                                 </li>
                                             ))}
@@ -1137,7 +1181,7 @@ export const DiscordBotLanding = () => {
                                             el?.scrollIntoView({ behavior: "smooth" });
                                             setFormData(prev => ({
                                                 ...prev,
-                                                budget: tier.name === "Basic Bot"
+                                                budget: tier.name === "Starter Utility Bot"
                                                     ? "$100 - $300"
                                                     : tier.name === "Advanced Automation"
                                                         ? "$300 - $1,000"
@@ -1145,10 +1189,12 @@ export const DiscordBotLanding = () => {
                                             }));
                                             trackEvent("pricing_cta_click", { tier: tier.name });
                                         }}
-                                        className={`w-full mt-6 font-bold ${tier.popular
-                                            ? "bg-primary hover:bg-primary/95 text-white shadow-md"
-                                            : "bg-white/5 border border-white/10 hover:bg-white/10 text-white"
-                                            }`}
+                                        style={tier.popular ? { backgroundColor: "#2563eb", color: "#ffffff" } : {}}
+                                        className={`w-full mt-6 font-bold h-11 text-xs rounded-xl shadow-xs ${
+                                            tier.popular
+                                                ? "hover:opacity-90 text-white"
+                                                : "bg-white border border-slate-300 text-slate-800 hover:bg-slate-50"
+                                        }`}
                                     >
                                         Select {tier.name}
                                     </Button>
@@ -1158,70 +1204,70 @@ export const DiscordBotLanding = () => {
                     </div>
                 </section>
 
-                {/* 11. PROCESS FLOW */}
-                <section className="py-20 bg-[#111214]">
+                {/* 12. PROCESS FLOW */}
+                <section className="py-20 bg-[#fafaf9] border-b border-slate-200/80">
                     <div className="container mx-auto px-6 max-w-5xl text-center">
-                        <h2 className="text-3xl md:text-4xl font-bold font-heading mb-12 text-white">
-                            Our Streamlined Bot Delivery Process
+                        <h2 className="text-3xl md:text-4xl font-black font-heading mb-12 text-slate-950">
+                            Predictable 5-Step Delivery Flow
                         </h2>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 relative">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                             {[
-                                { step: "01", name: "Submit Form", desc: "Send over your exact bot requirements using the form below." },
-                                { step: "02", name: "Review", desc: "I review your needs and map out the required logic." },
-                                { step: "03", name: "Within 24h", desc: "I reply with questions or a clear action plan." },
-                                { step: "04", name: "Quotation", desc: "You receive a fixed-price quote and development timeline." },
-                                { step: "05", name: "Development Begins", desc: "Code construction starts with regular updates." }
+                                { step: "01", name: "Submit Spec", desc: "Detail your required commands and bot architecture." },
+                                { step: "02", name: "Technical Review", desc: "I map database schemas, APIs, and permissions." },
+                                { step: "03", name: "Fixed Proposal", desc: "Receive a transparent sprint quote within 24 hours." },
+                                { step: "04", name: "Active Build", desc: "Modular Python development with staging updates." },
+                                { step: "05", name: "Deploy & Handover", desc: "Linux VPS deployment and 100% source code transfer." }
                             ].map((proc, idx) => (
-                                <div key={idx} className="bg-[#161719] border border-[#2f3136] p-5 rounded-xl space-y-3 text-left relative shadow-sm">
-                                    <div className="text-2xl font-black text-primary/30">{proc.step}</div>
-                                    <h3 className="font-bold text-sm text-white">{proc.name}</h3>
-                                    <p className="text-[#949ba4] text-xs leading-relaxed">{proc.desc}</p>
+                                <div key={idx} className="bg-white border border-slate-200 p-5 rounded-2xl space-y-2 text-left shadow-xs">
+                                    <div className="text-2xl font-black text-blue-600/40 font-heading">{proc.step}</div>
+                                    <h3 className="font-bold text-sm text-slate-950">{proc.name}</h3>
+                                    <p className="text-slate-600 text-xs leading-relaxed">{proc.desc}</p>
                                 </div>
                             ))}
                         </div>
                     </div>
                 </section>
 
-                {/* 12. FAQ SECTION */}
-                <section id="faq" className="py-20 bg-[#0f1012]">
+                {/* 13. FAQ SECTION */}
+                <section id="faq" className="py-20 bg-white border-b border-slate-200/80">
                     <div className="container mx-auto px-6 max-w-3xl">
-                        <h2 className="text-3xl md:text-4xl font-bold font-heading mb-10 text-center text-white">
+                        <h2 className="text-3xl md:text-4xl font-black font-heading mb-10 text-center text-slate-950">
                             Frequently Asked Questions
                         </h2>
 
                         <div className="space-y-4">
                             {[
-                                { q: "How to make a custom Discord bot for my server?", a: "To make a custom Discord bot, you need to register a developer app on the Discord portal, write the logic (usually in Python or TypeScript), and host it on a server. By hiring an experienced Discord developer, you get a professionally built, 24/7 online bot tailored to your exact needs without any coding stress." },
-                                { q: "What are custom commands on a Discord bot?", a: "Custom commands allow you to create interactions specific to your server's needs. You can trigger tasks like pulling stats, managing custom verification databases, or upgrading premium roles instantly. Generic public bots can't provide this level of personalized logic." },
-                                { q: "Why choose customizable bots for Discord over public ones?", a: "Choosing customizable bots for Discord ensures 100% white-labeled branding (your bot logo and name), custom commands tailored exactly to your workflows, zero monthly pricing model bottlenecks, and dedicated hosting for fast performance." },
-                                { q: "Do you host the bot for me?", a: "I configure the bot to run 24/7 on a Linux VPS server using PM2 manager. If you don't have hosting, I can guide you through setting up a server for free, or handle deployment for you." },
-                                { q: "What language and library do you write bots in?", a: "I write high-performance Discord bots in Python (using discord.py or nextcord) to guarantee execution speed and complete support for the latest Discord slash commands and interactions." },
-                                { q: "Do I get full ownership of the source code?", a: "Yes, 100%. Upon completion and final payment, you will receive all files, modules, and configurations. You own all rights to your bot's custom source code." },
-                                { q: "How long does it take to deliver a bot?", a: "Basic bots take around 3-5 days. Advanced moderation or payment setups take 7-14 days. Complex enterprise/database-linked bots can take 2-3 weeks depending on criteria." },
-                                { q: "Can we add new features to the bot in the future?", a: "Yes, the code is structured modularly using Cogs/command-handler layouts, making it incredibly simple to append new features, databases, or APIs later as your server scales." }
+                                { q: "How to make a custom Discord bot for my server?", a: "To create a custom Discord bot, you register an application on the Discord Developer Portal, write the asynchronous event handlers (in Python or TypeScript), and deploy it to a server. By engaging RelayWorks, you receive a production-hardened bot engineered to your exact specifications without the burden of maintenance." },
+                                { q: "What are custom commands on a Discord bot?", a: "Custom slash commands allow you to build workflows specific to your server — such as querying internal databases, synchronizing billing tiers, or issuing automated support channels. Generic public bots cannot provide this level of personalized logic." },
+                                { q: "Why choose customizable bots for Discord over public ones?", a: "Customizable bots ensure 100% white-label identity (your bot avatar, name, and presence), zero recurring per-server subscription fees, and dedicated execution without third-party rate limits." },
+                                { q: "Do you host the bot for me?", a: "I configure the bot to run 24/7 on a Linux VPS using the PM2 process manager. If you already maintain a server, I deploy directly to your infrastructure; otherwise, I guide you through free or low-cost VPS setups." },
+                                { q: "What language and libraries do you build in?", a: "I build Discord bots primarily in asynchronous Python (discord.py or nextcord) and TypeScript for maximum execution performance and full support for modern Discord UI components." },
+                                { q: "Do I get full ownership of the source code?", a: "Yes, 100%. Upon sprint completion and sign-off, you receive full copyright ownership of all code files, database schemas, and configuration assets." },
+                                { q: "How long does it take to deliver a bot sprint?", a: "Standard utility bots are typically delivered in 3–5 days. Advanced payment and ticket automations take 7–14 days. Complex multi-database systems take 2–3 weeks." },
+                                { q: "Can we expand the bot features in the future?", a: "Yes. All bots are built using modular Cogs architectures, making it straightforward to append new slash commands, database tables, or third-party APIs as your community expands." }
                             ].map((faq, idx) => (
                                 <div
                                     key={idx}
-                                    className="border-b border-white/10 pb-4 cursor-pointer"
+                                    className="border-b border-slate-200 pb-4 cursor-pointer"
                                     onClick={() => {
                                         setOpenFaq(openFaq === idx ? null : idx);
                                         trackEvent("faq_accordion_click", { question: faq.q });
                                     }}
                                 >
                                     <div className="flex justify-between items-center py-2 text-left">
-                                        <h3 className="font-bold text-white text-base md:text-lg flex items-center gap-2">
-                                            <HelpCircle className="w-5 h-5 text-primary shrink-0" />
-                                            {faq.q}
+                                        <h3 className="font-bold text-slate-950 text-base md:text-lg flex items-center gap-2.5">
+                                            <HelpCircle className="w-4 h-4 text-blue-600 shrink-0" />
+                                            <span>{faq.q}</span>
                                         </h3>
-                                        <ChevronDown className={`w-4 h-4 text-[#949ba4] transition-transform ${openFaq === idx ? "rotate-180" : ""}`} />
+                                        <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform ${openFaq === idx ? "rotate-180" : ""}`} />
                                     </div>
                                     <div
-                                        className={`overflow-hidden transition-all duration-300 ease-in-out pl-7 text-left ${
+                                        className={`overflow-hidden transition-all duration-300 ease-in-out pl-6 text-left ${
                                             openFaq === idx ? "max-h-[500px] opacity-100 mt-2" : "max-h-0 opacity-0 pointer-events-none"
                                         }`}
                                     >
-                                        <p className="text-[#dbdee1] text-sm leading-relaxed pb-2">
+                                        <p className="text-slate-600 text-sm leading-relaxed pb-2">
                                             {faq.a}
                                         </p>
                                     </div>
@@ -1231,141 +1277,141 @@ export const DiscordBotLanding = () => {
                     </div>
                 </section>
 
-                {/* 13. LEAD QUALIFYING CONTACT FORM */}
-                <section id="quote-form" className="py-20 bg-[#111214] relative">
+                {/* 14. CONTACT / QUOTE FORM */}
+                <section id="quote-form" className="py-20 bg-[#fafaf9] border-b border-slate-200/80 relative">
                     <div className="container mx-auto px-6 max-w-3xl">
-                        <div className="text-center mb-12">
-                            <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4 text-white">
-                                Tell Me About Your Bot Idea
+                        <div className="text-center mb-10">
+                            <h2 className="text-3xl md:text-4xl font-black font-heading mb-3 text-slate-950">
+                                Commission Your Custom Discord Bot
                             </h2>
-                            <p className="text-[#dbdee1] max-w-md mx-auto text-sm">
-                                Fill out our quick quote form to pre-qualify your project requirements and receive a transparent development quote within 2 hours.
+                            <p className="text-slate-600 max-w-md mx-auto text-sm leading-relaxed">
+                                Share your project requirements below to receive a technical architecture breakdown and fixed milestone quote within 2 hours.
                             </p>
                         </div>
 
-                        <div className="flex flex-col md:flex-row items-center justify-between bg-[#1e1f22] border border-primary/20 rounded-xl p-6 mb-8 shadow-xl">
+                        {/* Fast Track Calendly Box */}
+                        <div className="flex flex-col md:flex-row items-center justify-between bg-blue-50/70 border border-blue-200/80 rounded-2xl p-6 mb-8 shadow-xs">
                             <div className="text-left mb-4 md:mb-0">
-                                <h3 className="text-white font-bold text-lg flex items-center gap-2">
-                                    <Clock className="w-5 h-5 text-primary" /> Hate Filling Out Forms?
+                                <h3 className="text-slate-950 font-bold text-base flex items-center gap-2">
+                                    <Clock className="w-4 h-4 text-blue-600" /> Prefer a Direct Voice Discovery?
                                 </h3>
-                                <p className="text-[#949ba4] text-sm mt-1">Skip the queue and book a direct 15-minute consultation with me.</p>
+                                <p className="text-slate-600 text-xs mt-1">Book a direct 15-minute architecture conversation with lead engineer Hazrat.</p>
                             </div>
                             <a
                                 href="https://calendly.com/hazratummarsk9/book-15-minutes"
                                 target="_blank"
                                 rel="noreferrer"
                                 onClick={() => trackEvent("calendly_click")}
-                                className="shrink-0 bg-primary text-white font-bold px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2 shadow-[0_0_15px_rgba(88,101,242,0.3)]"
+                                style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                                className="shrink-0 font-bold text-xs px-5 py-2.5 rounded-xl hover:opacity-90 transition-opacity shadow-xs"
                             >
-                                Book 15 Minutes
+                                Schedule 15 Min ↗
                             </a>
                         </div>
 
-                        <Card className="bg-[#1e1f22] border border-[#2f3136] p-6 md:p-8 rounded-2xl shadow-xl">
-                            <form onSubmit={handleFormSubmit} className="space-y-6">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                    <div className="space-y-2 text-left">
-                                        <label htmlFor="lead-name" className="text-xs font-semibold text-white uppercase tracking-wider">Your Name</label>
+                        <Card className="bg-white border border-slate-200 p-6 md:p-8 rounded-3xl shadow-sm">
+                            <form onSubmit={handleFormSubmit} className="space-y-5">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="space-y-1.5 text-left">
+                                        <label htmlFor="lead-name" className="text-xs font-bold text-slate-800 uppercase tracking-wider">Your Name</label>
                                         <Input
                                             id="lead-name"
                                             value={formData.name}
                                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                             placeholder="Your Name"
                                             required
-                                            className="bg-black/20 border-[#2f3136] focus:border-primary text-white"
+                                            className="bg-white border-slate-300 text-slate-900 rounded-xl h-11 text-sm focus:border-blue-600"
                                         />
                                     </div>
-                                    <div className="space-y-2 text-left">
-                                        <label htmlFor="lead-email" className="text-xs font-semibold text-white uppercase tracking-wider">Email Address</label>
+                                    <div className="space-y-1.5 text-left">
+                                        <label htmlFor="lead-email" className="text-xs font-bold text-slate-800 uppercase tracking-wider">Work Email</label>
                                         <Input
                                             id="lead-email"
                                             type="email"
                                             value={formData.email}
                                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                            placeholder="your@email.com"
+                                            placeholder="name@domain.com"
                                             required
-                                            className="bg-black/20 border-[#2f3136] focus:border-primary text-white"
+                                            className="bg-white border-slate-300 text-slate-900 rounded-xl h-11 text-sm focus:border-blue-600"
                                         />
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                    <div className="space-y-2 text-left">
-                                        <label htmlFor="lead-discord" className="text-xs font-semibold text-white uppercase tracking-wider">Discord Username</label>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="space-y-1.5 text-left">
+                                        <label htmlFor="lead-discord" className="text-xs font-bold text-slate-800 uppercase tracking-wider">Discord Handle</label>
                                         <Input
                                             id="lead-discord"
                                             value={formData.discord}
                                             onChange={(e) => setFormData({ ...formData, discord: e.target.value })}
-                                            placeholder="username#0000 or username"
+                                            placeholder="username"
                                             required
-                                            className="bg-black/20 border-[#2f3136] focus:border-primary text-white"
+                                            className="bg-white border-slate-300 text-slate-900 rounded-xl h-11 text-sm focus:border-blue-600"
                                         />
                                     </div>
-                                    <div className="space-y-2 text-left">
-                                        <label htmlFor="lead-budget" className="text-xs font-semibold text-white uppercase tracking-wider">Project Budget</label>
+                                    <div className="space-y-1.5 text-left">
+                                        <label htmlFor="lead-budget" className="text-xs font-bold text-slate-800 uppercase tracking-wider">Estimated Budget</label>
                                         <select
                                             id="lead-budget"
                                             value={formData.budget}
                                             onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
-                                            className="flex h-10 w-full items-center justify-between rounded-md border border-[#2f3136] bg-black/20 px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-primary focus:ring-offset-0"
-                                            style={{ color: '#f2f3f5', backgroundColor: '#1e1f22' }}
+                                            className="flex h-11 w-full items-center justify-between rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600"
                                         >
-                                            <option value="Starts at $100" className="bg-[#1e1f22]" style={{ color: '#f2f3f5', backgroundColor: '#1e1f22' }}>Basic Bot (Starts at $100)</option>
-                                            <option value="Starts at $300" className="bg-[#1e1f22]" style={{ color: '#f2f3f5', backgroundColor: '#1e1f22' }}>Advanced Automation (Starts at $300)</option>
-                                            <option value="Contact for Quote" className="bg-[#1e1f22]" style={{ color: '#f2f3f5', backgroundColor: '#1e1f22' }}>Enterprise / AI Bot (Custom Quote)</option>
+                                            <option value="Starts at $149">Starter Utility Bot (Starts at $149)</option>
+                                            <option value="Starts at $349">Advanced Automation (Starts at $349)</option>
+                                            <option value="Contact for Quote">Enterprise / AI Bot (Custom Scope)</option>
                                         </select>
                                     </div>
                                 </div>
 
-                                <div className="space-y-2 text-left">
-                                    <label htmlFor="lead-timeline" className="text-xs font-semibold text-white uppercase tracking-wider">Expected Timeline</label>
+                                <div className="space-y-1.5 text-left">
+                                    <label htmlFor="lead-timeline" className="text-xs font-bold text-slate-800 uppercase tracking-wider">Target Timeline</label>
                                     <select
                                         id="lead-timeline"
                                         value={formData.timeline}
                                         onChange={(e) => setFormData({ ...formData, timeline: e.target.value })}
-                                        className="flex h-10 w-full items-center justify-between rounded-md border border-[#2f3136] bg-black/20 px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-primary"
-                                        style={{ color: '#f2f3f5', backgroundColor: '#1e1f22' }}
+                                        className="flex h-11 w-full items-center justify-between rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600"
                                     >
-                                        <option value="1 Week" className="bg-[#1e1f22]" style={{ color: '#f2f3f5', backgroundColor: '#1e1f22' }}>Urgent (1 Week)</option>
-                                        <option value="2-3 Weeks" className="bg-[#1e1f22]" style={{ color: '#f2f3f5', backgroundColor: '#1e1f22' }}>Standard (2-3 Weeks)</option>
-                                        <option value="1 Month+" className="bg-[#1e1f22]" style={{ color: '#f2f3f5', backgroundColor: '#1e1f22' }}>Flexible (1 Month+)</option>
+                                        <option value="1 Week">Urgent (1 Week Delivery)</option>
+                                        <option value="2-3 Weeks">Standard (2–3 Weeks Delivery)</option>
+                                        <option value="1 Month+">Flexible (1 Month+ Delivery)</option>
                                     </select>
                                 </div>
 
-                                <div className="space-y-2 text-left">
-                                    <label htmlFor="lead-desc" className="text-xs font-semibold text-white uppercase tracking-wider">Project Description</label>
+                                <div className="space-y-1.5 text-left">
+                                    <label htmlFor="lead-desc" className="text-xs font-bold text-slate-800 uppercase tracking-wider">Bot Scope & Requirements</label>
                                     <Textarea
                                         id="lead-desc"
                                         value={formData.description}
                                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                        placeholder="What should the bot do? List required slash commands, roles setup, webhook alerts, Stripe plans, or API needs..."
+                                        placeholder="Describe the required commands, payment integrations, verification workflows, or game servers..."
                                         required
-                                        className="bg-black/20 border-[#2f3136] focus:border-primary text-white min-h-[120px]"
+                                        className="bg-white border-slate-300 text-slate-900 rounded-xl focus:border-blue-600 min-h-[120px] text-sm"
                                     />
                                 </div>
 
                                 <Button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="w-full bg-[#5865F2] hover:bg-[#5865F2]/90 text-white font-bold text-base py-6 rounded-xl flex items-center justify-center gap-2"
+                                    style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                                    className="w-full hover:opacity-90 font-bold text-sm h-12 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-opacity"
                                 >
-                                    {isSubmitting ? (
-                                        "Submitting..."
-                                    ) : (
+                                    {isSubmitting ? "Submitting Requirements..." : (
                                         <>
-                                            <Send className="w-4 h-4" /> Send Request
+                                            <Send className="w-4 h-4" />
+                                            <span>Send Project Requirements</span>
                                         </>
                                     )}
                                 </Button>
 
                                 {submitResult === "success" && (
-                                    <p className="text-green-500 font-semibold text-center text-sm">
-                                        ✔ Request sent successfully! I will contact you on Discord/email within 2 hours.
+                                    <p className="text-emerald-800 bg-emerald-50 border border-emerald-200 p-3 rounded-xl font-semibold text-center text-xs">
+                                        ✔ Project request submitted! Hazrat will contact you within 2 hours.
                                     </p>
                                 )}
                                 {submitResult === "failed" && (
-                                    <p className="text-red-500 font-semibold text-center text-sm">
-                                        ❌ Failed to send request. Please contact me on Discord directly.
+                                    <p className="text-rose-800 bg-rose-50 border border-rose-200 p-3 rounded-xl font-semibold text-center text-xs">
+                                        ❌ Submission failed. Please email hazratummar9@gmail.com directly.
                                     </p>
                                 )}
                             </form>
@@ -1373,54 +1419,44 @@ export const DiscordBotLanding = () => {
                     </div>
                 </section>
 
-                {/* 13.5 TECH STACK BAR */}
-                <section className="py-6 border-t border-white/5 bg-[#0f1012]">
-                    <div className="container mx-auto px-6">
-                        <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4 text-[#949ba4] font-medium text-xs md:text-sm">
-                            <span className="text-white/50 font-bold uppercase tracking-widest text-[10px] w-full text-center mb-2">Powered By Next-Gen Tech</span>
-                            <span>Python</span>
-                            <span>discord.py</span>
-                            <span>MongoDB</span>
-                            <span>PostgreSQL</span>
-                            <span>Redis</span>
-                            <span>Docker</span>
-                            <span>Stripe / PayPal</span>
-                            <span>OpenAI / Claude / Gemini</span>
-                        </div>
-                    </div>
-                </section>
-
-                {/* 14. STRONG FINAL CTA */}
-                <section className="py-20 bg-gradient-to-t from-[#111214] to-[#0f1012] relative overflow-hidden">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-[#5865F2]/5 rounded-full blur-[100px] -z-10" />
-
-                    <div className="container mx-auto px-6 text-center max-w-xl space-y-6">
-                        <h2 className="text-3xl md:text-5xl font-black font-heading leading-tight text-white">
-                            Let's Build Your Discord Bot
+                {/* 15. FINAL CTA BANNER */}
+                <section 
+                    className="py-20 bg-white relative overflow-hidden"
+                    style={{ 
+                        backgroundImage: "radial-gradient(#cbd5e1 1px, transparent 1px)", 
+                        backgroundSize: "24px 24px" 
+                    }}
+                >
+                    <div className="container mx-auto px-6 text-center max-w-xl space-y-5 relative z-10">
+                        <h2 className="text-3xl md:text-5xl font-black font-heading leading-tight text-slate-950">
+                            Ready to Build Your Custom Discord Bot?
                         </h2>
-                        <p className="text-[#dbdee1] text-sm md:text-base">
-                            Transform your server administration workflow, stop bot raids, automate payments, and reward premium users automatically.
+                        <p className="text-slate-600 text-sm md:text-base leading-relaxed">
+                            Stop manual moderation overhead, prevent raid scripts, automate billing, and grant verified roles instantly.
                         </p>
-                        <div className="pt-4">
+                        <div className="pt-2">
                             <Button
                                 onClick={() => {
                                     const el = document.getElementById("quote-form");
                                     el?.scrollIntoView({ behavior: "smooth" });
                                     trackEvent("final_cta_click");
                                 }}
-                                className="bg-[#5865F2] hover:bg-[#5865F2]/90 text-white font-bold text-lg px-10 py-6 rounded-xl shadow-[0_0_25px_rgba(88,101,242,0.4)]"
+                                style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                                className="hover:opacity-90 font-bold text-base px-10 h-14 rounded-xl shadow-sm transition-all"
                             >
-                                Discuss My Project
+                                <span>Discuss Your Bot Architecture</span>
+                                <ArrowRight className="w-4 h-4 ml-2" />
                             </Button>
                         </div>
-                        <div className="flex flex-wrap items-center justify-center gap-4 pt-8 text-xs font-medium text-[#949ba4]">
-                            <span className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-green-500" /> Worldwide Clients</span>
-                            <span className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-green-500" /> Secure Payments</span>
-                            <span className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-green-500" /> 100% Source Code</span>
-                            <span className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-green-500" /> 30 Days Support</span>
+                        <div className="flex flex-wrap items-center justify-center gap-4 pt-4 text-xs font-semibold text-slate-600">
+                            <span className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-600" /> Worldwide Delivery</span>
+                            <span className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-600" /> Secure Milestone Billing</span>
+                            <span className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-600" /> 100% Source Code</span>
+                            <span className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-600" /> 30-Day Warranty</span>
                         </div>
                     </div>
                 </section>
+
             </div>
         </LazyMotion>
     );

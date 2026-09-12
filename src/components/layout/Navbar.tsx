@@ -38,7 +38,9 @@ export const Navbar = () => {
 
     const isDiscordLanding = pathname === "/discord-bot";
     const isAiChatbotLanding = pathname === "/ai-chatbot-development";
-    const isSpecialLanding = isDiscordLanding || isAiChatbotLanding;
+    const isMobileLanding = pathname === "/mobile-app-development";
+    const isSpecialLanding = isDiscordLanding || isAiChatbotLanding || isMobileLanding;
+    const isLightMode = isAiChatbotLanding || isDiscordLanding || isMobileLanding || pathname === "/" || pathname.startsWith("/services") || pathname === "/about" || pathname.startsWith("/blog");
 
     const handleMouseEnter = () => {
         if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
@@ -54,13 +56,13 @@ export const Navbar = () => {
     const getServiceIcon = (type: ServiceNavItem["iconType"]) => {
         switch (type) {
             case "bot":
-                return <Bot className="w-5 h-5 text-[#5865F2]" />;
+                return <Bot className={cn("w-5 h-5", isLightMode ? "text-blue-600" : "text-[#5865F2]")} />;
             case "sparkles":
-                return <Sparkles className="w-5 h-5 text-cyan-400" />;
+                return <Sparkles className={cn("w-5 h-5", isLightMode ? "text-blue-600" : "text-cyan-400")} />;
             case "smartphone":
-                return <Smartphone className="w-5 h-5 text-emerald-400" />;
+                return <Smartphone className={cn("w-5 h-5", isLightMode ? "text-emerald-600" : "text-emerald-400")} />;
             case "server":
-                return <Server className="w-5 h-5 text-purple-400" />;
+                return <Server className={cn("w-5 h-5", isLightMode ? "text-indigo-600" : "text-purple-400")} />;
         }
     };
 
@@ -72,11 +74,15 @@ export const Navbar = () => {
                 transition={{ duration: 0.5 }}
                 className={cn(
                     "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-                    isScrolled
-                        ? isSpecialLanding
-                            ? "bg-[#0b0f19]/90 backdrop-blur-md border-b border-white/10 py-4 shadow-xl"
-                            : "bg-background/80 backdrop-blur-md border-b border-white/10 py-4 shadow-xl"
-                        : "bg-transparent py-6"
+                    isLightMode
+                        ? isScrolled
+                            ? "bg-white/95 backdrop-blur-md border-b border-slate-200 py-4 shadow-sm"
+                            : "bg-white/80 backdrop-blur-sm border-b border-slate-200/60 py-5"
+                        : isScrolled
+                            ? isDiscordLanding
+                                ? "bg-[#0b0f19]/90 backdrop-blur-md border-b border-white/10 py-4 shadow-xl"
+                                : "bg-background/80 backdrop-blur-md border-b border-white/10 py-4 shadow-xl"
+                            : "bg-transparent py-6"
                 )}
             >
                 <div className="container mx-auto px-6 flex items-center justify-between">
@@ -84,14 +90,23 @@ export const Navbar = () => {
                     <div className="flex items-center gap-3">
                         <Link href="/" className="hover:opacity-90 transition-opacity flex items-center gap-2.5">
                             <Image src="/icon.png" alt="RelayWorks Logo" width={28} height={28} className="h-7 w-7 object-contain" priority />
-                            <span className="text-xl font-bold font-heading tracking-tighter text-white">
+                            <span className={cn("text-xl font-bold font-heading tracking-tighter", isLightMode ? "text-slate-900" : "text-white")}>
                                 Relay<span className="text-primary">Works</span>
                             </span>
                         </Link>
-                        <span className="text-white/20">|</span>
+                        <span className={isLightMode ? "text-slate-300" : "text-white/20"}>|</span>
                         <Link 
                             href="/blog" 
-                            className="flex items-center gap-1.5 text-xs bg-primary/10 text-primary border border-primary/20 px-2.5 py-0.5 rounded-full font-semibold hover:bg-primary/20 transition-colors"
+                            className={cn(
+                                "flex items-center gap-1.5 text-xs px-2.5 py-0.5 rounded-full font-semibold transition-colors",
+                                pathname.startsWith("/blog")
+                                    ? isLightMode
+                                        ? "bg-blue-50 text-blue-700 border border-blue-200 font-bold"
+                                        : "bg-primary/20 text-primary border border-primary/40 font-bold"
+                                    : isLightMode
+                                        ? "bg-slate-100 text-slate-600 border border-slate-200 hover:bg-blue-50 hover:text-blue-600"
+                                        : "bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20"
+                            )}
                         >
                             <BookOpen className="w-3 h-3" />
                             Blog
@@ -104,7 +119,7 @@ export const Navbar = () => {
                             href="/"
                             className={cn(
                                 "text-sm font-medium transition-colors hover:text-primary relative py-1 px-1",
-                                pathname === "/" ? "text-primary font-semibold" : "text-[#dbdee1]"
+                                pathname === "/" ? "text-primary font-semibold" : isLightMode ? "text-slate-600" : "text-[#dbdee1]"
                             )}
                         >
                             Home
@@ -119,15 +134,15 @@ export const Navbar = () => {
                             <button
                                 className={cn(
                                     "flex items-center gap-1.5 text-sm font-medium transition-colors hover:text-primary py-1 px-1 outline-none",
-                                    pathname.startsWith("/services") || isSpecialLanding ? "text-primary font-semibold" : "text-[#dbdee1]"
+                                    pathname.startsWith("/services") || isSpecialLanding ? "text-primary font-semibold" : isLightMode ? "text-slate-600" : "text-[#dbdee1]"
                                 )}
                                 onClick={() => setIsServicesDropdownOpen(!isServicesDropdownOpen)}
                                 aria-expanded={isServicesDropdownOpen}
                             >
                                 <span>Services</span>
                                 <ChevronDown className={cn(
-                                    "w-4 h-4 transition-transform duration-200 text-muted-foreground",
-                                    isServicesDropdownOpen && "rotate-180 text-primary"
+                                    "w-4 h-4 transition-transform duration-200",
+                                    isServicesDropdownOpen ? "rotate-180 text-primary" : isLightMode ? "text-slate-400" : "text-muted-foreground"
                                 )} />
                             </button>
 
@@ -143,12 +158,22 @@ export const Navbar = () => {
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0, y: 6 }}
                                             transition={{ duration: 0.15, ease: "easeOut" }}
-                                            style={{ backgroundColor: "#0c1017" }}
-                                            className="w-full border border-slate-800 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.95)] p-4"
+                                            style={isLightMode ? { backgroundColor: "#ffffff" } : { backgroundColor: "#0c1017" }}
+                                            className={cn(
+                                                "w-full rounded-2xl p-4 transition-colors",
+                                                isLightMode
+                                                    ? "border border-slate-200 shadow-[0_20px_50px_rgba(0,0,0,0.1)]"
+                                                    : "border border-slate-800 shadow-[0_20px_60px_rgba(0,0,0,0.95)]"
+                                            )}
                                         >
-                                            <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground px-2 pt-1 pb-2 flex items-center justify-between border-b border-white/10 mb-3">
+                                            <div className={cn(
+                                                "text-[11px] font-bold uppercase tracking-wider px-2 pt-1 pb-2 flex items-center justify-between border-b mb-3",
+                                                isLightMode ? "text-slate-500 border-slate-100" : "text-muted-foreground border-white/10"
+                                            )}>
                                                 <span>Specialized Agency Services</span>
-                                                <span className="text-primary text-[10px] font-semibold">Built for Scale</span>
+                                                <span className={cn("text-[10px] font-semibold", isLightMode ? "text-blue-600" : "text-primary")}>
+                                                    Built for Scale
+                                                </span>
                                             </div>
 
                                             <div className="grid grid-cols-2 gap-2.5">
@@ -156,26 +181,42 @@ export const Navbar = () => {
                                                     <Link
                                                         key={idx}
                                                         href={service.href}
-                                                        className="group flex items-start gap-3 p-3 rounded-xl bg-slate-900/50 hover:bg-slate-800/80 border border-white/5 hover:border-primary/40 transition-all duration-200"
+                                                        className={cn(
+                                                            "group flex items-start gap-3 p-3 rounded-xl border transition-all duration-200",
+                                                            isLightMode
+                                                                ? "bg-slate-50/70 hover:bg-blue-50/60 border-slate-200/80 hover:border-blue-300"
+                                                                : "bg-slate-900/50 hover:bg-slate-800/80 border-white/5 hover:border-primary/40"
+                                                        )}
                                                     >
-                                                        <div className="p-2 rounded-lg bg-white/5 border border-white/10 group-hover:scale-105 transition-transform flex-shrink-0 mt-0.5">
+                                                        <div className={cn(
+                                                            "p-2 rounded-lg border group-hover:scale-105 transition-transform flex-shrink-0 mt-0.5",
+                                                            isLightMode ? "bg-white border-slate-200 shadow-xs" : "bg-white/5 border-white/10"
+                                                        )}>
                                                             {getServiceIcon(service.iconType)}
                                                         </div>
                                                         <div className="flex-1 min-w-0">
                                                             <div className="flex items-center gap-1.5 mb-1 flex-wrap">
-                                                                <span className="text-sm font-semibold text-white group-hover:text-primary transition-colors">
+                                                                <span className={cn(
+                                                                    "text-sm font-semibold transition-colors",
+                                                                    isLightMode ? "text-slate-900 group-hover:text-blue-600" : "text-white group-hover:text-primary"
+                                                                )}>
                                                                     {service.title}
                                                                 </span>
                                                                 {service.badge && (
                                                                     <span className={cn(
                                                                         "text-[9px] font-bold px-1.5 py-0.2 rounded-full border uppercase tracking-wider flex-shrink-0",
-                                                                        service.badgeColor
+                                                                        isLightMode
+                                                                            ? "bg-blue-50 text-blue-700 border-blue-200"
+                                                                            : service.badgeColor
                                                                     )}>
                                                                         {service.badge}
                                                                     </span>
                                                                 )}
                                                             </div>
-                                                            <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                                                            <p className={cn(
+                                                                "text-xs line-clamp-2 leading-relaxed",
+                                                                isLightMode ? "text-slate-500" : "text-slate-400"
+                                                            )}>
                                                                 {service.description}
                                                             </p>
                                                         </div>
@@ -184,11 +225,17 @@ export const Navbar = () => {
                                             </div>
 
                                             {/* Bottom Footer Bar */}
-                                            <div className="mt-3 pt-3 border-t border-white/10 flex items-center justify-between px-2 text-xs">
-                                                <span className="text-muted-foreground">Looking for custom architecture?</span>
+                                            <div className={cn(
+                                                "mt-3 pt-3 border-t flex items-center justify-between px-2 text-xs",
+                                                isLightMode ? "border-slate-100" : "border-white/10"
+                                            )}>
+                                                <span className={isLightMode ? "text-slate-500" : "text-muted-foreground"}>Looking for custom architecture?</span>
                                                 <Link 
                                                     href="/services" 
-                                                    className="text-primary hover:text-primary/80 font-semibold flex items-center gap-1 group"
+                                                    className={cn(
+                                                        "font-semibold flex items-center gap-1 group",
+                                                        isLightMode ? "text-blue-600 hover:text-blue-700" : "text-primary hover:text-primary/80"
+                                                    )}
                                                 >
                                                     <span>View all capabilities</span>
                                                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
@@ -203,7 +250,7 @@ export const Navbar = () => {
                         {/* Standard Links */}
                         <Link
                             href="/#work"
-                            className="text-sm font-medium text-[#dbdee1] transition-colors hover:text-primary py-1 px-1"
+                            className={cn("text-sm font-medium transition-colors hover:text-primary py-1 px-1", isLightMode ? "text-slate-600" : "text-[#dbdee1]")}
                         >
                             Projects
                         </Link>
@@ -211,32 +258,68 @@ export const Navbar = () => {
                             href="/about"
                             className={cn(
                                 "text-sm font-medium transition-colors hover:text-primary py-1 px-1",
-                                pathname === "/about" ? "text-primary font-semibold" : "text-[#dbdee1]"
+                                pathname === "/about" ? "text-primary font-semibold" : isLightMode ? "text-slate-600" : "text-[#dbdee1]"
                             )}
                         >
                             About
                         </Link>
                         <Link
+                            href="/blog"
+                            className={cn(
+                                "text-sm font-medium transition-colors hover:text-primary py-1 px-1",
+                                pathname.startsWith("/blog") ? "text-primary font-semibold" : isLightMode ? "text-slate-600" : "text-[#dbdee1]"
+                            )}
+                        >
+                            Blog
+                        </Link>
+                        <Link
                             href="/#contact"
-                            className="text-sm font-medium text-[#dbdee1] transition-colors hover:text-primary py-1 px-1"
+                            className={cn("text-sm font-medium transition-colors hover:text-primary py-1 px-1", isLightMode ? "text-slate-600" : "text-[#dbdee1]")}
                         >
                             Contact
                         </Link>
 
                         {/* Action CTA */}
-                        {isSpecialLanding ? (
+                        {isDiscordLanding ? (
                             <Button 
                                 onClick={() => {
                                     document.getElementById("quote-form")?.scrollIntoView({ behavior: "smooth" });
                                 }}
-                                variant="default" 
-                                className="bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold shadow-[0_0_15px_rgba(34,211,238,0.4)] border-none text-xs px-5 h-9"
+                                style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                                className="hover:opacity-90 text-white font-semibold text-xs px-5 h-9 rounded-xl shadow-sm transition-opacity"
                             >
                                 Free Consultation
                             </Button>
+                        ) : isAiChatbotLanding ? (
+                            <Button 
+                                onClick={() => {
+                                    document.getElementById("consultation-form")?.scrollIntoView({ behavior: "smooth" });
+                                }}
+                                style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                                className="hover:opacity-90 text-white font-semibold text-xs px-5 h-9 rounded-xl shadow-sm transition-opacity"
+                            >
+                                Book Discovery
+                            </Button>
+                        ) : isMobileLanding ? (
+                            <Button 
+                                onClick={() => {
+                                    document.getElementById("quote-form")?.scrollIntoView({ behavior: "smooth" });
+                                }}
+                                style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                                className="hover:opacity-90 text-white font-semibold text-xs px-5 h-9 rounded-xl shadow-sm transition-opacity"
+                            >
+                                Estimate Project
+                            </Button>
                         ) : (
                             <HireMeModal>
-                                <Button variant="default" className="bg-primary hover:bg-primary/90 text-white shadow-[0_0_15px_rgba(59,130,246,0.5)] text-xs px-5 h-9 font-semibold">
+                                <Button 
+                                    variant="default" 
+                                    style={isLightMode ? { backgroundColor: "#2563eb", color: "#ffffff" } : {}}
+                                    className={cn(
+                                        "text-xs px-5 h-9 font-semibold transition-all",
+                                        isLightMode ? "hover:opacity-90 text-white rounded-xl shadow-sm" : "bg-primary hover:bg-primary/90 text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]"
+                                    )}
+                                >
                                     Get a Quote
                                 </Button>
                             </HireMeModal>
@@ -245,7 +328,7 @@ export const Navbar = () => {
 
                     {/* Mobile Menu Toggle */}
                     <button
-                        className="md:hidden text-[#dbdee1] p-2 hover:text-white"
+                        className={cn("md:hidden p-2 transition-colors", isLightMode ? "text-slate-700 hover:text-slate-950" : "text-[#dbdee1] hover:text-white")}
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         aria-label="Toggle menu"
                     >
@@ -261,25 +344,32 @@ export const Navbar = () => {
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
-                        className="fixed inset-0 z-40 pt-24 pb-8 px-6 md:hidden bg-[#0a0d14]/98 backdrop-blur-2xl overflow-y-auto"
+                        className={cn(
+                            "fixed inset-0 z-40 pt-24 pb-8 px-6 md:hidden backdrop-blur-2xl overflow-y-auto transition-colors",
+                            isLightMode ? "bg-white/98 text-slate-900" : "bg-[#0a0d14]/98 text-white"
+                        )}
                     >
                         <div className="flex flex-col space-y-4">
                             <Link
                                 href="/"
                                 onClick={() => setIsMobileMenuOpen(false)}
                                 className={cn(
-                                    "text-lg font-bold transition-colors py-2 border-b border-white/5",
-                                    pathname === "/" ? "text-primary" : "text-white"
+                                    "text-lg font-bold transition-colors py-2 border-b",
+                                    isLightMode ? "border-slate-200" : "border-white/5",
+                                    pathname === "/" ? "text-primary" : isLightMode ? "text-slate-900" : "text-white"
                                 )}
                             >
                                 Home
                             </Link>
 
                             {/* Mobile Services Accordion */}
-                            <div className="py-2 border-b border-white/5">
+                            <div className={cn("py-2 border-b", isLightMode ? "border-slate-200" : "border-white/5")}>
                                 <button
                                     onClick={() => setIsMobileServicesOpen(!isMobileServicesOpen)}
-                                    className="flex items-center justify-between w-full text-lg font-bold text-white py-1"
+                                    className={cn(
+                                        "flex items-center justify-between w-full text-lg font-bold py-1",
+                                        isLightMode ? "text-slate-900" : "text-white"
+                                    )}
                                 >
                                     <span>Services</span>
                                     <ChevronDown className={cn(
@@ -295,14 +385,25 @@ export const Navbar = () => {
                                                 key={index}
                                                 href={service.href}
                                                 onClick={() => setIsMobileMenuOpen(false)}
-                                                className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.03] border border-white/5 hover:border-primary/30 transition-all"
+                                                className={cn(
+                                                    "flex items-center gap-3 p-2.5 rounded-xl border transition-all",
+                                                    isLightMode 
+                                                        ? "bg-slate-50 border-slate-200 hover:border-primary/40 text-slate-900" 
+                                                        : "bg-white/[0.03] border-white/5 hover:border-primary/30 text-white"
+                                                )}
                                             >
-                                                <div className="p-2 rounded-lg bg-white/5">
+                                                <div className={cn(
+                                                    "p-2 rounded-lg",
+                                                    isLightMode ? "bg-white border border-slate-200" : "bg-white/5"
+                                                )}>
                                                     {getServiceIcon(service.iconType)}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex items-center gap-2">
-                                                        <span className="text-sm font-bold text-white truncate">
+                                                        <span className={cn(
+                                                            "text-sm font-bold truncate",
+                                                            isLightMode ? "text-slate-900" : "text-white"
+                                                        )}>
                                                             {service.title}
                                                         </span>
                                                         {service.badge && (
@@ -327,7 +428,10 @@ export const Navbar = () => {
                             <Link
                                 href="/#work"
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className="text-lg font-bold text-white py-2 border-b border-white/5"
+                                className={cn(
+                                    "text-lg font-bold py-2 border-b",
+                                    isLightMode ? "border-slate-200 text-slate-900" : "border-white/5 text-white"
+                                )}
                             >
                                 Projects
                             </Link>
@@ -335,8 +439,9 @@ export const Navbar = () => {
                                 href="/about"
                                 onClick={() => setIsMobileMenuOpen(false)}
                                 className={cn(
-                                    "text-lg font-bold py-2 border-b border-white/5",
-                                    pathname === "/about" ? "text-primary" : "text-white"
+                                    "text-lg font-bold py-2 border-b",
+                                    isLightMode ? "border-slate-200" : "border-white/5",
+                                    pathname === "/about" ? "text-primary" : isLightMode ? "text-slate-900" : "text-white"
                                 )}
                             >
                                 About
@@ -345,8 +450,9 @@ export const Navbar = () => {
                                 href="/blog"
                                 onClick={() => setIsMobileMenuOpen(false)}
                                 className={cn(
-                                    "text-lg font-bold py-2 border-b border-white/5",
-                                    pathname.startsWith("/blog") ? "text-primary" : "text-white"
+                                    "text-lg font-bold py-2 border-b",
+                                    isLightMode ? "border-slate-200" : "border-white/5",
+                                    pathname.startsWith("/blog") ? "text-primary" : isLightMode ? "text-slate-900" : "text-white"
                                 )}
                             >
                                 Blog
@@ -354,21 +460,47 @@ export const Navbar = () => {
                             <Link
                                 href="/#contact"
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className="text-lg font-bold text-white py-2 border-b border-white/5"
+                                className={cn(
+                                    "text-lg font-bold py-2 border-b",
+                                    isLightMode ? "border-slate-200 text-slate-900" : "border-white/5 text-white"
+                                )}
                             >
                                 Contact
                             </Link>
 
                             <div className="pt-4">
-                                {isSpecialLanding ? (
+                                {isDiscordLanding ? (
                                     <Button 
                                         onClick={() => {
                                             document.getElementById("quote-form")?.scrollIntoView({ behavior: "smooth" });
                                             setIsMobileMenuOpen(false);
                                         }}
-                                        className="w-full bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold py-6 text-base shadow-[0_0_15px_rgba(34,211,238,0.4)] border-none"
+                                        style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                                        className="w-full hover:opacity-90 text-white font-bold py-6 text-base shadow-sm rounded-xl border-none"
                                     >
                                         Free Consultation
+                                    </Button>
+                                ) : isAiChatbotLanding ? (
+                                    <Button 
+                                        onClick={() => {
+                                            document.getElementById("consultation-form")?.scrollIntoView({ behavior: "smooth" });
+                                            setIsMobileMenuOpen(false);
+                                        }}
+                                        style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                                        className="w-full hover:opacity-90 text-white font-bold py-6 text-base shadow-sm rounded-xl"
+                                    >
+                                        Book Discovery
+                                    </Button>
+                                ) : isMobileLanding ? (
+                                    <Button 
+                                        onClick={() => {
+                                            document.getElementById("quote-form")?.scrollIntoView({ behavior: "smooth" });
+                                            setIsMobileMenuOpen(false);
+                                        }}
+                                        style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                                        className="w-full hover:opacity-90 text-white font-bold py-6 text-base shadow-sm rounded-xl"
+                                    >
+                                        Estimate Project
                                     </Button>
                                 ) : (
                                     <HireMeModal>

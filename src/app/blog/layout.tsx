@@ -1,9 +1,8 @@
 import React from "react";
 import Script from "next/script";
-import { BlogNavbar } from "@/components/layout/BlogNavbar";
-import { BlogFooter } from "@/components/layout/BlogFooter";
-
-import { Metadata } from "next";
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
+import { BlogThemeController } from "@/components/layout/BlogThemeController";
 
 export const dynamic = 'force-dynamic';
 
@@ -13,7 +12,8 @@ export default function BlogLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <div className="dark flex flex-col min-h-screen bg-background text-foreground">
+        <div className="flex flex-col min-h-screen bg-[#fafaf9] text-slate-900 selection:bg-blue-100 selection:text-blue-900 relative">
+            <BlogThemeController />
             {/* AdSense Script */}
             <Script
                 async
@@ -22,16 +22,16 @@ export default function BlogLayout({
                 strategy="afterInteractive"
             />
 
-            {/* Custom Blog Navigation Bar */}
-            <BlogNavbar />
+            {/* Unified Navigation Bar */}
+            <Navbar />
             
             {/* Blog Page Content */}
-            <main className="flex-grow pt-28 pb-10">
+            <main className="flex-grow pt-24 pb-0">
                 {children}
             </main>
 
-            {/* Custom Blog Footer */}
-            <BlogFooter />
+            {/* Unified Studio Footer */}
+            <Footer />
         </div>
     );
 }

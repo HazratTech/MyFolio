@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { MessageSquare, Send, Calendar, User, Mail, Loader2 } from "lucide-react";
+import { MessageSquare, Send, Calendar, User, Mail, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -71,7 +71,7 @@ export function BlogComments({ postId }: BlogCommentsProps) {
 
             if (res.ok) {
                 const newComment = await res.json();
-                setComments(prev => [...prev, newComment]); // Add to the chronological thread list at the end
+                setComments(prev => [...prev, newComment]);
                 setForm({ name: "", email: "", content: "" });
                 setSubmitResult("success");
             } else {
@@ -86,17 +86,17 @@ export function BlogComments({ postId }: BlogCommentsProps) {
     };
 
     return (
-        <div className="mt-16 pt-12 border-t border-white/10 max-w-4xl mx-auto">
-            <h2 className="text-2xl font-bold font-heading text-white flex items-center gap-2 mb-8">
-                <MessageSquare className="w-5 h-5 text-primary" />
-                Discussion ({comments.length})
+        <div className="mt-16 pt-12 border-t border-slate-200 max-w-4xl mx-auto">
+            <h2 className="text-2xl font-black font-heading text-slate-950 flex items-center gap-2.5 mb-8">
+                <MessageSquare className="w-5 h-5 text-blue-600" />
+                <span>Discussion ({comments.length})</span>
             </h2>
 
             {/* Comment Thread List */}
-            <div className="space-y-6 mb-12">
+            <div className="space-y-4 mb-12">
                 {loading ? (
-                    <div className="flex justify-center py-6 text-slate-400">
-                        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                    <div className="flex justify-center py-8 text-slate-400">
+                        <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
                     </div>
                 ) : comments.length > 0 ? (
                     comments.map(comment => {
@@ -106,22 +106,22 @@ export function BlogComments({ postId }: BlogCommentsProps) {
                             day: "numeric"
                         });
                         return (
-                            <div key={comment._id} className="flex gap-4 items-start bg-[#161719]/40 border border-white/5 hover:border-white/10 transition-colors p-5 rounded-2xl">
+                            <div key={comment._id} className="flex gap-4 items-start bg-white border border-slate-200 p-5 rounded-2xl shadow-2xs transition-colors">
                                 <img
                                     src={`https://gravatar.com/avatar/${comment.emailHash}?d=identicon&s=120`}
                                     alt={comment.name}
-                                    className="w-10 h-10 rounded-full border border-white/10 shrink-0 bg-[#2b2d31]"
+                                    className="w-10 h-10 rounded-full border border-slate-200 shrink-0 bg-slate-100"
                                     loading="lazy"
                                 />
                                 <div className="space-y-1.5 flex-1 min-w-0">
                                     <div className="flex flex-wrap items-center justify-between gap-2">
-                                        <h4 className="font-bold text-white text-sm truncate">{comment.name}</h4>
-                                        <span className="text-[10px] text-[#949ba4] font-mono flex items-center gap-1">
-                                            <Calendar className="w-3 h-3" />
+                                        <h4 className="font-bold text-slate-900 text-sm truncate">{comment.name}</h4>
+                                        <span className="text-[11px] text-slate-500 font-mono flex items-center gap-1">
+                                            <Calendar className="w-3 h-3 text-slate-400" />
                                             {formattedDate}
                                         </span>
                                     </div>
-                                    <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap font-sans select-text">
+                                    <p className="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap font-sans select-text">
                                         {comment.content}
                                     </p>
                                 </div>
@@ -129,20 +129,20 @@ export function BlogComments({ postId }: BlogCommentsProps) {
                         );
                     })
                 ) : (
-                    <p className="text-slate-400 text-sm text-center py-6">
+                    <p className="text-slate-500 text-sm text-center py-6 bg-white rounded-2xl border border-slate-200 border-dashed">
                         No comments yet. Start the conversation below!
                     </p>
                 )}
             </div>
 
             {/* Submission Form */}
-            <div className="bg-[#161719]/30 border border-white/5 p-6 md:p-8 rounded-3xl backdrop-blur-sm">
-                <h3 className="text-lg font-bold font-heading text-white mb-6">Join the Discussion</h3>
+            <div className="bg-white border border-slate-200 p-6 md:p-8 rounded-3xl shadow-xs">
+                <h3 className="text-lg font-bold font-heading text-slate-950 mb-6">Join the Technical Discussion</h3>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-1.5">
-                            <label htmlFor="commenter-name" className="text-[10px] font-semibold text-[#949ba4] uppercase tracking-wider flex items-center gap-1.5">
-                                <User className="w-3 h-3 text-[#949ba4]" /> Name
+                            <label htmlFor="commenter-name" className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                                <User className="w-3.5 h-3.5 text-slate-500" /> Name
                             </label>
                             <Input
                                 id="commenter-name"
@@ -151,12 +151,12 @@ export function BlogComments({ postId }: BlogCommentsProps) {
                                 value={form.name}
                                 onChange={e => setForm({ ...form, name: e.target.value })}
                                 required
-                                className="bg-[#1e1f22] border-white/10 text-white focus-visible:ring-[#5865F2] h-11 text-sm rounded-xl"
+                                className="bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus-visible:ring-blue-600 h-11 text-sm rounded-xl"
                             />
                         </div>
                         <div className="space-y-1.5">
-                            <label htmlFor="commenter-email" className="text-[10px] font-semibold text-[#949ba4] uppercase tracking-wider flex items-center gap-1.5">
-                                <Mail className="w-3 h-3 text-[#949ba4]" /> Email <span className="text-[9px] text-[#949ba4] font-normal lowercase">(for Gravatar - kept private)</span>
+                            <label htmlFor="commenter-email" className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                                <Mail className="w-3.5 h-3.5 text-slate-500" /> Email <span className="text-[10px] text-slate-400 font-normal lowercase">(for Gravatar - kept private)</span>
                             </label>
                             <Input
                                 id="commenter-email"
@@ -165,26 +165,27 @@ export function BlogComments({ postId }: BlogCommentsProps) {
                                 value={form.email}
                                 onChange={e => setForm({ ...form, email: e.target.value })}
                                 required
-                                className="bg-[#1e1f22] border-white/10 text-white focus-visible:ring-[#5865F2] h-11 text-sm rounded-xl"
+                                className="bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus-visible:ring-blue-600 h-11 text-sm rounded-xl"
                             />
                         </div>
                     </div>
                     <div className="space-y-1.5">
-                        <label htmlFor="commenter-message" className="text-[10px] font-semibold text-[#949ba4] uppercase tracking-wider">Comment</label>
+                        <label htmlFor="commenter-message" className="text-xs font-bold text-slate-700 uppercase tracking-wider">Comment</label>
                         <Textarea
                             id="commenter-message"
-                            placeholder="Share your thoughts or questions..."
+                            placeholder="Share your technical perspective, question, or implementation insight..."
                             value={form.content}
                             onChange={e => setForm({ ...form, content: e.target.value })}
                             required
                             rows={4}
-                            className="bg-[#1e1f22] border-white/10 text-white focus-visible:ring-[#5865F2] text-sm rounded-xl resize-y"
+                            className="bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus-visible:ring-blue-600 text-sm rounded-xl resize-y"
                         />
                     </div>
                     <Button
                         type="submit"
                         disabled={submitting}
-                        className="w-full sm:w-auto bg-[#5865F2] hover:bg-[#5865F2]/90 text-white font-bold h-11 px-6 rounded-xl flex items-center justify-center gap-2"
+                        style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                        className="w-full sm:w-auto hover:opacity-90 text-white font-bold h-11 px-6 rounded-xl flex items-center justify-center gap-2 shadow-xs transition-opacity"
                     >
                         {submitting ? (
                             <>
@@ -198,14 +199,16 @@ export function BlogComments({ postId }: BlogCommentsProps) {
                     </Button>
 
                     {submitResult === "success" && (
-                        <p className="text-emerald-400 text-xs font-semibold mt-2">
-                            ✓ Comment posted successfully!
-                        </p>
+                        <div className="flex items-center gap-1.5 text-emerald-700 text-xs font-semibold mt-2">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                            <span>Comment posted successfully!</span>
+                        </div>
                     )}
                     {submitResult === "failed" && (
-                        <p className="text-red-400 text-xs font-semibold mt-2">
-                            ✗ Failed to post. Please try again.
-                        </p>
+                        <div className="flex items-center gap-1.5 text-red-600 text-xs font-semibold mt-2">
+                            <AlertCircle className="w-4 h-4 text-red-500" />
+                            <span>Failed to post comment. Please try again.</span>
+                        </div>
                     )}
                 </form>
             </div>

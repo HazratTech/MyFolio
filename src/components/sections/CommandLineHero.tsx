@@ -3,8 +3,9 @@
 import React, { useState, useEffect } from "react";
 import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Activity, Terminal, Shield, RefreshCw } from "lucide-react";
+import { ArrowRight, Activity, RefreshCw } from "lucide-react";
 import Link from "next/link";
+import { trackEvent } from "@/lib/analytics";
 
 interface DashboardLog {
     id: number;
@@ -15,20 +16,15 @@ interface DashboardLog {
 }
 
 const logTemplates = [
-    { source: "APP" as const, event: "User requested quote checkout", color: "text-emerald-400" },
-    { source: "API" as const, event: "POST /api/v1/projects - 200 OK", color: "text-blue-400" },
-    { source: "BOT" as const, event: "Dispatched staff notification channel", color: "text-purple-400" },
-    { source: "API" as const, event: "Stripe Webhook processed successfully", color: "text-blue-400" },
-    { source: "APP" as const, event: "Syncing local database state...", color: "text-emerald-400" },
-    { source: "BOT" as const, event: "MongoDB configurations reloaded", color: "text-purple-400" },
-    { source: "API" as const, event: "GET /api/v1/testimonials - 204ms", color: "text-blue-400" },
+    { source: "APP" as const, event: "Visitor asks about a service", color: "text-emerald-400" },
+    { source: "BOT" as const, event: "Answers the first question instantly", color: "text-purple-400" },
+    { source: "BOT" as const, event: "Collects project details and budget", color: "text-purple-400" },
+    { source: "API" as const, event: "Sends a qualified lead to your team", color: "text-blue-400" },
+    { source: "APP" as const, event: "Your team takes over when needed", color: "text-emerald-400" },
 ];
 
 export const SystemDashboardHero = () => {
     const [logs, setLogs] = useState<DashboardLog[]>([]);
-    const [latency, setLatency] = useState(24);
-    const [activeSessions, setActiveSessions] = useState(148);
-    const [completedJobs, setCompletedJobs] = useState(12840);
     const [sparkline, setSparkline] = useState<number[]>([]);
 
     // Logs simulation
@@ -45,9 +41,8 @@ export const SystemDashboardHero = () => {
         });
         setLogs(initialLogs);
 
-        // Smooth simulated telemetry with zero network blocking (eliminates 9.27s latency bottleneck)
+        // A lightweight visual example of a chatbot conversation moving through a workflow.
         const initialVal = Math.floor(18 + Math.random() * 8);
-        setLatency(initialVal);
         setSparkline(Array.from({ length: 10 }).map(() => initialVal + Math.floor(Math.random() * 6 - 3)));
 
         let logId = 4;
@@ -62,15 +57,11 @@ export const SystemDashboardHero = () => {
             setLogs(prev => [...prev.slice(1), newLog]);
 
             const duration = Math.floor(18 + Math.random() * 8);
-            setLatency(duration);
-
             setSparkline(prev => {
                 if (prev.length === 0) return Array.from({ length: 10 }).map(() => duration + Math.floor(Math.random() * 6 - 3));
                 return [...prev.slice(1), duration];
             });
 
-            setActiveSessions(prev => prev + (Math.random() > 0.5 ? 1 : -1));
-            setCompletedJobs(prev => prev + 1);
         }, 2500);
 
         return () => clearInterval(logInterval);
@@ -122,34 +113,42 @@ export const SystemDashboardHero = () => {
                                 >
                                     <span className="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full bg-primary/10 border border-primary/20 text-xs text-primary font-medium">
                                         <Activity className="w-3.5 h-3.5 animate-pulse" />
-                                        Custom Software & Workflow Automation
+                                        AI Chatbots and Workflow Automation
                                     </span>
                                 </m.div>
 
                                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-heading tracking-tight leading-[1.08] text-white">
-                                    We build software
+                                    Stop losing leads
                                     <br />
                                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-blue-400 to-emerald-400">
-                                        that runs operations.
+                                        when customers need answers.
                                     </span>
                                 </h1>
 
                                 <p className="text-muted-foreground text-base md:text-lg max-w-lg leading-relaxed">
-                                    RelayWorks engineers custom Android apps, API integrations, and robust backend microservices that automate manual work and connect your platforms seamlessly.
+                                    We build AI chatbots that answer customer questions, qualify enquiries, and hand the right conversations to your team across your website, WhatsApp, and internal tools.
                                 </p>
                             </div>
 
                             <div className="flex flex-col sm:flex-row gap-3">
-                                <Link href="/contact">
+                                <Link
+                                    href="/ai-chatbot-development#quote-form"
+                                    onClick={() => trackEvent("ai_chatbot_cta_click", { placement: "homepage_hero", action: "request_plan" })}
+                                >
                                     <Button size="lg" className="bg-primary hover:bg-primary/90 text-white h-12 px-8 text-base shadow-[0_0_24px_rgba(59,130,246,0.3)] hover:shadow-[0_0_32px_rgba(59,130,246,0.5)] transition-all duration-300">
-                                        Start Your Project <ArrowRight className="ml-2 w-4 h-4" />
+                                        Get a Free Chatbot Plan <ArrowRight className="ml-2 w-4 h-4" />
                                     </Button>
                                 </Link>
-                                <Link href="#services">
-                                    <Button variant="outline" size="lg" className="border-white/10 bg-white/5 hover:bg-white/10 h-12 px-8 text-base backdrop-blur-sm">
-                                        Explore Services
-                                    </Button>
-                                </Link>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        trackEvent("live_chat_open", { placement: "homepage_hero" });
+                                        window.dispatchEvent(new CustomEvent("openLiveChat"));
+                                    }}
+                                    className="inline-flex h-12 items-center justify-center rounded-md border border-white/10 bg-white/5 px-8 text-base font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/10"
+                                >
+                                    Ask a Question
+                                </button>
                             </div>
                         </m.div>
                     </LazyMotion>
@@ -167,7 +166,7 @@ export const SystemDashboardHero = () => {
                                 <div className="flex items-center justify-between px-4 py-3 bg-[#10121a]/80 border-b border-white/5">
                                     <div className="flex items-center gap-2">
                                         <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                                        <span className="text-xs font-semibold text-white/80 font-mono tracking-wide">SYSTEM MONITOR</span>
+                                        <span className="text-xs font-semibold text-white/80 font-mono tracking-wide">EXAMPLE LEAD FLOW</span>
                                     </div>
                                     <div className="flex items-center gap-1.5">
                                         <div className="w-2 h-2 rounded-full bg-white/10" />
@@ -180,25 +179,23 @@ export const SystemDashboardHero = () => {
                                     {/* Stats grid */}
                                     <div className="grid grid-cols-3 gap-3">
                                         <div className="bg-[#12141f] border border-white/5 rounded-xl p-3 text-center">
-                                            <div className="text-[10px] text-muted-foreground uppercase tracking-wider">ONEDROP LATENCY</div>
-                                            <div className="text-xl font-bold text-white font-mono mt-1">{latency}ms</div>
+                                            <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Step 1</div>
+                                            <div className="text-sm font-bold text-white mt-1">Answer</div>
                                         </div>
                                         <div className="bg-[#12141f] border border-white/5 rounded-xl p-3 text-center">
-                                            <div className="text-[10px] text-muted-foreground uppercase tracking-wider">ACTIVE SESSIONS</div>
-                                            <div className="text-xl font-bold text-emerald-400 font-mono mt-1">{activeSessions}</div>
+                                            <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Step 2</div>
+                                            <div className="text-sm font-bold text-emerald-400 mt-1">Qualify</div>
                                         </div>
                                         <div className="bg-[#12141f] border border-white/5 rounded-xl p-3 text-center">
-                                            <div className="text-[10px] text-muted-foreground uppercase tracking-wider">COMPLETED JOBS</div>
-                                            <div className="text-xl font-bold text-[#5865F2] font-mono mt-1">
-                                                {completedJobs.toLocaleString()}
-                                            </div>
+                                            <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Step 3</div>
+                                            <div className="text-sm font-bold text-[#5865F2] mt-1">Hand off</div>
                                         </div>
                                     </div>
 
                                     {/* Latency Waveform Graph */}
                                     <div className="bg-[#12141f] border border-white/5 rounded-xl p-4 flex flex-col justify-between h-[80px]">
                                         <div className="flex justify-between items-center mb-1">
-                                            <span className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">api.onedropblood.top PING</span>
+                                            <span className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">Website, WhatsApp, CRM</span>
                                             <span className="text-[10px] text-emerald-400 font-mono flex items-center gap-1">
                                                 <RefreshCw className="w-2.5 h-2.5 animate-spin" /> LIVE UPDATING
                                             </span>

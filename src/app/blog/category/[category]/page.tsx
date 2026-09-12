@@ -4,13 +4,13 @@ import dbConnect from "@/lib/db";
 import Post from "@/models/Post";
 import PostCard from "@/components/blog/PostCard";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, FileText, Sparkles } from "lucide-react";
 
 export async function generateMetadata({ params }: { params: { category: string } }): Promise<Metadata> {
     const category = decodeURIComponent(params.category);
     return {
-        title: `${category} Posts | RelayWorks`,
-        description: `Read articles about ${category}.`,
+        title: `${category} Architecture Guides | RelayWorks Dispatches`,
+        description: `Read articles and developer guides on ${category} by Hazrat Ummar Shaikh.`,
         alternates: {
             canonical: `/blog/category/${params.category}`,
         },
@@ -47,19 +47,26 @@ export default async function CategoryPage({
     const { posts, total, pages } = await getPostsByCategory(category, page);
 
     return (
-        <div className="min-h-screen bg-background pt-2 pb-16">
+        <div className="min-h-screen bg-[#fafaf9] [background-image:radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:24px_24px] pt-4 pb-20">
             <div className="container mx-auto px-6 max-w-7xl">
-                <Link href="/blog" className="inline-flex items-center text-muted-foreground hover:text-primary mb-8 transition-colors">
-                    <ArrowLeft className="w-4 h-4 mr-2" />
-                    Back to All Posts
-                </Link>
+                <div className="pt-4 pb-6">
+                    <Link href="/blog" className="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors gap-2">
+                        <ArrowLeft className="w-4 h-4" />
+                        <span>Back to All Dispatches</span>
+                    </Link>
+                </div>
 
-                <div className="mb-12 text-center">
-                    <h1 className="text-4xl md:text-5xl font-bold font-heading mb-4">
-                        Category: <span className="text-primary capitalize">{category}</span>
+                <div className="mb-12 text-center max-w-3xl mx-auto">
+                    <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 shadow-2xs mb-4">
+                        <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+                        <span>Curated Engineering Domain</span>
+                    </div>
+
+                    <h1 className="text-4xl md:text-5xl font-black font-heading tracking-tight text-slate-950 mb-3">
+                        Category: <span style={{ color: "#2563eb" }} className="capitalize">{category}</span>
                     </h1>
-                    <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-                        {total} article{total !== 1 ? 's' : ''} found
+                    <p className="text-slate-600 text-base">
+                        Showing <strong className="text-slate-900 font-bold">{total}</strong> technical publication{total !== 1 ? 's' : ''}
                     </p>
                 </div>
 
@@ -67,32 +74,42 @@ export default async function CategoryPage({
                 {posts.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {posts.map((post: any) => (
-                            <div key={post._id} className="animate-in fade-in zoom-in-95 duration-500">
+                            <div key={post._id} className="h-full">
                                 <PostCard post={post} />
                             </div>
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center py-20 bg-white/5 rounded-2xl border border-white/5 border-dashed">
-                        <h3 className="text-2xl font-bold mb-2">No posts found</h3>
-                        <p className="text-muted-foreground">Try a different category.</p>
+                    <div className="text-center py-20 bg-white rounded-3xl border border-slate-200 border-dashed p-8 max-w-md mx-auto">
+                        <FileText className="w-12 h-12 text-slate-400 mx-auto mb-3" />
+                        <h3 className="text-xl font-bold text-slate-900 mb-2 font-heading">No articles found</h3>
+                        <p className="text-slate-500 text-sm mb-4">No published guides match this category currently.</p>
+                        <Link href="/blog">
+                            <Button variant="outline" className="bg-white border-slate-200 hover:bg-slate-50 text-slate-700">
+                                Browse All Dispatches
+                            </Button>
+                        </Link>
                     </div>
                 )}
 
                 {/* Pagination */}
                 {pages > 1 && (
-                    <div className="flex justify-center gap-2 mt-16">
+                    <div className="flex justify-center items-center gap-2 mt-16">
                         {page > 1 && (
                             <Link href={`/blog/category/${params.category}?page=${page - 1}`}>
-                                <Button variant="outline">Previous</Button>
+                                <Button variant="outline" className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold h-9 px-4 rounded-lg shadow-2xs">
+                                    Previous
+                                </Button>
                             </Link>
                         )}
-                        <div className="flex items-center px-4 font-medium">
+                        <div className="flex items-center px-4 font-mono text-xs text-slate-600">
                             Page {page} of {pages}
                         </div>
                         {page < pages && (
                             <Link href={`/blog/category/${params.category}?page=${page + 1}`}>
-                                <Button variant="outline">Next</Button>
+                                <Button variant="outline" className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold h-9 px-4 rounded-lg shadow-2xs">
+                                    Next
+                                </Button>
                             </Link>
                         )}
                     </div>

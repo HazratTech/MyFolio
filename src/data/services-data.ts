@@ -9,8 +9,24 @@ export interface ServiceNavItem {
 
 export const servicesNavigationList: ServiceNavItem[] = [
     {
+        title: "Native Mobile Apps",
+        description: "Android (Kotlin/Compose), iOS (SwiftUI) & Kotlin Multiplatform.",
+        href: "/mobile-app-development",
+        badge: "Flagship",
+        iconType: "smartphone",
+        badgeColor: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
+    },
+    {
+        title: "Backend & Scalable APIs",
+        description: "Kotlin Spring Boot, FastAPI, PostgreSQL & Docker microservices.",
+        href: "/services",
+        badge: "Cloud",
+        iconType: "server",
+        badgeColor: "bg-purple-500/10 text-purple-400 border-purple-500/30",
+    },
+    {
         title: "Custom Discord Bots",
-        description: "Custom verification, tickets, economy & game server bots.",
+        description: "High-concurrency moderation, tickets, economy & checkout bots.",
         href: "/discord-bot",
         badge: "Popular",
         iconType: "bot",
@@ -18,26 +34,10 @@ export const servicesNavigationList: ServiceNavItem[] = [
     },
     {
         title: "AI Chatbot Development",
-        description: "24/7 support, lead qualification & automated AI agents.",
+        description: "Context-aware WhatsApp & web assistants connected to CRM.",
         href: "/ai-chatbot-development",
         badge: "AI Powered",
         iconType: "sparkles",
         badgeColor: "bg-cyan-500/10 text-cyan-400 border-cyan-500/30",
-    },
-    {
-        title: "Native Mobile Apps",
-        description: "High-performance Android (Kotlin/Compose) & iOS apps.",
-        href: "/mobile-app-development",
-        badge: "Mobile",
-        iconType: "smartphone",
-        badgeColor: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
-    },
-    {
-        title: "Backend & Scalable APIs",
-        description: "FastAPI, Ktor, MongoDB & WebSocket architectures.",
-        href: "/services",
-        badge: "Cloud",
-        iconType: "server",
-        badgeColor: "bg-purple-500/10 text-purple-400 border-purple-500/30",
     },
 ];

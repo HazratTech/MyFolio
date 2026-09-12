@@ -3,8 +3,9 @@
 import React from "react";
 import { LazyMotion, domAnimation, m } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Smartphone, Server, Bot, MessageSquare } from "lucide-react";
+import { ArrowRight, Smartphone, Server, MessageSquare } from "lucide-react";
 import Link from "next/link";
+import { trackEvent } from "@/lib/analytics";
 
 export const ServiceShowcase = () => {
     return (
@@ -150,20 +151,20 @@ export const ServiceShowcase = () => {
 
                                 <div className="space-y-3">
                                     <div className="flex items-center gap-2.5">
-                                        <Bot className="w-5 h-5 text-purple-400" />
-                                        <h3 className="text-lg font-bold text-white">Workflow Automation</h3>
+                                        <MessageSquare className="w-5 h-5 text-purple-400" />
+                                        <h3 className="text-lg font-bold text-white">AI Chatbot Automation</h3>
                                     </div>
                                     <p className="text-xs text-muted-foreground leading-relaxed">
-                                        Custom Discord bots, automated system alerts, and notification streams. We integrate with your existing APIs to link your online community directly with your product.
+                                        Custom AI chatbots for customer support, lead qualification, appointment booking, and human handoff. Built around your business, not a generic widget.
                                     </p>
                                 </div>
                             </div>
 
                             <div className="pt-6 border-t border-white/5 mt-6 flex justify-between items-center">
-                                <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">Starting at $50</span>
-                                <Link href="/discord-bot">
+                                <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">Starting at $250</span>
+                                <Link href="/ai-chatbot-development" onClick={() => trackEvent("ai_chatbot_cta_click", { placement: "service_showcase", action: "learn_more" })}>
                                     <Button variant="ghost" size="sm" className="text-xs text-muted-foreground group-hover:text-purple-400 p-0 hover:bg-transparent">
-                                        Get Started <ArrowRight className="ml-1.5 w-3.5 h-3.5" />
+                                        See Chatbot Options <ArrowRight className="ml-1.5 w-3.5 h-3.5" />
                                     </Button>
                                 </Link>
                             </div>

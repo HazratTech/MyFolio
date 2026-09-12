@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -85,6 +85,14 @@ const realProjects: RealProject[] = [
 ];
 
 export const MobileAppLanding = () => {
+    // Dynamic Light Theme Mount Effect
+    useEffect(() => {
+        document.documentElement.classList.remove("dark");
+        return () => {
+            document.documentElement.classList.add("dark");
+        };
+    }, []);
+
     // Currency Toggle
     const [currency, setCurrency] = useState<"USD" | "INR">("USD");
 
@@ -162,62 +170,71 @@ export const MobileAppLanding = () => {
 
     return (
         <LazyMotion features={domAnimation}>
-            <div className="min-h-screen bg-[#07090e] text-slate-100 font-sans selection:bg-primary/30 selection:text-white relative overflow-hidden">
-                
-                {/* Background Blueprint Grid */}
-                <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b12_1px,transparent_1px),linear-gradient(to_bottom,#1e293b12_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
+            <div className="min-h-screen bg-[#fafaf9] text-slate-900 selection:bg-blue-600 selection:text-white">
                 
                 {/* ─── 1. AUTHENTIC HUMAN-FIRST HERO SECTION ─── */}
-                <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 border-b border-white/5">
+                <section 
+                    className="relative pt-28 pb-20 md:pt-36 md:pb-28 overflow-hidden bg-white border-b border-slate-200/80"
+                    style={{ 
+                        backgroundImage: "radial-gradient(#cbd5e1 1px, transparent 1px)", 
+                        backgroundSize: "24px 24px" 
+                    }}
+                >
                     <div className="container mx-auto px-6 max-w-6xl relative z-10">
                         
                         {/* Live Proof Badge */}
-                        <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold tracking-wide mb-6">
-                            <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-                            Production Native Engineering • Shipped on Google Play
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs font-semibold tracking-wide mb-6 shadow-xs">
+                            <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
+                            <span>Production Native Engineering • Shipped on Google Play</span>
                         </div>
 
                         {/* Main Headline */}
-                        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold font-heading tracking-tight text-white max-w-4xl leading-[1.14] mb-6">
-                            Mobile apps engineered for <span className="text-cyan-400 font-bold">zero-data-loss offline operations</span> and fluid 60FPS UI.
+                        <h1 className="text-4xl sm:text-5xl md:text-6xl font-black font-heading tracking-tight text-slate-950 max-w-4xl leading-[1.14] mb-6">
+                            Mobile apps engineered for <span style={{ color: "#2563eb" }}>zero-data-loss offline operations</span> and fluid 60FPS UI.
                         </h1>
 
                         {/* Authentic Subheadline */}
-                        <p className="text-lg md:text-xl text-slate-300 max-w-3xl leading-relaxed mb-8 font-normal">
-                            I build production Native Android (<span className="text-white font-medium">Kotlin & Jetpack Compose</span>), iOS (<span className="text-white font-medium">SwiftUI</span>), and multiplatform applications backed by <span className="text-white font-medium">Kotlin Spring Boot</span>, PostgreSQL, and MongoDB. Direct senior engineer access with zero agency bureaucracy.
+                        <p className="text-lg md:text-xl text-slate-600 max-w-3xl leading-relaxed mb-8 font-normal">
+                            I build production Native Android (<span className="text-slate-900 font-semibold">Kotlin & Jetpack Compose</span>), iOS (<span className="text-slate-900 font-semibold">SwiftUI</span>), and multiplatform applications backed by <span className="text-slate-900 font-semibold">Kotlin Spring Boot</span>, PostgreSQL, and MongoDB. Direct senior engineer access with zero agency bureaucracy.
                         </p>
 
                         {/* Primary CTAs */}
                         <div className="flex flex-wrap items-center gap-4 mb-12">
                             <a href="#quote-form">
-                                <Button className="bg-primary hover:bg-primary/90 text-white font-semibold text-base px-7 py-6 rounded-xl shadow-[0_0_30px_rgba(59,130,246,0.35)] transition-all flex items-center gap-2.5 group">
+                                <Button 
+                                    style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                                    className="hover:opacity-90 font-bold px-8 h-[52px] text-base rounded-xl shadow-sm transition-all flex items-center gap-2.5 group"
+                                >
                                     <span>Request a Sprint Scope</span>
                                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                 </Button>
                             </a>
                             <a href="#shipped-apps">
-                                <Button variant="outline" className="bg-slate-900/70 border-white/10 hover:bg-slate-800 text-slate-200 font-medium text-base px-6 py-6 rounded-xl transition-colors">
+                                <Button 
+                                    variant="outline" 
+                                    className="border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900 font-semibold px-7 h-[52px] text-base rounded-xl transition-colors"
+                                >
                                     View Shipped Apps & Code
                                 </Button>
                             </a>
                         </div>
 
                         {/* Senior Engineer Credibility Bar */}
-                        <div className="p-4 md:p-5 rounded-2xl bg-slate-900/60 border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-                            <div className="flex items-center gap-3.5">
+                        <div className="p-5 md:p-6 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div className="flex items-center gap-4">
                                 <Image
                                     src="/images/founder.jpg"
                                     alt="Hazrat Ummar Shaikh"
                                     width={48}
                                     height={48}
-                                    className="w-12 h-12 rounded-full object-cover border-2 border-primary/50 shrink-0"
+                                    className="w-12 h-12 rounded-full object-cover border-2 border-blue-500/50 shrink-0"
                                 />
                                 <div>
-                                    <div className="text-sm font-bold text-white flex items-center gap-2">
+                                    <div className="text-sm font-bold text-slate-900 flex items-center gap-2">
                                         <span>Hazrat Ummar Shaikh</span>
-                                        <span className="text-[11px] font-normal px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Independent Senior Engineer</span>
+                                        <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Independent Senior Engineer</span>
                                     </div>
-                                    <div className="text-xs text-slate-400">Direct 1-on-1 sprint collaboration • 100% source code transfer</div>
+                                    <div className="text-xs text-slate-500 mt-0.5">Direct 1-on-1 sprint collaboration • 100% source code transfer</div>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
@@ -225,7 +242,7 @@ export const MobileAppLanding = () => {
                                     href="https://github.com/ihazratummar"
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-800 text-slate-300 text-xs font-semibold flex items-center gap-1.5 border border-white/5 transition-colors"
+                                    className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center gap-1.5 border border-slate-200 transition-colors"
                                 >
                                     <Github className="w-3.5 h-3.5" />
                                     <span>GitHub Profile</span>
@@ -234,7 +251,7 @@ export const MobileAppLanding = () => {
                                     href="https://play.google.com/store/apps/dev?id=8511073495389394372"
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="px-3 py-1.5 rounded-lg bg-emerald-950/40 hover:bg-emerald-900/50 text-emerald-400 text-xs font-semibold flex items-center gap-1.5 border border-emerald-500/20 transition-colors"
+                                    className="px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold flex items-center gap-1.5 border border-emerald-200/80 transition-colors"
                                 >
                                     <ExternalLink className="w-3.5 h-3.5" />
                                     <span>Google Play Developer</span>
@@ -246,37 +263,38 @@ export const MobileAppLanding = () => {
                 </section>
 
                 {/* ─── 2. INTERACTIVE LIVE OFFLINE-FIRST SIMULATOR ─── */}
-                <section className="py-20 md:py-28 bg-[#090c13] border-b border-white/5">
+                <section className="py-20 md:py-28 bg-[#fafaf9] border-b border-slate-200/80">
                     <div className="container mx-auto px-6 max-w-6xl">
                         
                         <div className="text-left max-w-3xl mb-12">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-emerald-500/10 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-3 border border-emerald-500/20">
-                                Live Interactive Architecture Demonstration
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold uppercase tracking-wider mb-3 border border-emerald-200">
+                                <Activity className="w-3.5 h-3.5 text-emerald-600" />
+                                <span>Live Interactive Architecture Demonstration</span>
                             </div>
-                            <h2 className="text-3xl md:text-4xl font-bold font-heading text-white mb-4">
+                            <h2 className="text-3xl md:text-4xl font-black font-heading text-slate-950 mb-4">
                                 Experience how our Local-First Delta Sync protects user data.
                             </h2>
-                            <p className="text-slate-400 text-sm md:text-base leading-relaxed">
+                            <p className="text-slate-600 text-sm md:text-base leading-relaxed">
                                 Most apps freeze or wipe unsaved entries when the network drops. In our architecture, every mutation writes immediately to the local device database (Room / SQLDelight) and syncs in the background upon reconnection. Test it below:
                             </p>
                         </div>
 
                         {/* Interactive Simulator Box */}
-                        <div className="p-6 md:p-8 rounded-2xl bg-[#0c1017] border border-slate-800 shadow-2xl">
+                        <div className="p-6 md:p-8 rounded-3xl bg-white border border-slate-200 shadow-sm">
                             
                             {/* Controls Bar */}
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 border-b border-white/10 gap-4">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 border-b border-slate-200 gap-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Network Simulation:</div>
+                                    <div className="text-xs font-bold uppercase tracking-wider text-slate-500">Network Simulation:</div>
                                     <button
                                         onClick={() => setIsSimulatedOnline(!isSimulatedOnline)}
-                                        className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 border ${
+                                        className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
                                             isSimulatedOnline
-                                                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                                                : "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                                                ? "bg-emerald-50 text-emerald-700 border-emerald-300"
+                                                : "bg-amber-50 text-amber-800 border-amber-300"
                                         }`}
                                     >
-                                        {isSimulatedOnline ? <Wifi className="w-3.5 h-3.5" /> : <WifiOff className="w-3.5 h-3.5" />}
+                                        {isSimulatedOnline ? <Wifi className="w-4 h-4 text-emerald-600" /> : <WifiOff className="w-4 h-4 text-amber-600" />}
                                         <span>{isSimulatedOnline ? "ONLINE (Connected to Spring Boot API)" : "OFFLINE (Simulated Basement Dead-Zone)"}</span>
                                     </button>
                                 </div>
@@ -284,7 +302,8 @@ export const MobileAppLanding = () => {
                                 <div className="flex items-center gap-3">
                                     <Button
                                         onClick={addSimulatedJob}
-                                        className="bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold py-2 px-4 rounded-lg border border-white/10"
+                                        variant="outline"
+                                        className="border-slate-300 text-slate-800 hover:bg-slate-100 text-xs font-semibold py-2 px-4 rounded-xl"
                                     >
                                         + Create New Field Job
                                     </Button>
@@ -292,7 +311,8 @@ export const MobileAppLanding = () => {
                                         <Button
                                             onClick={triggerSimulatedSync}
                                             disabled={isSyncing}
-                                            className="bg-primary hover:bg-primary/90 text-white text-xs font-semibold py-2 px-4 rounded-lg shadow"
+                                            style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                                            className="hover:opacity-90 text-white text-xs font-semibold py-2 px-4 rounded-xl shadow-sm"
                                         >
                                             {isSyncing ? "Syncing..." : "Reconnect & Delta Sync"}
                                         </Button>
@@ -302,36 +322,36 @@ export const MobileAppLanding = () => {
 
                             {/* Simulated Device Memory Queue */}
                             <div>
-                                <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center justify-between">
+                                <div className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center justify-between">
                                     <span>Device Local Database Queue (SQLDelight / Room DB)</span>
-                                    <span className="text-[11px] text-slate-500">{simulatedJobs.length} records in local storage</span>
+                                    <span className="text-[11px] text-slate-500 font-semibold">{simulatedJobs.length} records in local storage</span>
                                 </div>
 
                                 <div className="space-y-2.5">
                                     {simulatedJobs.map(job => (
                                         <div
                                             key={job.id}
-                                            className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between text-xs"
+                                            className="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 flex items-center justify-between text-xs"
                                         >
                                             <div className="flex items-center gap-3">
-                                                <div className="p-2 rounded-lg bg-slate-900 text-slate-300">
+                                                <div className="p-2 rounded-xl bg-white border border-slate-200 text-slate-700 shadow-xs">
                                                     <HardDrive className="w-4 h-4" />
                                                 </div>
                                                 <div>
-                                                    <div className="font-semibold text-white">{job.title}</div>
-                                                    <div className="text-[11px] text-slate-400">Total: {job.amount} • Rate snapshotted locally</div>
+                                                    <div className="font-bold text-slate-900 text-sm">{job.title}</div>
+                                                    <div className="text-[11px] text-slate-500 mt-0.5">Total: {job.amount} • Rate snapshotted locally</div>
                                                 </div>
                                             </div>
 
                                             <div>
                                                 {job.status === "synced" ? (
-                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[11px] font-semibold">
-                                                        <Check className="w-3 h-3" />
+                                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold">
+                                                        <Check className="w-3.5 h-3.5 text-emerald-600" />
                                                         Synced to Backend
                                                     </span>
                                                 ) : (
-                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[11px] font-semibold animate-pulse">
-                                                        <Activity className="w-3 h-3" />
+                                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-semibold animate-pulse">
+                                                        <Activity className="w-3.5 h-3.5 text-amber-600" />
                                                         Saved in Local Room DB (Pending Sync)
                                                     </span>
                                                 )}
@@ -347,15 +367,15 @@ export const MobileAppLanding = () => {
                 </section>
 
                 {/* ─── 3. SHIPPED PRODUCTION APPS SHOWCASE ─── */}
-                <section id="shipped-apps" className="py-20 md:py-28 border-b border-white/5">
+                <section id="shipped-apps" className="py-20 md:py-28 bg-white border-b border-slate-200/80">
                     <div className="container mx-auto px-6 max-w-6xl">
                         
                         <div className="text-left max-w-3xl mb-12">
-                            <h2 className="text-xs font-bold uppercase tracking-widest text-primary mb-3">Shipped Production Applications</h2>
-                            <h3 className="text-3xl md:text-4xl font-bold font-heading text-white mb-4">
+                            <h2 className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-3">Shipped Production Applications</h2>
+                            <h3 className="text-3xl md:text-4xl font-black font-heading text-slate-950 mb-4">
                                 Real mobile products running in production with verified code.
                             </h3>
-                            <p className="text-slate-400 text-sm md:text-base leading-relaxed">
+                            <p className="text-slate-600 text-sm md:text-base leading-relaxed">
                                 Explore how we solve real commercial challenges across offline field workforce tools, native Android utilities, and high-concurrency medical systems.
                             </p>
                         </div>
@@ -366,10 +386,10 @@ export const MobileAppLanding = () => {
                                 <button
                                     key={proj.id}
                                     onClick={() => setActiveProject(proj.id)}
-                                    className={`px-5 py-3 rounded-xl text-xs md:text-sm font-semibold transition-all border ${
+                                    className={`px-5 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all border ${
                                         activeProject === proj.id
-                                            ? "bg-slate-800 border-primary text-white shadow-lg"
-                                            : "bg-slate-900/40 border-white/5 text-slate-400 hover:text-white"
+                                            ? "bg-blue-50 border-blue-600 text-blue-700 shadow-sm"
+                                            : "bg-slate-50 border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                                     }`}
                                 >
                                     {proj.name}
@@ -378,11 +398,11 @@ export const MobileAppLanding = () => {
                         </div>
 
                         {/* Active Project Card */}
-                        <div className="p-8 md:p-10 rounded-2xl bg-[#0c1017] border border-slate-800 shadow-2xl">
+                        <div className="p-8 md:p-10 rounded-3xl bg-white border border-slate-200 shadow-sm">
                             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                                 
                                 {/* Image / Media preview */}
-                                <div className="lg:col-span-5 relative rounded-xl overflow-hidden bg-slate-950 border border-slate-800 aspect-[4/3] flex items-center justify-center">
+                                <div className="lg:col-span-5 relative rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 aspect-[4/3] flex items-center justify-center">
                                     <img
                                         src={currentProj.image}
                                         alt={currentProj.name}
@@ -394,14 +414,14 @@ export const MobileAppLanding = () => {
                                 <div className="lg:col-span-7 space-y-5">
                                     <div>
                                         <div className="flex items-center justify-between gap-4 mb-2">
-                                            <span className="text-xs font-semibold text-primary uppercase tracking-widest">{currentProj.category}</span>
+                                            <span className="text-xs font-bold text-blue-600 uppercase tracking-widest">{currentProj.category}</span>
                                             <div className="flex items-center gap-2">
                                                 {currentProj.githubUrl && (
                                                     <a
                                                         href={currentProj.githubUrl}
                                                         target="_blank"
                                                         rel="noreferrer"
-                                                        className="p-2 rounded-lg bg-slate-900 border border-white/10 hover:bg-slate-800 text-slate-300 transition-colors"
+                                                        className="p-2.5 rounded-xl bg-slate-100 border border-slate-200 hover:bg-slate-200 text-slate-700 transition-colors"
                                                         title="View Source on GitHub"
                                                     >
                                                         <Github className="w-4 h-4" />
@@ -412,7 +432,7 @@ export const MobileAppLanding = () => {
                                                         href={currentProj.liveUrl}
                                                         target="_blank"
                                                         rel="noreferrer"
-                                                        className="px-3 py-1.5 rounded-lg bg-emerald-950/50 border border-emerald-500/30 hover:bg-emerald-900/60 text-emerald-400 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                                                        className="px-3.5 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center gap-1.5 transition-colors"
                                                     >
                                                         <ExternalLink className="w-3.5 h-3.5" />
                                                         <span>Google Play</span>
@@ -420,21 +440,25 @@ export const MobileAppLanding = () => {
                                                 )}
                                             </div>
                                         </div>
-                                        <h4 className="text-2xl md:text-3xl font-bold font-heading text-white mb-2">{currentProj.name}</h4>
-                                        <p className="text-xs font-mono text-cyan-400">{currentProj.architectureType}</p>
+                                        <h4 className="text-2xl md:text-3xl font-black font-heading text-slate-950 mb-2">{currentProj.name}</h4>
+                                        <div className="font-mono text-xs text-blue-700 font-semibold bg-blue-50 px-3 py-1 rounded-md inline-block border border-blue-200/60">
+                                            {currentProj.architectureType}
+                                        </div>
                                     </div>
 
                                     <div>
-                                        <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Problem & Commercial Solution</div>
-                                        <p className="text-sm text-slate-300 leading-relaxed">{currentProj.problemSolved}</p>
+                                        <div className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Problem & Commercial Solution</div>
+                                        <div className="p-4 rounded-xl bg-rose-50/60 border border-rose-200 text-rose-950 text-xs sm:text-sm leading-relaxed">
+                                            {currentProj.problemSolved}
+                                        </div>
                                     </div>
 
                                     <div>
-                                        <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Key Technical Implementations</div>
-                                        <ul className="space-y-2 text-xs text-slate-200">
+                                        <div className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Key Technical Implementations</div>
+                                        <ul className="space-y-2 text-xs text-slate-700">
                                             {currentProj.engineeringDetails.map((item, idx) => (
-                                                <li key={idx} className="flex items-start gap-2">
-                                                    <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                                                <li key={idx} className="flex items-start gap-2.5">
+                                                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                                                     <span>{item}</span>
                                                 </li>
                                             ))}
@@ -442,9 +466,9 @@ export const MobileAppLanding = () => {
                                     </div>
 
                                     <div className="pt-2">
-                                        <div className="flex flex-wrap gap-1.5">
+                                        <div className="flex flex-wrap gap-2">
                                             {currentProj.techStack.map((tech, idx) => (
-                                                <span key={idx} className="px-2.5 py-1 rounded-md bg-slate-950 border border-slate-800 text-[11px] text-slate-300 font-mono">
+                                                <span key={idx} className="px-2.5 py-1 rounded-md bg-slate-100 border border-slate-200 text-[11px] text-slate-700 font-mono font-medium">
                                                     {tech}
                                                 </span>
                                             ))}
@@ -460,32 +484,34 @@ export const MobileAppLanding = () => {
                 </section>
 
                 {/* ─── 4. TRANSPARENT SPRINT SCOPES (USD / INR) ─── */}
-                <section id="pricing" className="py-20 md:py-28 bg-[#090c13] border-b border-white/5">
+                <section id="pricing" className="py-20 md:py-28 bg-[#fafaf9] border-b border-slate-200/80">
                     <div className="container mx-auto px-6 max-w-6xl">
                         
                         <div className="text-center max-w-3xl mx-auto mb-12">
-                            <h2 className="text-xs font-bold uppercase tracking-widest text-primary mb-3">Milestone-Based Engineering Sprints</h2>
-                            <h3 className="text-3xl md:text-4xl font-bold font-heading text-white mb-4">
+                            <h2 className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-3">Milestone-Based Engineering Sprints</h2>
+                            <h3 className="text-3xl md:text-4xl font-black font-heading text-slate-950 mb-4">
                                 Predictable sprint scoping with zero runaway hourly billing.
                             </h3>
-                            <p className="text-slate-400 text-sm md:text-base leading-relaxed mb-8">
+                            <p className="text-slate-600 text-sm md:text-base leading-relaxed mb-8">
                                 We structure projects into focused, milestone-based sprints. Every sprint produces working, testable builds with 100% source code ownership and direct builder communication.
                             </p>
 
                             {/* Currency Switcher */}
-                            <div className="inline-flex p-1 rounded-xl bg-slate-900 border border-white/10">
+                            <div className="inline-flex p-1 rounded-2xl bg-white border border-slate-200 shadow-xs">
                                 <button
                                     onClick={() => setCurrency("USD")}
-                                    className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                                        currency === "USD" ? "bg-primary text-white shadow" : "text-slate-400 hover:text-white"
+                                    style={currency === "USD" ? { backgroundColor: "#2563eb", color: "#ffffff" } : {}}
+                                    className={`px-5 py-2 rounded-xl text-xs font-bold transition-all ${
+                                        currency === "USD" ? "shadow-sm" : "text-slate-600 hover:text-slate-900"
                                     }`}
                                 >
                                     USD ($) Global
                                 </button>
                                 <button
                                     onClick={() => setCurrency("INR")}
-                                    className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                                        currency === "INR" ? "bg-primary text-white shadow" : "text-slate-400 hover:text-white"
+                                    style={currency === "INR" ? { backgroundColor: "#2563eb", color: "#ffffff" } : {}}
+                                    className={`px-5 py-2 rounded-xl text-xs font-bold transition-all ${
+                                        currency === "INR" ? "shadow-sm" : "text-slate-600 hover:text-slate-900"
                                     }`}
                                 >
                                     INR (₹) India
@@ -496,127 +522,145 @@ export const MobileAppLanding = () => {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
                             
                             {/* Tier 1 */}
-                            <div className="p-8 rounded-2xl bg-[#0c1017] border border-slate-800 flex flex-col justify-between hover:border-slate-700 transition-colors">
+                            <div className="p-8 rounded-3xl bg-white border border-slate-200 flex flex-col justify-between hover:border-slate-300 shadow-sm transition-all">
                                 <div>
-                                    <span className="text-xs font-bold uppercase tracking-wider text-blue-400 block mb-1">Prototype / MVP Sprint</span>
-                                    <h4 className="text-xl font-bold text-white mb-2">Native Android MVP</h4>
-                                    <p className="text-xs text-slate-400 mb-6 leading-relaxed">
+                                    <span className="text-xs font-bold uppercase tracking-wider text-blue-600 block mb-1">Prototype / MVP Sprint</span>
+                                    <h4 className="text-xl font-bold font-heading text-slate-900 mb-2">Native Android MVP</h4>
+                                    <p className="text-xs text-slate-500 mb-6 leading-relaxed">
                                         For validating core user flows, database architecture, and native UI on Android before scaling.
                                     </p>
-                                    <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">Starting from</div>
-                                    <div className="text-3xl font-bold font-heading text-white mb-1">
+                                    <div className="text-xs text-slate-400 uppercase tracking-wider mb-1 font-semibold">Starting from</div>
+                                    <div className="text-3xl font-black font-heading text-slate-950 mb-1">
                                         {currency === "USD" ? "$490" : "₹39,000"}
                                     </div>
                                     <div className="text-xs text-slate-500 mb-6">Fixed sprint milestone • 1-2 weeks</div>
                                     
-                                    <ul className="space-y-3 text-xs text-slate-300 mb-8 border-t border-white/10 pt-6">
+                                    <ul className="space-y-3 text-xs text-slate-700 mb-8 border-t border-slate-200 pt-6">
                                         <li className="flex items-center gap-2.5">
-                                            <Check className="w-4 h-4 text-primary shrink-0" />
+                                            <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />
                                             <span>Native Kotlin & Jetpack Compose UI</span>
                                         </li>
                                         <li className="flex items-center gap-2.5">
-                                            <Check className="w-4 h-4 text-primary shrink-0" />
+                                            <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />
                                             <span>Local Room Database / SQLite Setup</span>
                                         </li>
                                         <li className="flex items-center gap-2.5">
-                                            <Check className="w-4 h-4 text-primary shrink-0" />
+                                            <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />
                                             <span>REST API Integration & State Management</span>
                                         </li>
                                         <li className="flex items-center gap-2.5">
-                                            <Check className="w-4 h-4 text-primary shrink-0" />
+                                            <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />
                                             <span>Clean Git Repository & Test APK Delivery</span>
                                         </li>
                                     </ul>
                                 </div>
                                 <a href="#quote-form">
-                                    <Button variant="outline" className="w-full bg-slate-900 border-white/10 hover:bg-slate-800 text-white text-xs font-semibold py-5 rounded-xl">
+                                    <Button 
+                                        variant="outline" 
+                                        className="w-full border-slate-300 hover:bg-slate-50 text-slate-800 text-xs font-bold py-5 rounded-xl transition-colors"
+                                    >
                                         Request MVP Sprint Scope
                                     </Button>
                                 </a>
                             </div>
 
                             {/* Tier 2: POPULAR */}
-                            <div className="p-8 rounded-2xl bg-gradient-to-b from-slate-900/90 to-[#0c1017] border-2 border-primary shadow-[0_0_35px_rgba(59,130,246,0.2)] flex flex-col justify-between relative">
-                                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-primary text-white text-[10px] font-bold uppercase tracking-wider shadow">
+                            <div className="p-8 rounded-3xl bg-white border-2 border-blue-600 shadow-xl flex flex-col justify-between relative">
+                                <div 
+                                    style={{ 
+                                        backgroundColor: "#2563eb", 
+                                        color: "#ffffff",
+                                        top: "-13px",
+                                        left: "50%",
+                                        transform: "translateX(-50%)"
+                                    }}
+                                    className="absolute px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm whitespace-nowrap z-10"
+                                >
                                     Most Demanded
                                 </div>
                                 <div>
-                                    <span className="text-xs font-bold uppercase tracking-wider text-cyan-400 block mb-1">Production Multiplatform</span>
-                                    <h4 className="text-xl font-bold text-white mb-2">Android & iOS Native Suite</h4>
-                                    <p className="text-xs text-slate-300 mb-6 leading-relaxed">
+                                    <span className="text-xs font-bold uppercase tracking-wider text-blue-600 block mb-1">Production Multiplatform</span>
+                                    <h4 className="text-xl font-bold font-heading text-slate-900 mb-2">Android & iOS Native Suite</h4>
+                                    <p className="text-xs text-slate-600 mb-6 leading-relaxed">
                                         Dual-platform native mobile suite with shared Kotlin Multiplatform (KMP/CMP) core and offline delta sync.
                                     </p>
-                                    <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Starting from</div>
-                                    <div className="text-3xl font-bold font-heading text-white mb-1">
+                                    <div className="text-xs text-slate-400 uppercase tracking-wider mb-1 font-semibold">Starting from</div>
+                                    <div className="text-3xl font-black font-heading text-slate-950 mb-1">
                                         {currency === "USD" ? "$1,290" : "₹99,000"}
                                     </div>
-                                    <div className="text-xs text-slate-400 mb-6">Milestone-based sprints • Iterative delivery</div>
+                                    <div className="text-xs text-slate-500 mb-6">Milestone-based sprints • Iterative delivery</div>
                                     
-                                    <ul className="space-y-3 text-xs text-slate-200 mb-8 border-t border-white/10 pt-6">
+                                    <ul className="space-y-3 text-xs text-slate-700 mb-8 border-t border-slate-200 pt-6">
                                         <li className="flex items-center gap-2.5">
-                                            <Check className="w-4 h-4 text-cyan-400 shrink-0" />
+                                            <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />
                                             <span>Jetpack Compose (Android) + SwiftUI (iOS)</span>
                                         </li>
                                         <li className="flex items-center gap-2.5">
-                                            <Check className="w-4 h-4 text-cyan-400 shrink-0" />
+                                            <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />
                                             <span>Shared Business Logic (KMP / CMP Core)</span>
                                         </li>
                                         <li className="flex items-center gap-2.5">
-                                            <Check className="w-4 h-4 text-cyan-400 shrink-0" />
+                                            <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />
                                             <span>Deterministic Offline Delta Sync Engine</span>
                                         </li>
                                         <li className="flex items-center gap-2.5">
-                                            <Check className="w-4 h-4 text-cyan-400 shrink-0" />
+                                            <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />
                                             <span>Biometric Auth & In-App Purchases / Stripe</span>
                                         </li>
                                         <li className="flex items-center gap-2.5">
-                                            <Check className="w-4 h-4 text-cyan-400 shrink-0" />
+                                            <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />
                                             <span>App Store & Google Play Store Submission</span>
                                         </li>
                                     </ul>
                                 </div>
                                 <a href="#quote-form">
-                                    <Button className="w-full bg-primary hover:bg-primary/90 text-white text-xs font-semibold py-5 rounded-xl shadow-lg">
+                                    <Button 
+                                        style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                                        className="w-full hover:opacity-90 text-white text-xs font-bold py-5 rounded-xl shadow-sm transition-opacity"
+                                    >
                                         Request Dual-Platform Scope
                                     </Button>
                                 </a>
                             </div>
 
                             {/* Tier 3 */}
-                            <div className="p-8 rounded-2xl bg-[#0c1017] border border-slate-800 flex flex-col justify-between hover:border-slate-700 transition-colors">
+                            <div className="p-8 rounded-3xl bg-white border border-slate-200 flex flex-col justify-between hover:border-slate-300 shadow-sm transition-all">
                                 <div>
-                                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-400 block mb-1">Full-Stack Architecture</span>
-                                    <h4 className="text-xl font-bold text-white mb-2">Complete System + Spring Boot</h4>
-                                    <p className="text-xs text-slate-400 mb-6 leading-relaxed">
+                                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 block mb-1">Full-Stack Architecture</span>
+                                    <h4 className="text-xl font-bold font-heading text-slate-900 mb-2">Complete System + Spring Boot</h4>
+                                    <p className="text-xs text-slate-500 mb-6 leading-relaxed">
                                         Full platform build including native mobile clients, custom Kotlin Spring Boot backend, and PostgreSQL/MongoDB database.
                                     </p>
-                                    <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">Tailored Project Scope</div>
-                                    <div className="text-2xl font-bold font-heading text-white mb-1">
+                                    <div className="text-xs text-slate-400 uppercase tracking-wider mb-1 font-semibold">Tailored Project Scope</div>
+                                    <div className="text-2xl font-black font-heading text-slate-950 mb-1">
                                         Custom Architecture Scope
                                     </div>
                                     <div className="text-xs text-slate-500 mb-6">Sprint roadmap • End-to-end delivery</div>
                                     
-                                    <ul className="space-y-3 text-xs text-slate-300 mb-8 border-t border-white/10 pt-6">
+                                    <ul className="space-y-3 text-xs text-slate-700 mb-8 border-t border-slate-200 pt-6">
                                         <li className="flex items-center gap-2.5">
-                                            <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                                            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                                             <span>Dual-Platform Client (Android Compose + iOS SwiftUI)</span>
                                         </li>
                                         <li className="flex items-center gap-2.5">
-                                            <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                                            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                                             <span>Kotlin Spring Boot Microservice Server</span>
                                         </li>
                                         <li className="flex items-center gap-2.5">
-                                            <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                                            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                                             <span>PostgreSQL (ACID) & MongoDB Data Layer</span>
                                         </li>
                                         <li className="flex items-center gap-2.5">
-                                            <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                                            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                                             <span>Docker & GitHub Actions CI/CD Pipeline</span>
                                         </li>
                                     </ul>
                                 </div>
                                 <a href="#quote-form">
-                                    <Button variant="outline" className="w-full bg-slate-900 border-white/10 hover:bg-slate-800 text-white text-xs font-semibold py-5 rounded-xl">
+                                    <Button 
+                                        variant="outline" 
+                                        className="w-full border-slate-300 hover:bg-slate-50 text-slate-800 text-xs font-bold py-5 rounded-xl transition-colors"
+                                    >
                                         Request Custom Architecture Scope
                                     </Button>
                                 </a>
@@ -628,15 +672,15 @@ export const MobileAppLanding = () => {
                 </section>
 
                 {/* ─── 5. TECHNICAL FAQ ACCORDION ─── */}
-                <section id="faq" className="py-20 md:py-28 border-b border-white/5">
+                <section id="faq" className="py-20 md:py-28 bg-white border-b border-slate-200/80">
                     <div className="container mx-auto px-6 max-w-4xl">
                         
                         <div className="text-center max-w-3xl mx-auto mb-14">
-                            <h2 className="text-xs font-bold uppercase tracking-widest text-primary mb-3">Frequently Answered Questions</h2>
-                            <h3 className="text-3xl md:text-4xl font-bold font-heading text-white mb-4">
+                            <h2 className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-3">Frequently Answered Questions</h2>
+                            <h3 className="text-3xl md:text-4xl font-black font-heading text-slate-950 mb-4">
                                 Technical and commercial answers before you start.
                             </h3>
-                            <p className="text-slate-400 text-sm leading-relaxed">
+                            <p className="text-slate-600 text-sm leading-relaxed">
                                 Clear information on architecture, App Store approval guarantees, source code ownership, and post-launch maintenance.
                             </p>
                         </div>
@@ -670,18 +714,18 @@ export const MobileAppLanding = () => {
                             ].map((faq, idx) => (
                                 <div
                                     key={idx}
-                                    className="p-5 rounded-2xl bg-slate-900/40 border border-white/5 cursor-pointer transition-colors hover:border-white/10"
+                                    className="p-5 md:p-6 rounded-2xl bg-[#fafaf9] border border-slate-200/90 cursor-pointer transition-colors hover:border-slate-300 shadow-xs"
                                     onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
                                 >
                                     <div className="flex justify-between items-center text-left">
-                                        <h4 className="font-bold text-white text-base md:text-lg flex items-center gap-3">
-                                            <HelpCircle className="w-5 h-5 text-primary shrink-0" />
+                                        <h4 className="font-bold text-slate-900 text-base md:text-lg flex items-center gap-3">
+                                            <HelpCircle className="w-5 h-5 text-blue-600 shrink-0" />
                                             <span>{faq.q}</span>
                                         </h4>
-                                        <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform shrink-0 ml-4 ${openFaq === idx ? "rotate-180 text-primary" : ""}`} />
+                                        <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform shrink-0 ml-4 ${openFaq === idx ? "rotate-180 text-blue-600" : ""}`} />
                                     </div>
                                     <div className={`overflow-hidden transition-all duration-300 ease-in-out pl-8 text-left ${openFaq === idx ? "max-h-[500px] opacity-100 mt-3" : "max-h-0 opacity-0 pointer-events-none"}`}>
-                                        <p className="text-slate-300 text-sm leading-relaxed pb-2">{faq.a}</p>
+                                        <p className="text-slate-600 text-sm leading-relaxed pb-2">{faq.a}</p>
                                     </div>
                                 </div>
                             ))}
@@ -691,34 +735,34 @@ export const MobileAppLanding = () => {
                 </section>
 
                 {/* ─── 6. LEAD INTAKE / SCOPE SPECIFIER ─── */}
-                <section id="quote-form" className="py-20 md:py-28">
+                <section id="quote-form" className="py-20 md:py-28 bg-[#fafaf9]">
                     <div className="container mx-auto px-6 max-w-3xl">
                         
                         <div className="text-center mb-12">
-                            <h2 className="text-xs font-bold uppercase tracking-widest text-primary mb-3">Direct Engineering Discovery</h2>
-                            <h3 className="text-3xl md:text-4xl font-bold font-heading text-white mb-4">
+                            <h2 className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-3">Direct Engineering Discovery</h2>
+                            <h3 className="text-3xl md:text-4xl font-black font-heading text-slate-950 mb-4">
                                 Specify your mobile application scope.
                             </h3>
-                            <p className="text-slate-400 text-sm leading-relaxed max-w-xl mx-auto">
+                            <p className="text-slate-600 text-sm leading-relaxed max-w-xl mx-auto">
                                 Receive an architectural evaluation and sprint scope directly from our senior lead engineer within 24 hours.
                             </p>
                         </div>
 
-                        <div className="p-8 md:p-10 rounded-2xl bg-[#0c1017] border border-slate-800 shadow-2xl">
+                        <div className="p-8 md:p-10 rounded-3xl bg-white border border-slate-200 shadow-sm">
                             
                             {formStatus === "success" ? (
                                 <div className="text-center py-10">
-                                    <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-4">
+                                    <div className="w-14 h-14 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center mx-auto mb-4">
                                         <Check className="w-7 h-7" />
                                     </div>
-                                    <h4 className="text-2xl font-bold text-white mb-2">Scope Specification Received</h4>
-                                    <p className="text-slate-300 text-sm max-w-md mx-auto mb-6">
+                                    <h4 className="text-2xl font-black font-heading text-slate-950 mb-2">Scope Specification Received</h4>
+                                    <p className="text-slate-600 text-sm max-w-md mx-auto mb-6">
                                         Thank you. Our senior lead engineer will review your platform requirements and respond with a structured technical breakdown within 24 hours.
                                     </p>
                                     <Button
                                         onClick={() => setFormStatus("idle")}
                                         variant="outline"
-                                        className="bg-slate-900 border-white/10 text-white text-xs"
+                                        className="border-slate-300 text-slate-800 text-xs font-semibold"
                                     >
                                         Submit Another Scope
                                     </Button>
@@ -728,7 +772,7 @@ export const MobileAppLanding = () => {
                                     
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                         <div>
-                                            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+                                            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
                                                 Your Name / Organization
                                             </label>
                                             <Input
@@ -736,11 +780,11 @@ export const MobileAppLanding = () => {
                                                 placeholder="e.g. Alex Johnson"
                                                 value={formData.name}
                                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                                className="bg-slate-950 border-slate-800 text-white text-sm focus:border-primary rounded-xl py-5"
+                                                className="bg-slate-50 border-slate-200 text-slate-900 text-sm focus:border-blue-600 rounded-xl py-5"
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+                                            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
                                                 Work Email
                                             </label>
                                             <Input
@@ -749,20 +793,20 @@ export const MobileAppLanding = () => {
                                                 placeholder="alex@company.com"
                                                 value={formData.email}
                                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                                className="bg-slate-950 border-slate-800 text-white text-sm focus:border-primary rounded-xl py-5"
+                                                className="bg-slate-50 border-slate-200 text-slate-900 text-sm focus:border-blue-600 rounded-xl py-5"
                                             />
                                         </div>
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                         <div>
-                                            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+                                            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
                                                 Target Platform Suite
                                             </label>
                                             <select
                                                 value={formData.appType}
                                                 onChange={(e) => setFormData({ ...formData, appType: e.target.value })}
-                                                className="w-full bg-slate-950 border border-slate-800 text-white text-sm focus:border-primary rounded-xl px-3 py-3 outline-none"
+                                                className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:border-blue-600 rounded-xl px-3 py-3 outline-none font-medium"
                                             >
                                                 <option value="Native Android (Kotlin/Compose)">Native Android (Kotlin/Compose)</option>
                                                 <option value="Dual-Platform Native (Compose + SwiftUI / KMP)">Dual-Platform Native (Compose + SwiftUI / KMP)</option>
@@ -771,13 +815,13 @@ export const MobileAppLanding = () => {
                                             </select>
                                         </div>
                                         <div>
-                                            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+                                            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
                                                 Offline-First Requirement
                                             </label>
                                             <select
                                                 value={formData.offlineNeeds}
                                                 onChange={(e) => setFormData({ ...formData, offlineNeeds: e.target.value })}
-                                                className="w-full bg-slate-950 border border-slate-800 text-white text-sm focus:border-primary rounded-xl px-3 py-3 outline-none"
+                                                className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:border-blue-600 rounded-xl px-3 py-3 outline-none font-medium"
                                             >
                                                 <option value="Yes, requires full offline-first operations">Yes, requires full offline-first operations</option>
                                                 <option value="Standard online with basic caching">Standard online with basic caching</option>
@@ -787,7 +831,7 @@ export const MobileAppLanding = () => {
                                     </div>
 
                                     <div>
-                                        <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
                                             Project Specifications & Core Features
                                         </label>
                                         <Textarea
@@ -796,14 +840,15 @@ export const MobileAppLanding = () => {
                                             placeholder="Describe your user workflows, key screens, required third-party integrations (payments, maps, Bluetooth), and target launch date."
                                             value={formData.projectDetails}
                                             onChange={(e) => setFormData({ ...formData, projectDetails: e.target.value })}
-                                            className="bg-slate-950 border-slate-800 text-white text-sm focus:border-primary rounded-xl"
+                                            className="bg-slate-50 border-slate-200 text-slate-900 text-sm focus:border-blue-600 rounded-xl"
                                         />
                                     </div>
 
                                     <Button
                                         type="submit"
                                         disabled={formStatus === "submitting"}
-                                        className="w-full bg-primary hover:bg-primary/90 text-white font-semibold text-sm py-6 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2"
+                                        style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                                        className="w-full hover:opacity-90 text-white font-bold text-sm py-6 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2"
                                     >
                                         {formStatus === "submitting" ? (
                                             <>
@@ -819,8 +864,8 @@ export const MobileAppLanding = () => {
                                     </Button>
 
                                     {formStatus === "error" && (
-                                        <div className="text-center text-xs text-red-400 pt-2">
-                                            Unable to submit at this moment. Please email us directly at hazratummar@gmail.com.
+                                        <div className="text-center text-xs text-rose-600 pt-2 font-medium">
+                                            Unable to submit at this moment. Please email us directly at hazratummar9@gmail.com.
                                         </div>
                                     )}
 

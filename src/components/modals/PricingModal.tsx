@@ -206,40 +206,46 @@ export const PricingModal = ({ children, serviceType }: { children: React.ReactN
             <DialogTrigger asChild>
                 {children}
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[900px] bg-[#111218] border-white/10 text-foreground p-0 overflow-hidden shadow-2xl">
-                <div className="p-6 text-center border-b border-white/10 bg-white/5">
-                    <DialogTitle className="text-3xl font-bold mb-2">Choose Your Plan</DialogTitle>
-                    <p className="text-muted-foreground">Transparent pricing for {serviceType} Development.</p>
+            <DialogContent className="sm:max-w-[900px] bg-white border border-slate-200 text-slate-900 p-0 overflow-hidden shadow-2xl rounded-3xl">
+                <div className="p-6 text-center border-b border-slate-200 bg-slate-50/70">
+                    <DialogTitle className="text-2xl sm:text-3xl font-black font-heading text-slate-950 mb-2">Choose Your Milestone Plan</DialogTitle>
+                    <p className="text-slate-600 text-sm">Transparent milestone sprints for {serviceType} Development.</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-0 divide-y md:divide-y-0 md:divide-x divide-white/10">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-0 divide-y md:divide-y-0 md:divide-x divide-slate-200">
                     {tiers.map((tier, index) => (
-                        <div key={index} className={`p-6 flex flex-col h-full relative ${tier.popular ? 'bg-white/5' : ''}`}>
+                        <div key={index} className={`p-6 flex flex-col h-full relative ${tier.popular ? 'bg-blue-50/30' : 'bg-white'}`}>
                             {tier.popular && (
-                                <div className="absolute top-0 right-0 bg-primary text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
+                                <div 
+                                    style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                                    className="absolute top-0 right-0 text-xs font-bold px-3 py-1 rounded-bl-lg shadow-2xs"
+                                >
                                     POPULAR
                                 </div>
                             )}
 
-                            <div className={`w-12 h-12 rounded-lg ${tier.bg} flex items-center justify-center mb-4 ${tier.color}`}>
+                            <div className={`w-12 h-12 rounded-xl ${tier.bg} flex items-center justify-center mb-4 ${tier.color}`}>
                                 <tier.icon className="w-6 h-6" />
                             </div>
 
-                            <h3 className="text-xl font-bold mb-2">{tier.name}</h3>
-                            <div className="text-3xl font-bold mb-2">{tier.price}</div>
-                            <p className="text-sm text-muted-foreground mb-6">{tier.description}</p>
+                            <h3 className="text-xl font-bold text-slate-950 mb-1">{tier.name}</h3>
+                            <div className="text-3xl font-black text-slate-950 mb-2 font-mono">{tier.price}</div>
+                            <p className="text-sm text-slate-600 mb-6">{tier.description}</p>
 
                             <ul className="space-y-3 mb-8 flex-grow">
                                 {tier.features.map((feature, i) => (
                                     <li key={i} className="flex items-start text-sm">
                                         <Check className={`w-4 h-4 mr-2 mt-0.5 shrink-0 ${tier.color}`} />
-                                        <span className="text-muted-foreground">{feature}</span>
+                                        <span className="text-slate-700">{feature}</span>
                                     </li>
                                 ))}
                             </ul>
 
                             <HireMeModal>
-                                <Button className={`w-full ${tier.popular ? 'bg-primary hover:bg-primary/90' : 'bg-white/10 hover:bg-white/20'} text-white border border-white/10`}>
+                                <Button 
+                                    style={tier.popular ? { backgroundColor: "#2563eb", color: "#ffffff" } : {}}
+                                    className={`w-full h-11 rounded-xl font-bold shadow-xs ${tier.popular ? 'text-white hover:opacity-90' : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-200'}`}
+                                >
                                     Get Started
                                 </Button>
                             </HireMeModal>

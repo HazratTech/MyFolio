@@ -2,46 +2,45 @@ import type { Metadata } from "next";
 import { AIChatbotLanding } from "@/components/sections/AIChatbotLanding";
 
 export const metadata: Metadata = {
-    title: "AI Chatbot Development Services | RelayWorks",
+    title: "AI Chatbot & Conversational Automation Engineering | RelayWorks",
     description:
-        "Custom AI chatbot development for websites, WhatsApp, Discord, Telegram, customer support automation, lead qualification, appointment booking, CRM integration, and business workflow automation.",
+        "Bespoke AI chatbot development and conversational automation for websites, WhatsApp Business, and CRMs. Grounded vector RAG knowledge bases, zero hallucinations, automated calendar scheduling, and 100% full source code ownership.",
     alternates: {
         canonical: "/ai-chatbot-development",
     },
     keywords: [
-        "AI chatbot development",
-        "AI chatbot for website",
+        "AI chatbot development services",
         "WhatsApp chatbot development",
-        "business automation",
-        "AI agent development",
-        "customer support automation",
-        "lead generation chatbot",
-        "appointment booking chatbot",
-        "CRM integration",
-        "workflow automation",
-        "OpenAI integration",
-        "Claude integration",
-        "Gemini integration",
+        "custom AI agent engineering",
+        "RAG chatbot for business",
+        "conversational AI agency",
+        "HubSpot chatbot integration",
+        "automated appointment booking chatbot",
+        "customer support deflection bot",
+        "enterprise conversational AI",
+        "lead qualification chatbot",
+        "B2B AI chatbot developer",
+        "Hazrat Ummar Shaikh AI",
     ],
     openGraph: {
-        title: "AI Chatbot Development Services | RelayWorks",
+        title: "AI Chatbot & Conversational Automation Engineering | RelayWorks",
         description:
-            "Build custom AI chatbots that answer customers instantly, qualify leads, book appointments, and automate workflows across your website, WhatsApp, Discord, and Telegram.",
+            "Stop losing inbound leads while your office is closed. We engineer production AI assistants for your website and WhatsApp with zero hallucinations, instant calendar booking, and 100% code ownership.",
         url: "https://relayworks.dev/ai-chatbot-development",
         images: [
             {
                 url: "https://relayworks.dev/og-banner.png",
                 width: 1200,
                 height: 630,
-                alt: "AI Chatbot Development Services | RelayWorks",
+                alt: "AI Chatbot & Conversational Automation Engineering | RelayWorks",
             },
         ],
     },
     twitter: {
         card: "summary_large_image",
-        title: "AI Chatbot Development Services | RelayWorks",
+        title: "AI Chatbot & Conversational Automation Engineering | RelayWorks",
         description:
-            "Custom AI chatbot development for support automation, lead generation, booking, CRM sync, and workflow automation.",
+            "Production AI chatbots and conversational agents for website and WhatsApp. Grounded RAG, instant CRM sync, and direct senior engineer collaboration.",
         images: ["https://relayworks.dev/og-banner.png"],
     },
 };
@@ -52,53 +51,57 @@ const jsonLd = {
         {
             "@type": "Service",
             "@id": "https://relayworks.dev/ai-chatbot-development#service",
-            name: "AI Chatbot Development Services",
+            name: "AI Chatbot & Conversational Automation Engineering",
             provider: {
                 "@type": "Organization",
                 name: "RelayWorks",
                 url: "https://relayworks.dev",
             },
-            serviceType: "AI Chatbot Development",
+            serviceType: "Conversational AI and Business Automation",
             areaServed: "Worldwide",
             description:
-                "Custom AI chatbots for website support, WhatsApp automation, lead qualification, appointment booking, CRM integration, and business workflow automation.",
+                "Custom AI chatbots and conversational automation for websites, WhatsApp Business, and CRMs. Features grounded vector RAG on verified company documents, zero hallucinations, automated calendar booking, and 100% client source code ownership.",
             offers: {
-                "@type": "Offer",
-                availability: "https://schema.org/InStock",
+                "@type": "AggregateOffer",
                 priceCurrency: "USD",
+                lowPrice: "350",
+                highPrice: "1600",
+                offerCount: "3",
                 url: "https://relayworks.dev/ai-chatbot-development",
             },
             hasOfferCatalog: {
                 "@type": "OfferCatalog",
-                name: "AI chatbot and automation services",
+                name: "Conversational AI Engineering Sprints",
                 itemListElement: [
                     {
                         "@type": "Offer",
                         itemOffered: {
                             "@type": "Service",
-                            name: "Website AI Chatbot Development",
+                            name: "Starter Assistant Sprint",
+                            description: "Focused single-channel AI assistant for website or WhatsApp with vector RAG knowledge base and lead qualification.",
                         },
+                        price: "350",
+                        priceCurrency: "USD",
                     },
                     {
                         "@type": "Offer",
                         itemOffered: {
                             "@type": "Service",
-                            name: "WhatsApp Chatbot Development",
+                            name: "Growth Automation Sprint",
+                            description: "Dual-channel conversational automation across website and WhatsApp with real-time calendar booking, two-way CRM sync, and human escalation.",
                         },
+                        price: "750",
+                        priceCurrency: "USD",
                     },
                     {
                         "@type": "Offer",
                         itemOffered: {
                             "@type": "Service",
-                            name: "Customer Support Automation",
+                            name: "Enterprise Agent Architecture",
+                            description: "Multi-agent systems with private database querying, custom admin dashboards, and dedicated engineering retainers.",
                         },
-                    },
-                    {
-                        "@type": "Offer",
-                        itemOffered: {
-                            "@type": "Service",
-                            name: "CRM and Workflow Automation",
-                        },
+                        price: "1600",
+                        priceCurrency: "USD",
                     },
                 ],
             },
@@ -109,26 +112,26 @@ const jsonLd = {
             mainEntity: [
                 {
                     "@type": "Question",
-                    name: "What is included in AI chatbot development?",
+                    name: "How do you ensure the AI chatbot will not hallucinate or quote wrong prices?",
                     acceptedAnswer: {
                         "@type": "Answer",
-                        text: "RelayWorks builds custom AI chatbots with conversation design, knowledge base setup, OpenAI or Claude integration, CRM sync, lead capture, appointment booking, testing, deployment, and support.",
+                        text: "We implement strict Retrieval-Augmented Generation (RAG). The LLM is never allowed to guess. Every incoming query triggers a semantic search against your verified company knowledge base. The model is instructed with deterministic system bounds to answer exclusively from the retrieved text.",
                     },
                 },
                 {
                     "@type": "Question",
-                    name: "Can you build a chatbot for my website and WhatsApp?",
+                    name: "Can you connect it to our WhatsApp Business account?",
                     acceptedAnswer: {
                         "@type": "Answer",
-                        text: "Yes. RelayWorks builds chatbots for websites, WhatsApp, Discord, Telegram, Slack, and custom business systems.",
+                        text: "Yes. We engineer integrations using the official Meta WhatsApp Business Cloud API. We handle webhook registration, template configuration, and message routing so your business can engage leads directly on WhatsApp.",
                     },
                 },
                 {
                     "@type": "Question",
-                    name: "Can the chatbot hand off to a human?",
+                    name: "Do I own the full source code and data?",
                     acceptedAnswer: {
                         "@type": "Answer",
-                        text: "Yes. Chatbots can detect high-intent or complex conversations and hand them off to your team through live chat, email, Slack, Discord, or your CRM.",
+                        text: "Yes, 100%. Unlike SaaS chatbot builders that lock your conversation data, prompts, and flows into their proprietary platform, RelayWorks delivers clean, documented source code directly to your repository.",
                     },
                 },
             ],

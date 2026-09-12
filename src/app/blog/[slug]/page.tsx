@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     }
 
     return {
-        title: `${post.title} | RelayWorks`,
+        title: `${post.title} | RelayWorks Dispatches`,
         description: post.excerpt || post.content.substring(0, 160),
         alternates: {
             canonical: `/blog/${params.slug}`,
@@ -58,7 +58,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
             url: `https://relayworks.dev/blog/${params.slug}`,
             type: "article",
             publishedTime: post.publishedAt?.toString(),
-            authors: ["RelayWorks"],
+            authors: ["Hazrat Ummar Shaikh"],
             images: [
                 {
                     url: imageUrl,
@@ -88,36 +88,36 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
     const relatedPosts: any[] = await getRelatedPosts(post.category, post.slug);
 
     const categoryLower = (post.category || "").toLowerCase();
-    let ctaTitle = "Need a Professional Mobile & Backend Developer?";
-    let ctaDescription = "I build premium native mobile apps (Android, iOS) and high-performance backend systems (FastAPI, Ktor). Let's collaborate on your next project!";
+    let ctaTitle = "Need a Senior Mobile & Backend Builder?";
+    let ctaDescription = "I engineer high-performance native mobile apps (Android, iOS) and resilient cloud APIs (FastAPI, Spring Boot). Direct milestone sprints with 100% source ownership.";
     let ctaHref = "/services";
-    let ctaBtnText = "Explore Services";
+    let ctaBtnText = "Explore Capabilities & Sprints";
 
     if (categoryLower.includes("android")) {
-        ctaTitle = "Need Help with Native Android Development?";
-        ctaDescription = "I build high-performance Native Android apps using Kotlin, Jetpack Compose, and modern architecture. Let's collaborate to build a premium mobile experience!";
+        ctaTitle = "Need Native Android Architecture?";
+        ctaDescription = "I build high-performance Native Android apps using Kotlin, Jetpack Compose, and offline-first SQLite architectures. Let's engineer your mobile application!";
         ctaHref = "/mobile-app-development";
         ctaBtnText = "Explore Mobile Development";
     } else if (categoryLower.includes("discord")) {
-        ctaTitle = "Looking for a Custom Discord Bot Developer?";
-        ctaDescription = "I engineer custom, highly scalable Discord bots, verification systems, and ticket automation with 99.9% uptime. Let's build your custom bot!";
+        ctaTitle = "Looking for Custom Discord Bot Architecture?";
+        ctaDescription = "I engineer custom, highly scalable Discord bots, role verification engines, and ticket automation with 99.9% uptime. Zero agency middlemen.";
         ctaHref = "/discord-bot";
-        ctaBtnText = "View Discord Bot Services";
+        ctaBtnText = "View Discord Bot Engineering";
     } else if (categoryLower.includes("ai") || categoryLower.includes("chatbot") || categoryLower.includes("mcp")) {
-        ctaTitle = "Need Custom AI Chatbot or AI Agent Development?";
-        ctaDescription = "I build intelligent AI chatbots and automation agents for customer support, lead qualification, and CRM sync. Let's automate your workflows!";
+        ctaTitle = "Need Custom AI Assistants or Automation Agents?";
+        ctaDescription = "I build deterministic AI agents, customer support copilots, and multi-platform workflows with tool calling and vector embeddings.";
         ctaHref = "/ai-chatbot-development";
-        ctaBtnText = "View AI Chatbot Services";
+        ctaBtnText = "View AI Assistant Services";
     } else if (categoryLower.includes("backend") || categoryLower.includes("api") || categoryLower.includes("database")) {
-        ctaTitle = "Need Help with Custom APIs or Backend Systems?";
-        ctaDescription = "I build robust, secure, and scalable backend services, databases, and microservices using FastAPI, Ktor, Node.js, and MongoDB. Let's build your server infrastructure!";
+        ctaTitle = "Need Resilient Cloud APIs or Backend Microservices?";
+        ctaDescription = "I build secure, high-throughput backend services and event-driven microservices using Spring Boot, FastAPI, Node.js, and PostgreSQL.";
         ctaHref = "/services";
-        ctaBtnText = "View Backend & API Services";
+        ctaBtnText = "View Backend & API Sprints";
     } else if (categoryLower.includes("ios") || categoryLower.includes("swift")) {
-        ctaTitle = "Need Help with iOS App Development?";
-        ctaDescription = "I build modern, fluid, and high-performance native iOS applications using Swift and SwiftUI. Let's collaborate to launch your iOS app!";
+        ctaTitle = "Need Modern Native iOS Engineering?";
+        ctaDescription = "I build fluid, offline-first native iOS applications using Swift, SwiftUI, and modern architecture patterns.";
         ctaHref = "/mobile-app-development";
-        ctaBtnText = "Explore iOS App Services";
+        ctaBtnText = "Explore iOS Development";
     }
 
     const jsonLd = {
@@ -130,7 +130,7 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
         "author": {
             "@type": "Person",
             "name": "Hazrat Ummar Shaikh",
-            "jobTitle": "Founder & Lead Developer",
+            "jobTitle": "Lead Software Engineer & Studio Founder",
             "worksFor": {
                 "@type": "Organization",
                 "name": "RelayWorks",
@@ -161,7 +161,7 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
     });
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-[#fafaf9] [background-image:radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:24px_24px] pb-16">
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -171,71 +171,107 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
             {/* Reading Progress Bar */}
             <ReadingProgressBar />
 
-            {/* ─── HERO SECTION ─── */}
-            <div className="relative w-full" style={{ height: 'min(75vh, 580px)' }}>
-                {post.coverImage ? (
-                    <>
-                        <Image
-                            src={post.coverImage}
-                            alt={post.title}
-                            fill
-                            priority
-                            className="object-cover"
-                            sizes="100vw"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
-                    </>
-                ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-secondary/20" />
-                )}
-
-                {/* Hero Content (Overlaid on bottom of image) */}
-                <div className="absolute bottom-0 left-0 right-0 py-8 px-6 md:px-12">
-                    <div className="max-w-4xl mx-auto">
-                        <Link href="/blog" className="inline-flex items-center text-primary hover:text-primary/80 font-medium mb-4 transition-colors">
-                            <ArrowLeft className="w-4 h-4 mr-2" />
-                            Back to Blog
-                        </Link>
-                        
-                        <div className="flex flex-wrap gap-2 items-center mb-4">
-                            <Badge className="bg-primary/20 text-primary border-primary/30 font-semibold px-3 py-0.5 rounded-full backdrop-blur-sm">
-                                {post.category}
-                            </Badge>
-                            <span className="text-slate-400 text-xs flex items-center gap-1">
-                                <Clock className="w-3.5 h-3.5" />
-                                {post.readingTime || 5} min read
-                            </span>
-                        </div>
-
-                        <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold font-heading text-white tracking-tight mb-4 leading-tight drop-shadow-sm">
-                            {post.title}
-                        </h1>
-
-                        <div className="flex flex-wrap items-center gap-6 text-sm text-slate-300 font-sans">
-                            <span className="flex items-center gap-2">
-                                <span className="w-7 h-7 rounded-full bg-primary/25 border border-primary/40 flex items-center justify-center text-primary font-bold text-xs">
-                                    H
+            {/* ─── HERO HEADER SECTION ─── */}
+            {post.coverImage ? (
+                <div className="relative w-full" style={{ height: 'min(70vh, 520px)' }}>
+                    <Image
+                        src={post.coverImage}
+                        alt={post.title}
+                        fill
+                        priority
+                        className="object-cover"
+                        sizes="100vw"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#fafaf9] via-[#fafaf9]/75 to-slate-900/30" />
+                    
+                    <div className="absolute bottom-0 left-0 right-0 py-8 px-6 md:px-12">
+                        <div className="max-w-4xl mx-auto">
+                            <Link href="/blog" className="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-700 mb-4 transition-colors gap-2 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full border border-slate-200/80 shadow-2xs">
+                                <ArrowLeft className="w-4 h-4" />
+                                <span>Back to All Dispatches</span>
+                            </Link>
+                            
+                            <div className="flex flex-wrap gap-2 items-center mb-3">
+                                <span className="bg-blue-50 text-blue-700 border border-blue-200 font-semibold px-3 py-0.5 rounded-full text-xs shadow-2xs">
+                                    {post.category}
                                 </span>
-                                Hazrat Ummar Shaikh (Founder)
-                            </span>
-                            <span className="flex items-center gap-1.5">
-                                <Calendar className="w-4 h-4 text-primary" />
-                                {publishDate}
-                            </span>
-                            {!isPreview && (
-                                <span className="flex items-center gap-1.5">
-                                    <Eye className="w-4 h-4 text-primary" />
-                                    <span>{post.views || 0} views</span>
+                                <span className="text-slate-600 text-xs flex items-center gap-1 font-mono">
+                                    <Clock className="w-3.5 h-3.5 text-slate-500" />
+                                    {post.readingTime || 5} min read
                                 </span>
-                            )}
+                            </div>
+
+                            <h1 className="text-3xl md:text-5xl font-black font-heading text-slate-950 tracking-tight mb-4 leading-tight">
+                                {post.title}
+                            </h1>
+
+                            <div className="flex flex-wrap items-center gap-6 text-xs text-slate-600 font-sans">
+                                <span className="flex items-center gap-2">
+                                    <span className="w-6 h-6 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-center text-blue-700 font-bold text-xs">
+                                        H
+                                    </span>
+                                    Hazrat Ummar Shaikh (Lead Builder)
+                                </span>
+                                <span className="flex items-center gap-1.5 font-mono">
+                                    <Calendar className="w-3.5 h-3.5 text-blue-600" />
+                                    {publishDate}
+                                </span>
+                                {!isPreview && (
+                                    <span className="flex items-center gap-1.5 font-mono">
+                                        <Eye className="w-3.5 h-3.5 text-blue-600" />
+                                        <span>{post.views || 0} views</span>
+                                    </span>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            ) : (
+                <div className="pt-8 pb-4 px-6 md:px-12 max-w-4xl mx-auto">
+                    <Link href="/blog" className="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-700 mb-6 transition-colors gap-2">
+                        <ArrowLeft className="w-4 h-4" />
+                        <span>Back to All Dispatches</span>
+                    </Link>
+                    
+                    <div className="flex flex-wrap gap-2 items-center mb-3">
+                        <span className="bg-blue-50 text-blue-700 border border-blue-200 font-semibold px-3 py-0.5 rounded-full text-xs shadow-2xs">
+                            {post.category}
+                        </span>
+                        <span className="text-slate-500 text-xs flex items-center gap-1 font-mono">
+                            <Clock className="w-3.5 h-3.5 text-slate-400" />
+                            {post.readingTime || 5} min read
+                        </span>
+                    </div>
+
+                    <h1 className="text-3xl md:text-5xl font-black font-heading text-slate-950 tracking-tight mb-4 leading-tight">
+                        {post.title}
+                    </h1>
+
+                    <div className="flex flex-wrap items-center gap-6 text-xs text-slate-600 font-sans pb-6 border-b border-slate-200">
+                        <span className="flex items-center gap-2">
+                            <span className="w-6 h-6 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-center text-blue-700 font-bold text-xs">
+                                H
+                            </span>
+                            Hazrat Ummar Shaikh (Lead Builder)
+                        </span>
+                        <span className="flex items-center gap-1.5 font-mono">
+                            <Calendar className="w-3.5 h-3.5 text-blue-600" />
+                            {publishDate}
+                        </span>
+                        {!isPreview && (
+                            <span className="flex items-center gap-1.5 font-mono">
+                                <Eye className="w-3.5 h-3.5 text-blue-600" />
+                                <span>{post.views || 0} views</span>
+                            </span>
+                        )}
+                    </div>
+                </div>
+            )}
 
             {/* ─── ARTICLE CONTENT ─── */}
-            <article className="max-w-4xl mx-auto px-6 py-12 md:py-16">
+            <article className="max-w-4xl mx-auto px-6 py-8 md:py-12">
                 <div 
+                    id="article-content"
                     className="blog-prose"
                     dangerouslySetInnerHTML={{ __html: post.content }}
                 />
@@ -243,14 +279,14 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
 
                 {/* Tags Section */}
                 {post.tags && post.tags.length > 0 && (
-                    <div className="mt-12 pt-8 border-t border-white/10">
+                    <div className="mt-12 pt-8 border-t border-slate-200">
                         <div className="flex items-center gap-2 flex-wrap">
-                            <Tag className="w-4 h-4 text-muted-foreground" />
+                            <Tag className="w-4 h-4 text-slate-400" />
                             {post.tags.map((tag: string) => (
                                 <Link
                                     key={tag}
                                     href={`/blog/tag/${tag}`}
-                                    className="text-sm bg-primary/10 text-primary border border-primary/20 px-3 py-1 rounded-full hover:bg-primary/20 transition-colors"
+                                    className="text-xs font-mono uppercase bg-white border border-slate-200 hover:border-blue-300 hover:text-blue-600 text-slate-600 px-3 py-1 rounded-md transition-colors shadow-2xs"
                                 >
                                     #{tag}
                                 </Link>
@@ -260,23 +296,25 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
                 )}
 
                 {/* Visual Call To Action (CTA) */}
-                <div className="mt-16 mb-12 p-8 rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card/50 to-secondary/10 backdrop-blur-sm text-center relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-secondary/5 opacity-50 pointer-events-none" />
-                    <h3 className="text-xl md:text-2xl font-bold font-heading text-white mb-2 relative z-10">
+                <div className="mt-14 mb-12 p-8 rounded-3xl border border-blue-200 bg-gradient-to-br from-blue-50/90 via-white to-indigo-50/60 shadow-xs text-center relative overflow-hidden">
+                    <h3 className="text-xl md:text-2xl font-black font-heading text-slate-950 mb-2">
                         {ctaTitle}
                     </h3>
-                    <p className="text-slate-300 text-sm max-w-xl mx-auto mb-6 relative z-10 font-sans leading-relaxed">
+                    <p className="text-slate-600 text-sm max-w-xl mx-auto mb-6 font-sans leading-relaxed">
                         {ctaDescription}
                     </p>
-                    <div className="flex flex-wrap gap-4 justify-center relative z-10">
+                    <div className="flex flex-wrap gap-3 justify-center">
                         <Link href={ctaHref}>
-                            <Button className="bg-primary hover:bg-primary/95 text-white font-semibold rounded-xl px-6 shadow-lg shadow-primary/20 flex items-center gap-2">
+                            <Button 
+                                style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                                className="hover:opacity-90 text-white font-semibold rounded-xl px-6 h-11 shadow-xs flex items-center gap-2 transition-opacity text-sm"
+                            >
                                 <span>{ctaBtnText}</span>
                                 <ArrowRight className="w-4 h-4" />
                             </Button>
                         </Link>
                         <Link href="/contact">
-                            <Button variant="outline" className="bg-white/5 border-white/10 hover:bg-white/10 text-white font-medium rounded-xl px-5">
+                            <Button variant="outline" className="bg-white border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold rounded-xl px-5 h-11 shadow-2xs text-sm">
                                 Book Free Consultation
                             </Button>
                         </Link>
@@ -284,15 +322,17 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
                 </div>
 
                 {/* Author Card */}
-                <div className="mt-12 p-6 rounded-2xl border border-white/10 bg-card/40 backdrop-blur-sm flex gap-5 items-start">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary to-secondary flex-shrink-0 flex items-center justify-center text-white font-bold text-xl font-heading">
-                        H
+                <div className="mt-12 p-6 rounded-2xl border border-slate-200 bg-white shadow-xs flex gap-5 items-start">
+                    <div className="w-14 h-14 rounded-full overflow-hidden border border-slate-200 shrink-0 bg-blue-50 flex items-center justify-center">
+                        <Image src="/images/founder.jpg" alt="Hazrat Ummar Shaikh" width={56} height={56} className="w-full h-full object-cover" />
                     </div>
                     <div>
-                        <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Written by</p>
-                        <h3 className="font-bold text-lg font-heading text-foreground">Hazrat Ummar Shaikh <span className="text-sm font-normal text-muted-foreground ml-1">Founder, RelayWorks</span></h3>
-                        <p className="text-muted-foreground text-sm mt-1 leading-relaxed font-sans">
-                            Android Developer with 4+ years of experience. Built production Android apps, Ktor backends, Discord bots, and SaaS products using Kotlin, Python, and MongoDB. Passionate about building robust systems and writing clean code.
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-blue-600 mb-1 font-mono">Senior Builder & Author</p>
+                        <h3 className="font-bold text-base md:text-lg font-heading text-slate-950">
+                            Hazrat Ummar Shaikh <span className="text-xs font-normal text-slate-500 ml-1">· Lead Engineer & Studio Founder</span>
+                        </h3>
+                        <p className="text-slate-600 text-sm mt-1 leading-relaxed font-sans">
+                            Systems engineer with 4+ years shipping production Native Android applications (Kotlin, Compose), resilient cloud backends (FastAPI, Spring Boot), custom Discord bot infrastructure, and deterministic AI automations.
                         </p>
                     </div>
                 </div>
@@ -303,16 +343,18 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
 
             {/* ─── RELATED POSTS ─── */}
             {relatedPosts.length > 0 && (
-                <section className="border-t border-white/10 pt-16 pb-20 px-6 md:px-12">
+                <section className="border-t border-slate-200 pt-16 pb-12 px-6 md:px-12 bg-white/60">
                     <div className="max-w-7xl mx-auto">
                         <div className="flex items-center gap-3 mb-10">
-                            <div className="h-px flex-1 bg-gradient-to-r from-primary/40 to-transparent" />
-                            <h2 className="text-2xl font-bold font-heading text-foreground whitespace-nowrap">Related Posts</h2>
-                            <div className="h-px flex-1 bg-gradient-to-l from-primary/40 to-transparent" />
+                            <div className="h-px flex-1 bg-slate-200" />
+                            <h2 className="text-2xl font-black font-heading text-slate-950 whitespace-nowrap">Related Technical Dispatches</h2>
+                            <div className="h-px flex-1 bg-slate-200" />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {relatedPosts.map((relatedPost) => (
-                                <PostCard key={relatedPost._id} post={relatedPost} />
+                                <div key={relatedPost._id} className="h-full">
+                                    <PostCard post={relatedPost} />
+                                </div>
                             ))}
                         </div>
                     </div>

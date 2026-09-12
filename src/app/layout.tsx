@@ -3,6 +3,7 @@ import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { GoogleAdSense } from "@/components/analytics/GoogleAdSense";
 import { FacebookPixelRouteTracker } from "@/components/analytics/FacebookPixel";
+import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { CookieConsent } from "@/components/layout/CookieConsent";
 import { LiveChatWidget } from "@/components/chat/LiveChatWidget";
 import { cn } from "@/lib/utils";
@@ -18,22 +19,19 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://relayworks.dev",
   },
-  title: "RelayWorks | Custom Software, Discord Bot & AI Development Agency",
-  description: "RelayWorks is a custom software development agency specializing in Discord bots, native mobile apps (Android & iOS), high-performance backend APIs (FastAPI & Ktor), and AI chatbots. Founded by Hazrat Ummar Shaikh.",
+  title: "RelayWorks | Boutique Software Engineering Studio — Mobile, Backends & Automation",
+  description: "RelayWorks is an independent boutique software engineering studio led by Hazrat Ummar Shaikh. We engineer production native Android & iOS apps (Kotlin/Compose, SwiftUI, KMP), scalable Spring Boot backends, and custom automation.",
   keywords: [
     "RelayWorks",
-    "RelayWorks dev",
-    "relayworks.dev",
-    "Relay Works",
-    "relaywork",
-    "Custom Discord Bot Developer",
-    "Discord Bot Agency",
-    "Hire Discord Bot Developer",
-    "AI Chatbot Development Services",
-    "Android App Development Agency",
-    "Backend Development Agency",
-    "FastAPI Developer",
-    "Ktor Developer",
+    "Boutique Software Engineering Studio",
+    "Custom Mobile App Development",
+    "Native Android App Developer",
+    "Hire Kotlin Developer",
+    "Kotlin Multiplatform Consulting",
+    "SwiftUI iOS App Development",
+    "Kotlin Spring Boot Backend Development",
+    "FastAPI Microservices",
+    "Discord Bot Development Agency",
     "Hazrat Ummar Shaikh"
   ],
   authors: [{ name: "RelayWorks", url: "https://relayworks.dev" }],
@@ -49,22 +47,22 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://relayworks.dev",
-    title: "RelayWorks | Custom Software, Discord Bot & AI Development Agency",
-    description: "RelayWorks is a custom software development agency specializing in Discord bots, native mobile apps, backend APIs, and AI chatbots. Founded by Hazrat Ummar Shaikh.",
+    title: "RelayWorks | Boutique Software Engineering Studio — Mobile, Backends & Automation",
+    description: "Independent engineering studio led by Hazrat Ummar Shaikh. Production Native Android & iOS apps, Kotlin Multiplatform, Spring Boot backends, and Discord automation. Direct senior builder access.",
     siteName: "RelayWorks",
     images: [
       {
         url: "https://relayworks.dev/og-banner.png",
         width: 1200,
         height: 630,
-        alt: "RelayWorks | Custom Software & Automation Agency",
+        alt: "RelayWorks | Boutique Software Engineering Studio",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "RelayWorks | Custom Software, Discord Bot & AI Development Agency",
-    description: "RelayWorks is a custom software development agency specializing in Discord bots, native mobile apps, backend APIs, and AI chatbots.",
+    title: "RelayWorks | Boutique Software Engineering Studio",
+    description: "Production mobile apps, scalable backend systems, and custom automation. Direct senior engineer execution.",
     images: ["https://relayworks.dev/og-banner.png"],
     creator: "@ihazratummar9",
   },
@@ -207,18 +205,7 @@ export default function RootLayout({
             alt=""
           />
         </noscript>
-        <Script
-          strategy="afterInteractive"
-          src="https://www.googletagmanager.com/gtag/js?id=G-CGMGGSKEBE"
-        />
-        <Script id="google-analytics" strategy="afterInteractive" dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-CGMGGSKEBE');
-          `
-        }} />
+        <GoogleAnalytics gaId="G-CGMGGSKEBE" />
         <GoogleAdSense />
         <FacebookPixelRouteTracker />
         <Suspense fallback={null}>
