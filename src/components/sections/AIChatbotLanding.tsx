@@ -1244,7 +1244,8 @@ export const AIChatbotLanding = () => {
                 </section>
 
                 {/* 9. CONSULTATION & ARCHITECTURE DISCOVERY FORM */}
-                <section className="py-20 md:py-28 bg-[#fafaf9]" id="consultation-form">
+                <section className="py-20 md:py-28 bg-[#fafaf9] relative" id="consultation-form">
+                    <span id="quote-form" className="absolute -top-24 left-0 pointer-events-none" aria-hidden="true" />
                     <div className="container mx-auto px-6 max-w-4xl">
                         <div className="text-center max-w-2xl mx-auto mb-12">
                             <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-blue-700 shadow-sm mb-4">

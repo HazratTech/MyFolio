@@ -67,7 +67,7 @@ export default function PrivacyPolicy() {
                     <p className="mt-2">
                         Google's use of advertising cookies enables it and its partners to serve targeted ads based on your web browsing history. 
                         You can opt out of personalized advertising at any time by visiting the 
-                        <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline mx-1">
+                        <a href="https://adssettings.google.com/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline mx-1">
                             Google Ads Settings
                         </a> 
                         page. Alternatively, you can opt out of third-party vendors' cookies for personalized advertising by visiting 

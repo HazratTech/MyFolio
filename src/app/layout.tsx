@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://relayworks.dev",
   },
-  title: "RelayWorks | Boutique Software Engineering Studio — Mobile, Backends & Automation",
+  title: "RelayWorks | Boutique Software Engineering Studio",
   description: "RelayWorks is an independent boutique software engineering studio led by Hazrat Ummar Shaikh. We engineer production native Android & iOS apps (Kotlin/Compose, SwiftUI, KMP), scalable Spring Boot backends, and custom automation.",
   keywords: [
     "RelayWorks",
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://relayworks.dev",
-    title: "RelayWorks | Boutique Software Engineering Studio — Mobile, Backends & Automation",
+    title: "RelayWorks | Boutique Software Engineering Studio",
     description: "Independent engineering studio led by Hazrat Ummar Shaikh. Production Native Android & iOS apps, Kotlin Multiplatform, Spring Boot backends, and Discord automation. Direct senior builder access.",
     siteName: "RelayWorks",
     images: [
@@ -87,63 +87,82 @@ const jsonLd = {
       "@id": "https://relayworks.dev/#website",
       "url": "https://relayworks.dev",
       "name": "RelayWorks",
-      "description": "Custom Software, Discord Bots, and AI Automation Agency",
+      "description": "Boutique Software Engineering Studio — Mobile Apps, Backends & Automation",
       "publisher": {
         "@id": "https://relayworks.dev/#organization"
       }
     },
     {
-      "@type": "ProfessionalService",
+      "@type": "Organization",
       "@id": "https://relayworks.dev/#organization",
       "name": "RelayWorks",
       "alternateName": [
         "Relay Works",
         "relayworks.dev",
         "Relaywork",
-        "RelayWork",
-        "realyworks"
+        "RelayWork"
       ],
       "url": "https://relayworks.dev",
-      "logo": "https://relayworks.dev/logo-brand.png",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://relayworks.dev/icon.png"
+      },
       "image": "https://relayworks.dev/og-banner.png",
-      "description": "Custom software development agency specializing in custom Discord bots, mobile apps, backend architectures, and AI chatbots.",
+      "description": "Boutique software engineering studio specializing in native mobile apps (Android & iOS), Kotlin Multiplatform, Spring Boot backends, and custom automation.",
       "founder": {
         "@type": "Person",
         "name": "Hazrat Ummar Shaikh",
         "jobTitle": "Lead Software Engineer & Founder",
+        "url": "https://relayworks.dev/about",
         "sameAs": [
           "https://github.com/ihazratummar",
           "https://www.linkedin.com/in/hazrat-ummar-shaikh/",
           "https://x.com/ihazratummar9"
         ]
       },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "Customer Support & Engineering",
+        "email": "hazratummar9@gmail.com",
+        "url": "https://relayworks.dev/contact"
+      },
       "sameAs": [
         "https://github.com/ihazratummar",
         "https://www.linkedin.com/in/hazrat-ummar-shaikh/",
         "https://x.com/ihazratummar9",
-        "https://www.instagram.com/hazratummar/"
+        "https://play.google.com/store/apps/dev?id=8511073495389394372"
       ],
       "knowsAbout": [
-        "Discord Bot Development",
-        "Python",
+        "Android Development",
+        "iOS Development",
+        "Kotlin Multiplatform",
+        "Spring Boot",
         "FastAPI",
-        "Ktor",
-        "Android App Development",
-        "iOS App Development",
+        "Discord Bot Development",
         "AI Chatbots",
+        "PostgreSQL",
         "MongoDB"
       ],
       "hasOfferCatalog": {
         "@type": "OfferCatalog",
-        "name": "Software Development Services",
+        "name": "Software Engineering Capabilities",
         "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Native Mobile App Development",
+              "url": "https://relayworks.dev/mobile-app-development",
+              "description": "Production Native Android and iOS apps with local-first delta-sync."
+            }
+          },
           {
             "@type": "Offer",
             "itemOffered": {
               "@type": "Service",
               "name": "Custom Discord Bot Development",
               "url": "https://relayworks.dev/discord-bot",
-              "description": "Custom Discord bots with ticket systems, verification, economy, and AI integration."
+              "description": "High-concurrency Discord automation, tickets, economy, and payments."
             }
           },
           {
@@ -152,16 +171,16 @@ const jsonLd = {
               "@type": "Service",
               "name": "AI Chatbot Development",
               "url": "https://relayworks.dev/ai-chatbot-development",
-              "description": "Custom AI chatbots for customer support, lead qualification, and CRM automation."
+              "description": "Grounded conversational assistants with RAG vector search and CRM sync."
             }
           },
           {
             "@type": "Offer",
             "itemOffered": {
               "@type": "Service",
-              "name": "Backend & API Development",
+              "name": "High-Throughput Backend & Microservices",
               "url": "https://relayworks.dev/services",
-              "description": "Scalable REST & WebSocket APIs using FastAPI, Ktor, and MongoDB."
+              "description": "Scalable REST and WebSocket microservices in Spring Boot, Ktor, and FastAPI."
             }
           }
         ]

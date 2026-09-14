@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { AIChatbotLanding } from "@/components/sections/AIChatbotLanding";
 
 export const metadata: Metadata = {
-    title: "AI Chatbot & Conversational Automation Engineering | RelayWorks",
+    title: "Custom AI Chatbot & Automation Engineering | RelayWorks",
     description:
         "Bespoke AI chatbot development and conversational automation for websites, WhatsApp Business, and CRMs. Grounded vector RAG knowledge bases, zero hallucinations, automated calendar scheduling, and 100% full source code ownership.",
     alternates: {

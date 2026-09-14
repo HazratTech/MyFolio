@@ -1,0 +1,1350 @@
+[
+  {
+    "id": "6aa75510d9641c0a05b521ce",
+    "title": "2:47 AM: File Access Log Investigation on My Laptop",
+    "slug": "2-47-am-file-access-log-investigation-on-my-laptop",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 2697,
+    "slopCount": 2,
+    "slopHits": [
+      "crucial",
+      "leverage"
+    ],
+    "createdAt": "2026-09-14T01:59:44.509Z",
+    "hasImages": true,
+    "hasMermaid": true,
+    "hasCode": true,
+    "excerpt": "That unsettling 2:47 AM log entry wasn't just a system glitch; it was a wake-up call. Here's how to "
+  },
+  {
+    "id": "6aa35d55e44e4ad2c9d2adaf",
+    "title": "MCP Python SDK: Prevent Extension Method Collisions Early",
+    "slug": "mcp-python-sdk-prevent-extension-method-collisions-early",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 3354,
+    "slopCount": 1,
+    "slopHits": [
+      "crucial"
+    ],
+    "createdAt": "2026-09-11T01:45:57.295Z",
+    "hasImages": true,
+    "hasMermaid": true,
+    "hasCode": true,
+    "excerpt": "Discover how to proactively prevent MCP Python SDK extension method collisions. Learn to integrate p"
+  },
+  {
+    "id": "6aa0bbd9e44e4ad2c9d2a2e8",
+    "title": "RabbitMQ v4 Upgrade: Celery Tasks Migration Strategy",
+    "slug": "rabbitmq-v4-upgrade-celery-tasks-migration-strategy",
+    "category": "Architecture",
+    "status": "published",
+    "wordCount": 3093,
+    "slopCount": 4,
+    "slopHits": [
+      "delve",
+      "crucial",
+      "vital",
+      "leverage"
+    ],
+    "createdAt": "2026-09-09T01:52:25.506Z",
+    "hasImages": true,
+    "hasMermaid": true,
+    "hasCode": true,
+    "excerpt": "Upgrading RabbitMQ v4 for a high-volume Celery system presents unique challenges. This guide offers "
+  },
+  {
+    "id": "6a9e1470e44e4ad2c9d29b08",
+    "title": "Rust Version Bump Tool: 10,000x Faster Than Python Tools",
+    "slug": "rust-version-bump-tool-10-000x-faster-than-python-tools",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 2462,
+    "slopCount": 2,
+    "slopHits": [
+      "crucial",
+      "seamlessly"
+    ],
+    "createdAt": "2026-09-07T01:33:36.839Z",
+    "hasImages": true,
+    "hasMermaid": true,
+    "hasCode": true,
+    "excerpt": "Explore the journey of building a Rust version bumping tool that achieves incredible speed. Learn ho"
+  },
+  {
+    "id": "6a9a215be44e4ad2c9d29157",
+    "title": "Dev.to CLI Image Uploads From Terminal: Community PR Triumph",
+    "slug": "dev-to-cli-image-uploads-from-terminal-community-pr-triumph",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 2380,
+    "slopCount": 1,
+    "slopHits": [
+      "crucial"
+    ],
+    "createdAt": "2026-09-04T01:39:39.599Z",
+    "hasImages": true,
+    "hasMermaid": true,
+    "hasCode": true,
+    "excerpt": "Discover how the `devpub` CLI gained image upload capabilities through its first community PR. We di"
+  },
+  {
+    "id": "6a977f2846897cfed3934feb",
+    "title": "Operational Challenges in Building a Monitoring SaaS",
+    "slug": "operational-challenges-in-building-a-monitoring-saas",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 4153,
+    "slopCount": 4,
+    "slopHits": [
+      "crucial",
+      "vital",
+      "seamlessly",
+      "leverage"
+    ],
+    "createdAt": "2026-09-02T01:43:04.091Z",
+    "hasImages": true,
+    "hasMermaid": true,
+    "hasCode": true,
+    "excerpt": "Building a monitoring SaaS comes with hidden operational complexities. Discover the 'boring' work, f"
+  },
+  {
+    "id": "6a94dfa182de3d6ad3b8478b",
+    "title": "Five Bugs in My LLM App That Never Threw an Error",
+    "slug": "five-bugs-in-my-llm-app-that-never-threw-an-error",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 4351,
+    "slopCount": 3,
+    "slopHits": [
+      "crucial",
+      "vital",
+      "leverage"
+    ],
+    "createdAt": "2026-08-31T01:57:53.457Z",
+    "hasImages": true,
+    "hasMermaid": true,
+    "hasCode": true,
+    "excerpt": "LLM applications often fail without explicit errors, leading to subtle yet critical issues. This art"
+  },
+  {
+    "id": "6a9136ee82de3d6ad3b83e65",
+    "title": "The Model Said It Read the Report. It Didn't: AI Truthfulness",
+    "slug": "the-model-said-it-read-the-report-it-didn-t-ai-truthfulness",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 3136,
+    "slopCount": 4,
+    "slopHits": [
+      "crucial",
+      "vital",
+      "seamlessly",
+      "leverage"
+    ],
+    "createdAt": "2026-08-28T07:21:18.271Z",
+    "hasImages": true,
+    "hasMermaid": true,
+    "hasCode": true,
+    "excerpt": "AI models can mislead, claiming knowledge they don't possess. Discover how to build robust, automate"
+  },
+  {
+    "id": "6a8e351582de3d6ad3b83919",
+    "title": "Master iOS Dev: A Comprehensive Guide for 2024",
+    "slug": "master-ios-dev-a-comprehensive-guide-for-2024",
+    "category": "iOS",
+    "status": "published",
+    "wordCount": 3377,
+    "slopCount": 3,
+    "slopHits": [
+      "crucial",
+      "vital",
+      "leverage"
+    ],
+    "createdAt": "2026-08-26T00:36:37.344Z",
+    "hasImages": false,
+    "hasMermaid": true,
+    "hasCode": true,
+    "excerpt": "Dive deep into modern iOS development with our ultimate guide. Learn to build production-ready appli"
+  },
+  {
+    "id": "6a8b91c682de3d6ad3b82c27",
+    "title": "Kotlin Performance Optimization Silently Disables Features",
+    "slug": "kotlin-performance-optimization-silently-disables-features",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 4457,
+    "slopCount": 2,
+    "slopHits": [
+      "crucial",
+      "vital"
+    ],
+    "createdAt": "2026-08-24T00:35:18.128Z",
+    "hasImages": true,
+    "hasMermaid": true,
+    "hasCode": true,
+    "excerpt": "Uncover a critical Kotlin performance optimization bug that quietly disabled essential features. Lea"
+  },
+  {
+    "id": "6a879dc282de3d6ad3b81678",
+    "title": "The Test Was Green: Uncovering Real Connection Failures",
+    "slug": "the-test-was-green-uncovering-real-connection-failures",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 4450,
+    "slopCount": 1,
+    "slopHits": [
+      "crucial"
+    ],
+    "createdAt": "2026-08-21T00:37:22.722Z",
+    "hasImages": true,
+    "hasMermaid": true,
+    "hasCode": true,
+    "excerpt": "A 'green' test doesn't always mean success. Discover why seemingly passing tests can hide critical c"
+  },
+  {
+    "id": "6a84fa0082de3d6ad3b809a1",
+    "title": "Azure Blob Storage Direct Access IDE Plugin (Kotlin/Java)",
+    "slug": "azure-blob-storage-direct-access-ide-plugin-kotlin-java",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 2898,
+    "slopCount": 2,
+    "slopHits": [
+      "crucial",
+      "leverage"
+    ],
+    "createdAt": "2026-08-19T00:34:08.916Z",
+    "hasImages": true,
+    "hasMermaid": true,
+    "hasCode": true,
+    "excerpt": "Integrate Azure Blob Storage into your IDE plugin without the official SDK. This guide details the m"
+  },
+  {
+    "id": "6a8256dca6d487c733cbdf9f",
+    "title": "How to Form a Group Nobody Can Admit They're In",
+    "slug": "how-to-form-a-group-nobody-can-admit-they-re-in",
+    "category": "Architecture",
+    "status": "published",
+    "wordCount": 2579,
+    "slopCount": 2,
+    "slopHits": [
+      "crucial",
+      "leverage"
+    ],
+    "createdAt": "2026-08-17T00:33:32.758Z",
+    "hasImages": false,
+    "hasMermaid": true,
+    "hasCode": true,
+    "excerpt": "Discover the cutting-edge intersection of AI and social dynamics. Learn to architect intelligent age"
+  },
+  {
+    "id": "6a7e67eea6d487c733cbd38d",
+    "title": "Do I Still Need a Monkey Patch for Gemini Live? Insights",
+    "slug": "do-i-still-need-a-monkey-patch-for-gemini-live-insights",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 3553,
+    "slopCount": 2,
+    "slopHits": [
+      "crucial",
+      "leverage"
+    ],
+    "createdAt": "2026-08-14T00:57:18.486Z",
+    "hasImages": true,
+    "hasMermaid": true,
+    "hasCode": true,
+    "excerpt": "The era of complex workarounds for Gemini Live is over. Learn how Google AI SDK 2.x eliminates the n"
+  },
+  {
+    "id": "6a7bc494a6d487c733cbca80",
+    "title": "Porting Python PEG Parser to Rust: Proven Performance Gains",
+    "slug": "porting-python-peg-parser-to-rust-proven-performance-gains",
+    "category": "Architecture",
+    "status": "published",
+    "wordCount": 2875,
+    "slopCount": 2,
+    "slopHits": [
+      "crucial",
+      "leverage"
+    ],
+    "createdAt": "2026-08-12T00:55:48.706Z",
+    "hasImages": true,
+    "hasMermaid": true,
+    "hasCode": true,
+    "excerpt": "Embark on a rapid migration journey, porting a Python PEG parser to Rust in just 72 hours. Learn how"
+  },
+  {
+    "id": "6a792002a6d487c733cbc2f5",
+    "title": "What I Learned Building a Long-Lived AI Agent: The Boring Version",
+    "slug": "what-i-learned-building-a-long-lived-ai-agent-the-boring-version",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 4129,
+    "slopCount": 3,
+    "slopHits": [
+      "crucial",
+      "vital",
+      "leverage"
+    ],
+    "createdAt": "2026-08-10T00:49:06.723Z",
+    "hasImages": true,
+    "hasMermaid": true,
+    "hasCode": true,
+    "excerpt": "Building a durable AI agent involves more than initial coding. Discover the 'boring' but crucial les"
+  },
+  {
+    "id": "6a753d16a6d487c733cbaaae",
+    "title": "Fixing Android Native Crashes in React Native App",
+    "slug": "fixing-android-native-crashes-in-react-native-app",
+    "category": "Android",
+    "status": "published",
+    "wordCount": 5357,
+    "slopCount": 4,
+    "slopHits": [
+      "dive in",
+      "crucial",
+      "vital",
+      "leverage"
+    ],
+    "createdAt": "2026-08-07T02:04:06.820Z",
+    "hasImages": true,
+    "hasMermaid": true,
+    "hasCode": true,
+    "excerpt": "Discover why JavaScript error boundaries often miss critical Android native crashes in React Native."
+  },
+  {
+    "id": "6a729027a6d487c733cb9f50",
+    "title": "I Shipped a Fix for a Breaking Change: Why It Didn't Stick",
+    "slug": "i-shipped-a-fix-for-a-breaking-change-why-it-didn-t-stick",
+    "category": "Architecture",
+    "status": "published",
+    "wordCount": 2609,
+    "slopCount": 2,
+    "slopHits": [
+      "dive in",
+      "crucial"
+    ],
+    "createdAt": "2026-08-05T01:21:43.939Z",
+    "hasImages": false,
+    "hasMermaid": true,
+    "hasCode": true,
+    "excerpt": "Ever deployed a critical fix only to find the old bug persisting? This guide dives deep into why 'un"
+  },
+  {
+    "id": "6a6fef10d21718b1266cc60e",
+    "title": "What Nobody Tells You About Building \"Simple\" PDF Tools",
+    "slug": "what-nobody-tells-you-about-building-simple-pdf-tools",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 3630,
+    "slopCount": 3,
+    "slopHits": [
+      "dive in",
+      "crucial",
+      "leverage"
+    ],
+    "createdAt": "2026-08-03T01:29:52.669Z",
+    "hasImages": false,
+    "hasMermaid": true,
+    "hasCode": true,
+    "excerpt": "Building PDF tools often seems straightforward until you hit the hidden complexities. This guide exp"
+  },
+  {
+    "id": "6a6bfaa2d21718b1266cb6d0",
+    "title": "Alpine Python Build Security: Strengthening Your Docker Images",
+    "slug": "alpine-python-build-security-strengthening-your-docker-images",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 2723,
+    "slopCount": 2,
+    "slopHits": [
+      "crucial",
+      "leverage"
+    ],
+    "createdAt": "2026-07-31T01:30:10.964Z",
+    "hasImages": true,
+    "hasMermaid": true,
+    "hasCode": true,
+    "excerpt": "Discover how a broken Python Alpine build can be a hidden opportunity for a stronger security postur"
+  },
+  {
+    "id": "6a695651d21718b1266cadd1",
+    "title": "Building AI Agents with Kotlin ADK: A Comprehensive Guide",
+    "slug": "building-ai-agents-with-kotlin-adk-a-comprehensive-guide",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 3417,
+    "slopCount": 2,
+    "slopHits": [
+      "crucial",
+      "leverage"
+    ],
+    "createdAt": "2026-07-29T01:24:33.281Z",
+    "hasImages": true,
+    "hasMermaid": true,
+    "hasCode": true,
+    "excerpt": "Unlock the power of AI agent development with Kotlin's ADK. Dive into practical implementation, adva"
+  },
+  {
+    "id": "6a66b589d21718b1266ca8c4",
+    "title": "Debugging AI Tool Failure Paths: Proactive Frameworks",
+    "slug": "debugging-ai-tool-failure-paths-proactive-frameworks",
+    "category": "Architecture",
+    "status": "published",
+    "wordCount": 3546,
+    "slopCount": 3,
+    "slopHits": [
+      "unlock",
+      "crucial",
+      "leverage"
+    ],
+    "createdAt": "2026-07-27T01:34:01.209Z",
+    "hasImages": true,
+    "hasMermaid": true,
+    "hasCode": true,
+    "excerpt": "Ever taught your AI tool only one failure path? Dive deep into debugging convention-based errors and"
+  },
+  {
+    "id": "6a62bf3ae8ccce51fc28bc82",
+    "title": "Mastering Discord Bot Development: Strategies & Security",
+    "slug": "mastering-discord-bot-development-strategies-security",
+    "category": "Discord Bots",
+    "status": "published",
+    "wordCount": 3390,
+    "slopCount": 3,
+    "slopHits": [
+      "crucial",
+      "vital",
+      "leverage"
+    ],
+    "createdAt": "2026-07-24T01:26:18.485Z",
+    "hasImages": true,
+    "hasMermaid": true,
+    "hasCode": true,
+    "excerpt": "Master advanced Discord bot development from concept to deployment. This guide covers full-stack str"
+  },
+  {
+    "id": "6a601b45e8ccce51fc28a070",
+    "title": "4 Open-Source AI Tools, 1 MCP Server: My Journey & Insights",
+    "slug": "4-open-source-ai-tools-1-mcp-server-my-journey-insights",
+    "category": "Architecture",
+    "status": "published",
+    "wordCount": 2610,
+    "slopCount": 3,
+    "slopHits": [
+      "crucial",
+      "vital",
+      "leverage"
+    ],
+    "createdAt": "2026-07-22T01:22:13.117Z",
+    "hasImages": true,
+    "hasMermaid": true,
+    "hasCode": true,
+    "excerpt": "Embark on a detailed technical journey as we integrate four diverse open-source AI tools onto a sing"
+  },
+  {
+    "id": "6a5d944f3553a3ded250b350",
+    "title": "AI Chatbot Development Services: Boost Conversions & CX",
+    "slug": "ai-chatbot-development-services-boost-conversions-cx",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 1544,
+    "slopCount": 2,
+    "slopHits": [
+      "crucial",
+      "leverage"
+    ],
+    "createdAt": "2026-07-20T03:21:51.369Z",
+    "hasImages": false,
+    "hasMermaid": true,
+    "hasCode": false,
+    "excerpt": "Move beyond basic Q&A to strategic business growth with custom AI chatbot development. Discover how "
+  },
+  {
+    "id": "6a5d789c4c868808d1f071bb",
+    "title": "Debugging AI Agent Freezes: Preventing Infinite Loops & Timeouts",
+    "slug": "debugging-ai-agent-freezes-preventing-infinite-loops-timeouts",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 1736,
+    "slopCount": 1,
+    "slopHits": [
+      "crucial"
+    ],
+    "createdAt": "2026-07-20T01:23:40.249Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "AI agents can freeze unexpectedly due to subtle computational traps, rendering traditional timeouts "
+  },
+  {
+    "id": "6a5998e352c5bb6eaf380fc9",
+    "title": "Catching the Invisible: Micro AI Code Review for Mobile Security & Performance",
+    "slug": "catching-the-invisible-micro-ai-code-review-for-mobile-security-performance",
+    "category": "Android",
+    "status": "published",
+    "wordCount": 2423,
+    "slopCount": 4,
+    "slopHits": [
+      "game-changer",
+      "crucial",
+      "seamlessly",
+      "leverage"
+    ],
+    "createdAt": "2026-07-17T02:52:19.347Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Discover how micro AI code reviewers identify subtle bugs and security flaws in mobile apps, saving "
+  },
+  {
+    "id": "6a5846d852c5bb6eaf3809ae",
+    "title": "Python Benchmarks & The 4300-Digit Limit: 8 Bugs That Derail Scalability",
+    "slug": "python-benchmarks-the-4300-digit-limit-8-bugs-that-derail-scalability",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 1497,
+    "slopCount": 2,
+    "slopHits": [
+      "dive in",
+      "crucial"
+    ],
+    "createdAt": "2026-07-16T02:50:00.569Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "I share how a subtle CPython limit, and eight other common bugs, can silently corrupt data and cripp"
+  },
+  {
+    "id": "6a58415252c5bb6eaf380976",
+    "title": "Unlock Business Growth: Custom AI Chatbots & Agents Deliver Real ROI",
+    "slug": "unlock-business-growth-custom-ai-chatbots-agents-deliver-real-roi",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 1040,
+    "slopCount": 4,
+    "slopHits": [
+      "revolutionize",
+      "crucial",
+      "seamlessly",
+      "leverage"
+    ],
+    "createdAt": "2026-07-16T02:26:26.599Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": false,
+    "excerpt": "Automate repetitive tasks and streamline operations. Custom AI chatbots and agents deliver real busi"
+  },
+  {
+    "id": "6a56f3ba82f40e29e6a8813e",
+    "title": "RAG vs Fine-Tuning: Custom LLM Strategies for Founders & Devs",
+    "slug": "rag-vs-fine-tuning-custom-llm-strategies-for-founders-devs",
+    "category": "Architecture",
+    "status": "published",
+    "wordCount": 2930,
+    "slopCount": 3,
+    "slopHits": [
+      "crucial",
+      "vital",
+      "leverage"
+    ],
+    "createdAt": "2026-07-15T02:43:06.199Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Choosing between RAG and fine-tuning can make or break your custom LLM project. I'll demystify these"
+  },
+  {
+    "id": "6a55a28d82f40e29e6a87b42",
+    "title": "Porting Gemma-4 to Inferentia2: A Deep Dive for Cost-Effective AI",
+    "slug": "porting-gemma-4-to-inferentia2-a-deep-dive-for-cost-effective-ai",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 2043,
+    "slopCount": 5,
+    "slopHits": [
+      "game-changer",
+      "dive in",
+      "crucial",
+      "vital",
+      "leverage"
+    ],
+    "createdAt": "2026-07-14T02:44:29.302Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "This guide unpacks the complex journey of optimizing Gemma-4 for AWS Inferentia2, navigating compile"
+  },
+  {
+    "id": "6a54595682f40e29e6a87946",
+    "title": "Integrating WebRTC into py-libp2p: A Practical Guide for P2P",
+    "slug": "integrating-webrtc-into-py-libp2p-a-practical-guide-for-p2p",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 819,
+    "slopCount": 2,
+    "slopHits": [
+      "crucial",
+      "leverage"
+    ],
+    "createdAt": "2026-07-13T03:19:50.138Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Dive into WebRTC's integration with py-libp2p, bridging browser and Python runtimes for robust P2P n"
+  },
+  {
+    "id": "6a53073382f40e29e6a8781d",
+    "title": "Building & Scaling Discord Bots: A Practical Guide for Founders",
+    "slug": "building-scaling-discord-bots-a-practical-guide-for-founders",
+    "category": "Discord Bots",
+    "status": "published",
+    "wordCount": 2358,
+    "slopCount": 5,
+    "slopHits": [
+      "game changer",
+      "dive in",
+      "unlock",
+      "crucial",
+      "vital"
+    ],
+    "createdAt": "2026-07-12T03:17:07.778Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Unlock the power of custom Discord bots for your community. This guide deep-dives into architecture,"
+  },
+  {
+    "id": "6a52885d5cee7d77ec6f82c1",
+    "title": "Cloud Run CPU Throttling: Unraveling Serverless Performance Mysteries",
+    "slug": "cloud-run-cpu-throttling-unraveling-serverless-performance-mysteries",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 2612,
+    "slopCount": 2,
+    "slopHits": [
+      "dive in",
+      "crucial"
+    ],
+    "createdAt": "2026-07-11T18:15:57.010Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "A deep dive into how Cloud Run's CPU throttling can silently freeze background tasks, and practical "
+  },
+  {
+    "id": "6a4c4c15b4001daa1cb80576",
+    "title": "Building Custom Discord Bots: A Deep Dive into Development & Architecture",
+    "slug": "building-custom-discord-bots-a-deep-dive-into-development-architecture",
+    "category": "Discord Bots",
+    "status": "published",
+    "wordCount": 1611,
+    "slopCount": 4,
+    "slopHits": [
+      "dive in",
+      "unlock",
+      "crucial",
+      "leverage"
+    ],
+    "createdAt": "2026-07-07T00:45:09.025Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Unlock the full potential of your Discord server with a custom bot. This guide explores the architec"
+  },
+  {
+    "id": "6a487da5e59db348890c067d",
+    "title": "Unraveling Concurrency: C/C++ Threads vs. Python's GIL Reality",
+    "slug": "unraveling-concurrency-c-c-threads-vs-python-s-gil-reality",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 2086,
+    "slopCount": 5,
+    "slopHits": [
+      "dive in",
+      "delve",
+      "crucial",
+      "leverage",
+      "in conclusion"
+    ],
+    "createdAt": "2026-07-04T03:27:33.826Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Diving deep into the fundamental differences of multithreading in C/C++ versus Python, especially fo"
+  },
+  {
+    "id": "6a472df0e59db348890c0265",
+    "title": "Architecting Autonomous Systems: From Edge Devices to Sovereign AI",
+    "slug": "architecting-autonomous-systems-from-edge-devices-to-sovereign-ai",
+    "category": "Architecture",
+    "status": "published",
+    "wordCount": 2324,
+    "slopCount": 2,
+    "slopHits": [
+      "crucial",
+      "vital"
+    ],
+    "createdAt": "2026-07-03T03:35:12.380Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Explore the paradigm shift toward autonomous, 'sovereign' edge systems. We'll deep dive into archite"
+  },
+  {
+    "id": "6a45e0a0e59db348890bf92e",
+    "title": "Semantic Observability for Production RAG: Beyond Basic Metrics",
+    "slug": "semantic-observability-for-production-rag-beyond-basic-metrics",
+    "category": "Architecture",
+    "status": "published",
+    "wordCount": 2489,
+    "slopCount": 1,
+    "slopHits": [
+      "crucial"
+    ],
+    "createdAt": "2026-07-02T03:53:04.364Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Go beyond traditional metrics. Master semantic observability to ensure reliability and detect halluc"
+  },
+  {
+    "id": "6a4493a7e59db348890bf4e1",
+    "title": "Codename One Game Builder: Visual Levels, Coded Rules for Mobile",
+    "slug": "codename-one-game-builder-visual-levels-coded-rules-for-mobile",
+    "category": "Mobile",
+    "status": "published",
+    "wordCount": 2157,
+    "slopCount": 3,
+    "slopHits": [
+      "crucial",
+      "seamlessly",
+      "leverage"
+    ],
+    "createdAt": "2026-07-01T04:12:23.211Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Dive into Codename One's Game Builder, a tool separating visual level design from game logic for eff"
+  },
+  {
+    "id": "6a433e90e59db348890bf33b",
+    "title": "Unmasking Native Crashes: A Deep Dive into Seamless Mobile App Protection",
+    "slug": "unmasking-native-crashes-a-deep-dive-into-seamless-mobile-app-protection",
+    "category": "Architecture",
+    "status": "published",
+    "wordCount": 706,
+    "slopCount": 0,
+    "slopHits": [],
+    "createdAt": "2026-06-30T03:57:04.570Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "I'll peel back the layers on implementing robust crash protection for mobile apps, focusing on clien"
+  },
+  {
+    "id": "6a41f17be59db348890bec01",
+    "title": "Automating CS Exams: My 8-Month Journey to an AI-Powered Study App",
+    "slug": "automating-cs-exams-my-8-month-journey-to-an-ai-powered-study-app",
+    "category": "AI",
+    "status": "published",
+    "wordCount": 1098,
+    "slopCount": 1,
+    "slopHits": [
+      "crucial"
+    ],
+    "createdAt": "2026-06-29T04:15:55.991Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Facing tedious CS exams, I built an AI app in 8 months to automate studying and pseudocode generatio"
+  },
+  {
+    "id": "6a409e3ee59db348890be941",
+    "title": "Active Inference in Practice: Building Self-Curious AI Agents",
+    "slug": "active-inference-in-practice-building-self-curious-ai-agents",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 954,
+    "slopCount": 0,
+    "slopHits": [],
+    "createdAt": "2026-06-28T04:08:30.147Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Explore how active inference enables AI agents to develop curiosity intrinsically, boosting performa"
+  },
+  {
+    "id": "6a3f473ee59db348890be5a4",
+    "title": "Kotlin Unchained: Beyond Mobile, Powering Backends & Bots",
+    "slug": "kotlin-unchained-beyond-mobile-powering-backends-bots",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 1608,
+    "slopCount": 4,
+    "slopHits": [
+      "game-changer",
+      "crucial",
+      "seamlessly",
+      "leverage"
+    ],
+    "createdAt": "2026-06-27T03:45:02.486Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Discover Kotlin's prowess beyond Android, from high-performance Ktor backends to resilient Discord b"
+  },
+  {
+    "id": "6a3ca696e59db348890bdec0",
+    "title": "The Eval Harness That Saved My RAG Pipeline From Production Failure",
+    "slug": "the-eval-harness-that-saved-my-rag-pipeline-from-production-failure",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 2750,
+    "slopCount": 4,
+    "slopHits": [
+      "crucial",
+      "vital",
+      "seamlessly",
+      "leverage"
+    ],
+    "createdAt": "2026-06-25T03:55:02.754Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "I nearly shipped a RAG pipeline with subtle, critical flaws. An evaluation harness caught two major "
+  },
+  {
+    "id": "6a3b54ece59db348890bdac5",
+    "title": "Building Open-Source LLM Observability: Ditch the $79/Month Tools",
+    "slug": "building-open-source-llm-observability-ditch-the-79-month-tools",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 2380,
+    "slopCount": 3,
+    "slopHits": [
+      "dive in",
+      "crucial",
+      "leverage"
+    ],
+    "createdAt": "2026-06-24T03:54:20.071Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Proprietary LLM observability tools often carry a hefty subscription fee. I'll show you how I built "
+  },
+  {
+    "id": "6a398c5c71b6e6721f2aa7b9",
+    "title": "Mastering discord.py: Building Resilient & Scalable Discord Bots",
+    "slug": "mastering-discord-py-building-resilient-scalable-discord-bots",
+    "category": "Discord Bots",
+    "status": "published",
+    "wordCount": 2631,
+    "slopCount": 4,
+    "slopHits": [
+      "delve",
+      "crucial",
+      "vital",
+      "seamlessly"
+    ],
+    "createdAt": "2026-06-22T19:26:20.299Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Dive deep into discord.py's asynchronous architecture for building powerful, scalable Discord bots. "
+  },
+  {
+    "id": "6a391fd871b6e6721f2aa65d",
+    "title": "Why Hiring an Android App Developer Saves Months of Time",
+    "slug": "why-hiring-an-android-app-developer-saves-months-of-time",
+    "category": "Android",
+    "status": "published",
+    "wordCount": 2401,
+    "slopCount": 3,
+    "slopHits": [
+      "crucial",
+      "seamlessly",
+      "leverage"
+    ],
+    "createdAt": "2026-06-22T11:43:20.624Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": false,
+    "excerpt": "Launching an Android app? Discover why hiring an expert Android app developer saves time, money, and"
+  },
+  {
+    "id": "6a3917d90fd64f54828bc31b",
+    "title": "Boost Engagement: Custom Discord Bot Development Solutions",
+    "slug": "boost-engagement-custom-discord-bot-development-solutions",
+    "category": "Discord Bots",
+    "status": "published",
+    "wordCount": 1877,
+    "slopCount": 4,
+    "slopHits": [
+      "dive in",
+      "unlock",
+      "crucial",
+      "seamlessly"
+    ],
+    "createdAt": "2026-06-22T11:09:13.632Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": false,
+    "excerpt": "Struggling with Discord server management? Learn how custom Discord bot development can automate tas"
+  },
+  {
+    "id": "6a38d45ac871ce9244217cee",
+    "title": "Best Hosting for Discord Bots: Keep Your Bots Online 24/7",
+    "slug": "best-hosting-for-discord-bots-keep-your-bots-online-24-7",
+    "category": "Discord Bots",
+    "status": "published",
+    "wordCount": 1633,
+    "slopCount": 4,
+    "slopHits": [
+      "game-changer",
+      "crucial",
+      "vital",
+      "seamlessly"
+    ],
+    "createdAt": "2026-06-22T06:21:14.920Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Choosing the right hosting for your Discord bot can be challenging. Discover a reliable solution tha"
+  },
+  {
+    "id": "6a38b4d23c9cd6fbfaed11db",
+    "title": "Minimal FastAPI Deployment on DigitalOcean: A Developer's Guide",
+    "slug": "minimal-fastapi-deployment-on-digitalocean-a-developer-s-guide",
+    "category": "Architecture",
+    "status": "published",
+    "wordCount": 1318,
+    "slopCount": 3,
+    "slopHits": [
+      "dive in",
+      "crucial",
+      "leverage"
+    ],
+    "createdAt": "2026-06-22T04:06:42.865Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Curious about DigitalOcean for your side projects? I'll walk you through deploying the smallest, yet"
+  },
+  {
+    "id": "6a3853ed3c9cd6fbfaed10d4",
+    "title": "Deploying a Minimal FastAPI App on DigitalOcean: A Hands-On Guide",
+    "slug": "deploying-a-minimal-fastapi-app-on-digitalocean-a-hands-on-guide",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 651,
+    "slopCount": 1,
+    "slopHits": [
+      "vital"
+    ],
+    "createdAt": "2026-06-21T21:13:17.418Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "My friends asked how I use DigitalOcean for side projects. So I built the tiniest real-world app—a F"
+  },
+  {
+    "id": "6a381ef23c9cd6fbfaed1091",
+    "title": "Local LLM Output: Why My Em-Dash Preprocessing Was Flawed",
+    "slug": "local-llm-output-why-my-em-dash-preprocessing-was-flawed",
+    "category": "AI",
+    "status": "published",
+    "wordCount": 523,
+    "slopCount": 1,
+    "slopHits": [
+      "crucial"
+    ],
+    "createdAt": "2026-06-21T17:27:14.427Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "I nearly added an em-dash remover to my LLM library. Learn how testing local models revealed unexpec"
+  },
+  {
+    "id": "6a37f093db4e17d2c5d9a25d",
+    "title": "Debunking LLM Output Assumptions: Em-Dashes & Local Model Quirks",
+    "slug": "debunking-llm-output-assumptions-em-dashes-local-model-quirks",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 1775,
+    "slopCount": 1,
+    "slopHits": [
+      "crucial"
+    ],
+    "createdAt": "2026-06-21T14:09:23.224Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "I almost added an em-dash remover to my LLM library, llmclean, based on a faulty assumption. Testing"
+  },
+  {
+    "id": "6a37c7e8f8ce3e45faa5d68d",
+    "title": "Beyond Keywords: Building Smart Job Agents with FastAPI & MongoDB",
+    "slug": "beyond-keywords-building-smart-job-agents-with-fastapi-mongodb",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 391,
+    "slopCount": 0,
+    "slopHits": [],
+    "createdAt": "2026-06-21T11:15:52.811Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": false,
+    "excerpt": "I tested a dozen job search tools and found them all lacking. Discover how to build your own high-pe"
+  },
+  {
+    "id": "6a37c35df8ce3e45faa5d648",
+    "title": "Beyond Keyword Matching: The Semantic Gap in Developer Job Search",
+    "slug": "beyond-keyword-matching-the-semantic-gap-in-developer-job-search",
+    "category": "Architecture",
+    "status": "published",
+    "wordCount": 2102,
+    "slopCount": 4,
+    "slopHits": [
+      "dive in",
+      "crucial",
+      "vital",
+      "leverage"
+    ],
+    "createdAt": "2026-06-21T10:56:29.082Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Most job search tools rely on outdated keyword matching, missing crucial context. I'll expose their "
+  },
+  {
+    "id": "6a376372aec6fcca00957e49",
+    "title": "Mastering Android Dev News: Boost Compose Performance with Latest Tools",
+    "slug": "mastering-android-dev-news-boost-compose-performance-with-latest-tools",
+    "category": "Android",
+    "status": "published",
+    "wordCount": 2040,
+    "slopCount": 4,
+    "slopHits": [
+      "game-changer",
+      "dive in",
+      "crucial",
+      "leverage"
+    ],
+    "createdAt": "2026-06-21T04:07:14.124Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "I often find myself wrestling with subtle Compose performance bottlenecks. Recent Android dev news b"
+  },
+  {
+    "id": "6a3703cfaec6fcca00957ddb",
+    "title": "Automating ITR Filings: A Python Script's 209-Hour Efficiency Gain",
+    "slug": "automating-itr-filings-a-python-script-s-209-hour-efficiency-gain",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 2437,
+    "slopCount": 4,
+    "slopHits": [
+      "dive in",
+      "crucial",
+      "vital",
+      "leverage"
+    ],
+    "createdAt": "2026-06-20T21:19:11.482Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Discover how a lean Python script slashed 209 hours from ITR season workflows at a CA firm, showcasi"
+  },
+  {
+    "id": "6a369d3dd3622f08562ae82c",
+    "title": "Building Resilient AI Systems: Lessons from the RabbitHole Project",
+    "slug": "building-resilient-ai-systems-lessons-from-the-rabbithole-project",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 2014,
+    "slopCount": 3,
+    "slopHits": [
+      "game-changer",
+      "crucial",
+      "leverage"
+    ],
+    "createdAt": "2026-06-20T14:01:33.978Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Building a complex AI system often feels like fixing a plane mid-flight. Dive into the RabbitHole pr"
+  },
+  {
+    "id": "6a366c3ad3622f08562ae7c0",
+    "title": "Python Automation: Saving 209 ITR Hours for a CA Firm",
+    "slug": "python-automation-saving-209-itr-hours-for-a-ca-firm",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 1719,
+    "slopCount": 1,
+    "slopHits": [
+      "crucial"
+    ],
+    "createdAt": "2026-06-20T10:32:26.521Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Discover how a targeted Python script slashed 209 hours of manual work for a CA firm during ITR seas"
+  },
+  {
+    "id": "6a36464bd3622f08562ae783",
+    "title": "Building a Scalable Python MCP Server for GitHub API Automation",
+    "slug": "building-a-scalable-python-mcp-server-for-github-api-automation",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 2125,
+    "slopCount": 2,
+    "slopHits": [
+      "dive in",
+      "crucial"
+    ],
+    "createdAt": "2026-06-20T07:50:35.555Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "The Model Context Protocol is now standard for AI. I'll guide you through building a high-performanc"
+  },
+  {
+    "id": "6a361b4e990a114e4b1884f6",
+    "title": "Build a Python MCP Server: GitHub API Context Management",
+    "slug": "build-a-python-mcp-server-github-api-context-management",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 2278,
+    "slopCount": 4,
+    "slopHits": [
+      "game-changer",
+      "dive in",
+      "crucial",
+      "leverage"
+    ],
+    "createdAt": "2026-06-20T04:47:10.958Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "I've navigated the complexities of integrating AI models. Learn to build a Python MCP server for rob"
+  },
+  {
+    "id": "6a3618a9990a114e4b18846c",
+    "title": "Mastering Python MCP Servers: A Practical GitHub API Integration Guide",
+    "slug": "mastering-python-mcp-servers-a-practical-github-api-integration-guide",
+    "category": "Backend",
+    "status": "published",
+    "wordCount": 2046,
+    "slopCount": 2,
+    "slopHits": [
+      "game-changer",
+      "crucial"
+    ],
+    "createdAt": "2026-06-20T04:35:53.348Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Unlock advanced AI integration with Model Context Protocol. I'll show you how to build a robust Pyth"
+  },
+  {
+    "id": "6a360a360874a22ff3a5d3b2",
+    "title": "Building a Production-Ready Python MCP Server with FastAPI and GitHub API",
+    "slug": "building-a-production-ready-python-mcp-server-with-fastapi-and-github-api",
+    "category": "Development",
+    "status": "published",
+    "wordCount": 1588,
+    "slopCount": 1,
+    "slopHits": [
+      "leverage"
+    ],
+    "createdAt": "2026-06-20T03:34:14.572Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "The Model Context Protocol (MCP) is a game-changer for AI applications. Learn how to build your own "
+  },
+  {
+    "id": "6a35b03e4b704a56ec913357",
+    "title": "Beyond the Headlines: Practical Insights from the Latest Android Dev News for Kotlin and Compose Developers",
+    "slug": "beyond-the-headlines-practical-insights-from-the-latest-android-dev-news-for-kotlin-and-compose-developers",
+    "category": "Development",
+    "status": "published",
+    "wordCount": 1738,
+    "slopCount": 4,
+    "slopHits": [
+      "game-changer",
+      "dive in",
+      "crucial",
+      "leverage"
+    ],
+    "createdAt": "2026-06-19T21:10:22.146Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "The Android ecosystem evolves at lightning speed. This deep dive into recent Android dev news unpack"
+  },
+  {
+    "id": "6a3582f64b704a56ec9132f2",
+    "title": "Mastering Python for High-Performance Backends & Smarter Discord Bots",
+    "slug": "mastering-python-for-high-performance-backends-smarter-discord-bots",
+    "category": "Development",
+    "status": "published",
+    "wordCount": 1344,
+    "slopCount": 3,
+    "slopHits": [
+      "unlock",
+      "crucial",
+      "leverage"
+    ],
+    "createdAt": "2026-06-19T17:57:10.748Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Dive into Python's power for building blazing-fast APIs with FastAPI and automating Discord servers."
+  },
+  {
+    "id": "6a35531f85b2727477a34a9c",
+    "title": "FastAPI Deep Dive: Building Blazing-Fast APIs That Just Work",
+    "slug": "fastapi-deep-dive-building-blazing-fast-apis-that-just-work",
+    "category": "Development",
+    "status": "published",
+    "wordCount": 1486,
+    "slopCount": 3,
+    "slopHits": [
+      "dive in",
+      "crucial",
+      "leverage"
+    ],
+    "createdAt": "2026-06-19T14:33:03.555Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Tired of boilerplate and slow API development? FastAPI combines speed, robust validation, and async "
+  },
+  {
+    "id": "6a3536ee7bbe77f7b8bda4f0",
+    "title": "Demystifying Android OS: A Deep Dive for Web & Software Engineers",
+    "slug": "demystifying-android-os-a-deep-dive-for-web-software-engineers",
+    "category": "Development",
+    "status": "published",
+    "wordCount": 765,
+    "slopCount": 2,
+    "slopHits": [
+      "crucial",
+      "vital"
+    ],
+    "createdAt": "2026-06-19T12:32:46.958Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Ever wonder what makes an Android app tick, or why permissions work the way they do? This deep dive "
+  },
+  {
+    "id": "6a34ff730a443d658451233f",
+    "title": "Demystifying iOS Development: A Practical Guide for Web & Software Engineers",
+    "slug": "demystifying-ios-development-a-practical-guide-for-web-software-engineers",
+    "category": "Development",
+    "status": "published",
+    "wordCount": 738,
+    "slopCount": 1,
+    "slopHits": [
+      "dive in"
+    ],
+    "createdAt": "2026-06-19T08:36:03.487Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Curious about iOS development but overwhelmed by the native ecosystem? This deep dive translates cor"
+  },
+  {
+    "id": "6a34fe820a443d658451231c",
+    "title": "Mastering Modern Android Architecture: A Practical Guide for Robust Apps",
+    "slug": "mastering-modern-android-architecture-a-practical-guide-for-robust-apps",
+    "category": "Development",
+    "status": "published",
+    "wordCount": 1311,
+    "slopCount": 1,
+    "slopHits": [
+      "crucial"
+    ],
+    "createdAt": "2026-06-19T08:32:02.059Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Dive into modern Android development with practical insights on clean architecture, state management"
+  },
+  {
+    "id": "6a34fc350a443d65845122b4",
+    "title": "Deep Dive into iOS Development: Practical Strategies for Web & Software Engineers",
+    "slug": "deep-dive-into-ios-development-practical-strategies-for-web-software-engineers",
+    "category": "Development",
+    "status": "published",
+    "wordCount": 917,
+    "slopCount": 1,
+    "slopHits": [
+      "dive in"
+    ],
+    "createdAt": "2026-06-19T08:22:13.242Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Curious about building for Apple's ecosystem? This guide cuts through the noise, offering practical "
+  },
+  {
+    "id": "6a34df900a443d65845121a4",
+    "title": "Kotlin News: Your Practical Guide to the Latest Updates in Web & Mobile Engineering",
+    "slug": "kotlin-news-your-practical-guide-to-the-latest-updates-in-web-mobile-engineering",
+    "category": "Development",
+    "status": "published",
+    "wordCount": 2179,
+    "slopCount": 4,
+    "slopHits": [
+      "game-changer",
+      "crucial",
+      "vital",
+      "leverage"
+    ],
+    "createdAt": "2026-06-19T06:20:00.518Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Keeping up with Kotlin's rapid evolution is tough. This guide cuts through the noise, delivering pra"
+  },
+  {
+    "id": "6a34deb00a443d658451217a",
+    "title": "Mastering Python for Web and Software Engineering: A Practical Deep Dive",
+    "slug": "mastering-python-for-web-and-software-engineering-a-practical-deep-dive",
+    "category": "Development",
+    "status": "published",
+    "wordCount": 1550,
+    "slopCount": 2,
+    "slopHits": [
+      "game-changer",
+      "crucial"
+    ],
+    "createdAt": "2026-06-19T06:16:16.222Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Python's versatility makes it a powerhouse for web and software development. Let's cut through the h"
+  },
+  {
+    "id": "6a34cb5b0a443d6584512083",
+    "title": "Taming the Beast: Practical Strategies for Modernizing Legacy Code Before It Consumes You",
+    "slug": "taming-the-beast-practical-strategies-for-modernizing-legacy-code-before-it-consumes-you",
+    "category": "Development",
+    "status": "published",
+    "wordCount": 1303,
+    "slopCount": 0,
+    "slopHits": [],
+    "createdAt": "2026-06-19T04:53:47.781Z",
+    "hasImages": true,
+    "hasMermaid": false,
+    "hasCode": true,
+    "excerpt": "Legacy code is an unavoidable reality for many developers, often turning into a beast if left unchec"
+  }
+]

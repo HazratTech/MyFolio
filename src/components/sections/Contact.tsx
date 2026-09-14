@@ -107,9 +107,9 @@ export const Contact = () => {
                         transition={{ duration: 0.5 }}
                         className="mb-16 text-center"
                     >
-                        <h2 className="text-3xl md:text-5xl font-bold font-heading mb-4">
+                        <h1 className="text-3xl md:text-5xl font-bold font-heading mb-4">
                             Let's <span className="text-secondary">Connect</span>
-                        </h2>
+                        </h1>
                         <p className="text-muted-foreground max-w-2xl mx-auto">
                             Have a project in mind? Let's build something awesome together.
                         </p>
@@ -122,7 +122,7 @@ export const Contact = () => {
                             viewport={{ once: true }}
                             transition={{ duration: 0.5, delay: 0.2 }}
                         >
-                            <h3 className="text-2xl font-bold mb-6">Get in Touch</h3>
+                            <h2 className="text-2xl font-bold mb-6">Get in Touch</h2>
                             <div className="space-y-6">
                                 <div className="flex items-start space-x-4">
                                     <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
@@ -130,8 +130,8 @@ export const Contact = () => {
                                     </div>
                                     <div>
                                         <h4 className="font-medium mb-1">Email Me</h4>
-                                        <a href="mailto:contact@relayworks.dev" className="text-muted-foreground hover:text-primary transition-colors" aria-label="Email Me">
-                                            contact@relayworks.dev
+                                        <a href="mailto:hazratummar9@gmail.com" className="text-muted-foreground hover:text-primary transition-colors" aria-label="Email Me">
+                                            hazratummar9@gmail.com
                                         </a>
                                     </div>
                                 </div>

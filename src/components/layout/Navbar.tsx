@@ -249,8 +249,11 @@ export const Navbar = () => {
 
                         {/* Standard Links */}
                         <Link
-                            href="/#work"
-                            className={cn("text-sm font-medium transition-colors hover:text-primary py-1 px-1", isLightMode ? "text-slate-600" : "text-[#dbdee1]")}
+                            href="/projects"
+                            className={cn(
+                                "text-sm font-medium transition-colors hover:text-primary py-1 px-1",
+                                pathname === "/projects" ? "text-primary font-semibold" : isLightMode ? "text-slate-600" : "text-[#dbdee1]"
+                            )}
                         >
                             Projects
                         </Link>
@@ -426,7 +429,7 @@ export const Navbar = () => {
                             </div>
 
                             <Link
-                                href="/#work"
+                                href="/projects"
                                 onClick={() => setIsMobileMenuOpen(false)}
                                 className={cn(
                                     "text-lg font-bold py-2 border-b",

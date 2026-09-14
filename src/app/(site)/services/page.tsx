@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ServicesLanding } from "@/components/sections/ServicesLanding";
 
 export const metadata: Metadata = {
-    title: "Software Engineering Services (Mobile, AI, Bots & APIs) | RelayWorks",
+    title: "Software Engineering Services & Sprints | RelayWorks",
     description: "Commission production native mobile applications, deterministic AI chatbots, custom Discord bot infrastructure, and scalable backend APIs with 100% source code ownership.",
     alternates: {
         canonical: "https://relayworks.dev/services",

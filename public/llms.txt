@@ -1,0 +1,22 @@
+# RelayWorks
+
+> Boutique Software Engineering Studio founded and operated by Senior Software Engineer Hazrat Ummar Shaikh. RelayWorks specializes in production native mobile applications (Android & iOS), Kotlin Multiplatform (KMP), high-throughput backend microservices (Spring Boot & FastAPI), custom Discord platform automation, and contextual AI assistants.
+
+## Core Capabilities & Services
+
+- [Native Mobile App Development](https://relayworks.dev/mobile-app-development): Production Native Android (Kotlin & Jetpack Compose), iOS (SwiftUI), and cross-platform Kotlin Multiplatform (KMP) applications with local-first delta sync (Room, SQLDelight) and 60FPS fluid UI.
+- [High-Throughput Backend & APIs](https://relayworks.dev/services): Scalable REST and WebSocket microservices engineered in Kotlin Spring Boot, Ktor, and FastAPI with PostgreSQL, MongoDB, and containerized Docker deployments.
+- [Custom Discord Bot Development](https://relayworks.dev/discord-bot): High-concurrency Discord bots featuring automated moderation, ticketing engines, economy systems, Stripe/crypto checkout sync, and custom gaming integrations.
+- [AI Chatbot & Business Automation](https://relayworks.dev/ai-chatbot-development): Grounded vector RAG assistants for websites and WhatsApp Business Cloud API with zero hallucinations, CRM database sync, and calendar booking.
+
+## Case Studies & Shipped Software
+
+- [Karigo](https://github.com/ihazratummar/Karigo-App): Local-first offline invoice & rate engine for mobile field contractors built with Kotlin Multiplatform, Jetpack Compose, SQLDelight, and RevenueCat.
+- [Islam24](https://play.google.com/store/apps/details?id=com.hazrat.islam24): Native Android consumer application live on Google Play with ultra-low battery background engine (<1.5% daily) using AlarmManager and FusedLocationProvider.
+- [OneDrop](https://play.google.com/store/apps/details?id=com.hazrat.onedrop): Reactive healthcare & blood donor network featuring real-time WebSocket state distribution, atomic claim processing, and Kotlin backend.
+
+## Founder & Studio Information
+
+- [About Hazrat Ummar Shaikh](https://relayworks.dev/about): Senior Software Engineer, studio founder, and production mobile/backend architect.
+- [Engineering Dispatches & Blog](https://relayworks.dev/blog): In-depth architectural guides, mobile system designs, and production automation tutorials.
+- [Direct Contact](https://relayworks.dev/contact): Work directly with senior engineering lead (email: hazratummar9@gmail.com).

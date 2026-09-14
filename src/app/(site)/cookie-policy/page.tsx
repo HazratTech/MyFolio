@@ -42,7 +42,7 @@ export default function CookiePolicy() {
                                 <li>This site uses Google Analytics which is one of the most widespread and trusted analytics solution on the web for helping us to understand how you use the site and ways that we can improve your experience.</li>
                                 <li>
                                     This site uses <strong>Google AdSense</strong> to serve advertisements. Google uses cookies (including the DoubleClick DART cookie) to serve relevant, interest-based ads to our visitors based on their browsing activity. You can learn more or opt out of these personalized advertising cookies by visiting 
-                                    <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline ml-1">
+                                    <a href="https://adssettings.google.com/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline ml-1">
                                         Google Ads Settings
                                     </a>.
                                 </li>

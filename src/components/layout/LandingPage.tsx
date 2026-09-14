@@ -295,7 +295,8 @@ export const LandingPage = () => {
 
 
             {/* ─── 2. FLAGSHIP SHIPPED SOFTWARE SHOWCASE ─── */}
-            <section id="case-studies" className="py-20 md:py-28 border-b border-slate-200/80 bg-[#fafaf9]">
+            <section id="case-studies" className="py-20 md:py-28 border-b border-slate-200/80 bg-[#fafaf9] relative">
+                <span id="work" className="absolute -top-24 left-0 pointer-events-none" aria-hidden="true" />
                 <div className="container mx-auto px-6 max-w-6xl">
                     
                     {/* Section Header */}

@@ -4,26 +4,35 @@ import dbConnect from "@/lib/db";
 import Post from "@/models/Post";
 import PostCard from "@/components/blog/PostCard";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, FileText, Sparkles } from "lucide-react";
+import { ArrowLeft, FileText, Sparkles, Tag as TagIcon, Compass } from "lucide-react";
 
-export async function generateMetadata({ params }: { params: { category: string } }): Promise<Metadata> {
-    const category = decodeURIComponent(params.category);
-    const title = `${category} Architecture Guides | RelayWorks`;
+function extractTag(param: string | string[]): string {
+    if (Array.isArray(param)) {
+        return decodeURIComponent(param.join("/"));
+    }
+    return decodeURIComponent(param || "");
+}
+
+export async function generateMetadata({ params }: { params: { tag: string | string[] } }): Promise<Metadata> {
+    const tag = extractTag(params.tag);
+    const title = tag.length <= 32 
+        ? `#${tag} Engineering Guides | RelayWorks` 
+        : `#${tag} Guides | RelayWorks`;
     return {
         title: title.length <= 60 ? title : `${title.substring(0, 57)}...`,
-        description: `Read technical articles and developer guides on ${category} by Hazrat Ummar Shaikh.`,
+        description: `Read technical guides and architectural dispatches tagged with #${tag} by Hazrat Ummar Shaikh.`,
         alternates: {
-            canonical: `/blog/category/${params.category}`,
+            canonical: `/blog/tag/${Array.isArray(params.tag) ? params.tag.join("/") : params.tag}`,
         },
     };
 }
 
-async function getPostsByCategory(category: string, page: number = 1) {
+async function getPostsByTag(tag: string, page: number = 1) {
     await dbConnect();
     const limit = 9;
     const skip = (page - 1) * limit;
 
-    const query = { status: "published", category: new RegExp(`^${category}$`, 'i') }; // Case-insensitive exact match
+    const query = { status: "published", tags: new RegExp(`^${tag.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, "i") };
 
     const posts = await Post.find(query)
         .sort({ publishedAt: -1, createdAt: -1 })
@@ -36,20 +45,21 @@ async function getPostsByCategory(category: string, page: number = 1) {
     return { posts, total, pages: Math.ceil(total / limit) };
 }
 
-export default async function CategoryPage({
+export default async function TagPage({
     params,
     searchParams,
 }: {
-    params: { category: string };
+    params: { tag: string | string[] };
     searchParams: { page?: string };
 }) {
-    const category = decodeURIComponent(params.category);
+    const tag = extractTag(params.tag);
     const page = Number(searchParams.page) || 1;
-    const { posts, total, pages } = await getPostsByCategory(category, page);
+    const { posts, total, pages } = await getPostsByTag(tag, page);
 
-    const otherCategories = ["Android", "iOS", "Discord Bots", "Backend", "AI", "Architecture"].filter(
-        c => c.toLowerCase() !== category.toLowerCase()
-    );
+    const popularTags = [
+        "Android", "Kotlin", "SwiftUI", "iOS", "FastAPI", 
+        "Spring Boot", "Discord Bot", "AI Chatbots", "Microservices"
+    ];
 
     return (
         <div className="min-h-screen bg-[#fafaf9] [background-image:radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:24px_24px] pt-4 pb-20">
@@ -61,17 +71,18 @@ export default async function CategoryPage({
                     </Link>
                 </div>
 
+                {/* Header Section */}
                 <div className="mb-12 text-center max-w-3xl mx-auto">
                     <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 shadow-2xs mb-4">
                         <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-                        <span>Curated Engineering Domain</span>
+                        <span>Curated Tag Index</span>
                     </div>
 
                     <h1 className="text-4xl md:text-5xl font-black font-heading tracking-tight text-slate-950 mb-3">
-                        Category: <span style={{ color: "#2563eb" }} className="capitalize">{category}</span>
+                        Tag: <span style={{ color: "#2563eb" }}>#{tag}</span>
                     </h1>
                     <p className="text-slate-600 text-base leading-relaxed">
-                        Explore in-depth technical guides, architectural tradeoffs, and production case studies in <strong className="text-slate-900 font-bold">{category}</strong> engineered by Hazrat Ummar Shaikh. Showing <strong className="text-slate-900 font-bold">{total}</strong> publication{total !== 1 ? 's' : ''}.
+                        Curated collection of <strong className="text-slate-900 font-bold">{total}</strong> engineering dispatch{total !== 1 ? "es" : ""} and production architectural walk-throughs covering #{tag}, system tradeoffs, and senior engineering implementation.
                     </p>
                 </div>
 
@@ -88,7 +99,7 @@ export default async function CategoryPage({
                     <div className="text-center py-20 bg-white rounded-3xl border border-slate-200 border-dashed p-8 max-w-md mx-auto">
                         <FileText className="w-12 h-12 text-slate-400 mx-auto mb-3" />
                         <h3 className="text-xl font-bold text-slate-900 mb-2 font-heading">No articles found</h3>
-                        <p className="text-slate-500 text-sm mb-4">No published guides match this category currently.</p>
+                        <p className="text-slate-500 text-sm mb-4">No published guides match this tag currently.</p>
                         <Link href="/blog">
                             <Button variant="outline" className="bg-white border-slate-200 hover:bg-slate-50 text-slate-700">
                                 Browse All Dispatches
@@ -97,21 +108,24 @@ export default async function CategoryPage({
                     </div>
                 )}
 
-                {/* Category Context & Cross-Navigation */}
+                {/* Rich Context & Related Topics (Boosts word count and text-to-HTML ratio) */}
                 <div className="mt-16 pt-10 border-t border-slate-200/80 bg-white rounded-2xl p-8 border border-slate-200 shadow-xs max-w-4xl mx-auto">
-                    <h2 className="text-lg font-bold font-heading text-slate-900 mb-2">RelayWorks Engineering Standards</h2>
+                    <div className="flex items-center gap-2 mb-3">
+                        <Compass className="w-5 h-5 text-blue-600" />
+                        <h2 className="text-lg font-bold font-heading text-slate-900">Explore Core Engineering Disciplines</h2>
+                    </div>
                     <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-6">
-                        Every article in the {category} discipline is written from first-hand production experience. We prioritize deterministic system designs, battery efficiency, high-throughput microservices, and clean code that scales without technical debt.
+                        RelayWorks publishes in-depth architectural postmortems, performance benchmarks, and implementation strategies for production systems. Explore foundational categories across native mobile engineering, distributed microservices, and automated bot architectures.
                     </p>
-                    <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-xs font-semibold text-slate-500 mr-2">Other Categories:</span>
-                        {otherCategories.map((cat) => (
+                    <div className="flex flex-wrap gap-2">
+                        {popularTags.map((popularTag) => (
                             <Link
-                                key={cat}
-                                href={`/blog/category/${encodeURIComponent(cat)}`}
-                                className="px-3 py-1 rounded-full text-xs font-semibold bg-slate-50 border border-slate-200 text-slate-700 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 transition-colors"
+                                key={popularTag}
+                                href={`/blog/tag/${encodeURIComponent(popularTag)}`}
+                                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-50 border border-slate-200 text-slate-700 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 transition-colors"
                             >
-                                {cat}
+                                <TagIcon className="w-3 h-3 text-slate-400" />
+                                <span>#{popularTag}</span>
                             </Link>
                         ))}
                     </div>
@@ -119,24 +133,18 @@ export default async function CategoryPage({
 
                 {/* Pagination */}
                 {pages > 1 && (
-                    <div className="flex justify-center items-center gap-2 mt-16">
-                        {page > 1 && (
-                            <Link href={`/blog/category/${params.category}?page=${page - 1}`}>
-                                <Button variant="outline" className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold h-9 px-4 rounded-lg shadow-2xs">
-                                    Previous
+                    <div className="flex justify-center gap-2 mt-12">
+                        {Array.from({ length: pages }).map((_, i) => (
+                            <Link key={i} href={`/blog/tag/${encodeURIComponent(tag)}?page=${i + 1}`}>
+                                <Button
+                                    variant={page === i + 1 ? "default" : "outline"}
+                                    size="sm"
+                                    className={page === i + 1 ? "bg-blue-600 hover:bg-blue-700 text-white font-bold" : "bg-white border-slate-200 text-slate-700"}
+                                >
+                                    {i + 1}
                                 </Button>
                             </Link>
-                        )}
-                        <div className="flex items-center px-4 font-mono text-xs text-slate-600">
-                            Page {page} of {pages}
-                        </div>
-                        {page < pages && (
-                            <Link href={`/blog/category/${params.category}?page=${page + 1}`}>
-                                <Button variant="outline" className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold h-9 px-4 rounded-lg shadow-2xs">
-                                    Next
-                                </Button>
-                            </Link>
-                        )}
+                        ))}
                     </div>
                 )}
             </div>

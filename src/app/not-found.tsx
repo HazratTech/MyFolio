@@ -17,7 +17,7 @@ export default function NotFound() {
             <div className="max-w-2xl w-full space-y-8">
                 {/* 404 Glitch Effect */}
                 <div className="relative">
-                    <h1 className="text-9xl font-bold text-primary opacity-20 select-none">404</h1>
+                    <span aria-hidden="true" className="block text-9xl font-bold text-primary opacity-20 select-none">404</span>
                     <div className="absolute inset-0 flex items-center justify-center">
                         <h1 className="text-7xl md:text-8xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600 animate-pulse">
                             System Error

@@ -215,6 +215,7 @@ export const AboutLanding = () => {
                                             rel="noreferrer"
                                             className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors"
                                             title="GitHub Profile"
+                                            aria-label="GitHub Profile"
                                         >
                                             <Github className="w-4 h-4" />
                                         </a>
@@ -223,6 +224,7 @@ export const AboutLanding = () => {
                                             target="_blank"
                                             rel="noreferrer"
                                             className="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center gap-1.5 border border-emerald-200/80 transition-colors"
+                                            aria-label="Google Play Store Developer Profile"
                                         >
                                             <ExternalLink className="w-3.5 h-3.5" />
                                             <span>Google Play</span>
@@ -233,6 +235,7 @@ export const AboutLanding = () => {
                                             rel="noreferrer"
                                             className="p-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition-colors"
                                             title="LinkedIn"
+                                            aria-label="LinkedIn Profile"
                                         >
                                             <Linkedin className="w-4 h-4" />
                                         </a>
@@ -242,6 +245,7 @@ export const AboutLanding = () => {
                                             rel="noreferrer"
                                             className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors"
                                             title="X (Twitter)"
+                                            aria-label="X (Twitter) Profile"
                                         >
                                             <Twitter className="w-4 h-4" />
                                         </a>

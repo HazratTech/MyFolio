@@ -423,6 +423,7 @@ export const MobileAppLanding = () => {
                                                         rel="noreferrer"
                                                         className="p-2.5 rounded-xl bg-slate-100 border border-slate-200 hover:bg-slate-200 text-slate-700 transition-colors"
                                                         title="View Source on GitHub"
+                                                        aria-label={`View ${currentProj.name} source code on GitHub`}
                                                     >
                                                         <Github className="w-4 h-4" />
                                                     </a>

@@ -176,12 +176,17 @@ export default async function BlogPage({
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "Blog",
-        "name": "RelayWorks Dispatches | Technical Architecture & Engineering Guides",
+        "name": "RelayWorks Dispatches | Architecture & Engineering Guides",
+        "description": "Production guides on Native Android, iOS, Kotlin Multiplatform, Spring Boot, Discord bots, and AI automation.",
         "url": "https://relayworks.dev/blog",
         "publisher": {
-            "@type": "Person",
-            "name": "Hazrat Ummar Shaikh",
-            "url": "https://relayworks.dev"
+            "@type": "Organization",
+            "name": "RelayWorks",
+            "url": "https://relayworks.dev",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://relayworks.dev/icon.png"
+            }
         }
     };
 

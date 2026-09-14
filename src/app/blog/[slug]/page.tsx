@@ -46,14 +46,21 @@ export async function generateMetadata({ params }: { params: { slug: string } })
         imageUrl = `https://relayworks.dev${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
     }
 
+    const baseTitle = post.title ? post.title.trim() : "Technical Guide";
+    const metaTitle = baseTitle.length <= 47 
+        ? `${baseTitle} | RelayWorks` 
+        : baseTitle.length <= 60 
+            ? baseTitle 
+            : `${baseTitle.substring(0, 57).trim()}...`;
+
     return {
-        title: `${post.title} | RelayWorks Dispatches`,
+        title: metaTitle,
         description: post.excerpt || post.content.substring(0, 160),
         alternates: {
             canonical: `/blog/${params.slug}`,
         },
         openGraph: {
-            title: post.title,
+            title: metaTitle,
             description: post.excerpt,
             url: `https://relayworks.dev/blog/${params.slug}`,
             type: "article",
@@ -70,7 +77,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
         },
         twitter: {
             card: "summary_large_image",
-            title: post.title,
+            title: metaTitle,
             description: post.excerpt,
             images: [imageUrl],
         }
@@ -120,17 +127,31 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
         ctaBtnText = "Explore iOS Development";
     }
 
+    const canonicalUrl = `https://relayworks.dev/blog/${post.slug}`;
+    const pubDate = post.publishedAt || post.createdAt || new Date();
+    const modDate = post.updatedAt || post.publishedAt || post.createdAt || new Date();
+
+    let resolvedImage = post.coverImage || "https://relayworks.dev/og-banner.png";
+    if (resolvedImage && !resolvedImage.startsWith("http")) {
+        resolvedImage = `https://relayworks.dev${resolvedImage.startsWith("/") ? "" : "/"}${resolvedImage}`;
+    }
+
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "BlogPosting",
-        "headline": post.title,
-        "image": post.coverImage ? [post.coverImage] : [],
-        "datePublished": post.publishedAt || post.createdAt,
-        "dateModified": post.updatedAt || post.publishedAt || post.createdAt,
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": canonicalUrl
+        },
+        "headline": post.title ? post.title.substring(0, 110) : "RelayWorks Dispatch",
+        "image": [resolvedImage],
+        "datePublished": new Date(pubDate).toISOString(),
+        "dateModified": new Date(modDate).toISOString(),
         "author": {
             "@type": "Person",
             "name": "Hazrat Ummar Shaikh",
             "jobTitle": "Lead Software Engineer & Studio Founder",
+            "url": "https://relayworks.dev/about",
             "worksFor": {
                 "@type": "Organization",
                 "name": "RelayWorks",
@@ -148,7 +169,7 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
             "url": "https://relayworks.dev",
             "logo": {
                 "@type": "ImageObject",
-                "url": "https://relayworks.dev/logo-brand.png"
+                "url": "https://relayworks.dev/icon.png"
             }
         },
         "description": post.excerpt || post.content.replace(/<[^>]*>/g, "").substring(0, 160)

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { DiscordBotLanding } from "@/components/sections/DiscordBotLanding";
 
 export const metadata: Metadata = {
-  title: "Custom Discord Bot Developer & Development Services | RelayWorks",
+  title: "Custom Discord Bot Development Services | RelayWorks",
   description: "Looking to make a custom Discord bot? Hire an expert Discord developer to create your own bot with ticket systems, verification, economy, and AI integrations. Free consultation & fast delivery.",
   alternates: {
     canonical: "https://relayworks.dev/discord-bot",

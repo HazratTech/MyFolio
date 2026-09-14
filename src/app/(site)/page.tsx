@@ -2,7 +2,7 @@ import { LandingPage } from "@/components/layout/LandingPage";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "RelayWorks | Boutique Software Engineering Studio — Mobile Apps, Backends & Automation",
+  title: "RelayWorks | Boutique Software Engineering Studio",
   description: "RelayWorks is an independent boutique software engineering studio led by Hazrat Ummar Shaikh. We engineer production native Android & iOS apps (Kotlin/Compose, SwiftUI, KMP), high-throughput Spring Boot & FastAPI backends, and custom Discord bot automation.",
   alternates: {
     canonical: "https://relayworks.dev",
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     "Hazrat Ummar Shaikh"
   ],
   openGraph: {
-    title: "RelayWorks | Boutique Software Engineering Studio — Mobile Apps, Backends & Automation",
+    title: "RelayWorks | Boutique Software Engineering Studio",
     description: "Independent engineering studio led by Hazrat Ummar Shaikh. Production Native Android & iOS apps, Kotlin Multiplatform, Spring Boot backends, and Discord automation. Direct senior builder access.",
     url: "https://relayworks.dev",
     siteName: "RelayWorks",
@@ -48,27 +48,31 @@ const homeSchema = {
   "@context": "https://schema.org",
   "@graph": [
     {
-      "@type": "ProfessionalService",
+      "@type": "Organization",
       "@id": "https://relayworks.dev/#organization",
       "name": "RelayWorks",
       "url": "https://relayworks.dev",
-      "logo": "https://relayworks.dev/icon.png",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://relayworks.dev/icon.png"
+      },
       "image": "https://relayworks.dev/og-banner.png",
       "description": "Independent boutique software engineering studio specializing in native mobile applications (Kotlin, Compose, SwiftUI, KMP), high-throughput backend microservices (Spring Boot, FastAPI), and custom business automation.",
       "founder": {
         "@type": "Person",
         "name": "Hazrat Ummar Shaikh",
         "jobTitle": "Independent Senior Software Engineer & Studio Founder",
+        "url": "https://relayworks.dev/about",
         "sameAs": [
           "https://github.com/ihazratummar",
           "https://play.google.com/store/apps/dev?id=8511073495389394372"
         ]
       },
-      "priceRange": "$490 - $5000+",
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "5.0",
-        "reviewCount": "28"
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "Customer Support & Engineering",
+        "email": "hazratummar9@gmail.com",
+        "url": "https://relayworks.dev/contact"
       },
       "hasOfferCatalog": {
         "@type": "OfferCatalog",

@@ -59,12 +59,12 @@ export function CookieConsent() {
         }
     }, []);
 
-    // Listen for global href="#cookie-settings" clicks
+    // Listen for global href="#cookie-settings" and data-cookie-settings clicks
     useEffect(() => {
         const handleGlobalClick = (e: MouseEvent) => {
             const target = e.target as HTMLElement;
-            const anchor = target.closest("a");
-            if (anchor && anchor.getAttribute("href") === "#cookie-settings") {
+            const trigger = target.closest("a[href='#cookie-settings'], button[data-cookie-settings], [data-cookie-settings]");
+            if (trigger) {
                 e.preventDefault();
                 const savedConsent = getCookie(COOKIE_NAME);
                 if (savedConsent) {
@@ -84,13 +84,17 @@ export function CookieConsent() {
     const savePreferences = (updatedPrefs: ConsentSettings) => {
         setCookie(COOKIE_NAME, JSON.stringify(updatedPrefs));
         setIsOpen(false);
-        // Trigger page-wide event so scripts can immediately load/initialize
-        window.dispatchEvent(new CustomEvent(EVENT_NAME, { detail: updatedPrefs }));
+        setShowCustomize(false);
+
+        // Notify analytics listeners immediately
+        if (typeof window !== "undefined") {
+            window.dispatchEvent(new CustomEvent(EVENT_NAME, { detail: updatedPrefs }));
+        }
     };
 
     const handleAcceptAll = () => {
-        const allConsent = { necessary: true, analytics: true, advertising: true };
-        savePreferences(allConsent);
+        const allApproved = { necessary: true, analytics: true, advertising: true };
+        savePreferences(allApproved);
     };
 
     const handleDeclineNonEssential = () => {
@@ -111,15 +115,17 @@ export function CookieConsent() {
     };
 
     return (
-        <AnimatePresence>
-            {isOpen && (
-                <motion.div
-                    initial={{ y: 100, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: 100, opacity: 0 }}
-                    transition={{ type: "spring", stiffness: 260, damping: 25 }}
-                    className="fixed bottom-6 left-6 right-6 md:left-auto md:right-8 md:max-w-md z-[999] rounded-2xl border border-white/10 bg-card/90 backdrop-blur-md shadow-2xl p-6 text-foreground font-sans dark"
-                >
+        <>
+            <span id="cookie-settings" className="sr-only pointer-events-none" aria-hidden="true" />
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ y: 100, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: 100, opacity: 0 }}
+                        transition={{ type: "spring", stiffness: 260, damping: 25 }}
+                        className="fixed bottom-6 left-6 right-6 md:left-auto md:right-8 md:max-w-md z-[999] rounded-2xl border border-white/10 bg-card/90 backdrop-blur-md shadow-2xl p-6 text-foreground font-sans dark"
+                    >
                     <div className="flex gap-4 items-start mb-4">
                         <div className="p-3 bg-primary/10 rounded-xl text-primary flex-shrink-0">
                             <Cookie className="w-6 h-6 animate-pulse" />
@@ -232,5 +238,6 @@ export function CookieConsent() {
                 </motion.div>
             )}
         </AnimatePresence>
+        </>
     );
 }

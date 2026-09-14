@@ -207,30 +207,34 @@ export const Projects = () => {
 
                                             {/* Overlay with Links */}
                                             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 z-10">
-                                                <a
-                                                    href={project.githubUrl}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    aria-label={`View ${project.title} source code on GitHub`}
-                                                    className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors"
-                                                    onClick={(e) => e.stopPropagation()}
-                                                >
-                                                    <Github className="w-5 h-5" />
-                                                </a>
-                                                <a
-                                                    href={project.liveUrl}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    aria-label={`View ${project.title} live demo`}
-                                                    className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-                                                    onClick={(e) => e.stopPropagation()}
-                                                >
-                                                    {project.liveUrl && project.liveUrl.includes("play.google.com") ? (
-                                                        <Smartphone className="w-5 h-5" />
-                                                    ) : (
-                                                        <ExternalLink className="w-5 h-5" />
-                                                    )}
-                                                </a>
+                                                {project.githubUrl && project.githubUrl.trim() !== "" && (
+                                                    <a
+                                                        href={project.githubUrl}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        aria-label={`View ${project.title} source code on GitHub`}
+                                                        className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        <Github className="w-5 h-5" />
+                                                    </a>
+                                                )}
+                                                {project.liveUrl && project.liveUrl.trim() !== "" && (
+                                                    <a
+                                                        href={project.liveUrl}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        aria-label={`View ${project.title} live demo`}
+                                                        className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        {project.liveUrl.includes("play.google.com") ? (
+                                                            <Smartphone className="w-5 h-5" />
+                                                        ) : (
+                                                            <ExternalLink className="w-5 h-5" />
+                                                        )}
+                                                    </a>
+                                                )}
                                             </div>
 
                                             {/* Slider Controls */}
@@ -381,22 +385,26 @@ export const Projects = () => {
                                     </div>
 
                                     <div className="flex gap-3 mb-8">
-                                        <a href={selectedProject.githubUrl} target="_blank" rel="noopener noreferrer" className="flex-1">
-                                            <Button variant="outline" className="w-full border-white/10 hover:bg-white/5 hover:text-gray-700 hover:border-white/30 transition-all h-11">
-                                                <Github className="w-4 h-4 mr-2" />
-                                                Code
-                                            </Button>
-                                        </a>
-                                        <a href={selectedProject.liveUrl} target="_blank" rel="noopener noreferrer" className="flex-1">
-                                            <Button className="w-full bg-primary hover:bg-primary/90 text-white h-11 shadow-lg shadow-primary/20">
-                                                {selectedProject.liveUrl && selectedProject.liveUrl.includes("play.google.com") ? (
-                                                    <Smartphone className="w-4 h-4 mr-2" />
-                                                ) : (
-                                                    <ExternalLink className="w-4 h-4 mr-2" />
-                                                )}
-                                                Live Demo
-                                            </Button>
-                                        </a>
+                                        {selectedProject.githubUrl && selectedProject.githubUrl.trim() !== "" && (
+                                            <a href={selectedProject.githubUrl} target="_blank" rel="noopener noreferrer" className="flex-1" aria-label={`View ${selectedProject.title} GitHub repository`}>
+                                                <Button variant="outline" className="w-full border-white/10 hover:bg-white/5 hover:text-gray-700 hover:border-white/30 transition-all h-11">
+                                                    <Github className="w-4 h-4 mr-2" />
+                                                    Code
+                                                </Button>
+                                            </a>
+                                        )}
+                                        {selectedProject.liveUrl && selectedProject.liveUrl.trim() !== "" && (
+                                            <a href={selectedProject.liveUrl} target="_blank" rel="noopener noreferrer" className="flex-1" aria-label={`View ${selectedProject.title} live deployment`}>
+                                                <Button className="w-full bg-primary hover:bg-primary/90 text-white h-11 shadow-lg shadow-primary/20">
+                                                    {selectedProject.liveUrl.includes("play.google.com") ? (
+                                                        <Smartphone className="w-4 h-4 mr-2" />
+                                                    ) : (
+                                                        <ExternalLink className="w-4 h-4 mr-2" />
+                                                    )}
+                                                    Live Demo
+                                                </Button>
+                                            </a>
+                                        )}
                                     </div>
 
                                     <div className="border-t border-white/10 pt-6">

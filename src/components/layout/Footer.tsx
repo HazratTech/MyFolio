@@ -208,7 +208,7 @@ export const Footer = async () => {
                         <span className="text-slate-300">·</span>
                         <Link href="/cookie-policy" className="hover:text-blue-600 transition-colors">Cookie Policy</Link>
                         <span className="text-slate-300">·</span>
-                        <Link href="#cookie-settings" className="hover:text-blue-600 transition-colors">Manage Cookies</Link>
+                        <button type="button" data-cookie-settings className="hover:text-blue-600 transition-colors cursor-pointer bg-transparent border-none p-0 text-xs text-slate-500">Manage Cookies</button>
                     </div>
                 </div>
 

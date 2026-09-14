@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { AboutLanding } from "@/components/sections/AboutLanding";
 
 export const metadata: Metadata = {
-    title: "About Hazrat Ummar Shaikh | Lead Software Engineer | RelayWorks",
+    title: "About Hazrat Ummar Shaikh | Founder & Lead Engineer",
     description: "Learn more about Hazrat Ummar Shaikh, lead software engineer and founder of RelayWorks, specializing in production native mobile apps, deterministic AI chatbots, Discord bot infrastructure, and scalable APIs.",
     alternates: {
         canonical: "https://relayworks.dev/about",
