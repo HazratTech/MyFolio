@@ -453,6 +453,41 @@ Return ONLY valid JSON.`,
     }, "Strategist Agent");
 }
 
+// ─── Post Integrity Validator ────────────────────────────────────────────────
+export function validatePostIntegrity(title: string, content: string): { valid: boolean; reason?: string } {
+    const textOnly = content.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+    const words = textOnly.split(" ").filter(Boolean).length;
+
+    if (words < 1200) {
+        return { valid: false, reason: `Word count too low (${words} words). Minimum required is 1,200 words.` };
+    }
+
+    if (/\[IMAGE:[^\]]*\]?/i.test(content)) {
+        return { valid: false, reason: "Post contains unreplaced [IMAGE: ...] placeholders." };
+    }
+
+    // Check for abrupt endings
+    const last50 = textOnly.slice(-50).trim();
+    const isAbrupt = 
+        last50.endsWith(",") || 
+        last50.endsWith(":") || 
+        last50.endsWith("and") || 
+        last50.endsWith("the") || 
+        last50.endsWith("a") || 
+        last50.endsWith("an") || 
+        last50.endsWith("for") || 
+        last50.endsWith("with") || 
+        last50.endsWith("like") || 
+        last50.endsWith("just") || 
+        !/[.!?"]$/.test(last50);
+
+    if (isAbrupt) {
+        return { valid: false, reason: `Post appears truncated at ending: "${last50.slice(-30)}"` };
+    }
+
+    return { valid: true };
+}
+
 export async function runWriterAgent(
     ai: GoogleGenAI,
     research: any,
@@ -484,14 +519,14 @@ export async function runWriterAgent(
     return retryOperation(async () => {
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
-            contents: `You are a senior technical writer at RelayWorks (https://relayworks.dev), a custom software development and automation agency.
+            contents: `You are a Principal Software Architect writing for the RelayWorks Engineering Blog (https://relayworks.dev).
 
-Write a complete, publication-ready blog post following this exact blueprint:
+Write a deep, authoritative, publication-grade engineering case study following this exact blueprint:
 
 TITLE: "${strategy.title}"
-AUDIENCE: ${research.targetAudience}
+AUDIENCE: ${research.targetAudience} (Experienced developers, tech leads, system architects)
 UNIQUE ANGLE: ${research.uniqueAngle}
-TECHNICAL DEPTH: ${research.technicalDepth}
+TECHNICAL DEPTH: ${research.technicalDepth || "advanced"}
 RELATED KEYWORDS TO NATURALLY INCLUDE: ${research.relatedKeywords.join(", ")}
 EXTERNAL LINKS TO CITE: ${research.externalLinks.map((l: any) => `${l.anchorText}: ${l.url}`).join(", ")}
 ${affiliateWriterRule}
@@ -501,26 +536,26 @@ ${sectionsGuide}
 
 CTA PLACEMENTS: ${strategy.ctaPlacements.join("; ")}
   - Use ONLY these CTA links: <a href="/discord-bot">RelayWorks Custom Bot Development</a> and <a href="/contact">Contact RelayWorks</a>
-  - Integrate naturally, NO aggressive sales language
+  - Integrate naturally as an engineering resource, NO aggressive sales pitch.
 
-━━━━━ WRITING RULES ━━━━━
-• Write the full post content in standard HTML. Start directly with the first section (do NOT repeat the title as H1 in the content).
-• Write in neutral, authoritative third-person voice. Sound like a real engineer.
-• NEVER fabricate statistics, benchmarks, or survey results.
-• Avoid AI clichés: "Let's dive in", "Game changer", "In today's fast-paced world", "In conclusion", "Unlock", "Revolutionize", "Crucial"
-• Code must be correct and runnable.
-• Environment variables: use placeholders like YOUR_TOKEN_HERE.
-• NO author review scores or subjective ratings.
+━━━━━ STRICT ENGINEERING WRITING STANDARDS (GOOGLE ADSENSE & DEVELOPER TRUST) ━━━━━
+• VOICE: First-person authentic engineering voice ("In our production cluster...", "When we profiled this under load...", "Here is what broke and how we resolved it"). Sound like a battle-tested engineer who actually built and debugged this system.
+• COMPLETENESS: You MUST write the entire article from start to finish. NEVER truncate, never leave sentences unfinished, and never stop mid-code block. Conclude with a strong Architectural Takeaways / Conclusion section.
+• NO AI SLOP: Strictly BANNED words and phrases:
+  - "Let's dive in", "Game changer", "In today's fast-paced world", "In conclusion", "Unlock", "Revolutionize", "Crucial", "Vital", "Delve", "Seamlessly", "Leverage", "Furthermore", "Moreover", "A testament to", "Tapestry", "Beacon", "Pivotal", "Navigating the complexities", "Fast-forward to today".
+• CODE QUALITY: Every code snippet must be complete, runnable, and syntactically valid with realistic error handling and imports.
+• REALISTIC METRICS: Ground discussions in concrete technical considerations (latency in ms, throughput, connection limits, memory usage, CPU profiling) rather than vague generic statements.
+• FORMAT: Return ONLY the raw HTML content starting directly with the first section (do NOT repeat title as H1). Do NOT wrap in markdown code blocks (\`\`\`html) or JSON.
 
 ━━━━━ VISUAL RULES ━━━━━
 • [IMAGE: ...] markers: Place BETWEEN block elements, NEVER inside <p> tags.
-• Mermaid diagrams: <div class="mermaid">...valid mermaid code...</div>. Quote node labels with special characters. Use proper Mermaid syntax (graph TD, sequenceDiagram, flowchart LR, etc).
-  - **CRITICAL MERMAID SYNTAX RULE**: Do NOT use single quotes (') or commas (,) inside node shapes directly. For example, instead of A[KPIs 'Conversion Rate'] or B(CRM 'Salesforce'), you MUST enclose the text in double quotes inside the shapes: A["KPIs 'Conversion Rate'"] or B("CRM 'Salesforce'"). Never use raw single quotes inside parentheses or square brackets.
-• Code blocks: <pre><code class="language-python">...</code></pre> (specify language).
-• Tables: <table> with <thead> and <tbody>.
-
-━━━━━ FORMAT ━━━━━
-Return ONLY the raw HTML content. Do NOT wrap in markdown code blocks (\`\`\`html) or JSON.`,
+• Mermaid diagrams: <div class="mermaid">...valid mermaid code...</div>. Quote node labels with double quotes: A["Label Here"].
+• Code blocks: <pre><code class="language-python">...</code></pre> (always specify language).
+• Tables: <table> with <thead> and <tbody>.`,
+            config: {
+                maxOutputTokens: 8192,
+                temperature: 0.7,
+            }
         });
 
         if (!response?.text) throw new Error("Writer Agent returned empty response");
@@ -539,21 +574,37 @@ Return ONLY the raw HTML content. Do NOT wrap in markdown code blocks (\`\`\`htm
 export async function runEditorAgent(
     content: string,
     strategy: any,
-    research: any
+    _research: any
 ): Promise<any> {
-    console.log("🔬 Agent 4: Editor starting (GPT-4o-mini)...");
-    const systemPrompt = `You are a senior technical editor. Review and improve this blog draft:
-1. REMOVE AI slop: "Let's dive in", "Game changer", "Unlock", "Revolutionize", "Crucial", "Vital", "Delve", "Seamlessly", "Leverage"
-2. Verify code syntax, improve readability, ensure developer-to-developer tone
-3. Preserve <div class="mermaid"> blocks, verify no fabricated /blog/* URLs
-4. Check word count > 1200
-5. Clean up empty <p></p> tags
-Return JSON: {"content": "cleaned HTML", "editorScore": 0-100, "changesLog": ["change1"]}`;
+    console.log("🔬 Agent 4: Editor linting (HTML cleanup)...");
+    
+    // Clean up obvious AI slop phrases surgically without running lossy full-text JSON rewriting
+    let cleaned = content;
+    const slopPatterns = [
+        /\bIn today's fast-paced (world|landscape|tech environment),?\s*/gi,
+        /\bLet's dive (in|deep into this),?\s*/gi,
+        /\bIn conclusion,?\s*/gi,
+        /\bAs a testament to [^,.]*,?\s*/gi,
+        /\bIt is crucial to remember that\s*/gi,
+        /\bNeedless to say,?\s*/gi,
+    ];
 
-    const userPrompt = `TITLE: "${strategy.title}"\nDRAFT:\n${content}`;
-    const result = await callOpenAI(systemPrompt, userPrompt);
-    console.log("✅ Agent 4: Editing complete");
-    return JSON.parse(result);
+    for (const pattern of slopPatterns) {
+        cleaned = cleaned.replace(pattern, "");
+    }
+
+    // Clean empty tags
+    cleaned = cleaned.replace(/<p>\s*<\/p>/gi, "");
+    cleaned = cleaned.replace(/<p>&nbsp;<\/p>/gi, "");
+
+    const integrity = validatePostIntegrity(strategy.title, cleaned);
+    console.log(`✅ Agent 4: Linting complete (Integrity: ${integrity.valid ? "PASSED" : integrity.reason})`);
+
+    return {
+        content: cleaned,
+        editorScore: integrity.valid ? 95 : 60,
+        changesLog: integrity.valid ? ["Slop phrases scrubbed", "Empty tags cleaned"] : [integrity.reason || "Integrity warning"]
+    };
 }
 
 export async function runSEOAgent(
@@ -562,18 +613,21 @@ export async function runSEOAgent(
     research: any
 ): Promise<any> {
     console.log("📊 Agent 5: SEO Optimizer starting (GPT-4o-mini)...");
-    const systemPrompt = `You are an SEO specialist. Optimize this blog:
-1. Title 50-60 chars with keyword, meta 140-155 chars
-2. Keyword density 3-5x naturally, related keywords woven in
-3. Verify 2 external links + 2 internal CTAs (/discord-bot, /contact)
-4. Generate 3 FAQ items for rich snippets
-5. Preserve <div class="mermaid">, <pre><code>, <figure> blocks
-Return JSON: {"title":"","metaDescription":"","content":"HTML","faqSchema":[{"question":"","answer":""}],"seoScore":0-100,"optimizations":[]}`;
+    const systemPrompt = `You are a technical SEO specialist. Given the article details, generate optimized metadata and rich FAQ schema:
+1. Title 50-60 chars with primary keyword
+2. Meta description 140-155 chars
+3. Generate 3 authoritative FAQ items for rich snippets based on technical details
+Return JSON: {"title":"","metaDescription":"","faqSchema":[{"question":"","answer":""}],"seoScore":0-100,"optimizations":[]}`;
 
-    const userPrompt = `KEYWORD: "${research.keyword}"\nRELATED: ${research.relatedKeywords.join(", ")}\nTITLE: "${strategy.title}"\nMETA: "${strategy.metaDescription}"\n\nHTML:\n${content}`;
+    const userPrompt = `KEYWORD: "${research.keyword}"\nRELATED: ${research.relatedKeywords?.join(", ") || ""}\nTITLE: "${strategy.title}"\nMETA: "${strategy.metaDescription}"\nEXCERPT: "${strategy.excerpt}"`;
     const result = await callOpenAI(systemPrompt, userPrompt);
-    console.log("✅ Agent 5: SEO optimization complete");
-    return JSON.parse(result);
+    console.log("✅ Agent 5: SEO metadata complete");
+    const parsed = JSON.parse(result);
+    // Keep writer's full content untouched to prevent truncation
+    return {
+        ...parsed,
+        content
+    };
 }
 
 export async function runVisualCreatorAgent(
@@ -640,7 +694,8 @@ export async function runVisualCreatorAgent(
         replacedCount++;
     }
 
-    finalContent = finalContent.replace(/\[IMAGE:[^\]]*\]/g, "");
+    // Remove any remaining or unclosed image markers
+    finalContent = finalContent.replace(/\[IMAGE:[^\]]*(?:\]|$)/gi, "");
 
     console.log(`✅ Agent 6: ${replacedCount} inline photos injected`);
     return { content: finalContent, coverResult };

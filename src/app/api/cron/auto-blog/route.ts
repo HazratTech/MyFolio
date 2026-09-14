@@ -8,6 +8,7 @@ import { sendCronFailureNotification, sendSocialMediaWebhook } from "@/lib/disco
 import {
     respectRPM,
     countWords,
+    validatePostIntegrity,
     runResearchAgent,
     runStrategistAgent,
     runWriterAgent,
@@ -113,11 +114,22 @@ export async function POST(req: NextRequest) {
         }
 
         if (!selectedArticle) {
-            console.log("No matching Dev.to trends. Generating from allowed topics...");
-            const topicsToChoose = allowedTopics.filter(t => t !== "off topic");
-            selectedTopic = topicsToChoose.length > 0
-                ? topicsToChoose[Math.floor(Math.random() * topicsToChoose.length)]
-                : "mobile app development";
+            console.log("No matching Dev.to trends. Synthesizing advanced engineering topic...");
+            const deepTopics = [
+                "Diagnosing Memory Leaks and Heap Fragmentation in Production Ktor Services",
+                "Implementing Leaky Bucket Rate Limiting with Redis and Lua in FastAPI",
+                "Zero-Downtime PostgreSQL Schema Migrations under High Write Load",
+                "Swift Concurrency in Practice: Preventing Data Races with Actor Isolation",
+                "Optimizing Jetpack Compose Recomposition Performance with Custom Modifiers",
+                "Designing Resilient Discord Gateway Sharding for 100k+ Concurrent Servers",
+                "Tracing Bottlenecks in Async Python Services with OpenTelemetry and Jaeger",
+                "Handling Database Failover Gracefully with Connection Pool Retries in Go and Kotlin",
+                "Building Offline-First Android Apps with Room Database and Coroutines Flow"
+            ];
+            const uncoveredTopics = deepTopics.filter(t => !existingTitles.some((et: string) => et.includes(t.toLowerCase().slice(0, 20))));
+            selectedTopic = uncoveredTopics.length > 0 
+                ? uncoveredTopics[Math.floor(Math.random() * uncoveredTopics.length)]
+                : deepTopics[Math.floor(Math.random() * deepTopics.length)];
         }
 
         const topicString = selectedArticle
@@ -126,7 +138,7 @@ export async function POST(req: NextRequest) {
 
         const articleContext = selectedArticle
             ? `Trending on Dev.to: "${selectedArticle.title}". Description: "${selectedArticle.description}". Tags: ${selectedArticle.tag_list?.join(", ")}.`
-            : `Topic: "${selectedTopic}". Write a deep-dive practical guide.`;
+            : `Advanced Engineering Topic: "${selectedTopic}". Write a deep-dive case study covering production architectural trade-offs, real debugging steps, benchmarks, and concrete runnable code.`;
 
         // ══════════════════════════════════════════════════════════════════════
         console.log("═══════════════════════════════════════════════════");
@@ -278,6 +290,12 @@ export async function POST(req: NextRequest) {
                 name: mainCategory,
                 slug: mainCategory.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, ""),
             });
+        }
+
+        // ── Post Integrity Check (No AI Slop / Truncation) ────────────────
+        const integrity = validatePostIntegrity(finalTitle, cleanedContent);
+        if (!integrity.valid) {
+            throw new Error(`Generated blog failed integrity verification: ${integrity.reason}`);
         }
 
         // ── Save Post ─────────────────────────────────────────────────────

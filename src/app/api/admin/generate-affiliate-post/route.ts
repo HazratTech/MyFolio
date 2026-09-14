@@ -8,6 +8,7 @@ import { verifyToken } from "@/lib/session";
 import {
     respectRPM,
     countWords,
+    validatePostIntegrity,
     runResearchAgent,
     runStrategistAgent,
     runWriterAgent,
@@ -205,6 +206,12 @@ export async function POST(req: NextRequest) {
                 name: mainCategory,
                 slug: mainCategory.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, ""),
             });
+        }
+
+        // ── Post Integrity Check (No AI Slop / Truncation) ────────────────
+        const integrity = validatePostIntegrity(finalTitle, cleanedContent);
+        if (!integrity.valid) {
+            throw new Error(`Generated affiliate blog failed integrity verification: ${integrity.reason}`);
         }
 
         const newPost = await Post.create({
