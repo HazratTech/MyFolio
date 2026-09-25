@@ -19,6 +19,10 @@ const PostSchema = new Schema({
     readingTime: { type: Number }, // In minutes
     featured: { type: Boolean, default: false },
     publishedAt: { type: Date },
+    faq: [{
+        question: { type: String },
+        answer: { type: String }
+    }],
 }, { timestamps: true });
 
 // Prevent Mongoose model recompilation error in development
@@ -42,6 +46,7 @@ export interface IPost {
     featured: boolean;
     readingTime?: number;
     publishedAt?: Date;
+    faq?: Array<{ question: string; answer: string }>;
     createdAt: Date;
     updatedAt: Date;
 }

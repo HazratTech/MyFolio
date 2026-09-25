@@ -312,6 +312,7 @@ export async function POST(req: NextRequest) {
             publishedAt: new Date(),
             readingTime,
             views: 0,
+            faq: seoOutput.faqSchema || [],
         });
 
         // ── Social Media Posts (Gemini Flash) ─────────────────────────────

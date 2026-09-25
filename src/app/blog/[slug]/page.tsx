@@ -136,7 +136,7 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
         resolvedImage = `https://relayworks.dev${resolvedImage.startsWith("/") ? "" : "/"}${resolvedImage}`;
     }
 
-    const jsonLd = {
+    const jsonLd: { "@context": string; "@graph": any[] } = {
         "@context": "https://schema.org",
         "@graph": [
             {
@@ -207,6 +207,45 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
             }
         ]
     };
+
+    // Rich Schema.org FAQPage for Google Search rich snippets
+    const faqItems: Array<{ question: string; answer: string }> = [];
+    if (post.faq && Array.isArray(post.faq) && post.faq.length > 0) {
+        for (const item of post.faq) {
+            if (item.question && item.answer) {
+                faqItems.push({
+                    question: item.question.trim(),
+                    answer: item.answer.trim().replace(/<[^>]*>/g, "")
+                });
+            }
+        }
+    } else if (post.content) {
+        // Fallback: extract FAQ headings from HTML if present
+        const faqRegex = /<h[34][^>]*>(?:Q:\s*|FAQ:\s*)?([^<]+)<\/h[34]>\s*<p>(?:<strong>Answer:<\/strong>\s*)?([^<]+)<\/p>/gi;
+        let match;
+        while ((match = faqRegex.exec(post.content)) !== null) {
+            if (match[1] && match[2] && faqItems.length < 5) {
+                faqItems.push({
+                    question: match[1].replace(/^Q:\s*/i, "").trim(),
+                    answer: match[2].replace(/^<strong>Answer:<\/strong>\s*/i, "").trim()
+                });
+            }
+        }
+    }
+
+    if (faqItems.length > 0) {
+        jsonLd["@graph"].push({
+            "@type": "FAQPage",
+            "mainEntity": faqItems.map((item) => ({
+                "@type": "Question",
+                "name": item.question,
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": item.answer
+                }
+            }))
+        });
+    }
 
     const publishDate = new Date(post.publishedAt || post.createdAt).toLocaleDateString('en-US', {
         year: 'numeric',
