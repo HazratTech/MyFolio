@@ -842,7 +842,136 @@ export const LandingPage = () => {
             </section>
 
 
-            {/* ─── 7. INTERACTIVE PROJECT INTAKE & DISCOVERY WIZARD ─── */}
+            {/* ─── 7. FEATURED ARCHITECTURE & ENGINEERING DISPATCHES (INTERNAL LINKING ENGINE) ─── */}
+            <section className="py-20 md:py-28 bg-[#fafaf9] border-b border-slate-200/80">
+                <div className="container mx-auto px-6 max-w-6xl">
+                    <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-14">
+                        <div>
+                            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-slate-700 shadow-sm mb-3">
+                                Technical Leadership & Case Studies
+                            </div>
+                            <h2 className="text-3xl sm:text-4xl font-extrabold font-heading text-slate-950 tracking-tight leading-tight">
+                                Production Post-Mortems & Deep Dives
+                            </h2>
+                            <p className="text-slate-600 text-sm mt-2 max-w-xl">
+                                Real engineering challenges solved in production — from native memory crashes to serverless throttling and autonomous agent pipelines.
+                            </p>
+                        </div>
+                        <Link 
+                            href="/blog"
+                            className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors shrink-0"
+                        >
+                            <span>Browse All 50 Dispatches</span>
+                            <ArrowRight className="w-4 h-4" />
+                        </Link>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Article 1 */}
+                        <Link 
+                            href="/blog/fixing-android-native-crashes-in-react-native-app"
+                            className="p-7 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-md hover:border-blue-300 transition-all flex flex-col justify-between group"
+                        >
+                            <div>
+                                <div className="flex items-center justify-between text-xs font-mono text-slate-500 mb-3">
+                                    <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-semibold">
+                                        Android & NDK
+                                    </span>
+                                    <span>22 min read</span>
+                                </div>
+                                <h3 className="text-lg font-bold text-slate-950 group-hover:text-blue-600 transition-colors mb-2 leading-snug">
+                                    Fixing Android Native Crashes in React Native App
+                                </h3>
+                                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                    A deep dive into diagnosing SIGSEGV crashes, memory corruptions across native JNI bridges, and symbolicating tombstone dumps with LLDB and Android NDK.
+                                </p>
+                            </div>
+                            <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs text-blue-600 font-semibold">
+                                <span>Read Full Case Study</span>
+                                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                            </div>
+                        </Link>
+
+                        {/* Article 2 */}
+                        <Link 
+                            href="/blog/five-bugs-in-my-llm-app-that-never-threw-an-error"
+                            className="p-7 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-md hover:border-blue-300 transition-all flex flex-col justify-between group"
+                        >
+                            <div>
+                                <div className="flex items-center justify-between text-xs font-mono text-slate-500 mb-3">
+                                    <span className="px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 font-semibold">
+                                        AI & LLM Architecture
+                                    </span>
+                                    <span>18 min read</span>
+                                </div>
+                                <h3 className="text-lg font-bold text-slate-950 group-hover:text-blue-600 transition-colors mb-2 leading-snug">
+                                    Five Bugs in My LLM App That Never Threw an Error
+                                </h3>
+                                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                    Why LLM application bugs fail silently: analyzing hidden token context window truncations, hallucinated JSON schemas, and non-deterministic function-calling loops.
+                                </p>
+                            </div>
+                            <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs text-blue-600 font-semibold">
+                                <span>Read Full Case Study</span>
+                                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                            </div>
+                        </Link>
+
+                        {/* Article 3 */}
+                        <Link 
+                            href="/blog/cloud-run-cpu-throttling-unraveling-serverless-performance-mysteries"
+                            className="p-7 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-md hover:border-blue-300 transition-all flex flex-col justify-between group"
+                        >
+                            <div>
+                                <div className="flex items-center justify-between text-xs font-mono text-slate-500 mb-3">
+                                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold">
+                                        Backend & Cloud
+                                    </span>
+                                    <span>11 min read</span>
+                                </div>
+                                <h3 className="text-lg font-bold text-slate-950 group-hover:text-blue-600 transition-colors mb-2 leading-snug">
+                                    Cloud Run CPU Throttling: Unraveling Serverless Performance Mysteries
+                                </h3>
+                                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                    Investigating why serverless background tasks freeze between HTTP requests, container cold start mitigation, and optimal thread pool configurations.
+                                </p>
+                            </div>
+                            <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs text-blue-600 font-semibold">
+                                <span>Read Full Case Study</span>
+                                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                            </div>
+                        </Link>
+
+                        {/* Article 4 */}
+                        <Link 
+                            href="/blog/mastering-discord-py-building-resilient-scalable-discord-bots"
+                            className="p-7 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-md hover:border-blue-300 transition-all flex flex-col justify-between group"
+                        >
+                            <div>
+                                <div className="flex items-center justify-between text-xs font-mono text-slate-500 mb-3">
+                                    <span className="px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 font-semibold">
+                                        Discord Automation
+                                    </span>
+                                    <span>11 min read</span>
+                                </div>
+                                <h3 className="text-lg font-bold text-slate-950 group-hover:text-blue-600 transition-colors mb-2 leading-snug">
+                                    Mastering discord.py: Building Resilient & Scalable Discord Bots
+                                </h3>
+                                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                    Production architectural guide for event loop sharding, Redis state caching, Discord Gateway rate limits, and zero-downtime rolling deployments.
+                                </p>
+                            </div>
+                            <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs text-blue-600 font-semibold">
+                                <span>Read Full Case Study</span>
+                                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                            </div>
+                        </Link>
+                    </div>
+                </div>
+            </section>
+
+
+            {/* ─── 8. INTERACTIVE PROJECT INTAKE & DISCOVERY WIZARD ─── */}
             <section id="contact" className="py-20 md:py-28 bg-white">
                 <QuoteWizard />
             </section>

@@ -87,7 +87,7 @@ async function getFeaturedPost() {
 
 async function getPosts(search?: string, category?: string, page: number = 1, excludeId?: string) {
     await dbConnect();
-    const limit = 6; // Fits cleanly in 2-column grid layout
+    const limit = 12; // 12 posts per page reduces pagination depth and improves Googlebot crawl discovery
     const skip = (page - 1) * limit;
 
     const query: any = { status: "published" };

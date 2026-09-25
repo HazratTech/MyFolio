@@ -18,6 +18,9 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://relayworks.dev"),
   alternates: {
     canonical: "https://relayworks.dev",
+    types: {
+      "application/rss+xml": "https://relayworks.dev/blog/feed.xml",
+    },
   },
   title: "RelayWorks | Boutique Software Engineering Studio",
   description: "RelayWorks is an independent boutique software engineering studio led by Hazrat Ummar Shaikh. We engineer production native Android & iOS apps (Kotlin/Compose, SwiftUI, KMP), scalable Spring Boot backends, and custom automation.",

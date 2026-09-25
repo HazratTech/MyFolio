@@ -128,8 +128,48 @@ export const Footer = async () => {
                         </ul>
                     </div>
 
-                    {/* Col 3: Flagship Software & Proof */}
-                    <div style={{ flex: "1 1 180px", minWidth: "180px" }} className="space-y-4">
+                    {/* Col 3: Flagship Architecture Guides (Internal Linking Engine) */}
+                    <div style={{ flex: "1 1 200px", minWidth: "200px" }} className="space-y-4">
+                        <div className="text-xs font-bold uppercase tracking-wider text-slate-900">
+                            Engineering Guides
+                        </div>
+                        <ul className="space-y-2.5 text-xs text-slate-600">
+                            <li>
+                                <Link href="/blog/fixing-android-native-crashes-in-react-native-app" className="hover:text-blue-600 transition-colors line-clamp-1">
+                                    Android Native Crashes in React Native
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/blog/five-bugs-in-my-llm-app-that-never-threw-an-error" className="hover:text-blue-600 transition-colors line-clamp-1">
+                                    5 Silent Bugs in Production LLMs
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/blog/cloud-run-cpu-throttling-unraveling-serverless-performance-mysteries" className="hover:text-blue-600 transition-colors line-clamp-1">
+                                    Cloud Run CPU Throttling Mysteries
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/blog/mastering-discord-py-building-resilient-scalable-discord-bots" className="hover:text-blue-600 transition-colors line-clamp-1">
+                                    Resilient Discord Bots in Python
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/blog/mastering-modern-android-architecture-a-practical-guide-for-robust-apps" className="hover:text-blue-600 transition-colors line-clamp-1">
+                                    Modern Android Architecture Guide
+                                </Link>
+                            </li>
+                            <li className="pt-1">
+                                <Link href="/blog" className="text-blue-600 hover:text-blue-700 font-semibold inline-flex items-center gap-1">
+                                    <span>Browse All 50 Dispatches</span>
+                                    <span aria-hidden="true">&rarr;</span>
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* Col 4: Flagship Software & Proof */}
+                    <div style={{ flex: "1 1 160px", minWidth: "160px" }} className="space-y-4">
                         <div className="text-xs font-bold uppercase tracking-wider text-slate-900">
                             Software & Proof
                         </div>
@@ -159,11 +199,6 @@ export const Footer = async () => {
                             <li>
                                 <Link href="/projects" className="hover:text-blue-600 transition-colors whitespace-nowrap">
                                     Production Portfolio
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/blog" className="hover:text-blue-600 transition-colors whitespace-nowrap">
-                                    Engineering Deep Dives
                                 </Link>
                             </li>
                             <li>

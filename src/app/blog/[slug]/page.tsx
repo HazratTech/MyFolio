@@ -138,41 +138,74 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
 
     const jsonLd = {
         "@context": "https://schema.org",
-        "@type": "BlogPosting",
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": canonicalUrl
-        },
-        "headline": post.title ? post.title.substring(0, 110) : "RelayWorks Dispatch",
-        "image": [resolvedImage],
-        "datePublished": new Date(pubDate).toISOString(),
-        "dateModified": new Date(modDate).toISOString(),
-        "author": {
-            "@type": "Person",
-            "name": "Hazrat Ummar Shaikh",
-            "jobTitle": "Lead Software Engineer & Studio Founder",
-            "url": "https://relayworks.dev/about",
-            "worksFor": {
-                "@type": "Organization",
-                "name": "RelayWorks",
-                "url": "https://relayworks.dev"
+        "@graph": [
+            {
+                "@type": "BlogPosting",
+                "mainEntityOfPage": {
+                    "@type": "WebPage",
+                    "@id": canonicalUrl
+                },
+                "headline": post.title ? post.title.substring(0, 110) : "RelayWorks Dispatch",
+                "image": [resolvedImage],
+                "datePublished": new Date(pubDate).toISOString(),
+                "dateModified": new Date(modDate).toISOString(),
+                "author": {
+                    "@type": "Person",
+                    "name": "Hazrat Ummar Shaikh",
+                    "jobTitle": "Lead Software Engineer & Studio Founder",
+                    "url": "https://relayworks.dev/about",
+                    "worksFor": {
+                        "@type": "Organization",
+                        "name": "RelayWorks",
+                        "url": "https://relayworks.dev"
+                    },
+                    "sameAs": [
+                        "https://github.com/ihazratummar",
+                        "https://www.linkedin.com/in/hazrat-ummar-shaikh/",
+                        "https://x.com/ihazratummar9"
+                    ]
+                },
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "RelayWorks",
+                    "url": "https://relayworks.dev",
+                    "logo": {
+                        "@type": "ImageObject",
+                        "url": "https://relayworks.dev/icon.png"
+                    }
+                },
+                "description": post.excerpt || post.content.replace(/<[^>]*>/g, "").substring(0, 160)
             },
-            "sameAs": [
-                "https://github.com/ihazratummar",
-                "https://www.linkedin.com/in/hazrat-ummar-shaikh/",
-                "https://x.com/ihazratummar9"
-            ]
-        },
-        "publisher": {
-            "@type": "Organization",
-            "name": "RelayWorks",
-            "url": "https://relayworks.dev",
-            "logo": {
-                "@type": "ImageObject",
-                "url": "https://relayworks.dev/icon.png"
+            {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": "https://relayworks.dev"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Dispatches",
+                        "item": "https://relayworks.dev/blog"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": post.category || "Engineering",
+                        "item": `https://relayworks.dev/blog?category=${encodeURIComponent(post.category || "Engineering")}`
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 4,
+                        "name": post.title,
+                        "item": canonicalUrl
+                    }
+                ]
             }
-        },
-        "description": post.excerpt || post.content.replace(/<[^>]*>/g, "").substring(0, 160)
+        ]
     };
 
     const publishDate = new Date(post.publishedAt || post.createdAt).toLocaleDateString('en-US', {
@@ -207,10 +240,19 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
                     
                     <div className="absolute bottom-0 left-0 right-0 py-8 px-6 md:px-12">
                         <div className="max-w-4xl mx-auto">
-                            <Link href="/blog" className="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-700 mb-4 transition-colors gap-2 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full border border-slate-200/80 shadow-2xs">
-                                <ArrowLeft className="w-4 h-4" />
-                                <span>Back to All Dispatches</span>
-                            </Link>
+                            <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+                                <Link href="/blog" className="inline-flex items-center text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors gap-1.5 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full border border-slate-200/80 shadow-2xs">
+                                    <ArrowLeft className="w-3.5 h-3.5" />
+                                    <span>All Dispatches</span>
+                                </Link>
+                                <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-600 font-mono bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full border border-slate-200/60">
+                                    <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
+                                    <span className="text-slate-400">/</span>
+                                    <Link href="/blog" className="hover:text-blue-600 transition-colors">Blog</Link>
+                                    <span className="text-slate-400">/</span>
+                                    <span className="text-slate-800 font-medium truncate max-w-[160px]">{post.category || "Guide"}</span>
+                                </nav>
+                            </div>
                             
                             <div className="flex flex-wrap gap-2 items-center mb-3">
                                 <span className="bg-blue-50 text-blue-700 border border-blue-200 font-semibold px-3 py-0.5 rounded-full text-xs shadow-2xs">
@@ -249,10 +291,19 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
                 </div>
             ) : (
                 <div className="pt-8 pb-4 px-6 md:px-12 max-w-4xl mx-auto">
-                    <Link href="/blog" className="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-700 mb-6 transition-colors gap-2">
-                        <ArrowLeft className="w-4 h-4" />
-                        <span>Back to All Dispatches</span>
-                    </Link>
+                    <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+                        <Link href="/blog" className="inline-flex items-center text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors gap-1.5 bg-white px-3 py-1 rounded-full border border-slate-200 shadow-2xs">
+                            <ArrowLeft className="w-3.5 h-3.5" />
+                            <span>All Dispatches</span>
+                        </Link>
+                        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-600 font-mono bg-white px-3 py-1 rounded-full border border-slate-200">
+                            <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
+                            <span className="text-slate-400">/</span>
+                            <Link href="/blog" className="hover:text-blue-600 transition-colors">Blog</Link>
+                            <span className="text-slate-400">/</span>
+                            <span className="text-slate-800 font-medium truncate max-w-[160px]">{post.category || "Guide"}</span>
+                        </nav>
+                    </div>
                     
                     <div className="flex flex-wrap gap-2 items-center mb-3">
                         <span className="bg-blue-50 text-blue-700 border border-blue-200 font-semibold px-3 py-0.5 rounded-full text-xs shadow-2xs">
