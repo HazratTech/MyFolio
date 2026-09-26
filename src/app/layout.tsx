@@ -198,14 +198,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth dark">
+    <html lang="en" className="scroll-smooth">
       <head>
         <link rel="preconnect" href="https://minio-api.hazratdev.top" />
         <link rel="dns-prefetch" href="https://minio-api.hazratdev.top" />
       </head>
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          "min-h-screen bg-[#fafaf9] text-slate-900 font-sans antialiased",
           inter.variable,
           outfit.variable
         )}

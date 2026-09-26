@@ -52,9 +52,6 @@ export const DiscordBotLanding = () => {
     // Dynamic Light Theme Mount Effect
     useEffect(() => {
         document.documentElement.classList.remove("dark");
-        return () => {
-            document.documentElement.classList.add("dark");
-        };
     }, []);
 
     // Simulator states

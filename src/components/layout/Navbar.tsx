@@ -40,7 +40,7 @@ export const Navbar = () => {
     const isAiChatbotLanding = pathname === "/ai-chatbot-development";
     const isMobileLanding = pathname === "/mobile-app-development";
     const isSpecialLanding = isDiscordLanding || isAiChatbotLanding || isMobileLanding;
-    const isLightMode = isAiChatbotLanding || isDiscordLanding || isMobileLanding || pathname === "/" || pathname.startsWith("/services") || pathname === "/about" || pathname.startsWith("/blog");
+    const isLightMode = true;
 
     const handleMouseEnter = () => {
         if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
@@ -276,8 +276,11 @@ export const Navbar = () => {
                             Blog
                         </Link>
                         <Link
-                            href="/#contact"
-                            className={cn("text-sm font-medium transition-colors hover:text-primary py-1 px-1", isLightMode ? "text-slate-600" : "text-[#dbdee1]")}
+                            href="/contact"
+                            className={cn(
+                                "text-sm font-medium transition-colors hover:text-primary py-1 px-1",
+                                pathname === "/contact" ? "text-primary font-semibold" : isLightMode ? "text-slate-600" : "text-[#dbdee1]"
+                            )}
                         >
                             Contact
                         </Link>
@@ -461,11 +464,12 @@ export const Navbar = () => {
                                 Blog
                             </Link>
                             <Link
-                                href="/#contact"
+                                href="/contact"
                                 onClick={() => setIsMobileMenuOpen(false)}
                                 className={cn(
                                     "text-lg font-bold py-2 border-b",
-                                    isLightMode ? "border-slate-200 text-slate-900" : "border-white/5 text-white"
+                                    isLightMode ? "border-slate-200" : "border-white/5",
+                                    pathname === "/contact" ? "text-primary" : isLightMode ? "text-slate-900" : "text-white"
                                 )}
                             >
                                 Contact

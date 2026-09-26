@@ -40,9 +40,12 @@ export default function PostCard({ post }: PostCardProps) {
                 
                 {/* Category tag */}
                 <div className="absolute top-3.5 left-3.5 z-10">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/95 text-blue-700 border border-slate-200/80 shadow-xs backdrop-blur-sm">
+                    <Link 
+                        href={`/blog/category/${encodeURIComponent(post.category || "Development")}`}
+                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/95 text-blue-700 hover:text-blue-800 hover:bg-blue-50 border border-slate-200/80 shadow-xs backdrop-blur-sm transition-colors"
+                    >
                         {post.category || "Development"}
-                    </span>
+                    </Link>
                 </div>
             </div>
 

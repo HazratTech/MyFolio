@@ -195,7 +195,7 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
                         "@type": "ListItem",
                         "position": 3,
                         "name": post.category || "Engineering",
-                        "item": `https://relayworks.dev/blog?category=${encodeURIComponent(post.category || "Engineering")}`
+                        "item": `https://relayworks.dev/blog/category/${encodeURIComponent(post.category || "Engineering")}`
                     },
                     {
                         "@type": "ListItem",
@@ -289,14 +289,19 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
                                     <span className="text-slate-400">/</span>
                                     <Link href="/blog" className="hover:text-blue-600 transition-colors">Blog</Link>
                                     <span className="text-slate-400">/</span>
-                                    <span className="text-slate-800 font-medium truncate max-w-[160px]">{post.category || "Guide"}</span>
+                                    <Link href={`/blog/category/${encodeURIComponent(post.category || "Development")}`} className="text-slate-800 hover:text-blue-600 transition-colors font-medium truncate max-w-[160px]">
+                                        {post.category || "Guide"}
+                                    </Link>
                                 </nav>
                             </div>
                             
                             <div className="flex flex-wrap gap-2 items-center mb-3">
-                                <span className="bg-blue-50 text-blue-700 border border-blue-200 font-semibold px-3 py-0.5 rounded-full text-xs shadow-2xs">
+                                <Link 
+                                    href={`/blog/category/${encodeURIComponent(post.category || "Development")}`}
+                                    className="bg-blue-50 text-blue-700 hover:bg-blue-100 hover:border-blue-300 border border-blue-200 font-semibold px-3 py-0.5 rounded-full text-xs shadow-2xs transition-colors"
+                                >
                                     {post.category}
-                                </span>
+                                </Link>
                                 <span className="text-slate-600 text-xs flex items-center gap-1 font-mono">
                                     <Clock className="w-3.5 h-3.5 text-slate-500" />
                                     {post.readingTime || 5} min read

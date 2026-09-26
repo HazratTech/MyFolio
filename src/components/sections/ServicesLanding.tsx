@@ -75,9 +75,6 @@ export const ServicesLanding = () => {
     // Dynamic Light Theme Mount Effect
     useEffect(() => {
         document.documentElement.classList.remove("dark");
-        return () => {
-            document.documentElement.classList.add("dark");
-        };
     }, []);
 
     // Currency Switcher State

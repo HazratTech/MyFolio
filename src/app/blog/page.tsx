@@ -348,7 +348,7 @@ export default async function BlogPage({
                                 </Button>
                             </Link>
                             {categories.map((cat: any) => (
-                                <Link key={cat._id} href={`/blog?category=${cat.name}${search ? `&q=${search}` : ''}`}>
+                                <Link key={cat._id} href={search ? `/blog?category=${encodeURIComponent(cat.name)}&q=${encodeURIComponent(search)}` : `/blog/category/${encodeURIComponent(cat.name)}`}>
                                     <Button
                                         variant={category === cat.name ? "default" : "outline"}
                                         size="sm"

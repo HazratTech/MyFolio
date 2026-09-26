@@ -188,7 +188,7 @@ export const BlogNavbar = () => {
                             About
                         </Link>
                         <Link
-                            href="/#contact"
+                            href="/contact"
                             className="text-sm font-medium text-[#dbdee1] hover:text-primary transition-colors py-1 px-1"
                         >
                             Contact

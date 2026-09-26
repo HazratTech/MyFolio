@@ -8,10 +8,10 @@ export async function GET() {
     await dbConnect();
 
     try {
-        // Fetch 20 most recent published posts
+        // Fetch all published posts (up to 100 for complete RSS syndication)
         const posts = await Post.find({ status: 'published' })
-            .sort({ publishedAt: -1 })
-            .limit(20)
+            .sort({ publishedAt: -1, createdAt: -1 })
+            .limit(100)
             .lean();
 
         const feedItems = posts.map((post: any) => {
@@ -67,7 +67,7 @@ tags: ${tags.join(', ')}
             <link>https://relayworks.dev/blog/${post.slug}</link>
             <guid>https://relayworks.dev/blog/${post.slug}</guid>
             <canonical_url>https://relayworks.dev/blog/${post.slug}</canonical_url>
-            <pubDate>${new Date(post.publishedAt || post.createdAt).toUTCString()}</pubDate>
+            <pubDate>${new Date(post.updatedAt || post.publishedAt || post.createdAt).toUTCString()}</pubDate>
             <description><![CDATA[${cleanDescription}...]]></description>
             ${categoryXml}${mediaEnclosure}
             <content:encoded><![CDATA[${fullContent}]]></content:encoded>

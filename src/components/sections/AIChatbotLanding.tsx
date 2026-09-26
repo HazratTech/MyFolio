@@ -597,16 +597,7 @@ export const AIChatbotLanding = () => {
     const [openFaq, setOpenFaq] = useState<number | null>(0);
 
     useEffect(() => {
-        const root = document.documentElement;
-        const hadDark = root.classList.contains("dark");
-        if (hadDark) {
-            root.classList.remove("dark");
-        }
-        return () => {
-            if (hadDark) {
-                root.classList.add("dark");
-            }
-        };
+        document.documentElement.classList.remove("dark");
     }, []);
 
     const activeScenario = sandboxScenarios[selectedScenarioIndex];

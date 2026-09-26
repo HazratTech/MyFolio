@@ -142,9 +142,6 @@ export const AboutLanding = () => {
     // Dynamic Light Theme Mount Effect
     useEffect(() => {
         document.documentElement.classList.remove("dark");
-        return () => {
-            document.documentElement.classList.add("dark");
-        };
     }, []);
 
     return (

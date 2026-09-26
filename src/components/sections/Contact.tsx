@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { Mail, ExternalLink } from "lucide-react";
-import { trackEvent } from "@/lib/analytics";
+import { Mail, ExternalLink, Send, MessageSquare, CheckCircle2, ChevronRight, Clock, ShieldCheck, Terminal } from "lucide-react";
+import Link from "next/link";
 
 interface Social {
     name: string;
@@ -17,10 +17,15 @@ interface Social {
 }
 
 export const Contact = () => {
+    // Enforce consistent light theme
+    useEffect(() => {
+        document.documentElement.classList.remove("dark");
+    }, []);
+
     const [formData, setFormData] = useState({
         name: "",
         email: "",
-        service: "Discord Bot",
+        service: "Mobile App Development",
         subject: "",
         message: "",
     });
@@ -45,7 +50,6 @@ export const Contact = () => {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { id, value } = e.target;
-        // Remove 'contact-' prefix to get the state key
         const key = id.replace("contact-", "");
         setFormData({ ...formData, [key]: value });
     };
@@ -56,15 +60,16 @@ export const Contact = () => {
         setResult(null);
 
         const embed = {
-            title: "🔥 New Lead from RelayWorks",
-            color: 5814783, // Blue color
+            title: "New Lead from RelayWorks Contact Page",
+            color: 2450411,
             fields: [
-                { name: "Name", value: formData.name, inline: true },
-                { name: "Email", value: formData.email, inline: true },
-                { name: "Service", value: formData.service, inline: true },
-                { name: "Subject", value: formData.subject },
-                { name: "Message", value: formData.message },
+                { name: "Name", value: formData.name || "N/A", inline: true },
+                { name: "Email", value: formData.email || "N/A", inline: true },
+                { name: "Service", value: formData.service || "N/A", inline: true },
+                { name: "Subject", value: formData.subject || "N/A", inline: false },
+                { name: "Message", value: formData.message || "N/A", inline: false },
             ],
+            footer: { text: "RelayWorks Lead Pipeline" },
             timestamp: new Date().toISOString(),
         };
 
@@ -72,211 +77,253 @@ export const Contact = () => {
             const response = await fetch("/api/contact", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ embeds: [embed] }),
+                body: JSON.stringify({
+                    ...formData,
+                    embeds: [embed],
+                }),
             });
 
             if (response.ok) {
-                setResult("Message sent successfully!");
-                trackEvent("contact_form_submit", {
-                    service: formData.service,
-                    subject: formData.subject,
+                setResult("Thank you! Your message has been sent directly to Hazrat Ummar Shaikh. You will receive a response within 24 hours.");
+                setFormData({
+                    name: "",
+                    email: "",
+                    service: "Mobile App Development",
+                    subject: "",
+                    message: "",
                 });
-                setFormData({ name: "", email: "", service: "Discord Bot", subject: "", message: "" });
             } else {
-                setResult("Failed to send message.");
+                setResult("Failed to send message. Please email directly at hazratummar9@gmail.com");
             }
         } catch (error) {
-            console.error(error);
-            setResult("Something went wrong!");
+            console.error("Failed to send message:", error);
+            setResult("Failed to send message. Please email directly at hazratummar9@gmail.com");
         } finally {
             setIsSubmitting(false);
         }
     };
 
     return (
-        <section id="contact" className="py-20 relative overflow-hidden">
-            {/* Background Glow */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[128px] -z-10" />
+        <div className="min-h-screen bg-[#fafaf9] [background-image:radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:24px_24px] pt-4 pb-24 relative">
+            <div className="container mx-auto px-6 max-w-6xl relative z-10">
+                
+                {/* Breadcrumbs */}
+                <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-slate-500 font-mono pt-4 mb-6">
+                    <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                    <span className="text-slate-800 font-semibold">Contact &amp; Discovery</span>
+                </nav>
 
-            <div className="container mx-auto px-6">
-                <LazyMotion features={domAnimation}>
-                    <m.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.5 }}
-                        className="mb-16 text-center"
-                    >
-                        <h1 className="text-3xl md:text-5xl font-bold font-heading mb-4">
-                            Let's <span className="text-secondary">Connect</span>
-                        </h1>
-                        <p className="text-muted-foreground max-w-2xl mx-auto">
-                            Have a project in mind? Let's build something awesome together.
-                        </p>
-                    </m.div>
+                {/* Hero Header */}
+                <div className="pt-2 pb-12 text-center max-w-3xl mx-auto">
+                    <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 shadow-2xs mb-4">
+                        <Terminal className="w-3.5 h-3.5 text-blue-600" />
+                        <span>Direct Senior Builder Access</span>
+                    </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
-                        <m.div
-                            initial={{ opacity: 0, x: -50 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.5, delay: 0.2 }}
-                        >
-                            <h2 className="text-2xl font-bold mb-6">Get in Touch</h2>
-                            <div className="space-y-6">
-                                <div className="flex items-start space-x-4">
-                                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                                        <Mail className="w-5 h-5" />
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl font-black font-heading tracking-tight text-slate-950 mb-4">
+                        Let&apos;s Build <span style={{ color: "#2563eb" }}>Together</span>
+                    </h1>
+
+                    <p className="text-slate-600 text-base md:text-lg leading-relaxed mb-6">
+                        Have a project in mind? Speak directly with lead engineer Hazrat Ummar Shaikh. Zero account managers, zero sales fluff.
+                    </p>
+
+                    <div className="inline-flex flex-wrap items-center justify-center gap-4 sm:gap-6 pt-2 pb-2 px-6 rounded-2xl bg-white border border-slate-200 shadow-xs text-xs font-medium text-slate-600">
+                        <span className="flex items-center gap-1.5">
+                            <Clock className="w-3.5 h-3.5 text-blue-600" />
+                            <span>Response within 24 Hours</span>
+                        </span>
+                        <span className="hidden sm:inline text-slate-300">·</span>
+                        <span className="flex items-center gap-1.5">
+                            <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
+                            <span>100% Code Ownership</span>
+                        </span>
+                        <span className="hidden sm:inline text-slate-300">·</span>
+                        <span className="flex items-center gap-1.5">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
+                            <span>Q4 Sprints Available</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-5xl mx-auto">
+                    
+                    {/* Left Column: Direct Connect Info */}
+                    <div className="lg:col-span-5 space-y-6">
+                        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-5">
+                            <h2 className="text-lg font-bold font-heading text-slate-900 tracking-tight pb-3 border-b border-slate-100">
+                                Direct Engineering Contact
+                            </h2>
+
+                            <div className="space-y-4 text-sm">
+                                <div className="flex items-start gap-3.5">
+                                    <div className="w-9 h-9 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 shrink-0">
+                                        <Mail className="w-4 h-4" />
                                     </div>
                                     <div>
-                                        <h4 className="font-medium mb-1">Email Me</h4>
-                                        <a href="mailto:hazratummar9@gmail.com" className="text-muted-foreground hover:text-primary transition-colors" aria-label="Email Me">
+                                        <div className="text-xs text-slate-500 font-medium">Canonical Email</div>
+                                        <a href="mailto:hazratummar9@gmail.com" className="font-semibold text-slate-900 hover:text-blue-600 transition-colors">
                                             hazratummar9@gmail.com
                                         </a>
                                     </div>
                                 </div>
 
-                                <div className="flex items-start space-x-4">
-                                    <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary shrink-0">
-                                        <img src="/discord.svg" alt="Discord" className="w-5 h-5" />
+                                <div className="flex items-start gap-3.5">
+                                    <div className="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-700 shrink-0">
+                                        <MessageSquare className="w-4 h-4" />
                                     </div>
                                     <div>
-                                        <h4 className="font-medium mb-1">Discord</h4>
-                                        <p className="text-muted-foreground">ihazratummar</p>
+                                        <div className="text-xs text-slate-500 font-medium">Discord Handle</div>
+                                        <span className="font-semibold text-slate-900 font-mono text-xs">
+                                            ihazratummar
+                                        </span>
                                     </div>
-                                </div>
-
-                                {/* Freelance Profiles */}
-                                <div className="pt-6 border-t border-white/10">
-                                    <h4 className="font-bold mb-4">Hire me on</h4>
-                                    <div className="flex flex-wrap gap-4">
-                                        {/* Fiverr - Always visible */}
-                                        <a
-                                            href="https://www.fiverr.com/hazratummar"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-gradient-to-r from-green-600/20 to-green-500/20 hover:from-green-600/30 hover:to-green-500/30 border border-green-500/30 transition-all group"
-                                            aria-label="Fiverr Profile"
-                                        >
-                                            <span className="font-medium text-green-400 transition-colors">Fiverr</span>
-                                            <ExternalLink className="w-4 h-4 text-green-400 group-hover:text-green-300 transition-colors" />
-                                        </a>
-
-                                        {/* Other platforms from database */}
-                                        {socials.filter(s => s.name === "Upwork" || s.name === "Freelancer").map((link, index) => (
-                                            <a
-                                                key={index}
-                                                href={link.href}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-all group"
-                                                aria-label={`${link.name} Profile`}
-                                            >
-                                                <span className={`font-medium ${link.color} transition-colors`}>{link.name}</span>
-                                                <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-white transition-colors" />
-                                            </a>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <div className="p-6 bg-card/30 border border-white/10 rounded-xl mt-8">
-                                    <p className="text-muted-foreground italic">
-                                        "I'm always open to discussing new projects, creative ideas or opportunities to be part of your visions."
-                                    </p>
                                 </div>
                             </div>
-                        </m.div>
 
-                        <m.div
-                            initial={{ opacity: 0, x: 50 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.5, delay: 0.4 }}
-                        >
-                            <Card className="bg-card/50 backdrop-blur-md border-white/10">
-                                <CardContent className="p-6 space-y-4">
-                                    <form id="contact-form" onSubmit={handleSubmit} className="space-y-4">
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                            <div className="space-y-2">
-                                                <label htmlFor="contact-name" className="text-sm font-medium">Name</label>
-                                                <Input
-                                                    id="contact-name"
-                                                    value={formData.name}
-                                                    onChange={handleChange}
-                                                    placeholder="Your Name"
-                                                    required
-                                                    className="bg-white/5 border-white/10 focus:border-primary"
-                                                />
-                                            </div>
-                                            <div className="space-y-2">
-                                                <label htmlFor="contact-email" className="text-sm font-medium">Email</label>
-                                                <Input
-                                                    id="contact-email"
-                                                    type="email"
-                                                    value={formData.email}
-                                                    onChange={handleChange}
-                                                    placeholder="your@email.com"
-                                                    required
-                                                    className="bg-white/5 border-white/10 focus:border-primary"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label htmlFor="contact-service" className="text-sm font-medium">Service</label>
-                                            <select
-                                                id="contact-service"
-                                                value={formData.service}
-                                                onChange={handleChange}
-                                                className="flex h-10 w-full items-center justify-between rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                            >
-                                                <option value="Discord Bot">Discord Bot</option>
-                                                <option value="Mobile App">Mobile App</option>
-                                                <option value="Backend Dev">Backend Dev</option>
-                                                <option value="AI Chatbot">AI Chatbot</option>
-                                            </select>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label htmlFor="contact-subject" className="text-sm font-medium">Subject</label>
-                                            <Input
-                                                id="contact-subject"
-                                                value={formData.subject}
-                                                onChange={handleChange}
-                                                placeholder="Project Inquiry"
-                                                required
-                                                className="bg-white/5 border-white/10 focus:border-primary"
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label htmlFor="contact-message" className="text-sm font-medium">Message</label>
-                                            <Textarea
-                                                id="contact-message"
-                                                value={formData.message}
-                                                onChange={handleChange}
-                                                placeholder="Tell me about your project..."
-                                                required
-                                                className="min-h-[150px] bg-white/5 border-white/10 focus:border-primary"
-                                            />
-                                        </div>
-                                        <Button
-                                            type="submit"
-                                            disabled={isSubmitting}
-                                            className="w-full bg-gradient-to-r from-primary to-secondary text-white font-bold shadow-lg hover:shadow-primary/25 transition-all duration-300"
-                                        >
-                                            {isSubmitting ? "Sending..." : "Send Message"}
-                                        </Button>
-                                        {result && (
-                                            <p className={`text-center text-sm mt-2 ${result.includes("success") ? "text-green-500" : "text-red-500"}`}>
-                                                {result}
-                                            </p>
-                                        )}
-                                    </form>
-                                </CardContent>
-                            </Card>
-                        </m.div>
+                            <div className="pt-4 border-t border-slate-100 text-xs text-slate-600 leading-relaxed">
+                                &quot;Every project begins with honest architectural feasibility. I will tell you frankly what works, what doesn&apos;t, and the most cost-effective path to production.&quot;
+                                <div className="mt-2 font-bold text-slate-900">— Hazrat Ummar Shaikh, Lead Builder</div>
+                            </div>
+                        </div>
+
+                        {/* Verified Marketplace Profiles */}
+                        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs">
+                            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3">
+                                Verified Freelance Profiles
+                            </h3>
+                            <div className="flex flex-wrap gap-2.5">
+                                <a
+                                    href="https://www.fiverr.com/hazratummar"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold hover:bg-emerald-100 transition-colors shadow-2xs"
+                                >
+                                    <span>Fiverr Verified</span>
+                                    <ExternalLink className="w-3 h-3 text-emerald-600" />
+                                </a>
+                                <a
+                                    href="https://github.com/ihazratummar"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-xs font-semibold hover:bg-slate-100 transition-colors shadow-2xs"
+                                >
+                                    <span>GitHub Profile</span>
+                                    <ExternalLink className="w-3 h-3 text-slate-500" />
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                </LazyMotion>
+
+                    {/* Right Column: Contact Inquiry Form */}
+                    <div className="lg:col-span-7">
+                        <Card className="bg-white border border-slate-200/90 rounded-2xl shadow-xs">
+                            <CardContent className="p-6 sm:p-8">
+                                <form id="contact-form" onSubmit={handleSubmit} className="space-y-4">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div className="space-y-1.5">
+                                            <label htmlFor="contact-name" className="text-xs font-bold text-slate-700">
+                                                Your Name
+                                            </label>
+                                            <Input
+                                                id="contact-name"
+                                                value={formData.name}
+                                                onChange={handleChange}
+                                                placeholder="Alex Mercer"
+                                                required
+                                                className="bg-white border-slate-200 text-slate-900 rounded-xl h-10 text-xs focus:border-blue-600"
+                                            />
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <label htmlFor="contact-email" className="text-xs font-bold text-slate-700">
+                                                Email Address
+                                            </label>
+                                            <Input
+                                                id="contact-email"
+                                                type="email"
+                                                value={formData.email}
+                                                onChange={handleChange}
+                                                placeholder="alex@company.com"
+                                                required
+                                                className="bg-white border-slate-200 text-slate-900 rounded-xl h-10 text-xs focus:border-blue-600"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label htmlFor="contact-service" className="text-xs font-bold text-slate-700">
+                                            Engineering Discipline
+                                        </label>
+                                        <select
+                                            id="contact-service"
+                                            value={formData.service}
+                                            onChange={handleChange}
+                                            className="flex h-10 w-full items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-2xs focus:outline-none focus:ring-1 focus:ring-blue-600"
+                                        >
+                                            <option value="Mobile App Development">Native Mobile (Android &amp; KMP)</option>
+                                            <option value="AI Assistant Development">AI Chatbot &amp; Deterministic Agents</option>
+                                            <option value="Discord Bot Architecture">Custom Discord Bot &amp; Automation</option>
+                                            <option value="Backend APIs">Cloud Backend &amp; Microservices (Spring/FastAPI)</option>
+                                            <option value="Architecture Audit">Architecture Review &amp; Refactoring</option>
+                                        </select>
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label htmlFor="contact-subject" className="text-xs font-bold text-slate-700">
+                                            Subject
+                                        </label>
+                                        <Input
+                                            id="contact-subject"
+                                            value={formData.subject}
+                                            onChange={handleChange}
+                                            placeholder="Sprint inquiry or system architecture"
+                                            required
+                                            className="bg-white border-slate-200 text-slate-900 rounded-xl h-10 text-xs focus:border-blue-600"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label htmlFor="contact-message" className="text-xs font-bold text-slate-700">
+                                            Project Specifications &amp; Requirements
+                                        </label>
+                                        <Textarea
+                                            id="contact-message"
+                                            value={formData.message}
+                                            onChange={handleChange}
+                                            placeholder="Describe your current technical bottleneck, timeline, or requirements..."
+                                            required
+                                            rows={5}
+                                            className="bg-white border-slate-200 text-slate-900 rounded-xl text-xs focus:border-blue-600 resize-none leading-relaxed"
+                                        />
+                                    </div>
+
+                                    <Button
+                                        type="submit"
+                                        disabled={isSubmitting}
+                                        className="w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+                                    >
+                                        <Send className="w-4 h-4" />
+                                        <span>{isSubmitting ? "Sending to Hazrat..." : "Submit Technical Inquiry"}</span>
+                                    </Button>
+
+                                    {result && (
+                                        <div className={`p-4 rounded-xl text-xs font-medium ${
+                                            result.includes("Thank you") 
+                                                ? "bg-emerald-50 text-emerald-800 border border-emerald-200" 
+                                                : "bg-red-50 text-red-800 border border-red-200"
+                                        }`}>
+                                            {result}
+                                        </div>
+                                    )}
+                                </form>
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                </div>
+
             </div>
-        </section>
+        </div>
     );
 };
-

@@ -171,16 +171,7 @@ export const LandingPage = () => {
     const [currency, setCurrency] = useState<"USD" | "INR">("USD");
 
     useEffect(() => {
-        const root = document.documentElement;
-        const hadDark = root.classList.contains("dark");
-        if (hadDark) {
-            root.classList.remove("dark");
-        }
-        return () => {
-            if (hadDark) {
-                root.classList.add("dark");
-            }
-        };
+        document.documentElement.classList.remove("dark");
     }, []);
 
     const activeProject = flagshipProjects.find(p => p.id === selectedProject) || flagshipProjects[0];

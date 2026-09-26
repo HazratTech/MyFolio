@@ -159,10 +159,13 @@ export const Footer = async () => {
                                     Modern Android Architecture Guide
                                 </Link>
                             </li>
-                            <li className="pt-1">
+                            <li className="pt-1 flex items-center justify-between">
                                 <Link href="/blog" className="text-blue-600 hover:text-blue-700 font-semibold inline-flex items-center gap-1">
-                                    <span>Browse All 50 Dispatches</span>
+                                    <span>All 50 Dispatches</span>
                                     <span aria-hidden="true">&rarr;</span>
+                                </Link>
+                                <Link href="/sitemap" className="text-slate-500 hover:text-blue-600 font-medium text-xs">
+                                    Archive
                                 </Link>
                             </li>
                         </ul>
@@ -237,6 +240,8 @@ export const Footer = async () => {
                         &copy; {new Date().getFullYear()} RelayWorks Studio. All rights reserved. Founded & engineered by Hazrat Ummar Shaikh.
                     </p>
                     <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+                        <Link href="/sitemap" className="hover:text-blue-600 transition-colors font-medium text-slate-600">Sitemap</Link>
+                        <span className="text-slate-300">·</span>
                         <Link href="/privacy-policy" className="hover:text-blue-600 transition-colors">Privacy Policy</Link>
                         <span className="text-slate-300">·</span>
                         <Link href="/terms-of-service" className="hover:text-blue-600 transition-colors">Terms of Service</Link>

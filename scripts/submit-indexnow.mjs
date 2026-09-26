@@ -12,7 +12,11 @@ const envVars = Object.fromEntries(
 async function submitIndexNow() {
   await mongoose.connect(envVars.MONGODB_URI, { dbName: 'myfolio' });
   const Post = mongoose.model('Post', new mongoose.Schema({}, { strict: false }));
-  const posts = await Post.find({ status: 'published' }).select('slug').lean();
+  const Category = mongoose.model('Category', new mongoose.Schema({}, { strict: false }));
+  const [posts, categories] = await Promise.all([
+    Post.find({ status: 'published' }).select('slug').lean(),
+    Category.find({}).select('name').lean()
+  ]);
 
   const staticUrls = [
     'https://relayworks.dev',
@@ -21,13 +25,18 @@ async function submitIndexNow() {
     'https://relayworks.dev/services',
     'https://relayworks.dev/contact',
     'https://relayworks.dev/blog',
+    'https://relayworks.dev/sitemap',
     'https://relayworks.dev/discord-bot',
     'https://relayworks.dev/ai-chatbot-development',
-    'https://relayworks.dev/mobile-app-development'
+    'https://relayworks.dev/mobile-app-development',
+    'https://relayworks.dev/privacy-policy',
+    'https://relayworks.dev/terms-of-service',
+    'https://relayworks.dev/cookie-policy'
   ];
 
+  const categoryUrls = categories.map(c => `https://relayworks.dev/blog/category/${encodeURIComponent(c.name)}`);
   const postUrls = posts.map(p => `https://relayworks.dev/blog/${p.slug}`);
-  const allUrls = [...staticUrls, ...postUrls];
+  const allUrls = [...staticUrls, ...categoryUrls, ...postUrls];
 
   console.log(`Submitting ${allUrls.length} URLs to IndexNow API...`);
 
