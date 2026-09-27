@@ -57,7 +57,7 @@ export const Footer = async () => {
                         </Link>
                         
                         <p className="text-slate-600 text-sm leading-relaxed">
-                            Independent boutique software engineering studio founded by Hazrat Ummar Shaikh. We engineer production native mobile apps, resilient cloud backends, and deterministic AI automations.
+                            Independent software engineering studio founded by Hazrat Ummar Shaikh. We engineer production native mobile apps, resilient cloud backends, and deterministic AI automations.
                         </p>
                         
                         {/* Operational Status Pill */}

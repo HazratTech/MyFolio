@@ -22,19 +22,18 @@ export const metadata: Metadata = {
       "application/rss+xml": "https://relayworks.dev/blog/feed.xml",
     },
   },
-  title: "RelayWorks | Boutique Software Engineering Studio",
-  description: "RelayWorks is an independent boutique software engineering studio led by Hazrat Ummar Shaikh. We engineer production native Android & iOS apps (Kotlin/Compose, SwiftUI, KMP), scalable Spring Boot backends, and custom automation.",
+  title: "RelayWorks — Production Mobile Apps, Scalable Backends & AI Systems",
+  description: "Work directly with senior engineer Hazrat Ummar Shaikh. We engineer production-grade Android & KMP mobile apps, resilient cloud backends, and custom automations with verified code and transparent sprint milestones.",
   keywords: [
     "RelayWorks",
-    "Boutique Software Engineering Studio",
-    "Custom Mobile App Development",
+    "Production Mobile Apps",
     "Native Android App Developer",
     "Hire Kotlin Developer",
     "Kotlin Multiplatform Consulting",
     "SwiftUI iOS App Development",
     "Kotlin Spring Boot Backend Development",
     "FastAPI Microservices",
-    "Discord Bot Development Agency",
+    "Discord Bot Development",
     "Hazrat Ummar Shaikh"
   ],
   authors: [{ name: "RelayWorks", url: "https://relayworks.dev" }],
@@ -50,22 +49,22 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://relayworks.dev",
-    title: "RelayWorks | Boutique Software Engineering Studio",
-    description: "Independent engineering studio led by Hazrat Ummar Shaikh. Production Native Android & iOS apps, Kotlin Multiplatform, Spring Boot backends, and Discord automation. Direct senior builder access.",
+    title: "RelayWorks — Production Mobile Apps & Scalable Systems",
+    description: "From offline-first Android apps to high-concurrency cloud backends, we build and ship software that scales. Work directly with senior engineer Hazrat Ummar Shaikh — zero agency bloat, 100% verified code.",
     siteName: "RelayWorks",
     images: [
       {
         url: "https://relayworks.dev/og-banner.png",
         width: 1200,
         height: 630,
-        alt: "RelayWorks | Boutique Software Engineering Studio",
+        alt: "RelayWorks — Production Mobile Apps, Scalable Backends & AI Systems",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "RelayWorks | Boutique Software Engineering Studio",
-    description: "Production mobile apps, scalable backend systems, and custom automation. Direct senior engineer execution.",
+    title: "RelayWorks — Production Mobile Apps & Scalable Systems",
+    description: "Offline-first Android & KMP mobile apps, scalable cloud backends, and custom automations. Work directly with senior engineer Hazrat Ummar Shaikh.",
     images: ["https://relayworks.dev/og-banner.png"],
     creator: "@ihazratummar9",
   },
@@ -90,7 +89,7 @@ const jsonLd = {
       "@id": "https://relayworks.dev/#website",
       "url": "https://relayworks.dev",
       "name": "RelayWorks",
-      "description": "Boutique Software Engineering Studio — Mobile Apps, Backends & Automation",
+      "description": "Production Software Engineering Studio — Mobile Apps, Cloud Backends & Automations",
       "publisher": {
         "@id": "https://relayworks.dev/#organization"
       }
@@ -111,7 +110,7 @@ const jsonLd = {
         "url": "https://relayworks.dev/icon.png"
       },
       "image": "https://relayworks.dev/og-banner.png",
-      "description": "Boutique software engineering studio specializing in native mobile apps (Android & iOS), Kotlin Multiplatform, Spring Boot backends, and custom automation.",
+      "description": "Software engineering studio specializing in production native mobile apps (Android, iOS & KMP), high-throughput backend microservices (Spring Boot & FastAPI), and custom business automation.",
       "founder": {
         "@type": "Person",
         "name": "Hazrat Ummar Shaikh",

@@ -199,7 +199,7 @@ export const LandingPage = () => {
                         style={{ backgroundColor: "#eff6ff", color: "#1d4ed8", borderColor: "#bfdbfe" }}
                     >
                         <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span>Boutique Software Engineering Studio • Independent Senior Builder</span>
+                        <span>Production Software Engineering • Direct Senior Builder</span>
                     </div>
 
                     {/* Main Headline */}

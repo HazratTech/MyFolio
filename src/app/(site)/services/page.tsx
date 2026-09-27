@@ -8,22 +8,22 @@ export const metadata: Metadata = {
         canonical: "https://relayworks.dev/services",
     },
     openGraph: {
-        title: "Software Engineering Services | RelayWorks",
-        description: "Boutique software engineering studio building production mobile apps, deterministic AI chatbots, Discord bots, and scalable backends.",
+        title: "Software Engineering Services & Sprints | RelayWorks",
+        description: "Commission production native mobile apps, scalable backend APIs, custom Discord infrastructure, and AI automations with transparent milestone sprints.",
         url: "https://relayworks.dev/services",
         images: [
             {
                 url: "https://relayworks.dev/og-banner.png",
                 width: 1200,
                 height: 630,
-                alt: "RelayWorks Software Engineering Services",
+                alt: "RelayWorks Software Engineering Services & Sprints",
             },
         ],
     },
     twitter: {
         card: "summary_large_image",
-        title: "Software Engineering Services | RelayWorks",
-        description: "Boutique software engineering studio building production mobile apps, deterministic AI chatbots, Discord bots, and scalable backends.",
+        title: "Software Engineering Services & Sprints | RelayWorks",
+        description: "Commission production native mobile apps, scalable backend APIs, custom Discord infrastructure, and AI automations with transparent milestone sprints.",
         images: ["https://relayworks.dev/og-banner.png"],
     },
 };

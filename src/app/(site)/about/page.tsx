@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     },
     openGraph: {
         title: "About Hazrat Ummar Shaikh | RelayWorks",
-        description: "Independent boutique software studio. Production native mobile apps, deterministic AI chatbots, Discord bots, and scalable backends with 100% source code ownership.",
+        description: "Meet Hazrat Ummar Shaikh, founder and lead engineer at RelayWorks. Building production native mobile apps, scalable backends, and custom automations with 100% verified code.",
         url: "https://relayworks.dev/about",
         images: [
             {

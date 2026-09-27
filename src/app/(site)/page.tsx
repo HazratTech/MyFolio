@@ -2,27 +2,26 @@ import { LandingPage } from "@/components/layout/LandingPage";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "RelayWorks | Boutique Software Engineering Studio",
-  description: "RelayWorks is an independent boutique software engineering studio led by Hazrat Ummar Shaikh. We engineer production native Android & iOS apps (Kotlin/Compose, SwiftUI, KMP), high-throughput Spring Boot & FastAPI backends, and custom Discord bot automation.",
+  title: "RelayWorks — Production Mobile Apps & Scalable Systems",
+  description: "Work directly with senior engineer Hazrat Ummar Shaikh. We engineer production-grade Android & KMP mobile apps, resilient cloud backends, and custom automations with verified code and transparent sprint milestones.",
   alternates: {
     canonical: "https://relayworks.dev",
   },
   keywords: [
     "RelayWorks",
-    "Boutique Software Engineering Studio",
-    "Custom Mobile App Development",
+    "Production Mobile Apps",
     "Native Android App Developer",
     "Hire Kotlin Developer",
     "Kotlin Multiplatform Consulting",
     "SwiftUI iOS App Development",
     "Kotlin Spring Boot Backend Development",
     "FastAPI Microservices",
-    "Discord Bot Development Agency",
+    "Discord Bot Development",
     "Hazrat Ummar Shaikh"
   ],
   openGraph: {
-    title: "RelayWorks | Boutique Software Engineering Studio",
-    description: "Independent engineering studio led by Hazrat Ummar Shaikh. Production Native Android & iOS apps, Kotlin Multiplatform, Spring Boot backends, and Discord automation. Direct senior builder access.",
+    title: "RelayWorks — Production Mobile Apps & Scalable Systems",
+    description: "From offline-first Android apps to high-concurrency cloud backends, we build and ship software that scales. Work directly with senior engineer Hazrat Ummar Shaikh — zero agency bloat, 100% verified code.",
     url: "https://relayworks.dev",
     siteName: "RelayWorks",
     images: [
@@ -30,7 +29,7 @@ export const metadata: Metadata = {
         url: "https://relayworks.dev/og-banner.png",
         width: 1200,
         height: 630,
-        alt: "RelayWorks Boutique Software Engineering Studio",
+        alt: "RelayWorks — Production Mobile Apps, Scalable Backends & AI Systems",
       },
     ],
     locale: "en_US",
@@ -38,8 +37,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "RelayWorks | Boutique Software Engineering Studio",
-    description: "Production mobile apps, scalable backend systems, and custom automation. Direct senior engineer execution.",
+    title: "RelayWorks — Production Mobile Apps & Scalable Systems",
+    description: "Offline-first Android & KMP mobile apps, scalable cloud backends, and custom automations. Work directly with senior engineer Hazrat Ummar Shaikh.",
     images: ["https://relayworks.dev/og-banner.png"],
   },
 };
@@ -57,7 +56,7 @@ const homeSchema = {
         "url": "https://relayworks.dev/icon.png"
       },
       "image": "https://relayworks.dev/og-banner.png",
-      "description": "Independent boutique software engineering studio specializing in native mobile applications (Kotlin, Compose, SwiftUI, KMP), high-throughput backend microservices (Spring Boot, FastAPI), and custom business automation.",
+      "description": "Software engineering studio specializing in production native mobile applications (Kotlin, Compose, SwiftUI, KMP), high-throughput backend microservices (Spring Boot, FastAPI), and custom business automation.",
       "founder": {
         "@type": "Person",
         "name": "Hazrat Ummar Shaikh",

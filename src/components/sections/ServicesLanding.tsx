@@ -101,7 +101,7 @@ export const ServicesLanding = () => {
                         {/* Eyebrow Pill */}
                         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs font-semibold tracking-wide mb-6 shadow-xs">
                             <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
-                            <span>Boutique Software Engineering Studio • Fixed-Scope Sprints</span>
+                            <span>Fixed-Scope Sprints • Direct Senior Builder</span>
                         </div>
 
                         {/* Main Headline */}
