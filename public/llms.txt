@@ -1,22 +1,49 @@
 # RelayWorks
 
-> Boutique Software Engineering Studio founded and operated by Senior Software Engineer Hazrat Ummar Shaikh. RelayWorks specializes in production native mobile applications (Android & iOS), Kotlin Multiplatform (KMP), high-throughput backend microservices (Spring Boot & FastAPI), custom Discord platform automation, and contextual AI assistants.
+> Independent software engineering studio founded by Hazrat Ummar Shaikh. RelayWorks designs, builds, and ships production native mobile applications (Android & iOS), cross-platform Kotlin Multiplatform (KMP) apps, high-throughput backend microservices, custom Discord bots, and AI-powered business automation.
 
-## Core Capabilities & Services
+## Who We Are
 
-- [Native Mobile App Development](https://relayworks.dev/mobile-app-development): Production Native Android (Kotlin & Jetpack Compose), iOS (SwiftUI), and cross-platform Kotlin Multiplatform (KMP) applications with local-first delta sync (Room, SQLDelight) and 60FPS fluid UI.
-- [High-Throughput Backend & APIs](https://relayworks.dev/services): Scalable REST and WebSocket microservices engineered in Kotlin Spring Boot, Ktor, and FastAPI with PostgreSQL, MongoDB, and containerized Docker deployments.
-- [Custom Discord Bot Development](https://relayworks.dev/discord-bot): High-concurrency Discord bots featuring automated moderation, ticketing engines, economy systems, Stripe/crypto checkout sync, and custom gaming integrations.
-- [AI Chatbot & Business Automation](https://relayworks.dev/ai-chatbot-development): Grounded vector RAG assistants for websites and WhatsApp Business Cloud API with zero hallucinations, CRM database sync, and calendar booking.
+RelayWorks is a one-engineer studio where clients work directly with senior software engineer Hazrat Ummar Shaikh — no account managers, no junior hand-offs. Every line of code is written, reviewed, and deployed by the same person you talk to.
 
-## Case Studies & Shipped Software
+- Founder: Hazrat Ummar Shaikh — Senior Software Engineer & Architect
+- Website: https://relayworks.dev
+- Email: hazratummar9@gmail.com
+- GitHub: https://github.com/ihazratummar
+- LinkedIn: https://www.linkedin.com/in/hazrat-ummar-shaikh/
 
-- [Karigo](https://github.com/ihazratummar/Karigo-App): Local-first offline invoice & rate engine for mobile field contractors built with Kotlin Multiplatform, Jetpack Compose, SQLDelight, and RevenueCat.
-- [Islam24](https://play.google.com/store/apps/details?id=com.hazrat.islam24): Native Android consumer application live on Google Play with ultra-low battery background engine (<1.5% daily) using AlarmManager and FusedLocationProvider.
-- [OneDrop](https://play.google.com/store/apps/details?id=com.hazrat.onedrop): Reactive healthcare & blood donor network featuring real-time WebSocket state distribution, atomic claim processing, and Kotlin backend.
+## Engineering Services
 
-## Founder & Studio Information
+- [Native Mobile App Development](https://relayworks.dev/mobile-app-development): Production Android apps in Kotlin & Jetpack Compose, iOS apps in SwiftUI, and cross-platform apps using Kotlin Multiplatform (KMP). Offline-first Room/SQLDelight storage with background delta sync.
+- [Backend & API Engineering](https://relayworks.dev/services): Scalable REST and WebSocket microservices in Kotlin Spring Boot, Ktor, and Python FastAPI. PostgreSQL, MongoDB, Redis, Docker, and CI/CD with GitHub Actions.
+- [Custom Discord Bot Development](https://relayworks.dev/discord-bot): Python-based Discord bots with ticket systems, verification, moderation, economy engines, Stripe payment sync, and game server integrations.
+- [AI Chatbot & Business Automation](https://relayworks.dev/ai-chatbot-development): RAG-grounded AI assistants for websites and WhatsApp Business with zero hallucinations, CRM sync, and automated calendar booking.
 
-- [About Hazrat Ummar Shaikh](https://relayworks.dev/about): Senior Software Engineer, studio founder, and production mobile/backend architect.
-- [Engineering Dispatches & Blog](https://relayworks.dev/blog): In-depth architectural guides, mobile system designs, and production automation tutorials.
-- [Direct Contact](https://relayworks.dev/contact): Work directly with senior engineering lead (email: hazratummar9@gmail.com).
+## Shipped Software (Case Studies)
+
+- [Karigo](https://github.com/ihazratummar/Karigo-App): Offline-first invoice and rate engine for field contractors. Built with Kotlin Multiplatform, Jetpack Compose, SQLDelight, and RevenueCat.
+- [Islam24](https://play.google.com/store/apps/details?id=com.hazrat.islam24): Native Android app on Google Play with ultra-low battery background engine (<1.5% daily drain) using AlarmManager and FusedLocationProvider.
+- [OneDrop](https://play.google.com/store/apps/details?id=com.hazrat.onedrop): Real-time blood donor network with WebSocket push broadcasts and atomic claim processing on Kotlin backend.
+
+## Technical Knowledge & Blog
+
+- [Engineering Blog](https://relayworks.dev/blog): In-depth technical guides on Android architecture, Kotlin Multiplatform patterns, backend system design, and AI integration tutorials.
+
+## Common Questions
+
+Q: What technologies does RelayWorks use for mobile app development?
+A: RelayWorks builds native Android apps using Kotlin and Jetpack Compose, native iOS apps using SwiftUI, and cross-platform apps using Kotlin Multiplatform (KMP) with Compose Multiplatform. All apps use offline-first architecture with Room or SQLDelight for local storage.
+
+Q: How does RelayWorks handle offline data sync in mobile apps?
+A: We implement local-first architecture where all user actions are recorded immediately in SQLite/Room with timestamps and mutation logs. When connectivity returns, a background delta sync worker pushes atomic batches to the server with field-level conflict resolution, guaranteeing zero data loss.
+
+Q: Does RelayWorks build both mobile apps and backends?
+A: Yes. RelayWorks specializes in full-stack mobile systems using Kotlin Spring Boot, PostgreSQL, MongoDB, and Docker. The same senior engineer builds both the mobile client and backend API, eliminating communication friction between frontend and server developers.
+
+Q: How do RelayWorks AI chatbots avoid hallucinating?
+A: We implement strict Retrieval-Augmented Generation (RAG). Every user query triggers a semantic vector search against verified company documents. The LLM is instruction-bound to answer exclusively from retrieved text, never from its general training knowledge.
+
+## Contact
+
+- [Start a Project](https://relayworks.dev/contact): Work directly with founder Hazrat Ummar Shaikh.
+- Email: hazratummar9@gmail.com

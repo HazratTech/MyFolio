@@ -29,6 +29,53 @@ export const metadata: Metadata = {
     }
 };
 
+const projectsSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "CollectionPage",
+            "@id": "https://relayworks.dev/projects#webpage",
+            "url": "https://relayworks.dev/projects",
+            "name": "Shipped Software & Engineering Systems | RelayWorks",
+            "description": "Commercial software portfolio: production native mobile apps, scalable backend microservices, and high-concurrency Discord platform automations.",
+            "isPartOf": {
+                "@id": "https://relayworks.dev/#website"
+            },
+            "about": {
+                "@id": "https://relayworks.dev/#organization"
+            },
+            "creator": {
+                "@id": "https://relayworks.dev/about#person"
+            }
+        },
+        {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://relayworks.dev"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Projects",
+                    "item": "https://relayworks.dev/projects"
+                }
+            ]
+        }
+    ]
+};
+
 export default function ProjectsPage() {
-    return <Projects />;
+    return (
+        <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(projectsSchema) }}
+            />
+            <Projects />
+        </>
+    );
 }

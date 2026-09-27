@@ -3,11 +3,18 @@ Allow: /
 Disallow: /admin/
 Disallow: /api/
 
+# ── Google AI (AI Overviews, AI Mode, Gemini) ──
 User-agent: Google-Extended
 Allow: /
 Disallow: /admin/
 Disallow: /api/
 
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+# ── OpenAI (ChatGPT Search, GPT crawling) ──
 User-agent: GPTBot
 Allow: /
 Disallow: /admin/
@@ -19,15 +26,71 @@ Allow: /
 User-agent: OAI-SearchBot
 Allow: /
 
+# ── Anthropic (Claude) ──
 User-agent: Claude-Web
 Allow: /
 Disallow: /admin/
 Disallow: /api/
 
+User-agent: anthropic-ai
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+# ── Perplexity ──
 User-agent: PerplexityBot
 Allow: /
 Disallow: /admin/
 Disallow: /api/
+
+# ── Meta AI ──
+User-agent: FacebookBot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+User-agent: meta-externalagent
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+# ── Microsoft / Bing AI (Copilot) ──
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+# ── Cohere ──
+User-agent: cohere-ai
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+# ── Apple Intelligence / Siri ──
+User-agent: Applebot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+# ── Amazon / Alexa ──
+User-agent: Amazonbot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+# ── Machine-Readable Manifests for LLMs ──
+# LLM Summary: https://relayworks.dev/llms.txt
+# LLM Full Technical Manifest: https://relayworks.dev/llms-full.txt
 
 Sitemap: https://relayworks.dev/sitemap.xml
 Host: https://relayworks.dev

@@ -201,6 +201,9 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://minio-api.hazratdev.top" />
         <link rel="dns-prefetch" href="https://minio-api.hazratdev.top" />
+        {/* AI Agent / LLM Discoverability */}
+        <link rel="describedby" href="https://relayworks.dev/llms.txt" type="text/plain" title="LLM Site Manifest" />
+        <link rel="alternate" href="https://relayworks.dev/llms-full.txt" type="text/plain" title="LLM Full Technical Manifest" />
       </head>
       <body
         className={cn(

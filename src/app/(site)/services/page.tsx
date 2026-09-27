@@ -28,6 +28,50 @@ export const metadata: Metadata = {
     },
 };
 
+const servicesSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "WebPage",
+            "@id": "https://relayworks.dev/services#webpage",
+            "url": "https://relayworks.dev/services",
+            "name": "Software Engineering Services & Sprints | RelayWorks",
+            "description": "Production native mobile apps, scalable backend APIs, custom Discord infrastructure, and AI automations with transparent milestone sprints.",
+            "isPartOf": {
+                "@id": "https://relayworks.dev/#website"
+            },
+            "about": {
+                "@id": "https://relayworks.dev/#organization"
+            }
+        },
+        {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://relayworks.dev"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Services",
+                    "item": "https://relayworks.dev/services"
+                }
+            ]
+        }
+    ]
+};
+
 export default function ServicesPage() {
-    return <ServicesLanding />;
+    return (
+        <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(servicesSchema) }}
+            />
+            <ServicesLanding />
+        </>
+    );
 }

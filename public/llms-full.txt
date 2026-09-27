@@ -1,13 +1,16 @@
-# RelayWorks — Full Architectural & Studio Manifest
+# RelayWorks — Full Technical Manifest & Knowledge Base
 
-> RelayWorks is an independent boutique software engineering studio founded by Hazrat Ummar Shaikh. We architect, build, and ship production native mobile applications, high-concurrency backend microservices, custom platform automation (Discord & Slack), and domain-grounded conversational AI workflows.
+> RelayWorks is an independent software engineering studio founded and operated by Hazrat Ummar Shaikh. We architect, build, and ship production native mobile applications, high-concurrency backend microservices, custom platform automation (Discord & Slack), and domain-grounded conversational AI workflows. Clients work directly with the senior engineer — no agency layers, no junior hand-offs.
 
-## Studio Overview
+## Studio Identity
+- Name: RelayWorks
 - Domain: https://relayworks.dev
 - Founder: Hazrat Ummar Shaikh
-- Founder Roles: Lead Software Engineer & Architect
+- Role: Lead Software Engineer & Architect
 - Contact Email: hazratummar9@gmail.com
 - GitHub: https://github.com/ihazratummar
+- LinkedIn: https://www.linkedin.com/in/hazrat-ummar-shaikh/
+- X (Twitter): https://x.com/ihazratummar9
 - Google Play Developer: https://play.google.com/store/apps/dev?id=8511073495389394372
 
 ---
@@ -15,53 +18,132 @@
 ## 1. Native & Multiplatform Mobile App Development
 URL: https://relayworks.dev/mobile-app-development
 
-### Disciplines
+### What We Build
+Production-grade native mobile applications for Android, iOS, and cross-platform using Kotlin Multiplatform. Every app ships with offline-first data architecture, 60FPS declarative UI, and full App Store/Play Store compliance.
+
+### Technology Stack
 - Android: Native Kotlin, Jetpack Compose, Coroutines & Flows, Room Database, WorkManager, Foreground Services.
 - iOS: Swift, SwiftUI, Combine, SwiftData / CoreData, BackgroundTasks framework.
 - Multiplatform: Kotlin Multiplatform (KMP), Compose Multiplatform, SQLDelight, Koin dependency injection, Ktor client.
 
 ### Architectural Standards
-- Offline-First Architecture: Local-first SQLite/Room/SQLDelight storage with delta sync queue and deterministic conflict resolution.
+- Offline-First Architecture: Local-first SQLite/Room/SQLDelight storage with delta sync queue and deterministic conflict resolution. Users never lose data even without connectivity.
 - UI Fluidity: Strict 60FPS / 120FPS ProMotion rendering without jank or main-thread blocking.
 - Clean Architecture: Distinct domain, data, and presentation layers for complete testability.
 - App Store & Play Store Delivery: 100% store review compliance, signing keys, privacy manifests, and in-app purchase setups (RevenueCat / StoreKit 2 / Google Play Billing).
+
+### Frequently Asked Questions
+
+Q: Why use Kotlin Multiplatform instead of Flutter or React Native?
+A: Flutter uses an artificial canvas renderer that doesn't look or feel native to iOS, and React Native relies on bridge serialization that can cause frame drops on complex lists. Kotlin Multiplatform lets us write 100% native UI in Jetpack Compose on Android and SwiftUI on iOS while sharing 80% of business logic, database queries, and networking in pure Kotlin — without runtime performance penalties.
+
+Q: How does offline-first architecture handle data sync conflicts?
+A: We implement local-first SQLite/Room storage where user actions are recorded immediately with local timestamps and mutation logs. When the device reconnects, a background Delta Sync worker pushes atomic batches to our Spring Boot/PostgreSQL backend with automated field-level conflict resolution, guaranteeing zero data loss.
+
+Q: Do you guarantee App Store and Play Store approval?
+A: Yes. Every mobile contract includes complete store submission support: privacy policy compliance, app icon asset bundling, signing key configuration, and direct resolution of any store review feedback until the application is live.
+
+Q: What does a mobile app project cost?
+A: Native Android MVP starts at $1,490. Android & iOS dual-platform suite starts at $3,490. Complete mobile + backend system starts at $6,490. Projects are structured in 3 transparent milestones with working test builds before each payment.
 
 ---
 
 ## 2. High-Throughput Backend & Microservice Architecture
 URL: https://relayworks.dev/services
 
-### Disciplines
+### What We Build
+Scalable REST and WebSocket API backends that power mobile apps, web dashboards, and automation systems. Designed for high concurrency, containerized deployment, and zero-downtime updates.
+
+### Technology Stack
 - Frameworks: Kotlin Spring Boot, Ktor, Python FastAPI, Node.js / Next.js.
 - Databases: PostgreSQL, MongoDB, Redis.
 - Communication: RESTful APIs, WebSocket full-duplex channels, SSE (Server-Sent Events), RabbitMQ / Kafka message streaming.
-- Infrastructure: Docker containerization, Linux VPS hardening, Nginx reverse proxy, CI/CD automated deployment with GitHub Actions.
+- Infrastructure: Docker containerization, Linux VPS hardening, Nginx reverse proxy, CI/CD with GitHub Actions.
+
+### Frequently Asked Questions
+
+Q: Can you build the backend as well as the mobile app?
+A: Yes. We specialize in full-stack mobile systems using Kotlin Spring Boot, PostgreSQL, MongoDB, and Docker. The same senior engineer builds both the mobile client and backend API, eliminating communication friction between separate frontend and server developers.
+
+Q: What databases do you support?
+A: PostgreSQL for relational data with strong consistency guarantees, MongoDB for document-oriented flexible schemas, and Redis for caching and real-time session management. Database choice depends on the project's data access patterns and consistency requirements.
 
 ---
 
 ## 3. Custom Discord Bots & Platform Automation
 URL: https://relayworks.dev/discord-bot
 
-### Disciplines
+### What We Build
+High-concurrency Discord bots with custom moderation, ticket systems, verification flows, multi-currency economy engines, Stripe payment integration, and game server connections. Built in Python with discord.py/nextcord.
+
+### Technology Stack
 - Languages: Python (discord.py, nextcord)
-- Bot Architecture: Cogs modular pattern, async command trees, Discord Slash Commands, Modals, Select Menus, Buttons.
-- Capabilities: Automated moderation systems, private ticket lifecycles with HTML transcripts, multi-tier economy engines, Stripe / crypto payment verification webhooks, and game server integrations.
+- Architecture: Cogs modular pattern, async command trees, Discord Slash Commands, Modals, Select Menus, Buttons.
+- Capabilities: Automated moderation, private ticket lifecycles with HTML transcripts, multi-tier economy engines, Stripe / crypto payment verification webhooks, and game server integrations.
 - Hosting: 24/7 uptime on hardened Linux VPS instances monitored via PM2 and health-check endpoints.
+
+### Frequently Asked Questions
+
+Q: How to make a custom Discord bot for my server?
+A: To make a custom Discord bot, you register a developer app on the Discord portal, write the bot logic in Python or TypeScript, and host it on a server. By hiring an experienced Discord developer, you get a professionally built bot running 24/7, tailored to your exact needs, without any coding on your part.
+
+Q: Why choose a custom Discord bot over public bots like MEE6?
+A: Custom bots give you 100% white-labeled branding (your bot logo and name), commands tailored exactly to your workflows, zero monthly pricing bottlenecks, dedicated hosting for fast performance, and full source code ownership.
+
+Q: What does a Discord bot cost?
+A: Basic bots (slash commands, welcome cards, moderation) start at $149. Advanced community/SaaS bots (tickets, verification, economy) start at $349. Delivery is 3-5 days for basic bots, 7-14 days for advanced setups.
 
 ---
 
 ## 4. Conversational AI & Business Workflows
 URL: https://relayworks.dev/ai-chatbot-development
 
-### Disciplines
+### What We Build
+Production AI chatbots and conversational agents grounded in your company's verified knowledge base. Deployed on websites and WhatsApp Business with CRM synchronization, automated calendar booking, and zero hallucinations.
+
+### Technology Stack
 - Frameworks: FastAPI, LangChain, LlamaIndex, OpenAI API, Anthropic Claude API, Gemini API.
 - Vector Systems: pgvector, Pinecone, ChromaDB, hybrid BM25 + dense semantic retrieval.
 - Grounding: Strict Retrieval-Augmented Generation (RAG) with deterministic guardrails eliminating model hallucinations.
-- Omnichannel: Web interactive widgets, WhatsApp Business Cloud API integration, CRM database syncing (HubSpot, Salesforce, Supabase).
+- Channels: Web interactive widgets, WhatsApp Business Cloud API integration, CRM database syncing (HubSpot, Salesforce, Supabase).
+
+### Frequently Asked Questions
+
+Q: How do you ensure the AI chatbot won't hallucinate or quote wrong prices?
+A: We implement strict Retrieval-Augmented Generation (RAG). The LLM is never allowed to guess. Every incoming query triggers a semantic search against your verified company knowledge base. The model is instructed with deterministic system bounds to answer exclusively from the retrieved text.
+
+Q: Can you connect the chatbot to WhatsApp?
+A: Yes. We engineer integrations using the official Meta WhatsApp Business Cloud API. We handle webhook registration, template configuration, and message routing so your business can engage leads directly on WhatsApp.
+
+Q: What does an AI chatbot cost?
+A: Starter Assistant (single channel, vector RAG, lead qualification) starts at $350. Growth Automation (dual channel, calendar booking, CRM sync) starts at $750. Enterprise Agent Architecture (multi-agent, database querying, admin dashboards) starts at $1,600.
 
 ---
 
 ## Shipped Case Studies
-1. Karigo (Field Operations SaaS): Zero-server local-first mobile invoice and rate engine built with Kotlin Multiplatform, Jetpack Compose, SQLDelight, and RevenueCat. (https://github.com/ihazratummar/Karigo-App)
-2. Islam24 (Native Android Application): Ultra-low battery background engine (<1.5% daily) utilizing exact AlarmManager scheduling and FusedLocationProvider. Live on Google Play Store. (https://play.google.com/store/apps/details?id=com.hazrat.islam24)
-3. OneDrop (Real-Time Healthcare System): High-throughput mobile client and Kotlin server handling real-time push broadcasts and atomic reservation locks for blood donors. (https://play.google.com/store/apps/details?id=com.hazrat.onedrop)
+
+### Karigo — Field Operations SaaS
+- URL: https://github.com/ihazratummar/Karigo-App
+- Description: Zero-server local-first mobile invoice and rate engine built for field contractors. Users can generate invoices, manage rates, and track operations entirely offline. Data syncs automatically when connectivity returns.
+- Stack: Kotlin Multiplatform, Jetpack Compose, SQLDelight, RevenueCat.
+
+### Islam24 — Native Android Application
+- URL: https://play.google.com/store/apps/details?id=com.hazrat.islam24
+- Description: Consumer Android application live on Google Play with ultra-low battery background engine (<1.5% daily drain). Uses exact AlarmManager scheduling and FusedLocationProvider for location-aware notifications.
+- Stack: Native Kotlin, Jetpack Compose, Room Database, WorkManager.
+
+### OneDrop — Real-Time Healthcare System
+- URL: https://play.google.com/store/apps/details?id=com.hazrat.onedrop
+- Description: High-throughput blood donor network with real-time push broadcasts and atomic reservation locks. Mobile client communicates with Kotlin backend via WebSocket for instant state distribution.
+- Stack: Kotlin, Jetpack Compose, Kotlin Spring Boot, WebSocket, PostgreSQL.
+
+---
+
+## About the Founder
+
+Hazrat Ummar Shaikh is an independent senior software engineer specializing in production mobile application architecture and full-stack system design. He has shipped multiple applications to Google Play Store with thousands of active users, built high-concurrency backend systems, and engineered AI-powered business automation for clients worldwide.
+
+- GitHub: https://github.com/ihazratummar
+- LinkedIn: https://www.linkedin.com/in/hazrat-ummar-shaikh/
+- Google Play: https://play.google.com/store/apps/dev?id=8511073495389394372
+- About Page: https://relayworks.dev/about
