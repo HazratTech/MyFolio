@@ -3,29 +3,31 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { 
-    ArrowRight, 
-    ExternalLink, 
-    Github, 
-    Smartphone, 
-    Server, 
-    Bot, 
-    Sparkles, 
-    Check, 
+import {
+    ArrowRight,
+    ExternalLink,
+    Github,
+    Smartphone,
+    Server,
+    Bot,
+    Sparkles,
+    Check,
     CheckCircle2,
-    ShieldCheck, 
-    Clock, 
-    Star, 
-    Layers, 
-    Code2, 
-    Database, 
-    Cpu, 
-    Terminal, 
+    ShieldCheck,
+    Clock,
+    Star,
+    Layers,
+    Code2,
+    Database,
+    Cpu,
+    Terminal,
     Zap,
     ChevronRight,
     MoveUpRight
 } from "lucide-react";
 import { QuoteWizard } from "@/components/sections/QuoteWizard";
+import { TechMarquee } from "@/components/sections/TechMarquee";
+import { BorderBeam } from "@/components/lightswind/border-beam";
 import { cn } from "@/lib/utils";
 
 interface FlagshipProject {
@@ -182,7 +184,7 @@ export const LandingPage = () => {
             {/* ─── 1. BOUTIQUE STUDIO HERO (Editorial B2B Light Mode) ─── */}
             <section className="relative pt-24 pb-20 md:pt-36 md:pb-28 overflow-hidden border-b border-slate-200/80 bg-white">
                 {/* Hairline Grid Background */}
-                <div 
+                <div
                     className="absolute inset-0 pointer-events-none opacity-60"
                     style={{
                         backgroundImage: "radial-gradient(#cbd5e1 1px, transparent 1px)",
@@ -192,14 +194,17 @@ export const LandingPage = () => {
                 />
 
                 <div className="container mx-auto px-6 max-w-6xl relative z-10">
-                    
+
                     {/* Studio Eyebrow */}
-                    <div 
-                        className="inline-flex items-center gap-2.5 rounded-full px-3.5 py-1 text-xs font-bold uppercase tracking-wider shadow-sm border mb-6"
+                    <div
+                        className="inline-flex items-center gap-2.5 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider shadow-xs border mb-6"
                         style={{ backgroundColor: "#eff6ff", color: "#1d4ed8", borderColor: "#bfdbfe" }}
                     >
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span>Production Software Engineering • Direct Senior Builder</span>
+                        <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        <span>Available for Q4 Sprints • Direct Senior Builder</span>
                     </div>
 
                     {/* Main Headline */}
@@ -214,7 +219,7 @@ export const LandingPage = () => {
 
                     {/* Primary CTAs */}
                     <div className="flex flex-wrap items-center gap-4 mb-12">
-                        <a 
+                        <a
                             href="#services"
                             style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
                             className="inline-flex items-center justify-center gap-2.5 font-semibold text-base px-8 rounded-xl shadow-sm hover:opacity-95 transition-all group h-[56px] text-white cursor-pointer"
@@ -222,7 +227,7 @@ export const LandingPage = () => {
                             <span>Explore Services & Sprints</span>
                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </a>
-                        <a 
+                        <a
                             href="#case-studies"
                             style={{ backgroundColor: "#ffffff", color: "#0f172a", borderColor: "#cbd5e1" }}
                             className="inline-flex items-center justify-center gap-2 border font-semibold text-base px-8 rounded-xl transition-colors shadow-sm hover:bg-slate-50 h-[56px] cursor-pointer"
@@ -231,9 +236,11 @@ export const LandingPage = () => {
                         </a>
                     </div>
 
-                    {/* Founder & Credibility Bar */}
-                    <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <div className="flex items-center gap-4">
+                    {/* Founder & Credibility Bar with BorderBeam */}
+                    <div className="relative overflow-hidden p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <BorderBeam size={120} duration={8} colorFrom="#2563eb" colorTo="#10b981" />
+
+                        <div className="flex items-center gap-4 relative z-10">
                             <Image
                                 src="/images/founder.jpg"
                                 alt="Hazrat Ummar Shaikh, Founder & Senior Engineer"
@@ -255,7 +262,7 @@ export const LandingPage = () => {
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-2.5 flex-wrap">
+                        <div className="flex items-center gap-2.5 flex-wrap relative z-10">
                             <a
                                 href="https://github.com/ihazratummar"
                                 target="_blank"
@@ -284,12 +291,15 @@ export const LandingPage = () => {
                 </div>
             </section>
 
+            {/* ─── 1.5 TECH MARQUEE (LIGHTSWIND / MAGIC UI) ─── */}
+            <TechMarquee />
+
 
             {/* ─── 2. FLAGSHIP SHIPPED SOFTWARE SHOWCASE ─── */}
             <section id="case-studies" className="py-20 md:py-28 border-b border-slate-200/80 bg-[#fafaf9] relative">
                 <span id="work" className="absolute -top-24 left-0 pointer-events-none" aria-hidden="true" />
                 <div className="container mx-auto px-6 max-w-6xl">
-                    
+
                     {/* Section Header */}
                     <div className="mb-12">
                         <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-slate-700 shadow-sm mb-3">
@@ -332,10 +342,11 @@ export const LandingPage = () => {
                         ))}
                     </div>
 
-                    {/* Active Project Card */}
-                    <div className="rounded-3xl bg-white border border-slate-200 overflow-hidden shadow-sm">
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 p-6 sm:p-8 lg:p-10 items-center">
-                            
+                    {/* Active Project Card with BorderBeam */}
+                    <div className="relative rounded-3xl bg-white border border-slate-200 overflow-hidden shadow-sm">
+                        <BorderBeam size={160} duration={12} colorFrom="#3b82f6" colorTo="#8b5cf6" />
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 p-6 sm:p-8 lg:p-10 items-center relative z-10">
+
                             {/* Visual App Mockup */}
                             <div className="lg:col-span-6 relative group rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 aspect-video flex items-center justify-center shadow-inner">
                                 <Image
@@ -345,7 +356,18 @@ export const LandingPage = () => {
                                     sizes="(min-width: 1024px) 50vw, 100vw"
                                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent pointer-events-none" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/20 to-transparent pointer-events-none" />
+
+                                {/* Overlay Badges */}
+                                <div className="absolute bottom-3 left-3 right-3 flex flex-wrap gap-2 pointer-events-none z-10">
+                                    <span className="px-2.5 py-1 rounded-lg bg-slate-950/80 backdrop-blur-md text-white text-[11px] font-mono font-bold border border-white/20 shadow-sm flex items-center gap-1.5">
+                                        <Sparkles className="w-3 h-3 text-emerald-400" />
+                                        <span>Production Verified</span>
+                                    </span>
+                                    <span className="px-2.5 py-1 rounded-lg bg-blue-950/80 backdrop-blur-md text-blue-200 text-[11px] font-mono font-bold border border-blue-500/30 shadow-sm">
+                                        {activeProject.architectureType.split("+")[0].trim()}
+                                    </span>
+                                </div>
                             </div>
 
                             {/* Project Breakdown */}
@@ -441,7 +463,7 @@ export const LandingPage = () => {
             {/* ─── 3. CORE ENGINEERING TRACKS (SERVICE SILOS) ─── */}
             <section id="services" className="py-20 md:py-28 bg-white border-b border-slate-200">
                 <div className="container mx-auto px-6 max-w-6xl">
-                    
+
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
                         <div>
                             <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-blue-700 shadow-sm mb-3">
@@ -512,7 +534,7 @@ export const LandingPage = () => {
             {/* ─── 4. THE ANTI-AGENCY ADVANTAGE ─── */}
             <section className="py-20 md:py-28 bg-[#fafaf9] border-b border-slate-200">
                 <div className="container mx-auto px-6 max-w-6xl">
-                    
+
                     <div className="text-center max-w-3xl mx-auto mb-16">
                         <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-slate-700 shadow-sm mb-3">
                             The Anti-Agency Advantage
@@ -526,7 +548,7 @@ export const LandingPage = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                        
+
                         {/* Traditional Agency Card */}
                         <div className="p-8 rounded-2xl bg-white border border-rose-200 shadow-sm">
                             <div className="text-xs font-bold text-rose-700 uppercase tracking-wider mb-6 flex items-center gap-2 bg-rose-50 border border-rose-200 px-3 py-1 rounded-full w-fit">
@@ -558,11 +580,11 @@ export const LandingPage = () => {
                         </div>
 
                         {/* RelayWorks Model */}
-                        <div 
+                        <div
                             style={{ borderColor: "#2563eb" }}
                             className="p-8 rounded-2xl bg-white border-2 shadow-xl shadow-blue-600/10 relative"
                         >
-                            <div 
+                            <div
                                 style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
                                 className="text-xs font-bold uppercase tracking-wider mb-6 flex items-center gap-2 px-3 py-1 rounded-full w-fit shadow-sm text-white"
                             >
@@ -602,7 +624,7 @@ export const LandingPage = () => {
             {/* ─── 5. PREDICTABLE MILESTONE SPRINTS ─── */}
             <section id="pricing" className="py-20 md:py-28 bg-white border-b border-slate-200">
                 <div className="container mx-auto px-6 max-w-6xl">
-                    
+
                     <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-16">
                         <div>
                             <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-slate-700 shadow-sm mb-3">
@@ -642,7 +664,7 @@ export const LandingPage = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-                        
+
                         {/* Sprint 1: Prototype / MVP */}
                         <div className="p-8 rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
                             <div>
@@ -677,7 +699,7 @@ export const LandingPage = () => {
                                 </ul>
                             </div>
                             <a href="#contact">
-                                <button 
+                                <button
                                     style={{ backgroundColor: "#0f172a", color: "#ffffff" }}
                                     className="w-full py-3 rounded-xl text-xs font-bold transition-all hover:bg-slate-800 text-white cursor-pointer shadow-sm"
                                 >
@@ -687,13 +709,14 @@ export const LandingPage = () => {
                         </div>
 
                         {/* Sprint 2: Production Dual-Platform Suite */}
-                        <div 
+                        <div
                             style={{ borderColor: "#2563eb" }}
-                            className="p-8 rounded-2xl bg-white border-2 shadow-xl shadow-blue-600/10 flex flex-col justify-between relative"
+                            className="p-8 rounded-2xl bg-white border-2 shadow-xl shadow-blue-600/10 flex flex-col justify-between relative overflow-hidden"
                         >
-                            <div 
+                            <BorderBeam size={160} duration={6} colorFrom="#2563eb" colorTo="#38bdf8" />
+                            <div
                                 style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
-                                className="absolute -top-3 left-1/2 -translate-x-1/2 px-3.5 py-0.5 rounded-full text-white text-[10px] font-bold uppercase tracking-wider shadow-sm whitespace-nowrap"
+                                className="absolute -top-3 left-1/2 -translate-x-1/2 px-3.5 py-0.5 rounded-full text-white text-[10px] font-bold uppercase tracking-wider shadow-sm whitespace-nowrap z-20"
                             >
                                 Most Requested
                             </div>
@@ -733,7 +756,7 @@ export const LandingPage = () => {
                                 </ul>
                             </div>
                             <a href="#contact">
-                                <button 
+                                <button
                                     style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
                                     className="w-full py-3 rounded-xl text-xs font-bold transition-all hover:opacity-95 text-white cursor-pointer shadow-sm"
                                 >
@@ -775,7 +798,7 @@ export const LandingPage = () => {
                                 </ul>
                             </div>
                             <a href="#contact">
-                                <button 
+                                <button
                                     style={{ backgroundColor: "#0f172a", color: "#ffffff" }}
                                     className="w-full py-3 rounded-xl text-xs font-bold transition-all hover:bg-slate-800 text-white cursor-pointer shadow-sm"
                                 >
@@ -793,7 +816,7 @@ export const LandingPage = () => {
             {/* ─── 6. VERIFIED CLIENT FEEDBACK ─── */}
             <section className="py-20 md:py-28 border-b border-slate-200/80 bg-[#fafaf9]">
                 <div className="container mx-auto px-6 max-w-6xl">
-                    
+
                     <div className="text-center max-w-2xl mx-auto mb-16">
                         <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-slate-700 shadow-sm mb-3">
                             Verified Client Reviews
@@ -848,7 +871,7 @@ export const LandingPage = () => {
                                 Real engineering challenges solved in production — from native memory crashes to serverless throttling and autonomous agent pipelines.
                             </p>
                         </div>
-                        <Link 
+                        <Link
                             href="/blog"
                             className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors shrink-0"
                         >
@@ -859,7 +882,7 @@ export const LandingPage = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Article 1 */}
-                        <Link 
+                        <Link
                             href="/blog/fixing-android-native-crashes-in-react-native-app"
                             className="p-7 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-md hover:border-blue-300 transition-all flex flex-col justify-between group"
                         >
@@ -884,7 +907,7 @@ export const LandingPage = () => {
                         </Link>
 
                         {/* Article 2 */}
-                        <Link 
+                        <Link
                             href="/blog/five-bugs-in-my-llm-app-that-never-threw-an-error"
                             className="p-7 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-md hover:border-blue-300 transition-all flex flex-col justify-between group"
                         >
@@ -909,7 +932,7 @@ export const LandingPage = () => {
                         </Link>
 
                         {/* Article 3 */}
-                        <Link 
+                        <Link
                             href="/blog/cloud-run-cpu-throttling-unraveling-serverless-performance-mysteries"
                             className="p-7 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-md hover:border-blue-300 transition-all flex flex-col justify-between group"
                         >
@@ -934,7 +957,7 @@ export const LandingPage = () => {
                         </Link>
 
                         {/* Article 4 */}
-                        <Link 
+                        <Link
                             href="/blog/mastering-discord-py-building-resilient-scalable-discord-bots"
                             className="p-7 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-md hover:border-blue-300 transition-all flex flex-col justify-between group"
                         >
