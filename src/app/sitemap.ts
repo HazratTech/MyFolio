@@ -2,7 +2,6 @@ import { MetadataRoute } from 'next'
 import dbConnect from '@/lib/db'
 import Post from '@/models/Post'
 import Category from '@/models/Category'
-import Tag from '@/models/Tag'
 
 export const dynamic = 'force-dynamic'
 
@@ -37,7 +36,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
         const posts = await Post.find({ status: 'published' }).select('slug updatedAt').lean()
         const categories = await Category.find({}).select('name updatedAt').lean()
-        const tags = await Tag.find({}).select('name updatedAt').lean()
 
         const postRoutes = posts.map((post: any) => ({
             url: `${baseUrl}/blog/${post.slug}`,
@@ -53,14 +51,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             priority: 0.6,
         }))
 
-        const tagRoutes = tags.map((tag: any) => ({
-            url: `${baseUrl}/blog/tag/${encodeURIComponent(tag.name)}`,
-            lastModified: new Date(tag.updatedAt || new Date()),
-            changeFrequency: 'weekly' as const,
-            priority: 0.5,
-        }))
-
-        return [...staticRoutes, ...postRoutes, ...categoryRoutes, ...tagRoutes]
+        return [...staticRoutes, ...postRoutes, ...categoryRoutes]
     } catch (error) {
         console.error('Unable to load dynamic sitemap routes:', error)
         return staticRoutes

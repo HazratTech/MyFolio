@@ -38,20 +38,10 @@ export async function GET() {
             const tags = Array.from(new Set(rawTags)).slice(0, 4);
             const categoryXml = tags.map((t: any) => `<category>${t}</category>`).join('\n            ');
 
-            // Dev.to YAML Frontmatter block to guarantee cover image & canonical link extraction
-            const frontmatter = `---
-title: "${(post.title || '').replace(/"/g, '\\"')}"
-published: true
-description: "${cleanDescription.replace(/"/g, '\\"')}"
-cover_image: "${coverImageUrl}"
-canonical_url: "https://relayworks.dev/blog/${post.slug}"
-tags: ${tags.join(', ')}
----`;
-
             const coverImageHtml = coverImageUrl
                 ? `<figure class="blog-cover"><img src="${coverImageUrl}" alt="${post.title}" /></figure>\n`
                 : '';
-            const fullContent = `${frontmatter}\n${coverImageHtml}${post.content || ''}`;
+            const fullContent = `${coverImageHtml}${post.content || ''}`;
 
             const mediaEnclosure = coverImageUrl
                 ? `\n            <cover_image>${coverImageUrl}</cover_image>

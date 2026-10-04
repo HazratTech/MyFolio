@@ -24,6 +24,10 @@ export async function generateMetadata({ params }: { params: { tag: string | str
         alternates: {
             canonical: `/blog/tag/${Array.isArray(params.tag) ? params.tag.join("/") : params.tag}`,
         },
+        robots: {
+            index: false,
+            follow: true,
+        },
     };
 }
 
