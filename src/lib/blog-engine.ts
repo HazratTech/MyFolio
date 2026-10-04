@@ -532,7 +532,7 @@ export async function runWriterAgent(
         if (s.visualType === "photo") {
             visualInstruction = `Place marker: [IMAGE: ${s.visualDescription} | ${s.heading} technical visual overview]`;
         } else if (s.visualType === "diagram") {
-            visualInstruction = `Generate a valid Mermaid.js diagram wrapped in: <div class="mermaid">\n...valid mermaid code with double-quoted labels...\n</div>\nDescription: ${s.visualDescription}`;
+            visualInstruction = `Generate a valid Mermaid.js diagram illustrating: ${s.visualDescription}. Wrap ONLY the diagram code inside: <div class="mermaid">\n...valid mermaid code with double-quoted labels...\n</div>. Do NOT write "Description:" or any meta commentary outside the div.`;
         } else if (s.visualType === "code") {
             visualInstruction = `Include a complete, runnable code example with imports and error handling in <pre><code class="language-xxx">...</code></pre>`;
         } else if (s.visualType === "table") {

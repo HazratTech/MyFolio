@@ -43,12 +43,22 @@ export async function GET() {
                 : '';
             
             // Automatically convert any relative links to absolute relayworks.dev links for RSS subscribers and Dev.to syndication
-            const absoluteContent = (post.content || '')
+            let sanitizedContent = (post.content || '')
                 .replace(/href=["']\/(?!\/)([^"'\s>]+)["']/g, 'href="https://relayworks.dev/$1"')
                 .replace(/src=["']\/(?!\/)([^"'\s>]+)["']/g, 'src="https://relayworks.dev/$1"')
                 .replace(/\[([^\]]+)\]\(\/(?!\/)([^\)\s]+)\)/g, '[$1](https://relayworks.dev/$2)');
 
-            const fullContent = `${coverImageHtml}${absoluteContent}`;
+            // Strip LLM prompt residue like "Description: Mermaid.js..."
+            sanitizedContent = sanitizedContent.replace(/Description:\s*(?:Mermaid\.js|Flowchart|Diagram|Visual)[\s\S]*?(?=\n\n[#A-Z<]|\n<h|\s*$)/gi, '');
+
+            // Convert <div class="mermaid"> to static images for RSS readers & Dev.to that cannot execute Mermaid client-side JS
+            sanitizedContent = sanitizedContent.replace(/<div class="mermaid">\s*([\s\S]*?)\s*<\/div>/gi, (_, code) => {
+                const cleanCode = code.trim();
+                const base64 = Buffer.from(cleanCode).toString('base64');
+                return `<figure class="mermaid-diagram" style="text-align: center; margin: 2rem 0;"><img src="https://mermaid.ink/img/${base64}" alt="Architecture Diagram" style="max-width: 100%; height: auto;" /></figure>`;
+            });
+
+            const fullContent = `${coverImageHtml}${sanitizedContent}`;
 
             const mediaEnclosure = coverImageUrl
                 ? `\n            <cover_image>${coverImageUrl}</cover_image>
