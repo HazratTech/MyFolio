@@ -23,7 +23,9 @@ import {
     Terminal,
     Zap,
     ChevronRight,
-    MoveUpRight
+    MoveUpRight,
+    Send,
+    MessageSquare
 } from "lucide-react";
 import { QuoteWizard } from "@/components/sections/QuoteWizard";
 import { TechMarquee } from "@/components/sections/TechMarquee";
@@ -263,12 +265,30 @@ export const LandingPage = () => {
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-2.5 flex-wrap relative z-10">
+                        <div className="flex items-center gap-2 flex-wrap relative z-10">
+                            <a
+                                href="https://t.me/hazratummar"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="px-3 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-800 text-xs font-bold flex items-center gap-1.5 border border-sky-200 transition-colors shadow-2xs"
+                            >
+                                <Send className="w-3.5 h-3.5 text-sky-600" />
+                                <span>Telegram Direct</span>
+                            </a>
+                            <a
+                                href="https://discord.com/users/ihazratummar"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="px-3 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-800 text-xs font-bold flex items-center gap-1.5 border border-indigo-200 transition-colors shadow-2xs"
+                            >
+                                <MessageSquare className="w-3.5 h-3.5 text-indigo-600" />
+                                <span>Discord</span>
+                            </a>
                             <a
                                 href="https://github.com/ihazratummar"
                                 target="_blank"
                                 rel="noreferrer"
-                                className="px-3.5 py-2 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold flex items-center gap-1.5 border border-slate-200 transition-colors shadow-sm"
+                                className="px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold flex items-center gap-1.5 border border-slate-200 transition-colors shadow-2xs"
                             >
                                 <Github className="w-3.5 h-3.5 text-slate-600" />
                                 <span>GitHub</span>
@@ -277,14 +297,14 @@ export const LandingPage = () => {
                                 href="https://play.google.com/store/apps/dev?id=8511073495389394372"
                                 target="_blank"
                                 rel="noreferrer"
-                                className="px-3.5 py-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold flex items-center gap-1.5 border border-emerald-200 transition-colors shadow-sm"
+                                className="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold flex items-center gap-1.5 border border-emerald-200 transition-colors shadow-2xs"
                             >
                                 <ExternalLink className="w-3.5 h-3.5 text-emerald-700" />
-                                <span>Google Play Developer</span>
+                                <span>Google Play</span>
                             </a>
-                            <div className="px-3 py-2 rounded-lg bg-amber-50 text-amber-900 text-xs font-semibold flex items-center gap-1.5 border border-amber-200 shadow-sm">
+                            <div className="px-2.5 py-1.5 rounded-lg bg-amber-50 text-amber-900 text-xs font-semibold flex items-center gap-1.5 border border-amber-200 shadow-2xs">
                                 <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-                                <span>5.0★ Rating</span>
+                                <span>5.0★</span>
                             </div>
                         </div>
                     </div>
@@ -463,6 +483,76 @@ export const LandingPage = () => {
 
                             </div>
 
+                        </div>
+                    </div>
+
+                    {/* ─── iOS Delivery & Risk-Reversal Protocol ─── */}
+                    <div className="mt-10 p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-xs">
+                        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-slate-200">
+                            <div className="space-y-2 max-w-2xl">
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wider border border-blue-200">
+                                    <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
+                                    <span>Dual-Platform Delivery Protocol</span>
+                                </div>
+                                <h3 className="text-2xl sm:text-3xl font-black font-heading text-slate-950">
+                                    Building for iPhone / iPad? Here is How We Safeguard Your Release.
+                                </h3>
+                                <p className="text-slate-600 text-sm leading-relaxed">
+                                    Our public showcase apps feature live Google Play Store applications and open-source GitHub repositories. If your business requires an iOS client, we eliminate 100% of your risk before you spend a single dollar:
+                                </p>
+                            </div>
+                            <div className="flex flex-wrap lg:flex-col gap-2.5 shrink-0">
+                                <a
+                                    href="https://t.me/hazratummar"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold transition-colors inline-flex items-center gap-1.5 shadow-2xs"
+                                >
+                                    <Send className="w-3.5 h-3.5" />
+                                    <span>Chat on Telegram</span>
+                                </a>
+                                <a
+                                    href="https://discord.com/users/ihazratummar"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-colors inline-flex items-center gap-1.5 shadow-2xs"
+                                >
+                                    <MessageSquare className="w-3.5 h-3.5" />
+                                    <span>DM on Discord</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
+                            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 shadow-2xs space-y-2">
+                                <div className="w-9 h-9 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 font-bold text-xs">
+                                    01
+                                </div>
+                                <h4 className="font-bold text-slate-900 text-sm">100% Native SwiftUI Interface</h4>
+                                <p className="text-slate-600 text-xs leading-relaxed">
+                                    Zero webviews or laggy wrapper bridges. 80% of business logic &amp; offline DB are shared in Kotlin (KMP), while the UI is written in pure native SwiftUI with 120Hz smooth scrolling.
+                                </p>
+                            </div>
+
+                            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 shadow-2xs space-y-2">
+                                <div className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 font-bold text-xs">
+                                    02
+                                </div>
+                                <h4 className="font-bold text-slate-900 text-sm">Apple TestFlight Milestone Verification</h4>
+                                <p className="text-slate-600 text-xs leading-relaxed">
+                                    We deploy test builds directly to your personal iPhone or iPad via Apple TestFlight. You physically verify and test the native iOS build in your hands before releasing milestone funds.
+                                </p>
+                            </div>
+
+                            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 shadow-2xs space-y-2">
+                                <div className="w-9 h-9 rounded-xl bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600 font-bold text-xs">
+                                    03
+                                </div>
+                                <h4 className="font-bold text-slate-900 text-sm">100% App Store Approval Guarantee</h4>
+                                <p className="text-slate-600 text-xs leading-relaxed">
+                                    Apple Review Guidelines (2.1, 4.0, 5.1.1) are strict. We manage all certificates, privacy manifests, and reviewer inquiries. If Apple requests changes, we resolve 100% of notes at zero extra cost.
+                                </p>
+                            </div>
                         </div>
                     </div>
 
@@ -761,7 +851,7 @@ export const LandingPage = () => {
                                     </li>
                                     <li className="flex items-center gap-2">
                                         <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                                        <span>Google Play & TestFlight store prep</span>
+                                        <span>100% App Store & Google Play Approval Guarantee</span>
                                     </li>
                                 </ul>
                             </div>

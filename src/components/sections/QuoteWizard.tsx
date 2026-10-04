@@ -164,6 +164,36 @@ export const QuoteWizard = () => {
                         </p>
                     </m.div>
 
+                    {/* Skip the Wizard Fast-Track Banner */}
+                    <div className="mb-8 p-4 rounded-2xl bg-blue-50/80 border border-blue-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-2xs max-w-xl mx-auto">
+                        <div className="flex items-center gap-2">
+                            <span className="flex h-2 w-2 rounded-full bg-blue-600 shrink-0" />
+                            <span className="text-slate-700 font-medium">
+                                Want an instant answer? Skip the steps &amp; message Hazrat directly:
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                            <a
+                                href="https://t.me/hazratummar"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="px-3 py-1.5 rounded-lg bg-sky-600 text-white font-bold text-xs hover:bg-sky-700 transition-colors inline-flex items-center gap-1 shadow-2xs"
+                            >
+                                <Send className="w-3 h-3" />
+                                <span>Telegram Direct</span>
+                            </a>
+                            <a
+                                href="https://discord.com/users/ihazratummar"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 transition-colors inline-flex items-center gap-1 shadow-2xs"
+                            >
+                                <MessageSquare className="w-3 h-3" />
+                                <span>Discord</span>
+                            </a>
+                        </div>
+                    </div>
+
                     {/* Progress Bar */}
                     <div className="flex items-center gap-1.5 mb-8 max-w-md mx-auto">
                         {[1, 2, 3, 4].map(s => (
