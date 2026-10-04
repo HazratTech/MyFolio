@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { Mail, ExternalLink, Send, MessageSquare, CheckCircle2, ChevronRight, Clock, ShieldCheck, Terminal } from "lucide-react";
+import { Mail, ExternalLink, Send, MessageSquare, CheckCircle2, ChevronRight, Clock, ShieldCheck, Terminal, Instagram, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
 interface Social {
@@ -152,32 +152,107 @@ export const Contact = () => {
                     {/* Left Column: Direct Connect Info */}
                     <div className="lg:col-span-5 space-y-6">
                         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-5">
-                            <h2 className="text-lg font-bold font-heading text-slate-900 tracking-tight pb-3 border-b border-slate-100">
-                                Direct Engineering Contact
-                            </h2>
+                            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                                <h2 className="text-lg font-bold font-heading text-slate-900 tracking-tight">
+                                    Direct Engineering Contact
+                                </h2>
+                                <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                    Active Today
+                                </span>
+                            </div>
 
-                            <div className="space-y-4 text-sm">
-                                <div className="flex items-start gap-3.5">
-                                    <div className="w-9 h-9 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 shrink-0">
-                                        <Mail className="w-4 h-4" />
+                            <div className="space-y-3.5 text-sm">
+                                {/* Telegram */}
+                                <div className="p-3.5 rounded-xl bg-sky-50/60 border border-sky-200/80 flex items-start justify-between gap-3">
+                                    <div className="flex items-start gap-3">
+                                        <div className="w-9 h-9 rounded-xl bg-sky-500 flex items-center justify-center text-white shrink-0 shadow-2xs">
+                                            <Send className="w-4 h-4" />
+                                        </div>
+                                        <div>
+                                            <div className="text-[11px] font-bold uppercase tracking-wider text-sky-800">Telegram (Fastest)</div>
+                                            <div className="font-semibold text-slate-900 font-mono text-xs">@hazratummar</div>
+                                            <div className="text-[11px] text-slate-500 mt-0.5">Average reply &lt; 1 hour · Voice &amp; Chat</div>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <div className="text-xs text-slate-500 font-medium">Canonical Email</div>
-                                        <a href="mailto:hazratummar9@gmail.com" className="font-semibold text-slate-900 hover:text-blue-600 transition-colors">
-                                            hazratummar9@gmail.com
+                                    <a
+                                        href="https://t.me/hazratummar"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-sky-600 text-white font-bold text-xs hover:bg-sky-700 transition-colors shadow-2xs"
+                                    >
+                                        <span>Chat</span>
+                                        <ArrowUpRight className="w-3.5 h-3.5" />
+                                    </a>
+                                </div>
+
+                                {/* Discord */}
+                                <div className="p-3.5 rounded-xl bg-indigo-50/60 border border-indigo-200/80 flex items-start justify-between gap-3">
+                                    <div className="flex items-start gap-3">
+                                        <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shrink-0 shadow-2xs">
+                                            <MessageSquare className="w-4 h-4" />
+                                        </div>
+                                        <div>
+                                            <div className="text-[11px] font-bold uppercase tracking-wider text-indigo-800">Discord</div>
+                                            <div className="font-semibold text-slate-900 font-mono text-xs">ihazratummar</div>
+                                            <div className="text-[11px] text-slate-500 mt-0.5">Bots, community &amp; screen-shares</div>
+                                        </div>
+                                    </div>
+                                    <a
+                                        href="https://discord.com/users/ihazratummar"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 transition-colors shadow-2xs"
+                                    >
+                                        <span>Open</span>
+                                        <ArrowUpRight className="w-3.5 h-3.5" />
+                                    </a>
+                                </div>
+
+                                {/* Instagram Channels */}
+                                <div className="p-3.5 rounded-xl bg-pink-50/50 border border-pink-200/70 space-y-2">
+                                    <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-pink-900">
+                                        <Instagram className="w-3.5 h-3.5 text-pink-600" />
+                                        <span>Instagram Direct</span>
+                                    </div>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-xs">
+                                        <a
+                                            href="https://www.instagram.com/relayworks.dev/"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="p-2 rounded-lg bg-white border border-pink-200/80 hover:border-pink-300 transition-colors flex items-center justify-between"
+                                        >
+                                            <div>
+                                                <div className="font-bold text-slate-900 text-[11px]">Studio</div>
+                                                <div className="text-[10px] text-slate-500">@relayworks.dev</div>
+                                            </div>
+                                            <ArrowUpRight className="w-3 h-3 text-pink-500" />
+                                        </a>
+                                        <a
+                                            href="https://www.instagram.com/ihazratummar/"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="p-2 rounded-lg bg-white border border-pink-200/80 hover:border-pink-300 transition-colors flex items-center justify-between"
+                                        >
+                                            <div>
+                                                <div className="font-bold text-slate-900 text-[11px]">Personal</div>
+                                                <div className="text-[10px] text-slate-500">@ihazratummar</div>
+                                            </div>
+                                            <ArrowUpRight className="w-3 h-3 text-pink-500" />
                                         </a>
                                     </div>
                                 </div>
 
-                                <div className="flex items-start gap-3.5">
-                                    <div className="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-700 shrink-0">
-                                        <MessageSquare className="w-4 h-4" />
+                                {/* Canonical Email */}
+                                <div className="flex items-start gap-3.5 pt-2">
+                                    <div className="w-9 h-9 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 shrink-0">
+                                        <Mail className="w-4 h-4" />
                                     </div>
                                     <div>
-                                        <div className="text-xs text-slate-500 font-medium">Discord Handle</div>
-                                        <span className="font-semibold text-slate-900 font-mono text-xs">
-                                            ihazratummar
-                                        </span>
+                                        <div className="text-xs text-slate-500 font-medium">Canonical Email (RFPs &amp; Contracts)</div>
+                                        <a href="mailto:hazratummar9@gmail.com" className="font-semibold text-slate-900 hover:text-blue-600 transition-colors text-xs">
+                                            hazratummar9@gmail.com
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -217,7 +292,35 @@ export const Contact = () => {
                     </div>
 
                     {/* Right Column: Contact Inquiry Form */}
-                    <div className="lg:col-span-7">
+                    <div className="lg:col-span-7 space-y-4">
+                        {/* Skip the form fast-track notice */}
+                        <div className="bg-blue-50/80 border border-blue-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-2xs">
+                            <div className="flex items-center gap-2">
+                                <span className="flex h-2 w-2 rounded-full bg-blue-600 shrink-0" />
+                                <span className="text-slate-700 font-medium">
+                                    Want instant feedback? Message Hazrat directly on <a href="https://t.me/hazratummar" target="_blank" rel="noreferrer" className="font-bold text-sky-700 underline">Telegram</a> or <a href="https://discord.com/users/ihazratummar" target="_blank" rel="noreferrer" className="font-bold text-indigo-700 underline">Discord</a>.
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0">
+                                <a
+                                    href="https://t.me/hazratummar"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="px-2.5 py-1 rounded-lg bg-sky-600 text-white font-bold text-[11px] hover:bg-sky-700 transition-colors"
+                                >
+                                    Telegram ↗
+                                </a>
+                                <a
+                                    href="https://discord.com/users/ihazratummar"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-bold text-[11px] hover:bg-indigo-700 transition-colors"
+                                >
+                                    Discord ↗
+                                </a>
+                            </div>
+                        </div>
+
                         <Card className="bg-white border border-slate-200/90 rounded-2xl shadow-xs">
                             <CardContent className="p-6 sm:p-8">
                                 <form id="contact-form" onSubmit={handleSubmit} className="space-y-4">

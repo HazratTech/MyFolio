@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import {
     Smartphone, Bot, Sparkles, Server, ArrowRight, CheckCircle2,
     Database, Zap, ShieldCheck, ExternalLink, Github, Linkedin,
-    Twitter, Star, Code2, Award, Clock, Terminal, UserCheck, Mail
+    Twitter, Star, Code2, Award, Clock, Terminal, UserCheck, Mail,
+    Send, MessageSquare, Instagram
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -207,6 +208,28 @@ export const AboutLanding = () => {
                                     {/* Social / Developer Links */}
                                     <div className="flex flex-wrap gap-2">
                                         <a
+                                            href="https://t.me/hazratummar"
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="px-2.5 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 text-xs font-semibold flex items-center gap-1 transition-colors"
+                                            title="Telegram Direct"
+                                            aria-label="Telegram"
+                                        >
+                                            <Send className="w-3.5 h-3.5" />
+                                            <span>Telegram</span>
+                                        </a>
+                                        <a
+                                            href="https://discord.com/users/ihazratummar"
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="px-2.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-semibold flex items-center gap-1 transition-colors"
+                                            title="Discord"
+                                            aria-label="Discord"
+                                        >
+                                            <MessageSquare className="w-3.5 h-3.5" />
+                                            <span>Discord</span>
+                                        </a>
+                                        <a
                                             href="https://github.com/ihazratummar"
                                             target="_blank"
                                             rel="noreferrer"
@@ -220,11 +243,21 @@ export const AboutLanding = () => {
                                             href="https://play.google.com/store/apps/dev?id=8511073495389394372"
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center gap-1.5 border border-emerald-200/80 transition-colors"
+                                            className="px-2.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center gap-1 border border-emerald-200/80 transition-colors"
                                             aria-label="Google Play Store Developer Profile"
                                         >
                                             <ExternalLink className="w-3.5 h-3.5" />
                                             <span>Google Play</span>
+                                        </a>
+                                        <a
+                                            href="https://www.instagram.com/relayworks.dev/"
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="p-2 rounded-xl bg-pink-50 hover:bg-pink-100 text-pink-700 border border-pink-200 transition-colors"
+                                            title="Company Instagram @relayworks.dev"
+                                            aria-label="Company Instagram"
+                                        >
+                                            <Instagram className="w-4 h-4" />
                                         </a>
                                         <a
                                             href="https://www.linkedin.com/in/hazrat-ummar-shaikh/"
@@ -235,16 +268,6 @@ export const AboutLanding = () => {
                                             aria-label="LinkedIn Profile"
                                         >
                                             <Linkedin className="w-4 h-4" />
-                                        </a>
-                                        <a
-                                            href="https://x.com/ihazratummar9"
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors"
-                                            title="X (Twitter)"
-                                            aria-label="X (Twitter) Profile"
-                                        >
-                                            <Twitter className="w-4 h-4" />
                                         </a>
                                     </div>
                                 </div>
@@ -503,21 +526,40 @@ export const AboutLanding = () => {
                                 Connect directly with Hazrat Ummar Shaikh. Receive a structured technical breakdown, platform feasibility check, and milestone roadmap within 24 hours.
                             </p>
 
-                            <div className="flex flex-wrap items-center justify-center gap-4">
+                            <div className="flex flex-wrap items-center justify-center gap-3">
                                 <HireMeModal>
                                     <Button 
                                         style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
-                                        className="hover:opacity-90 font-bold px-8 h-[52px] text-base rounded-xl shadow-sm transition-all flex items-center gap-2.5 cursor-pointer"
+                                        className="hover:opacity-90 font-bold px-7 h-[50px] text-sm rounded-xl shadow-sm transition-all flex items-center gap-2 cursor-pointer"
                                     >
                                         <span>Start Technical Discovery</span>
                                         <ArrowRight className="w-4 h-4" />
                                     </Button>
                                 </HireMeModal>
                                 <a 
-                                    href="mailto:hazratummar9@gmail.com"
-                                    className="inline-flex items-center gap-2 px-7 h-[52px] rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900 font-semibold text-sm transition-colors"
+                                    href="https://t.me/hazratummar"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1.5 px-5 h-[50px] rounded-xl bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200 font-semibold text-sm transition-colors"
                                 >
-                                    <span>hazratummar9@gmail.com</span>
+                                    <Send className="w-4 h-4 text-sky-600" />
+                                    <span>Telegram Direct</span>
+                                </a>
+                                <a 
+                                    href="https://discord.com/users/ihazratummar"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1.5 px-5 h-[50px] rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 font-semibold text-sm transition-colors"
+                                >
+                                    <MessageSquare className="w-4 h-4 text-indigo-600" />
+                                    <span>Discord</span>
+                                </a>
+                                <a 
+                                    href="mailto:hazratummar9@gmail.com"
+                                    className="inline-flex items-center gap-2 px-5 h-[50px] rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900 font-semibold text-sm transition-colors"
+                                >
+                                    <Mail className="w-4 h-4 text-slate-500" />
+                                    <span>Email</span>
                                 </a>
                             </div>
                         </div>

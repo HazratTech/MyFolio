@@ -1,10 +1,9 @@
-import { Github, Linkedin, Instagram, Twitter, Mail, Code, Smartphone, Zap, Globe, Server, Database, Layout, Terminal, MessageCircle, MessageSquare, Bot } from "lucide-react";
+import { Github, Linkedin, Instagram, Twitter, Mail, Code, Smartphone, Zap, Globe, Server, Database, Layout, Terminal, MessageCircle, MessageSquare, Bot, Send } from "lucide-react";
 
 export const navLinks = [
     { name: "Home", href: "/" },
     { name: "Services", href: "/#services" },
     { name: "Projects", href: "/#work" },
-
     { name: "Contact", href: "/contact" },
     { name: "Blog", href: "/blog" },
 ];
@@ -23,10 +22,28 @@ export const socialLinks = [
         color: "hover:text-blue-500",
     },
     {
-        name: "Instagram",
-        href: "https://www.instagram.com/hazratummar/",
+        name: "Telegram",
+        href: "https://t.me/hazratummar",
+        icon: Send,
+        color: "hover:text-sky-400",
+    },
+    {
+        name: "Company Instagram",
+        href: "https://www.instagram.com/relayworks.dev/",
         icon: Instagram,
         color: "hover:text-pink-500",
+    },
+    {
+        name: "Personal Instagram",
+        href: "https://www.instagram.com/ihazratummar/",
+        icon: Instagram,
+        color: "hover:text-rose-500",
+    },
+    {
+        name: "Discord",
+        href: "https://discord.com/users/ihazratummar",
+        icon: MessageSquare,
+        color: "hover:text-indigo-500",
     },
     {
         name: "X (Twitter)",
@@ -34,18 +51,7 @@ export const socialLinks = [
         icon: Twitter,
         color: "hover:text-sky-500",
     },
-    {
-        name: "Discord",
-        href: "#", // Discord ID provided: ihazratummar
-        icon: MessageCircle,
-        color: "hover:text-indigo-500",
-    },
 ];
-
-// Fix for Discord icon if not available in Lucide, or use a generic one. 
-// Lucide has 'Disc' but not Discord brand icon. We can use a custom component or just text for now.
-// Actually, let's use 'MessageSquare' for Discord for now.
-socialLinks[4].icon = MessageSquare;
 
 
 export const about = {

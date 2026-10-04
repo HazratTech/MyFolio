@@ -1,4 +1,4 @@
-import { Github, Linkedin, Twitter, Instagram, Facebook, Youtube, Mail, MapPin, Phone, ExternalLink, Smartphone, MessageCircle, MessageSquare, Bot, Server, Code, Globe, Database, Layout, Terminal, Cpu, Zap } from "lucide-react";
+import { Github, Linkedin, Twitter, Instagram, Facebook, Youtube, Mail, MapPin, Phone, ExternalLink, Smartphone, MessageCircle, MessageSquare, Bot, Server, Code, Globe, Database, Layout, Terminal, Cpu, Zap, Send } from "lucide-react";
 
 export const iconMap: { [key: string]: any } = {
     Github,
@@ -22,7 +22,8 @@ export const iconMap: { [key: string]: any } = {
     Layout,
     Terminal,
     Cpu,
-    Zap
+    Zap,
+    Send
 };
 
 export const getIcon = (name: string) => {

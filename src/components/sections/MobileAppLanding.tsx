@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
     Smartphone, Check, X, ShieldAlert, Sparkles, Terminal,
     Layers, Database, Server, GitBranch, Cpu, Lock, ArrowRight,
-    Send, HelpCircle, ChevronDown, CheckCircle2, RefreshCw,
+    Send, HelpCircle, ChevronDown, CheckCircle2, RefreshCw, MessageSquare,
     Activity, Globe, HardDrive, Zap, Code2, AlertTriangle, UserCheck,
     ExternalLink, Github, Wifi, WifiOff, ShieldCheck, Play, ArrowUpRight
 } from "lucide-react";
@@ -478,6 +478,76 @@ export const MobileAppLanding = () => {
                             </div>
                         </div>
 
+                        {/* ─── iOS Delivery & Risk-Reversal Protocol ─── */}
+                        <div className="mt-12 p-6 sm:p-8 rounded-3xl bg-slate-50 border border-slate-200/90 shadow-xs">
+                            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-slate-200">
+                                <div className="space-y-2 max-w-2xl">
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wider border border-blue-200">
+                                        <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
+                                        <span>Dual-Platform Delivery Protocol</span>
+                                    </div>
+                                    <h3 className="text-2xl sm:text-3xl font-black font-heading text-slate-950">
+                                        Building for iPhone / iPad? Here is How We Safeguard Your Release.
+                                    </h3>
+                                    <p className="text-slate-600 text-sm leading-relaxed">
+                                        Our public showcase apps feature live Google Play Store applications and open-source repositories. If your business requires an iOS client, we eliminate 100% of your risk before you spend a single dollar:
+                                    </p>
+                                </div>
+                                <div className="flex flex-wrap lg:flex-col gap-2.5 shrink-0">
+                                    <a
+                                        href="https://t.me/hazratummar"
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold transition-colors inline-flex items-center gap-1.5 shadow-2xs"
+                                    >
+                                        <Send className="w-3.5 h-3.5" />
+                                        <span>Chat on Telegram</span>
+                                    </a>
+                                    <a
+                                        href="https://discord.com/users/ihazratummar"
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-colors inline-flex items-center gap-1.5 shadow-2xs"
+                                    >
+                                        <MessageSquare className="w-3.5 h-3.5" />
+                                        <span>DM on Discord</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
+                                <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-2">
+                                    <div className="w-9 h-9 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 font-bold text-xs">
+                                        01
+                                    </div>
+                                    <h4 className="font-bold text-slate-900 text-sm">100% Native SwiftUI Interface</h4>
+                                    <p className="text-slate-600 text-xs leading-relaxed">
+                                        Zero webviews or laggy wrapper bridges. 80% of business logic &amp; offline DB are shared in Kotlin (KMP), while the UI is written in pure native SwiftUI with 120Hz smooth scrolling.
+                                    </p>
+                                </div>
+
+                                <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-2">
+                                    <div className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 font-bold text-xs">
+                                        02
+                                    </div>
+                                    <h4 className="font-bold text-slate-900 text-sm">Apple TestFlight Milestone Verification</h4>
+                                    <p className="text-slate-600 text-xs leading-relaxed">
+                                        We deploy test builds directly to your personal iPhone or iPad via Apple TestFlight. You physically verify and test the native iOS build in your hands before releasing milestone funds.
+                                    </p>
+                                </div>
+
+                                <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-2">
+                                    <div className="w-9 h-9 rounded-xl bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600 font-bold text-xs">
+                                        03
+                                    </div>
+                                    <h4 className="font-bold text-slate-900 text-sm">100% App Store Approval Guarantee</h4>
+                                    <p className="text-slate-600 text-xs leading-relaxed">
+                                        Apple Review Guidelines (2.1, 4.0, 5.1.1) are strict. We manage all certificates, privacy manifests, and reviewer inquiries. If Apple requests changes, we resolve 100% of notes at zero extra cost.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </section>
 
@@ -688,6 +758,10 @@ export const MobileAppLanding = () => {
                                 {
                                     q: "Why use Kotlin Multiplatform (KMP/CMP) + SwiftUI instead of Flutter or React Native?",
                                     a: "Flutter uses an artificial canvas renderer that does not look or feel native to iOS, while React Native relies on bridge serialization that can cause frame drops on complex lists. Kotlin Multiplatform allows us to write 100% native UI in Jetpack Compose on Android and SwiftUI on iOS while sharing 80% of business logic, database queries, and network sync in pure Kotlin without runtime performance penalties."
+                                },
+                                {
+                                    q: "I see your public showcase apps are on Google Play. How do you guarantee delivery for our iOS app?",
+                                    a: "Past client apps were internal enterprise tools or Android-first MVPs. Because we build with Kotlin Multiplatform (KMP), 80% of your codebase (offline SQLDelight database, network synchronization, business logic) is shared, while the iOS UI is pure native SwiftUI. We eliminate all client risk: (1) You receive TestFlight beta builds directly to your personal iPhone to test and approve before releasing milestone funds, and (2) We include a 100% Apple App Store Approval Guarantee—if Apple reviewers request any code or guideline changes, we resolve them at zero additional cost until approved."
                                 },
                                 {
                                     q: "How does the offline-first architecture handle data sync conflicts?",

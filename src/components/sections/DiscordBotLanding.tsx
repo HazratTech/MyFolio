@@ -1286,24 +1286,61 @@ export const DiscordBotLanding = () => {
                             </p>
                         </div>
 
-                        {/* Fast Track Calendly Box */}
-                        <div className="flex flex-col md:flex-row items-center justify-between bg-blue-50/70 border border-blue-200/80 rounded-2xl p-6 mb-8 shadow-xs">
-                            <div className="text-left mb-4 md:mb-0">
-                                <h3 className="text-slate-950 font-bold text-base flex items-center gap-2">
-                                    <Clock className="w-4 h-4 text-blue-600" /> Prefer a Direct Voice Discovery?
-                                </h3>
-                                <p className="text-slate-600 text-xs mt-1">Book a direct 15-minute architecture conversation with lead engineer Hazrat.</p>
+                        {/* Fast Track Direct Chat & Calendly Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 text-left">
+                            <div className="bg-indigo-50/70 border border-indigo-200/80 rounded-2xl p-5 flex flex-col justify-between shadow-xs">
+                                <div>
+                                    <h3 className="text-slate-950 font-bold text-sm flex items-center gap-2">
+                                        <MessageSquare className="w-4 h-4 text-indigo-600" /> Instant Chat on Discord or Telegram
+                                    </h3>
+                                    <p className="text-slate-600 text-xs mt-1 leading-relaxed">
+                                        Server admin or bot dev? Chat directly with lead engineer Hazrat. Zero calendar scheduling needed.
+                                    </p>
+                                </div>
+                                <div className="flex flex-wrap items-center gap-2 mt-4">
+                                    <a
+                                        href="https://discord.com/users/ihazratummar"
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 transition-colors shadow-2xs"
+                                    >
+                                        <span>Discord: @ihazratummar</span>
+                                        <ArrowRight className="w-3 h-3" />
+                                    </a>
+                                    <a
+                                        href="https://t.me/hazratummar"
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-sky-500 text-white font-bold text-xs hover:bg-sky-600 transition-colors shadow-2xs"
+                                    >
+                                        <Send className="w-3 h-3" />
+                                        <span>Telegram: @hazratummar</span>
+                                    </a>
+                                </div>
                             </div>
-                            <a
-                                href="https://calendly.com/hazratummarsk9/book-15-minutes"
-                                target="_blank"
-                                rel="noreferrer"
-                                onClick={() => trackEvent("calendly_click")}
-                                style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
-                                className="shrink-0 font-bold text-xs px-5 py-2.5 rounded-xl hover:opacity-90 transition-opacity shadow-xs"
-                            >
-                                Schedule 15 Min ↗
-                            </a>
+
+                            <div className="bg-blue-50/70 border border-blue-200/80 rounded-2xl p-5 flex flex-col justify-between shadow-xs">
+                                <div>
+                                    <h3 className="text-slate-950 font-bold text-sm flex items-center gap-2">
+                                        <Clock className="w-4 h-4 text-blue-600" /> Prefer a 15-Min Voice Call?
+                                    </h3>
+                                    <p className="text-slate-600 text-xs mt-1 leading-relaxed">
+                                        Book a live Google Meet architecture session with Hazrat to discuss custom bot features and scalability.
+                                    </p>
+                                </div>
+                                <div className="mt-4">
+                                    <a
+                                        href="https://calendly.com/hazratummarsk9/book-15-minutes"
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        onClick={() => trackEvent("calendly_click")}
+                                        style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                                        className="inline-flex items-center gap-1.5 font-bold text-xs px-4 py-2 rounded-xl hover:opacity-90 transition-opacity shadow-xs text-white"
+                                    >
+                                        <span>Schedule 15 Min ↗</span>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
 
                         <Card className="bg-white border border-slate-200 p-6 md:p-8 rounded-3xl shadow-sm">

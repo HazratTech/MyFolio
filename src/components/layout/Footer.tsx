@@ -18,9 +18,12 @@ export const Footer = async () => {
 
     const fallbackSocials = [
         { name: "GitHub", href: "https://github.com/ihazratummar", icon: "Github" },
+        { name: "Telegram", href: "https://t.me/hazratummar", icon: "Send" },
+        { name: "Company Instagram", href: "https://www.instagram.com/relayworks.dev/", icon: "Instagram" },
+        { name: "Personal Instagram", href: "https://www.instagram.com/ihazratummar/", icon: "Instagram" },
+        { name: "Discord", href: "https://discord.com/users/ihazratummar", icon: "MessageSquare" },
         { name: "LinkedIn", href: "https://www.linkedin.com/in/hazrat-ummar-shaikh/", icon: "Linkedin" },
         { name: "X (Twitter)", href: "https://x.com/ihazratummar9", icon: "Twitter" },
-        { name: "Instagram", href: "https://www.instagram.com/hazratummar/", icon: "Instagram" },
     ];
 
     const displaySocials = socials && socials.length > 0 ? socials : fallbackSocials;
@@ -221,14 +224,28 @@ export const Footer = async () => {
                             Direct technical inquiries answered within 24 hours by lead engineer.
                         </p>
                         <FooterQuickInquiry />
-                        <div className="pt-1">
+                        <div className="pt-2 space-y-1.5">
                             <a 
                                 href="mailto:hazratummar9@gmail.com"
-                                className="text-xs font-medium text-slate-600 hover:text-blue-600 transition-colors inline-flex items-center gap-2"
+                                className="text-xs font-medium text-slate-600 hover:text-blue-600 transition-colors flex items-center gap-2"
                             >
-                                <Mail className="w-4 h-4 text-blue-600 shrink-0" />
+                                <Mail className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                                 <span>hazratummar9@gmail.com</span>
                             </a>
+                            <div className="flex items-center gap-3 pt-1 text-xs">
+                                <a 
+                                    href="https://t.me/hazratummar" 
+                                    target="_blank" 
+                                    rel="noreferrer"
+                                    className="font-semibold text-sky-600 hover:text-sky-700 flex items-center gap-1"
+                                >
+                                    <span>Telegram: @hazratummar</span>
+                                </a>
+                                <span className="text-slate-300">·</span>
+                                <span className="font-semibold text-indigo-600">
+                                    Discord: ihazratummar
+                                </span>
+                            </div>
                         </div>
                     </div>
 
