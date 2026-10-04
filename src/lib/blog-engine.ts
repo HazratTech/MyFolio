@@ -571,7 +571,7 @@ SECTION BLUEPRINT:
 ${sectionsGuide}
 
 CTA PLACEMENTS: ${strategy.ctaPlacements.join("; ")}
-  - Use ONLY these CTA links: <a href="/discord-bot">RelayWorks Custom Bot Development</a> and <a href="/contact">Contact RelayWorks</a>
+  - Use ONLY these CTA links: <a href="https://relayworks.dev/discord-bot">RelayWorks Custom Bot Development</a> and <a href="https://relayworks.dev/contact">Contact RelayWorks</a>
   - Integrate naturally as an engineering resource, NO aggressive sales pitch.
 
 ━━━━━ STRICT GOOGLE HELPFUL CONTENT & E-E-A-T WRITING STANDARDS ━━━━━

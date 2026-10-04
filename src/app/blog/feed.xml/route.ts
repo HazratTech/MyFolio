@@ -41,7 +41,14 @@ export async function GET() {
             const coverImageHtml = coverImageUrl
                 ? `<figure class="blog-cover"><img src="${coverImageUrl}" alt="${post.title}" /></figure>\n`
                 : '';
-            const fullContent = `${coverImageHtml}${post.content || ''}`;
+            
+            // Automatically convert any relative links to absolute relayworks.dev links for RSS subscribers and Dev.to syndication
+            const absoluteContent = (post.content || '')
+                .replace(/href=["']\/(?!\/)([^"'\s>]+)["']/g, 'href="https://relayworks.dev/$1"')
+                .replace(/src=["']\/(?!\/)([^"'\s>]+)["']/g, 'src="https://relayworks.dev/$1"')
+                .replace(/\[([^\]]+)\]\(\/(?!\/)([^\)\s]+)\)/g, '[$1](https://relayworks.dev/$2)');
+
+            const fullContent = `${coverImageHtml}${absoluteContent}`;
 
             const mediaEnclosure = coverImageUrl
                 ? `\n            <cover_image>${coverImageUrl}</cover_image>
