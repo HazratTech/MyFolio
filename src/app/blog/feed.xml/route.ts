@@ -41,7 +41,7 @@ export async function GET() {
             // Dev.to YAML Frontmatter block to guarantee cover image & canonical link extraction
             const frontmatter = `---
 title: "${(post.title || '').replace(/"/g, '\\"')}"
-published: false
+published: true
 description: "${cleanDescription.replace(/"/g, '\\"')}"
 cover_image: "${coverImageUrl}"
 canonical_url: "https://relayworks.dev/blog/${post.slug}"
