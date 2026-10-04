@@ -52,7 +52,7 @@ export async function GET() {
             sanitizedContent = sanitizedContent.replace(/Description:\s*(?:Mermaid\.js|Flowchart|Diagram|Visual)[\s\S]*?(?=\n\n[#A-Z<]|\n<h|\s*$)/gi, '');
 
             // Convert <div class="mermaid"> to static images for RSS readers & Dev.to that cannot execute Mermaid client-side JS
-            sanitizedContent = sanitizedContent.replace(/<div class="mermaid">\s*([\s\S]*?)\s*<\/div>/gi, (_, code) => {
+            sanitizedContent = sanitizedContent.replace(/<div class="mermaid">\s*([\s\S]*?)\s*<\/div>/gi, (_: string, code: string) => {
                 const cleanCode = code.trim();
                 const base64 = Buffer.from(cleanCode).toString('base64');
                 return `<figure class="mermaid-diagram" style="text-align: center; margin: 2rem 0;"><img src="https://mermaid.ink/img/${base64}" alt="Architecture Diagram" style="max-width: 100%; height: auto;" /></figure>`;
