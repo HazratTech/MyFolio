@@ -56,11 +56,21 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     }
 }
 
+import Redirect from "@/models/Redirect";
+
 export async function PUT(req: NextRequest, { params }: { params: { slug: string } }) {
     try {
         await dbConnect();
         const { slug } = params;
         const body = await req.json();
+
+        // If slug is changing, automatically push the previous slug so old backlinks never 404
+        if (body.slug && body.slug !== slug) {
+            await Post.findOneAndUpdate(
+                { slug },
+                { $addToSet: { previousSlugs: slug } }
+            );
+        }
 
         const post = await Post.findOneAndUpdate({ slug }, body, { new: true });
 
@@ -85,6 +95,13 @@ export async function DELETE(req: NextRequest, { params }: { params: { slug: str
         if (!post) {
             return NextResponse.json({ error: "Post not found" }, { status: 404 });
         }
+
+        // Automatically preserve inbound backlinks by redirecting deleted slug to /blog
+        await Redirect.findOneAndUpdate(
+            { source: slug },
+            { source: slug, destination: "/blog", permanent: true },
+            { upsert: true }
+        ).catch(() => {});
 
         return NextResponse.json({ message: "Post deleted successfully" });
     } catch (error) {

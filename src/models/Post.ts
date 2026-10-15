@@ -23,6 +23,7 @@ const PostSchema = new Schema({
         question: { type: String },
         answer: { type: String }
     }],
+    previousSlugs: [{ type: String, index: true }],
 }, { timestamps: true });
 
 // Prevent Mongoose model recompilation error in development
@@ -47,6 +48,7 @@ export interface IPost {
     readingTime?: number;
     publishedAt?: Date;
     faq?: Array<{ question: string; answer: string }>;
+    previousSlugs?: string[];
     createdAt: Date;
     updatedAt: Date;
 }

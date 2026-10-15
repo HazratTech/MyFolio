@@ -1,9 +1,10 @@
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect, RedirectType } from "next/navigation";
 import dbConnect from "@/lib/db";
 import Post from "@/models/Post";
+import { resolvePostOrRedirect } from "@/lib/redirect-engine";
 import { Calendar, Eye, Clock, ArrowLeft, ArrowRight, Tag, User } from "lucide-react";
 import ViewCounter from "@/components/blog/ViewCounter";
 import { Badge } from "@/components/ui/badge";
@@ -12,16 +13,6 @@ import PostCard from "@/components/blog/PostCard";
 import ReadingProgressBar from "@/components/blog/ReadingProgressBar";
 import BlogComments from "@/components/blog/BlogComments";
 import MermaidRenderer from "@/components/blog/MermaidRenderer";
-
-async function getPost(slug: string, isPreview: boolean = false) {
-    await dbConnect();
-    const query: any = { slug };
-    if (!isPreview) {
-        query.status = "published";
-    }
-    const post = await Post.findOne(query).lean();
-    return post;
-}
 
 async function getRelatedPosts(category: string, currentSlug: string) {
     await dbConnect();
@@ -36,7 +27,12 @@ async function getRelatedPosts(category: string, currentSlug: string) {
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-    const post = await getPost(params.slug);
+    const result = await resolvePostOrRedirect(params.slug);
+    if (result.type === "redirect") {
+        redirect(result.destination, result.permanent ? RedirectType.replace : RedirectType.push);
+    }
+
+    const post = result.post;
     if (!post) {
         return { title: "Post Not Found" };
     }
@@ -86,8 +82,13 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 export default async function BlogPostPage({ params, searchParams }: { params: { slug: string }, searchParams: { preview?: string } }) {
     const isPreview = searchParams.preview === 'true';
-    const post: any = await getPost(params.slug, isPreview);
+    const result = await resolvePostOrRedirect(params.slug, isPreview);
 
+    if (result.type === "redirect") {
+        redirect(result.destination, result.permanent ? RedirectType.replace : RedirectType.push);
+    }
+
+    const post: any = result.post;
     if (!post) {
         notFound();
     }

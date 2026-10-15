@@ -1,5 +1,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import Media from "@/models/Media";
+import Post from "@/models/Post";
 
 const STORAGE_API_URL = "https://api-minio-storage.hazratdev.top";
 const BUCKET = "myfolio";
@@ -553,6 +554,16 @@ export async function runWriterAgent(
         ? `\n━━━━━ AFFILIATE LINKS ━━━━━\nNaturally embed these exact URLs using relevant anchor text:\n${linksList.map((l: string) => `- ${l}`).join("\n")}\nDo NOT change or fabricate URLs.\n`
         : "";
 
+    let canonicalInternalLinksRule = "";
+    try {
+        const livePosts = await Post.find({ status: "published" }).select("title slug").limit(15).lean();
+        if (livePosts.length > 0) {
+            canonicalInternalLinksRule = `\n━━━━━ CANONICAL INTERNAL LINKS (RELAYWORKS) ━━━━━\nWhen contextually relevant, link to existing RelayWorks articles using ONLY from this list:\n${livePosts.map((p: any) => `- <a href="https://relayworks.dev/blog/${p.slug}">${p.title}</a>`).join("\n")}\nCRITICAL: Do NOT invent, assume, or fabricate any other /blog/... URLs. If none fit naturally, do NOT add an internal post link.\n`;
+        }
+    } catch (e) {
+        // ignore
+    }
+
     const writerPrompt = `You are a Principal Software Architect writing for the RelayWorks Engineering Blog (https://relayworks.dev).
 
 Write a deep, authoritative, publication-grade engineering case study following this exact blueprint:
@@ -566,6 +577,7 @@ CONCRETE METRICS: ${research.concreteMetrics?.join(", ") || "Latency (ms), memor
 RELATED KEYWORDS TO NATURALLY INCLUDE: ${research.relatedKeywords.join(", ")}
 EXTERNAL LINKS TO CITE: ${research.externalLinks.map((l: any) => `${l.anchorText}: ${l.url}`).join(", ")}
 ${affiliateWriterRule}
+${canonicalInternalLinksRule}
 
 SECTION BLUEPRINT:
 ${sectionsGuide}
@@ -658,6 +670,19 @@ Requirements:
     if (preOpen > preClose) {
         writerContent += "\n</code></pre>\n<p>Following these architectural patterns ensures high-throughput reliability in production.</p>";
     }
+
+    // ── Enforce SEO Link Hygiene ─────────────────────────────────────────────
+    // 1. Remove nofollow from internal links
+    writerContent = writerContent.replace(/<a([^>]*?)rel=["']([^"']*)["']([^>]*?)href=["'](\/[^"']*|https:\/\/relayworks\.dev[^"']*)["']([^>]*?)>/gi, (match, p1, relVal, p3, hrefVal, p5) => {
+        const cleanRel = relVal.replace(/\bnofollow\b/gi, "").replace(/\s+/g, " ").trim();
+        const relAttr = cleanRel ? `rel="${cleanRel}"` : "";
+        return `<a${p1}${relAttr}${p3}href="${hrefVal}"${p5}>`.replace(/\s+/g, " ");
+    });
+
+    // 2. Strip trailing HTML tag artifacts from external URLs
+    writerContent = writerContent.replace(/https?:\/\/[^\s\)\"'>]+<\/(?:a|code)>/gi, (match) => {
+        return match.replace(/<\/(?:a|code)>$/i, "");
+    });
 
     console.log("✅ Agent 3: Writing complete");
     return writerContent.trim();
