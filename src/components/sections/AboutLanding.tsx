@@ -238,6 +238,7 @@ export const AboutLanding = () => {
                                             aria-label="GitHub Profile"
                                         >
                                             <Github className="w-4 h-4" />
+                                            <span className="sr-only">GitHub Profile</span>
                                         </a>
                                         <a
                                             href="https://play.google.com/store/apps/dev?id=8511073495389394372"
@@ -258,6 +259,7 @@ export const AboutLanding = () => {
                                             aria-label="Company Instagram"
                                         >
                                             <Instagram className="w-4 h-4" />
+                                            <span className="sr-only">Company Instagram</span>
                                         </a>
                                         <a
                                             href="https://www.linkedin.com/in/hazrat-ummar-shaikh/"
@@ -268,6 +270,7 @@ export const AboutLanding = () => {
                                             aria-label="LinkedIn Profile"
                                         >
                                             <Linkedin className="w-4 h-4" />
+                                            <span className="sr-only">LinkedIn Profile</span>
                                         </a>
                                     </div>
                                 </div>

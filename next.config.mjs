@@ -278,6 +278,31 @@ const nextConfig = {
                 destination: '/blog',
                 permanent: true,
             },
+            {
+                source: '/ai-software-development',
+                destination: '/ai-chatbot-development',
+                permanent: true,
+            },
+            {
+                source: '/blog/building-discord-ticket-bot-python',
+                destination: '/discord-bot',
+                permanent: true,
+            },
+            {
+                source: '/blog/ktor-fastapi-backend-comparison',
+                destination: '/blog/fastapi-deep-dive-building-blazing-fast-apis-that-just-work',
+                permanent: true,
+            },
+            {
+                source: '/blog/kotlin-multiplatform-mobile-guide',
+                destination: '/mobile-app-development',
+                permanent: true,
+            },
+            {
+                source: '/blog/demystifying-android-os-internals',
+                destination: '/blog/mastering-modern-android-architecture-a-practical-guide-for-robust-apps',
+                permanent: true,
+            },
         ];
     },
 };

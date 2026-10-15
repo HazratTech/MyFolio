@@ -47,11 +47,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     }
 
     const baseTitle = post.title ? post.title.trim() : "Technical Guide";
-    const metaTitle = baseTitle.length <= 47 
-        ? `${baseTitle} | RelayWorks` 
-        : baseTitle.length <= 60 
-            ? baseTitle 
-            : `${baseTitle.substring(0, 57).trim()}...`;
+    // Ensure <title> is optimized for search engines (<= 60 chars) and never duplicates <h1>
+    let metaTitle = `${baseTitle} | RelayWorks`;
+    if (metaTitle.length > 60) {
+        metaTitle = `${baseTitle.substring(0, 46).trim()}... | RelayWorks`;
+    }
 
     return {
         title: metaTitle,

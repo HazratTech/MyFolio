@@ -44,6 +44,7 @@ export const BlogFooter = async () => {
                                     aria-label={`${social.name} Profile`}
                                 >
                                     <Icon className="w-5 h-5" />
+                                    <span className="sr-only">{social.name} Profile</span>
                                 </a>
                             );
                         })}

@@ -398,13 +398,26 @@ export default async function SitemapPage() {
 
                         <div className="flex flex-wrap gap-4 text-xs">
                             {LEGAL_PAGES.map((legal) => (
-                                <Link 
-                                    key={legal.href} 
-                                    href={legal.href}
-                                    className="text-slate-600 hover:text-blue-600 transition-colors font-medium underline underline-offset-4 decoration-slate-200 hover:decoration-blue-400"
-                                >
-                                    {legal.title}
-                                </Link>
+                                legal.href.endsWith(".xml") ? (
+                                    <a
+                                        key={legal.href}
+                                        href={legal.href}
+                                        target="_blank"
+                                        rel="alternate"
+                                        type="application/rss+xml"
+                                        className="text-slate-600 hover:text-blue-600 transition-colors font-medium underline underline-offset-4 decoration-slate-200 hover:decoration-blue-400"
+                                    >
+                                        {legal.title}
+                                    </a>
+                                ) : (
+                                    <Link 
+                                        key={legal.href} 
+                                        href={legal.href}
+                                        className="text-slate-600 hover:text-blue-600 transition-colors font-medium underline underline-offset-4 decoration-slate-200 hover:decoration-blue-400"
+                                    >
+                                        {legal.title}
+                                    </Link>
+                                )
                             ))}
                         </div>
                     </section>

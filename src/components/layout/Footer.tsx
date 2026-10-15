@@ -88,6 +88,7 @@ export const Footer = async () => {
                                         aria-label={`${social.name} Profile`}
                                     >
                                         <Icon className="w-4 h-4" />
+                                        <span className="sr-only">{social.name} Profile</span>
                                     </a>
                                 );
                             })}
