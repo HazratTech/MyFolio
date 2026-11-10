@@ -17,7 +17,17 @@ import {
     Smartphone,
     Server,
     X,
-    Eye
+    Eye,
+    Edit3,
+    Save,
+    RotateCcw,
+    Zap,
+    ShieldCheck,
+    Cpu,
+    Plus,
+    FileText,
+    Mail,
+    CheckCircle2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,9 +62,19 @@ export default function LeadsAdminPage() {
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [selectedStatus, setSelectedStatus] = useState("All");
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
-    const [copiedField, setCopiedField] = useState<string | null>(null);
     const [syncMessage, setSyncMessage] = useState<string | null>(null);
+
+    // Modal Dynamic State
+    const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+    const [editableSubject, setEditableSubject] = useState("");
+    const [editableBody, setEditableBody] = useState("");
+    const [editableStatus, setEditableStatus] = useState<string>("New");
+    const [editableNotes, setEditableNotes] = useState("");
+    const [activeTab, setActiveTab] = useState<"edit" | "preview">("edit");
+    const [activePreset, setActivePreset] = useState<"technical" | "concise" | "caseStudy">("technical");
+    const [isSaving, setIsSaving] = useState(false);
+    const [saveSuccess, setSaveSuccess] = useState(false);
+    const [copiedField, setCopiedField] = useState<string | null>(null);
 
     const categories = ["All", "Discord Bots", "Mobile Apps", "AI & Chatbots", "Backend"];
     const statuses = ["All", "New", "Contacted", "In Discussion", "Closed"];
@@ -118,6 +138,7 @@ export default function LeadsAdminPage() {
                 setLeads(prev => prev.map(l => l._id === id ? { ...l, status: newStatus as any } : l));
                 if (selectedLead && selectedLead._id === id) {
                     setSelectedLead(prev => prev ? { ...prev, status: newStatus as any } : null);
+                    setEditableStatus(newStatus);
                 }
             }
         } catch (error) {
@@ -137,6 +158,112 @@ export default function LeadsAdminPage() {
             }
         } catch (error) {
             console.error("Failed to delete lead:", error);
+        }
+    };
+
+    // Open Modal and hydrate dynamic states
+    const handleOpenModal = (lead: Lead) => {
+        setSelectedLead(lead);
+        setEditableSubject(lead.personalizedEmail?.subject || "");
+        setEditableBody(lead.personalizedEmail?.body || "");
+        setEditableStatus(lead.status || "New");
+        setEditableNotes(lead.notes || "");
+        setActivePreset("technical");
+        setActiveTab("edit");
+        setSaveSuccess(false);
+    };
+
+    // Dynamic Tone / Preset Generator
+    const getLeadPresets = (lead: Lead) => {
+        const tech = lead.techStack?.slice(0, 3).join(", ") || "Python, React, TypeScript";
+        
+        // Preset 1: Technical Peer (In-depth engineering & architectural guardrails)
+        const technicalSubject = lead.personalizedEmail?.subject || `re: HN post (${lead.category} engineering for ${lead.company})`;
+        const technicalBody = lead.personalizedEmail?.body || `Hi ${lead.decisionMaker},\n\nSaw your note regarding ${lead.company}'s requirements around ${lead.painSignal}.\n\nI run RelayWorks (https://relayworks.dev) — I build production-grade ${lead.category.toLowerCase()} systems using ${tech}.\n\nWould love to discuss how I can help your team ship faster on a fixed sprint or contractor agreement.\n\nBest,\nHazrat Ummar\nhttps://relayworks.dev | Telegram: @hazratummar`;
+
+        // Preset 2: Direct 3-Sentence DM (Ultra concise cold message)
+        const conciseSubject = `Quick question re: ${lead.company} ${lead.category.toLowerCase()}`;
+        const conciseBody = `Hi ${lead.decisionMaker},\n\nSaw your post regarding ${lead.company}'s need for ${lead.painSignal}.\n\nI specialize in ${tech} and ship production-ready ${lead.category.toLowerCase()} on 1-2 week fixed sprints.\n\nAre you open to a brief 5-minute chat this week?\n\nBest,\nHazrat Ummar\nhttps://relayworks.dev | Telegram: @hazratummar`;
+
+        // Preset 3: Case Study & Proof
+        let proofStory = "built high-throughput bot architectures handling 99.9% uptime";
+        if (lead.category === "Mobile Apps") {
+            proofStory = "shipped native Android and cross-platform apps with zero-latency background sync and offline SQLite caching";
+        } else if (lead.category === "AI & Chatbots") {
+            proofStory = "engineered deterministic agent workflows with strict Pydantic schemas, pgvector retrieval, and zero-hallucination guardrails";
+        } else if (lead.category === "Discord Bots") {
+            proofStory = "built Clipping Club and ClutchBot handling automated media processing, Discord API rate-limiting, and webhook orchestration";
+        } else if (lead.category === "Backend") {
+            proofStory = "architected resilient microservices with idempotent webhooks, Redis caching, and automated queue workers";
+        }
+
+        const caseStudySubject = `Relevant case study for ${lead.company}: ${lead.category} architecture`;
+        const caseStudyBody = `Hi ${lead.decisionMaker},\n\nI noticed ${lead.company}'s post about ${lead.painSignal}.\n\nRecently, I ${proofStory} for clients in similar problem spaces using ${tech}.\n\nHappy to share the live repository architecture, demo videos, and technical breakdown if you're evaluating contractors for this.\n\nBest,\nHazrat Ummar\nhttps://relayworks.dev | Telegram: @hazratummar`;
+
+        return {
+            technical: { subject: technicalSubject, body: technicalBody },
+            concise: { subject: conciseSubject, body: conciseBody },
+            caseStudy: { subject: caseStudySubject, body: caseStudyBody }
+        };
+    };
+
+    const handleApplyPreset = (type: "technical" | "concise" | "caseStudy") => {
+        if (!selectedLead) return;
+        const presets = getLeadPresets(selectedLead);
+        setActivePreset(type);
+        if (type === "technical") {
+            setEditableSubject(presets.technical.subject);
+            setEditableBody(presets.technical.body);
+        } else if (type === "concise") {
+            setEditableSubject(presets.concise.subject);
+            setEditableBody(presets.concise.body);
+        } else if (type === "caseStudy") {
+            setEditableSubject(presets.caseStudy.subject);
+            setEditableBody(presets.caseStudy.body);
+        }
+    };
+
+    const handleInsertSnippet = (snippet: string) => {
+        setEditableBody(prev => `${prev}\n\n${snippet}`);
+    };
+
+    const handleSavePitch = async () => {
+        if (!selectedLead) return;
+        try {
+            setIsSaving(true);
+            const res = await fetch(`/api/admin/leads/${selectedLead._id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    personalizedEmail: {
+                        subject: editableSubject,
+                        body: editableBody,
+                    },
+                    status: editableStatus,
+                    notes: editableNotes,
+                }),
+            });
+
+            if (res.ok) {
+                setLeads(prev => prev.map(l => l._id === selectedLead._id ? {
+                    ...l,
+                    personalizedEmail: { subject: editableSubject, body: editableBody },
+                    status: editableStatus as any,
+                    notes: editableNotes,
+                } : l));
+                setSelectedLead(prev => prev ? {
+                    ...prev,
+                    personalizedEmail: { subject: editableSubject, body: editableBody },
+                    status: editableStatus as any,
+                    notes: editableNotes,
+                } : null);
+                setSaveSuccess(true);
+                setTimeout(() => setSaveSuccess(false), 2500);
+            }
+        } catch (err) {
+            console.error("Failed to save lead updates:", err);
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -182,6 +309,10 @@ export default function LeadsAdminPage() {
     const mobileCount = leads.filter(l => l.category === "Mobile Apps").length;
     const aiCount = leads.filter(l => l.category === "AI & Chatbots").length;
     const backendCount = leads.filter(l => l.category === "Backend").length;
+
+    // Word and character calculation
+    const wordCount = editableBody.trim() ? editableBody.trim().split(/\s+/).length : 0;
+    const readSeconds = Math.max(15, Math.ceil(wordCount / 3));
 
     return (
         <div className="space-y-6 pb-20">
@@ -270,7 +401,7 @@ export default function LeadsAdminPage() {
                 </div>
             </div>
 
-            {/* Filter Bar & Search (Pure White Card Container) */}
+            {/* Filter Bar & Search */}
             <div className="space-y-3 p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                     {/* Search Form */}
@@ -435,7 +566,7 @@ export default function LeadsAdminPage() {
                                     {/* Action Buttons */}
                                     <div className="flex items-center gap-2">
                                         <Button
-                                            onClick={() => setSelectedLead(lead)}
+                                            onClick={() => handleOpenModal(lead)}
                                             size="sm"
                                             className="bg-slate-950 hover:bg-black text-white font-medium text-xs h-9 px-4 rounded-xl transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
                                         >
@@ -460,160 +591,420 @@ export default function LeadsAdminPage() {
                 </div>
             )}
 
-            {/* Personalized Email Modal / Inspector */}
+            {/* DYNAMIC OUTREACH STUDIO POPUP (Auto-fitted, never cuts off viewport) */}
             <Dialog open={!!selectedLead} onOpenChange={(open) => !open && setSelectedLead(null)}>
-                <DialogContent showCloseButton={false} className="max-w-[95vw] w-full md:max-w-2xl bg-white border border-slate-200 text-slate-900 p-0 overflow-hidden rounded-3xl shadow-2xl">
+                <DialogContent 
+                    showCloseButton={false} 
+                    className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[100] w-[95vw] max-w-3xl h-[88vh] max-h-[820px] flex flex-col p-0 gap-0 overflow-hidden rounded-2xl bg-white border border-slate-200 text-slate-900 shadow-2xl focus:outline-none"
+                >
                     {selectedLead && (
-                        <div className="flex flex-col max-h-[85vh]">
-                            {/* Modal Header */}
-                            <div className="p-6 border-b border-slate-200 bg-slate-50/70 flex items-start justify-between">
+                        <>
+                            {/* 1. Anchored Header (Always visible at top) */}
+                            <div className="shrink-0 px-5 py-3.5 border-b border-slate-200 bg-slate-50/90 flex items-center justify-between gap-4">
                                 <div>
-                                    <div className="flex items-center gap-2 mb-1.5">
+                                    <div className="flex items-center gap-2 mb-0.5">
                                         <span className={`text-[10px] font-bold font-mono px-2 py-0.5 rounded border ${getCategoryBadgeClass(selectedLead.category)}`}>
                                             {selectedLead.category}
                                         </span>
-                                        <span className="text-xs font-medium text-slate-500">Target: {selectedLead.company}</span>
+                                        <span className="text-xs font-semibold text-slate-600">Target: {selectedLead.company}</span>
                                     </div>
-                                    <DialogTitle className="text-xl font-bold font-heading text-slate-950">
-                                        Tailored Outreach Pitch
+                                    <DialogTitle className="text-lg font-bold font-heading text-slate-950 flex items-center gap-2">
+                                        <span>Tailored Outreach Studio</span>
+                                        <span className="text-xs font-normal text-slate-500 hidden sm:inline">· Pitch for {selectedLead.decisionMaker}</span>
                                     </DialogTitle>
-                                    <p className="text-xs text-slate-500 mt-1">
-                                        Personalized technical outreach tailored for {selectedLead.decisionMaker}
-                                    </p>
                                 </div>
 
-                                <button
-                                    onClick={() => setSelectedLead(null)}
-                                    className="p-2 rounded-xl hover:bg-slate-200/80 text-slate-400 hover:text-slate-900 transition-colors"
-                                    aria-label="Close modal"
-                                >
-                                    <X className="w-5 h-5" />
-                                </button>
-                            </div>
-
-                            {/* Modal Body */}
-                            <div className="p-6 overflow-y-auto space-y-5 flex-grow">
-                                {/* Lead Meta Summary */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs">
-                                    <div>
-                                        <span className="text-slate-500 block mb-0.5 font-medium">Recipient:</span>
-                                        <span className="font-semibold text-slate-950">{selectedLead.decisionMaker}</span>
-                                    </div>
-                                    <div>
-                                        <span className="text-slate-500 block mb-0.5 font-medium">Direct Email:</span>
-                                        <a href={`mailto:${selectedLead.email}`} className="font-mono text-blue-600 hover:underline">
-                                            {selectedLead.email}
-                                        </a>
-                                    </div>
-                                    <div className="md:col-span-2">
-                                        <span className="text-slate-500 block mb-0.5 font-medium">Client's Stated Request:</span>
-                                        <p className="text-slate-700 italic bg-white p-3 rounded-xl border border-slate-200/80">
-                                            "{selectedLead.painSignal}"
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {/* Subject Line Section */}
-                                <div className="space-y-1.5">
-                                    <div className="flex items-center justify-between">
-                                        <label className="text-xs font-semibold text-slate-900">Subject Line</label>
-                                        <button
-                                            onClick={() => copyToClipboard(selectedLead.personalizedEmail.subject, "subject")}
-                                            className="text-xs font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1 cursor-pointer"
-                                        >
-                                            {copiedField === "subject" ? (
-                                                <>
-                                                    <Check className="w-3.5 h-3.5 text-emerald-600" />
-                                                    <span className="text-emerald-700 font-semibold">Copied!</span>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Copy className="w-3.5 h-3.5" />
-                                                    <span>Copy Subject</span>
-                                                </>
-                                            )}
-                                        </button>
-                                    </div>
-                                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 font-mono text-xs text-slate-900 font-semibold">
-                                        {selectedLead.personalizedEmail.subject}
-                                    </div>
-                                </div>
-
-                                {/* Email Body Section */}
-                                <div className="space-y-1.5">
-                                    <div className="flex items-center justify-between">
-                                        <label className="text-xs font-semibold text-slate-900">Email Message</label>
-                                        <button
-                                            onClick={() => copyToClipboard(selectedLead.personalizedEmail.body, "body")}
-                                            className="text-xs font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1 cursor-pointer"
-                                        >
-                                            {copiedField === "body" ? (
-                                                <>
-                                                    <Check className="w-3.5 h-3.5 text-emerald-600" />
-                                                    <span className="text-emerald-700 font-semibold">Copied Message!</span>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Copy className="w-3.5 h-3.5" />
-                                                    <span>Copy Message</span>
-                                                </>
-                                            )}
-                                        </button>
-                                    </div>
-                                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 font-sans text-xs text-slate-800 leading-relaxed whitespace-pre-wrap">
-                                        {selectedLead.personalizedEmail.body}
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Modal Footer / Dispatch Actions */}
-                            <div className="p-5 border-t border-slate-200 bg-slate-50/70 flex flex-wrap items-center justify-between gap-3">
                                 <div className="flex items-center gap-2">
-                                    <Button
-                                        onClick={() => {
-                                            copyToClipboard(
-                                                `Subject: ${selectedLead.personalizedEmail.subject}\n\n${selectedLead.personalizedEmail.body}`,
-                                                "all"
-                                            );
+                                    {/* Inline Status Controller */}
+                                    <select
+                                        value={editableStatus}
+                                        onChange={(e) => {
+                                            const newStat = e.target.value;
+                                            setEditableStatus(newStat);
+                                            updateLeadStatus(selectedLead._id, newStat);
                                         }}
-                                        variant="outline"
-                                        className="border-slate-200 text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 h-10 px-4 rounded-xl flex items-center gap-2 cursor-pointer shadow-2xs"
+                                        className="text-xs font-medium bg-white border border-slate-200 text-slate-800 rounded-lg px-2.5 py-1.5 focus:border-blue-600 shadow-2xs cursor-pointer"
                                     >
-                                        {copiedField === "all" ? (
+                                        <option value="New">🟢 New</option>
+                                        <option value="Contacted">🟡 Contacted</option>
+                                        <option value="In Discussion">🔵 In Discussion</option>
+                                        <option value="Closed">🏆 Closed</option>
+                                        <option value="Archived">📁 Archived</option>
+                                    </select>
+
+                                    <button
+                                        onClick={() => setSelectedLead(null)}
+                                        className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-900 transition-colors cursor-pointer"
+                                        aria-label="Close modal"
+                                    >
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* 2. Scrollable Dynamic Body (Smooth vertical scrolling inside constrained window) */}
+                            <div className="flex-1 min-h-0 overflow-y-auto p-5 space-y-4 text-xs">
+                                {/* Lead Intelligence Strip */}
+                                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+                                    <div className="flex flex-wrap items-center justify-between gap-2 text-[11px]">
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-semibold text-slate-700">Contact:</span>
+                                            <span className="font-bold text-slate-950">{selectedLead.decisionMaker}</span>
+                                            <span className="text-slate-400">·</span>
+                                            <a 
+                                                href={`mailto:${selectedLead.email}`} 
+                                                className="font-mono text-blue-600 hover:underline flex items-center gap-1"
+                                            >
+                                                <Mail className="w-3 h-3" />
+                                                <span>{selectedLead.email}</span>
+                                            </a>
+                                        </div>
+
+                                        <div className="flex items-center gap-1 text-slate-500">
+                                            <span className="font-medium">Source:</span>
+                                            <span>{selectedLead.source}</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="text-[11px] text-slate-600 bg-white p-2.5 rounded-lg border border-slate-200/70 italic">
+                                        <span className="font-semibold text-slate-800 not-italic mr-1.5">Stated Request:</span>
+                                        "{selectedLead.painSignal}"
+                                    </div>
+                                </div>
+
+                                {/* Dynamic Tone & Angle Presets */}
+                                <div className="space-y-1.5">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-xs font-semibold text-slate-800 flex items-center gap-1.5">
+                                            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+                                            <span>Dynamic Pitch Angles</span>
+                                        </span>
+                                        <span className="text-[11px] text-slate-500">Click to switch angles instantly</span>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => handleApplyPreset("technical")}
+                                            className={`p-2.5 rounded-xl text-left border transition-all cursor-pointer flex flex-col justify-between ${
+                                                activePreset === "technical"
+                                                    ? "bg-blue-50/80 border-blue-400 text-blue-950 shadow-2xs"
+                                                    : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                                            }`}
+                                        >
+                                            <div className="flex items-center gap-1.5 font-semibold text-[11px]">
+                                                <Cpu className="w-3.5 h-3.5 text-blue-600" />
+                                                <span>Technical Peer</span>
+                                            </div>
+                                            <p className="text-[10px] text-slate-500 mt-1 line-clamp-1">Guardrails, schemas &amp; architecture</p>
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => handleApplyPreset("concise")}
+                                            className={`p-2.5 rounded-xl text-left border transition-all cursor-pointer flex flex-col justify-between ${
+                                                activePreset === "concise"
+                                                    ? "bg-blue-50/80 border-blue-400 text-blue-950 shadow-2xs"
+                                                    : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                                            }`}
+                                        >
+                                            <div className="flex items-center gap-1.5 font-semibold text-[11px]">
+                                                <Zap className="w-3.5 h-3.5 text-amber-600" />
+                                                <span>Concise DM</span>
+                                            </div>
+                                            <p className="text-[10px] text-slate-500 mt-1 line-clamp-1">3 sentences, direct question</p>
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => handleApplyPreset("caseStudy")}
+                                            className={`p-2.5 rounded-xl text-left border transition-all cursor-pointer flex flex-col justify-between ${
+                                                activePreset === "caseStudy"
+                                                    ? "bg-blue-50/80 border-blue-400 text-blue-950 shadow-2xs"
+                                                    : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                                            }`}
+                                        >
+                                            <div className="flex items-center gap-1.5 font-semibold text-[11px]">
+                                                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                                                <span>Proof &amp; Case Study</span>
+                                            </div>
+                                            <p className="text-[10px] text-slate-500 mt-1 line-clamp-1">Live metrics &amp; codebase proof</p>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* View Switcher (Compose vs Recipient Preview) */}
+                                <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => setActiveTab("edit")}
+                                            className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${
+                                                activeTab === "edit"
+                                                    ? "bg-slate-900 text-white shadow-2xs"
+                                                    : "text-slate-600 hover:bg-slate-100"
+                                            }`}
+                                        >
+                                            <Edit3 className="w-3 h-3" />
+                                            <span>Compose &amp; Edit</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setActiveTab("preview")}
+                                            className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${
+                                                activeTab === "preview"
+                                                    ? "bg-slate-900 text-white shadow-2xs"
+                                                    : "text-slate-600 hover:bg-slate-100"
+                                            }`}
+                                        >
+                                            <Eye className="w-3 h-3" />
+                                            <span>Inbox Preview</span>
+                                        </button>
+                                    </div>
+
+                                    {/* Live Read & Word Stats */}
+                                    <div className="text-[11px] font-mono text-slate-500">
+                                        <span className="font-semibold text-slate-800">{wordCount} words</span>
+                                        <span className="mx-1">·</span>
+                                        <span>~{readSeconds}s read</span>
+                                    </div>
+                                </div>
+
+                                {activeTab === "edit" ? (
+                                    <>
+                                        {/* Editable Subject */}
+                                        <div className="space-y-1.5">
+                                            <div className="flex items-center justify-between">
+                                                <label className="text-xs font-semibold text-slate-900">
+                                                    Subject Line
+                                                </label>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => copyToClipboard(editableSubject, "subject")}
+                                                    className="text-[11px] font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1 cursor-pointer"
+                                                >
+                                                    {copiedField === "subject" ? (
+                                                        <>
+                                                            <Check className="w-3 h-3 text-emerald-600" />
+                                                            <span className="text-emerald-700 font-semibold">Copied!</span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Copy className="w-3 h-3" />
+                                                            <span>Copy Subject</span>
+                                                        </>
+                                                    )}
+                                                </button>
+                                            </div>
+                                            <Input
+                                                value={editableSubject}
+                                                onChange={(e) => setEditableSubject(e.target.value)}
+                                                className="bg-white border-slate-300 font-mono text-xs text-slate-900 font-semibold h-9 rounded-xl shadow-2xs focus:ring-1 focus:ring-blue-600"
+                                            />
+                                        </div>
+
+                                        {/* Quick Snippet Injectors */}
+                                        <div className="space-y-1">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-[11px] font-medium text-slate-500">Quick Insert Chips:</span>
+                                            </div>
+                                            <div className="flex flex-wrap gap-1.5">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleInsertSnippet("Feel free to pick 15 minutes directly on my calendar: https://cal.com/hazratummar")}
+                                                    className="px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-medium transition-colors flex items-center gap-1 cursor-pointer"
+                                                >
+                                                    <Plus className="w-2.5 h-2.5" />
+                                                    <span>+ Add Calendly</span>
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleInsertSnippet("Telegram: @hazratummar | Direct mobile: +91 91702 47365")}
+                                                    className="px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-medium transition-colors flex items-center gap-1 cursor-pointer"
+                                                >
+                                                    <Plus className="w-2.5 h-2.5" />
+                                                    <span>+ Add Contact Info</span>
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleInsertSnippet("I work on a 100% approval milestone: you test and verify the running code in staging before release.")}
+                                                    className="px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-medium transition-colors flex items-center gap-1 cursor-pointer"
+                                                >
+                                                    <Plus className="w-2.5 h-2.5" />
+                                                    <span>+ Milestone Guarantee</span>
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleInsertSnippet("Full IP assignment and repository transfer upon milestone completion with standard contractor NDA.")}
+                                                    className="px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-medium transition-colors flex items-center gap-1 cursor-pointer"
+                                                >
+                                                    <Plus className="w-2.5 h-2.5" />
+                                                    <span>+ IP &amp; NDA Transfer</span>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        {/* Editable Email Message */}
+                                        <div className="space-y-1.5">
+                                            <div className="flex items-center justify-between">
+                                                <label className="text-xs font-semibold text-slate-900">
+                                                    Email Message
+                                                </label>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => copyToClipboard(editableBody, "body")}
+                                                    className="text-[11px] font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1 cursor-pointer"
+                                                >
+                                                    {copiedField === "body" ? (
+                                                        <>
+                                                            <Check className="w-3 h-3 text-emerald-600" />
+                                                            <span className="text-emerald-700 font-semibold">Copied Message!</span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Copy className="w-3 h-3" />
+                                                            <span>Copy Message</span>
+                                                        </>
+                                                    )}
+                                                </button>
+                                            </div>
+                                            <textarea
+                                                rows={9}
+                                                value={editableBody}
+                                                onChange={(e) => setEditableBody(e.target.value)}
+                                                className="w-full font-sans text-xs text-slate-800 bg-white border border-slate-300 rounded-xl p-3.5 leading-relaxed focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 shadow-2xs resize-y"
+                                                placeholder="Write or customize your personalized message..."
+                                            />
+                                        </div>
+
+                                        {/* Internal Lead Notes */}
+                                        <div className="space-y-1 pt-1">
+                                            <label className="text-[11px] font-semibold text-slate-600 flex items-center gap-1">
+                                                <FileText className="w-3 h-3 text-slate-400" />
+                                                <span>Internal Notes for this Opportunity (Private)</span>
+                                            </label>
+                                            <Input
+                                                value={editableNotes}
+                                                onChange={(e) => setEditableNotes(e.target.value)}
+                                                placeholder="e.g. Followed up on HN thread, asked for 15-min sprint demo"
+                                                className="bg-slate-50 border-slate-200 text-xs text-slate-700 h-8 rounded-lg shadow-2xs"
+                                            />
+                                        </div>
+                                    </>
+                                ) : (
+                                    /* Recipient Preview Mode (Simulated Inbox View) */
+                                    <div className="rounded-2xl border border-slate-200 bg-white shadow-xs overflow-hidden">
+                                        <div className="bg-slate-50 border-b border-slate-200 p-4 space-y-1.5 text-xs">
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-semibold text-slate-500 w-14">From:</span>
+                                                <span className="font-medium text-slate-900">Hazrat Ummar &lt;hazratummar9@gmail.com&gt;</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-semibold text-slate-500 w-14">To:</span>
+                                                <span className="font-medium text-slate-900">{selectedLead.decisionMaker} &lt;{selectedLead.email}&gt;</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-semibold text-slate-500 w-14">Subject:</span>
+                                                <span className="font-bold text-slate-950 font-mono">{editableSubject}</span>
+                                            </div>
+                                        </div>
+                                        <div className="p-5 font-sans text-xs text-slate-800 leading-relaxed whitespace-pre-wrap">
+                                            {editableBody}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* 3. Anchored Footer (Always visible at bottom) */}
+                            <div className="shrink-0 px-5 py-3.5 border-t border-slate-200 bg-slate-50/90 flex flex-wrap items-center justify-between gap-3">
+                                <div className="flex items-center gap-2">
+                                    {/* Save Pitch & Changes to MongoDB */}
+                                    <Button
+                                        onClick={handleSavePitch}
+                                        disabled={isSaving}
+                                        variant="outline"
+                                        size="sm"
+                                        className="border-slate-300 text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 h-9 px-3 rounded-xl flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                                    >
+                                        {saveSuccess ? (
                                             <>
-                                                <Check className="w-3.5 h-3.5 text-emerald-600" />
-                                                <span className="text-emerald-700 font-semibold">Entire Email Copied!</span>
+                                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                                                <span className="text-emerald-700 font-semibold">Saved to Lead!</span>
                                             </>
                                         ) : (
                                             <>
-                                                <Copy className="w-3.5 h-3.5" />
-                                                <span>Copy Full Message</span>
+                                                <Save className="w-3.5 h-3.5 text-slate-500" />
+                                                <span>{isSaving ? "Saving..." : "Save Customizations"}</span>
                                             </>
                                         )}
                                     </Button>
 
+                                    {/* Copy Full Pitch (Subject + Body) */}
                                     <Button
                                         onClick={() => {
-                                            updateLeadStatus(selectedLead._id, "Contacted");
+                                            copyToClipboard(`Subject: ${editableSubject}\n\n${editableBody}`, "all");
                                         }}
                                         variant="ghost"
-                                        className="text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 h-10 px-3 rounded-xl cursor-pointer"
+                                        size="sm"
+                                        className="text-xs font-medium text-slate-700 hover:text-slate-950 hover:bg-slate-200/60 h-9 px-3 rounded-xl flex items-center gap-1.5 cursor-pointer"
                                     >
-                                        Mark as Contacted
+                                        {copiedField === "all" ? (
+                                            <>
+                                                <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                                <span className="text-emerald-700 font-semibold">Entire Pitch Copied!</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Copy className="w-3.5 h-3.5 text-slate-500" />
+                                                <span>Copy Full Pitch</span>
+                                            </>
+                                        )}
                                     </Button>
                                 </div>
 
-                                <a
-                                    href={`mailto:${selectedLead.email}?subject=${encodeURIComponent(selectedLead.personalizedEmail.subject)}&body=${encodeURIComponent(selectedLead.personalizedEmail.body)}`}
-                                    className="inline-flex"
-                                >
-                                    <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs h-10 px-5 rounded-xl shadow-xs flex items-center gap-2 cursor-pointer">
-                                        <Send className="w-3.5 h-3.5" />
-                                        <span>Open in Email App</span>
+                                <div className="flex items-center gap-2">
+                                    {/* Reset to Original Pitch */}
+                                    <Button
+                                        type="button"
+                                        onClick={() => {
+                                            if (selectedLead) {
+                                                const orig = getLeadPresets(selectedLead);
+                                                setEditableSubject(orig.technical.subject);
+                                                setEditableBody(orig.technical.body);
+                                                setActivePreset("technical");
+                                            }
+                                        }}
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-xs text-slate-500 hover:text-slate-900 h-9 px-2.5 rounded-xl flex items-center gap-1"
+                                        title="Reset message to original template"
+                                    >
+                                        <RotateCcw className="w-3 h-3" />
+                                        <span className="hidden sm:inline">Reset</span>
                                     </Button>
-                                </a>
+
+                                    {/* Direct Mailto Dispatch */}
+                                    <a
+                                        href={`mailto:${selectedLead.email}?subject=${encodeURIComponent(editableSubject)}&body=${encodeURIComponent(editableBody)}`}
+                                        className="inline-flex"
+                                        onClick={() => {
+                                            if (editableStatus === "New") {
+                                                setEditableStatus("Contacted");
+                                                updateLeadStatus(selectedLead._id, "Contacted");
+                                            }
+                                        }}
+                                    >
+                                        <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs h-9 px-4 rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer">
+                                            <Send className="w-3.5 h-3.5" />
+                                            <span>Open in Email App</span>
+                                        </Button>
+                                    </a>
+                                </div>
                             </div>
-                        </div>
+                        </>
                     )}
                 </DialogContent>
             </Dialog>
