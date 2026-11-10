@@ -76,6 +76,14 @@ const COMMERCIAL_CASE_STUDIES = [
         problem: "High-volume Discord gaming communities suffered from manual transaction disputes, trade scams, and unverified in-game currency exchanges.",
         solution: "Engineered an asynchronous Discord event engine featuring dual-currency economy transactions, automated purchase ticket escrow, role verification, and full in-Discord admin panels.",
         impact: "Over 55 production modules running 24/7 with zero downtime and automated escrow handling thousands of transactions."
+    },
+    {
+        title: "Clipping Club Campaign Engine",
+        category: "Creator Economy & Social Verification",
+        tech: "Python 3.12 · Discord Components V2 · PostgreSQL · Scrapers",
+        problem: "Marketing agencies managing clipping bounties spent dozens of hours manually verifying creator TikTok/YouTube bios and calculating view CPM payouts across fraud claims.",
+        solution: "Architected a zero-password bio crawler verification system, monotonic view ledger with non-decreasing CPM math, and automated crypto payroll exports for thousands of creators.",
+        impact: "Saved 40+ hours of manual verification weekly with fraud-proof creator ownership validation and instant CPM calculation."
     }
 ];
 
@@ -173,7 +181,7 @@ export const Projects = () => {
         fetchProjects();
     }, []);
 
-    const categories = ["All", "Mobile Apps", "Discord Bots", "Backend"];
+    const categories = ["All", "Discord Bots", "Mobile Apps", "Backend"];
 
     const getCategoryCount = (cat: string) => {
         if (cat === "All") return projects.length;
@@ -219,7 +227,7 @@ export const Projects = () => {
                         <div className="hidden sm:block h-3.5 w-px bg-slate-200" />
                         <div className="flex items-center gap-2">
                             <CheckCircle2 className="w-4 h-4 text-blue-600" />
-                            <span><strong className="text-slate-900 font-bold">Android · KMP · Backend</strong></span>
+                            <span><strong className="text-slate-900 font-bold">Android · Discord Bots · Backend</strong></span>
                         </div>
                         <div className="hidden sm:block h-3.5 w-px bg-slate-200" />
                         <div className="flex items-center gap-2">
@@ -459,7 +467,7 @@ export const Projects = () => {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {COMMERCIAL_CASE_STUDIES.map((study, idx) => (
                             <div 
                                 key={idx}
