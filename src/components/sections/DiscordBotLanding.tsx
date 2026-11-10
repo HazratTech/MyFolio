@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import {
     Bot, Check, X, Sparkles, MessageSquare, Terminal,
-    Webhook, Clock, Star, ArrowRight, Send, HelpCircle, ChevronDown, CheckCircle2, Lock, ExternalLink
+    Webhook, Clock, Star, ArrowRight, Send, HelpCircle, ChevronDown, CheckCircle2, AlertCircle, Lock, ExternalLink
 } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
 
@@ -352,7 +352,7 @@ export const DiscordBotLanding = () => {
                                 </div>
 
                                 {/* Simulated Bot Stats Card */}
-                                <div className="grid grid-cols-3 gap-3 pt-3">
+                                <div data-ui="bot-stats" className="grid grid-cols-3 gap-3 pt-3">
                                     <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
                                         <div className="text-[11px] text-slate-500 font-medium">Uptime SLA</div>
                                         <div className="text-lg font-black text-emerald-600">99.99%</div>
@@ -442,7 +442,7 @@ export const DiscordBotLanding = () => {
                                         Get a Bot Scope & Quote in 60 Seconds
                                     </h2>
                                     <p className="text-xs md:text-sm text-slate-600 leading-relaxed">
-                                        No long forms. Share your name, contact handle, and core requirement. Hazrat will reply with an architectural breakdown within 2 hours.
+                                        No long forms. Share your name, contact handle, and core requirement. Hazrat will reply with an architectural breakdown within 24 hours.
                                     </p>
                                 </div>
                                 <form onSubmit={handleQuickFormSubmit} className="w-full md:max-w-md space-y-3 text-left">
@@ -494,13 +494,15 @@ export const DiscordBotLanding = () => {
                                     </Button>
 
                                     {quickSubmitResult === "success" && (
-                                        <p className="text-emerald-700 bg-emerald-50 border border-emerald-200 p-2 rounded-xl text-xs font-semibold text-center mt-2">
-                                            ✔ Inquiry received! Hazrat will review and reach out shortly.
+                                        <p className="text-emerald-700 bg-emerald-50 border border-emerald-200 p-2 rounded-xl text-xs font-semibold text-center mt-2 flex items-center justify-center gap-1.5">
+                                            <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                                            <span>Inquiry received. Hazrat will review and reach out within 24 hours.</span>
                                         </p>
                                     )}
                                     {quickSubmitResult === "failed" && (
-                                        <p className="text-rose-700 bg-rose-50 border border-rose-200 p-2 rounded-xl text-xs font-semibold text-center mt-2">
-                                            ✗ Failed to send. Please contact hazratummar9@gmail.com directly.
+                                        <p className="text-rose-700 bg-rose-50 border border-rose-200 p-2 rounded-xl text-xs font-semibold text-center mt-2 flex items-center justify-center gap-1.5">
+                                            <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                                            <span>Failed to send. Please contact hazratummar9@gmail.com directly.</span>
                                         </p>
                                     )}
                                 </form>
@@ -697,7 +699,7 @@ export const DiscordBotLanding = () => {
                             Why Commission a Custom Discord Bot?
                         </h2>
                         <p className="text-slate-600 max-w-xl mx-auto mb-12 text-sm">
-                            Public SaaS bots are heavily constrained, lock core features behind monthly subscriptions, and advertise external branding. A bespoke bot delivers complete autonomy.
+                            Public SaaS bots are heavily constrained, lock core features behind monthly subscriptions, and advertise external branding. A dedicated custom bot delivers complete autonomy.
                         </p>
 
                         <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -1039,10 +1041,10 @@ export const DiscordBotLanding = () => {
                             </div>
                             <div className="space-y-2 font-mono text-xs text-slate-300">
                                 <p className="text-slate-500"># Initializing modular cogs...</p>
-                                <p className="text-emerald-400">✔ Database connection successful: MongoDB Atlas</p>
-                                <p className="text-emerald-400">✔ Stripe Webhook router listening on port 8000</p>
-                                <p className="text-emerald-400">✔ OpenAI contextual guardrails loaded</p>
-                                <p className="text-blue-400">✔ 28 slash commands synchronized with Discord API</p>
+                                <p className="text-emerald-400 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 shrink-0" /><span>Database connection successful: MongoDB Atlas</span></p>
+                                <p className="text-emerald-400 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 shrink-0" /><span>Stripe Webhook router listening on port 8000</span></p>
+                                <p className="text-emerald-400 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 shrink-0" /><span>OpenAI contextual guardrails loaded</span></p>
+                                <p className="text-blue-400 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 shrink-0" /><span>28 slash commands synchronized with Discord API</span></p>
                             </div>
                         </div>
                     </div>
@@ -1062,7 +1064,7 @@ export const DiscordBotLanding = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {(reviews.length > 0 ? reviews.filter(r => r.content.toLowerCase().includes("bot") || r.content.toLowerCase().includes("discord") || r.role.toLowerCase().includes("bot") || reviews.length <= 4) : [
-                                { name: "sgtgonzo", role: "United States", content: "Amazing work! Speedy and meticulous. Answered all my questions, explained and demonstrated how my bot worked, outstanding job.", rating: 5 },
+                                { name: "sgtgonzo", role: "United States", content: "Amazing work! Speedy and thorough. Answered all my questions, explained and demonstrated how my bot worked, outstanding job.", rating: 5 },
                                 { name: "afcumerma", role: "United States", content: "Hazrat created a custom mission creation bot for my Discord community of 600+ members, specifically for the Star Citizen space MMO.", rating: 5 },
                                 { name: "frescher", role: "Germany", content: "Working with Hazrat was a pleasure. He asked many questions about the details to make sure I got the functionality that I need. Clear recommendation!", rating: 5 },
                                 { name: "samswa", role: "Austria", content: "Did a great job setting up a custom bot in our discord server! 10/10", rating: 5 }
@@ -1282,7 +1284,7 @@ export const DiscordBotLanding = () => {
                                 Commission Your Custom Discord Bot
                             </h2>
                             <p className="text-slate-600 max-w-md mx-auto text-sm leading-relaxed">
-                                Share your project requirements below to receive a technical architecture breakdown and fixed milestone quote within 2 hours.
+                                Share your project requirements below to receive a technical architecture breakdown and fixed milestone quote within 24 hours.
                             </p>
                         </div>
 
@@ -1439,13 +1441,15 @@ export const DiscordBotLanding = () => {
                                 </Button>
 
                                 {submitResult === "success" && (
-                                    <p className="text-emerald-800 bg-emerald-50 border border-emerald-200 p-3 rounded-xl font-semibold text-center text-xs">
-                                        ✔ Project request submitted! Hazrat will contact you within 2 hours.
+                                    <p className="text-emerald-800 bg-emerald-50 border border-emerald-200 p-3 rounded-xl font-semibold text-center text-xs flex items-center justify-center gap-1.5">
+                                        <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+                                        <span>Project request submitted. Hazrat will contact you within 24 hours.</span>
                                     </p>
                                 )}
                                 {submitResult === "failed" && (
-                                    <p className="text-rose-800 bg-rose-50 border border-rose-200 p-3 rounded-xl font-semibold text-center text-xs">
-                                        ❌ Submission failed. Please email hazratummar9@gmail.com directly.
+                                    <p className="text-rose-800 bg-rose-50 border border-rose-200 p-3 rounded-xl font-semibold text-center text-xs flex items-center justify-center gap-1.5">
+                                        <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+                                        <span>Submission failed. Please email hazratummar9@gmail.com directly.</span>
                                     </p>
                                 )}
                             </form>

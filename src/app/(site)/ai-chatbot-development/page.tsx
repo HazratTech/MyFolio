@@ -4,7 +4,7 @@ import { AIChatbotLanding } from "@/components/sections/AIChatbotLanding";
 export const metadata: Metadata = {
     title: "Custom AI Chatbot & Automation Engineering | RelayWorks",
     description:
-        "Bespoke AI chatbot development and conversational automation for websites, WhatsApp Business, and CRMs. Grounded vector RAG knowledge bases, zero hallucinations, automated calendar scheduling, and 100% full source code ownership.",
+        "Production AI chatbot development and conversational automation for websites, WhatsApp Business, and CRMs. Grounded vector RAG knowledge bases, zero hallucinations, automated calendar scheduling, and 100% full source code ownership.",
     alternates: {
         canonical: "/ai-chatbot-development",
     },

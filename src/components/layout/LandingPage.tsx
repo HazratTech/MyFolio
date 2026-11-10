@@ -12,6 +12,7 @@ import {
     Bot,
     Sparkles,
     Check,
+    X,
     CheckCircle2,
     ShieldCheck,
     Clock,
@@ -105,7 +106,7 @@ const serviceTracks = [
         number: "01",
         title: "Native & Multiplatform Mobile Apps",
         headline: "60FPS fluid UI and zero-data-loss offline architecture.",
-        description: "Bespoke Android apps built in Kotlin & Jetpack Compose, iOS in SwiftUI, and unified multiplatform suites in Kotlin Multiplatform (KMP). Engineered with local-first databases (Room/SQLDelight) so field teams never lose data in low-signal environments.",
+        description: "Production Native Android apps built in Kotlin & Jetpack Compose, iOS in SwiftUI, and unified multiplatform suites in Kotlin Multiplatform (KMP). Engineered with local-first databases (Room/SQLDelight) so field teams never lose data in low-signal environments.",
         href: "/mobile-app-development",
         badge: "Core Discipline",
         badgeColor: "bg-emerald-50 text-emerald-700 border-emerald-200",
@@ -119,7 +120,7 @@ const serviceTracks = [
         description: "Scalable REST and WebSocket backends engineered in Kotlin Spring Boot, Ktor, and FastAPI. Backed by PostgreSQL and MongoDB with containerized Docker deployments, automated GitHub Actions CI/CD, and sub-100ms response times.",
         href: "/services",
         badge: "Cloud Infrastructure",
-        badgeColor: "bg-purple-50 text-purple-700 border-purple-200",
+        badgeColor: "bg-slate-100 text-slate-800 border-slate-200",
         tech: ["Kotlin Spring Boot", "FastAPI", "Ktor", "PostgreSQL", "MongoDB", "Docker"],
         sprint: "Milestone-based architecture"
     },
@@ -149,17 +150,17 @@ const serviceTracks = [
 
 const testimonials = [
     {
-        quote: "Speedy and meticulous. Answered all my questions, explained and demonstrated how my bot worked. Delivery was outstanding.",
+        quote: "Speedy and thorough. Answered all my questions, explained and demonstrated how my bot worked. Delivery was outstanding.",
         author: "sgtgonzo",
         role: "Community Founder",
-        platform: "Fiverr 5.0★ Verified",
+        platform: "Fiverr Verified 5.0 Rating",
         platformBadge: "bg-emerald-50 text-emerald-800 border-emerald-200"
     },
     {
         quote: "He asked many questions about the details to make sure I got the exact functionality I needed. Delivery was quick, clean, and highly professional.",
         author: "frescher",
         role: "Product Operator",
-        platform: "Fiverr 5.0★ Verified",
+        platform: "Fiverr Verified 5.0 Rating",
         platformBadge: "bg-emerald-50 text-emerald-800 border-emerald-200"
     },
     {
@@ -217,7 +218,7 @@ export const LandingPage = () => {
 
                     {/* Subheadline */}
                     <p className="text-lg md:text-xl leading-relaxed mb-8 font-normal max-w-3xl" style={{ color: "#334155" }}>
-                        Direct 1-on-1 collaboration with a senior engineer. Production Native Android (<span className="text-slate-950 font-semibold">Kotlin & Compose</span>), iOS (<span className="text-slate-950 font-semibold">SwiftUI</span>), <span className="text-slate-950 font-semibold">Kotlin Multiplatform (KMP)</span>, robust <span className="text-slate-950 font-semibold">Spring Boot & FastAPI</span> backends, and custom automation. Zero agency bureaucracy.
+                        Direct 1-on-1 collaboration with a senior engineer. Production Native Android (<span className="text-slate-950 font-semibold">Kotlin & Compose</span>), iOS (<span className="text-slate-950 font-semibold">SwiftUI</span>), <span className="text-slate-950 font-semibold">Kotlin Multiplatform (KMP)</span>, fault-tolerant <span className="text-slate-950 font-semibold">Spring Boot & FastAPI</span> backends, and custom automation. Zero agency bureaucracy.
                     </p>
 
                     {/* Primary CTAs */}
@@ -304,7 +305,7 @@ export const LandingPage = () => {
                             </a>
                             <div className="px-2.5 py-1.5 rounded-lg bg-amber-50 text-amber-900 text-xs font-semibold flex items-center gap-1.5 border border-amber-200 shadow-2xs">
                                 <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-                                <span>5.0★</span>
+                                <span>5.0 Rating</span>
                             </div>
                         </div>
                     </div>
@@ -657,23 +658,23 @@ export const LandingPage = () => {
                             </div>
                             <ul className="space-y-4 text-sm text-slate-600">
                                 <li className="flex items-start gap-3">
-                                    <span className="text-rose-500 font-bold">✕</span>
+                                    <X className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
                                     <span>3-4 non-technical account managers filtering all communication</span>
                                 </li>
                                 <li className="flex items-start gap-3">
-                                    <span className="text-rose-500 font-bold">✕</span>
+                                    <X className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
                                     <span>Code delegated to junior outsourced contractors</span>
                                 </li>
                                 <li className="flex items-start gap-3">
-                                    <span className="text-rose-500 font-bold">✕</span>
+                                    <X className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
                                     <span>Weeks wasted on scoping meetings before a line of code is written</span>
                                 </li>
                                 <li className="flex items-start gap-3">
-                                    <span className="text-rose-500 font-bold">✕</span>
+                                    <X className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
                                     <span>Hidden hourly fees, black-box billing, and runaway budgets</span>
                                 </li>
                                 <li className="flex items-start gap-3">
-                                    <span className="text-rose-500 font-bold">✕</span>
+                                    <X className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
                                     <span>Messy architecture that breaks when you try to scale</span>
                                 </li>
                             </ul>

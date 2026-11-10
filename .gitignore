@@ -46,6 +46,9 @@ next-env.d.ts
 *.swo
 *~
 
+# taste-skill
+.taste-skill/
+
 # OS files
 .DS_Store
 Thumbs.db

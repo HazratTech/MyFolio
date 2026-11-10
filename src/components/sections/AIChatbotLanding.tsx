@@ -92,7 +92,7 @@ const sandboxScenarios: SandboxScenario[] = [
             },
             {
                 role: "user",
-                content: "Yes please, 9:30 PM works. Contact is Marcus at 555-0192.",
+                content: "Yes please, 9:30 PM works. Contact is Alex at 555-0192.",
                 time: "08:16 PM",
             },
             {
@@ -108,7 +108,7 @@ const sandboxScenarios: SandboxScenario[] = [
             actionTaken: "Dispatched tech slot via ServiceTitan Webhook",
             crmPayload: {
                 company: "Evergreen Bakery",
-                contact: "Marcus (555-0192)",
+                contact: "Alex (555-0192)",
                 zip: "62704",
                 severity: "High (Commercial Walk-in)",
                 scheduled: "Tonight, 9:30 PM",
@@ -386,7 +386,7 @@ const sprintPricing = [
         name: "Enterprise Agent Architecture",
         usdPrice: "$1,600+",
         inrPrice: "₹1,32,000+",
-        tagline: "Bespoke multi-agent systems connected to private databases and internal APIs.",
+        tagline: "Autonomous multi-agent systems connected to private databases and internal APIs.",
         timeline: "Custom Scope (2 to 4 weeks)",
         features: [
             "Multi-Agent Orchestration (Triage, Booking, & Deep Retrieval agents)",
@@ -639,7 +639,7 @@ export const AIChatbotLanding = () => {
 
                                 {/* Subheadline */}
                                 <p className="text-lg md:text-xl leading-relaxed font-normal" style={{ color: "#334155" }}>
-                                    We engineer intelligent website & WhatsApp conversational assistants that qualify prospects, answer intricate business questions from your verified documentation, and book meetings directly into your calendar 24/7. No generic templates, zero hallucinations, and 100% full source code ownership.
+                                    We engineer intelligent website & WhatsApp conversational assistants that qualify prospects, answer complex domain questions from your verified documentation, and book meetings directly into your calendar 24/7. No generic templates, zero hallucinations, and 100% full source code ownership.
                                 </p>
 
                                 {/* Action Buttons - Balanced Heights & Padding */}
@@ -913,7 +913,7 @@ export const AIChatbotLanding = () => {
                     <div className="container mx-auto px-6 max-w-7xl">
                         <div className="text-center max-w-3xl mx-auto mb-16">
                             <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-blue-700 shadow-sm mb-4">
-                                Robust Systems Engineering
+                                Deterministic Systems Architecture
                             </div>
                             <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-950 tracking-tight">
                                 How We Engineer Zero-Hallucination AI Agents

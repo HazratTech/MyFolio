@@ -4,7 +4,7 @@ import { MobileAppLanding } from "@/components/sections/MobileAppLanding";
 export const metadata: Metadata = {
     title: "Native Mobile App Development (Android & iOS) | RelayWorks",
     description:
-        "High-performance native mobile app development in Kotlin, Jetpack Compose, SwiftUI, and Kotlin Multiplatform (KMP). Offline-first architecture, background delta sync, and robust Kotlin Spring Boot backends.",
+        "High-performance native mobile app development in Kotlin, Jetpack Compose, SwiftUI, and Kotlin Multiplatform (KMP). Offline-first architecture, background delta sync, and scalable Kotlin Spring Boot backends.",
     alternates: {
         canonical: "https://relayworks.dev/mobile-app-development",
     },

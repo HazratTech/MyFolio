@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { LazyMotion, domAnimation, m } from "framer-motion";
-import { Star, ExternalLink } from "lucide-react";
+import { Star, ExternalLink, MapPin } from "lucide-react";
 
 interface Testimonial {
     name: string;
@@ -79,9 +79,9 @@ export const SocialProofWall = () => {
             "from-[#5865F2] to-[#7289da]",
             "from-emerald-500 to-teal-500",
             "from-orange-500 to-red-500",
-            "from-purple-500 to-pink-500",
+            "from-slate-700 to-slate-900",
             "from-blue-500 to-cyan-500",
-            "from-yellow-500 to-orange-500",
+            "from-amber-500 to-orange-500",
         ];
 
         return (
@@ -125,8 +125,9 @@ export const SocialProofWall = () => {
                             {/* Country tag */}
                             {review.role && (
                                 <div className="mt-2">
-                                    <span className="text-[10px] text-white/25 bg-white/[0.03] px-2 py-0.5 rounded">
-                                        📍 {review.role}
+                                    <span className="text-[10px] text-white/40 bg-white/[0.03] px-2 py-0.5 rounded inline-flex items-center gap-1">
+                                        <MapPin className="w-2.5 h-2.5 text-white/40" />
+                                        <span>{review.role}</span>
                                     </span>
                                 </div>
                             )}

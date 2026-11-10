@@ -97,7 +97,7 @@ export const QuoteWizard = () => {
         const service = serviceOptions.find(s => s.id === selectedService);
 
         const embed = {
-            title: "🚀 New Quote Request from RelayWorks",
+            title: "New Project Quote Request: RelayWorks",
             color: 0x2563eb,
             fields: [
                 { name: "Service", value: service?.title || selectedService || "N/A", inline: true },

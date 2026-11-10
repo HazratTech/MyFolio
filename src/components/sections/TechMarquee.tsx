@@ -1,43 +1,34 @@
 "use client";
 
 import React from "react";
-import { 
-    Smartphone, 
-    Server, 
-    Database, 
-    Layers, 
-    Bot, 
-    Cpu, 
-    Terminal, 
-    Zap, 
-    Globe, 
-    Radio 
-} from "lucide-react";
+import Image from "next/image";
+import { Terminal, Radio, Database } from "lucide-react";
 
 interface TechItem {
     name: string;
     category: string;
-    icon: React.ReactNode;
+    iconSrc?: string;
+    iconFallback?: React.ReactNode;
     color: string;
 }
 
 const techItems: TechItem[] = [
-    { name: "Kotlin", category: "Core Mobile", icon: <Smartphone className="w-4 h-4 text-purple-600" />, color: "bg-purple-50 border-purple-200 text-purple-900" },
-    { name: "Jetpack Compose", category: "Declarative UI", icon: <Layers className="w-4 h-4 text-emerald-600" />, color: "bg-emerald-50 border-emerald-200 text-emerald-900" },
-    { name: "SwiftUI", category: "iOS Native", icon: <Smartphone className="w-4 h-4 text-blue-600" />, color: "bg-blue-50 border-blue-200 text-blue-900" },
-    { name: "Kotlin Multiplatform (KMP)", category: "Cross-Platform", icon: <Globe className="w-4 h-4 text-indigo-600" />, color: "bg-indigo-50 border-indigo-200 text-indigo-900" },
-    { name: "Spring Boot", category: "Microservices", icon: <Server className="w-4 h-4 text-emerald-700" />, color: "bg-emerald-50 border-emerald-200 text-emerald-900" },
-    { name: "FastAPI", category: "High Throughput", icon: <Zap className="w-4 h-4 text-teal-600" />, color: "bg-teal-50 border-teal-200 text-teal-900" },
-    { name: "PostgreSQL", category: "Relational DB", icon: <Database className="w-4 h-4 text-blue-700" />, color: "bg-blue-50 border-blue-200 text-blue-900" },
-    { name: "MongoDB", category: "Document Store", icon: <Database className="w-4 h-4 text-green-700" />, color: "bg-green-50 border-green-200 text-green-900" },
-    { name: "Docker & CI/CD", category: "DevOps", icon: <Cpu className="w-4 h-4 text-sky-600" />, color: "bg-sky-50 border-sky-200 text-sky-900" },
-    { name: "Discord.py", category: "Automation", icon: <Bot className="w-4 h-4 text-indigo-600" />, color: "bg-indigo-50 border-indigo-200 text-indigo-900" },
-    { name: "SQLDelight", category: "Local-First Sync", icon: <Database className="w-4 h-4 text-amber-600" />, color: "bg-amber-50 border-amber-200 text-amber-900" },
-    { name: "WebSockets", category: "Real-Time State", icon: <Radio className="w-4 h-4 text-rose-600" />, color: "bg-rose-50 border-rose-200 text-rose-900" },
+    { name: "Kotlin", category: "Core Mobile", iconSrc: "/icons/tech/kotlin.svg", color: "bg-slate-50 border-slate-200 text-slate-900" },
+    { name: "Jetpack Compose", category: "Declarative UI", iconSrc: "/icons/tech/android.svg", color: "bg-emerald-50 border-emerald-200 text-emerald-900" },
+    { name: "SwiftUI", category: "iOS Native", iconSrc: "/icons/tech/swift.svg", color: "bg-blue-50 border-blue-200 text-blue-900" },
+    { name: "Kotlin Multiplatform (KMP)", category: "Cross-Platform", iconSrc: "/icons/tech/kotlin.svg", color: "bg-slate-50 border-slate-200 text-slate-900" },
+    { name: "Spring Boot", category: "Microservices", iconSrc: "/icons/tech/spring.svg", color: "bg-emerald-50 border-emerald-200 text-emerald-900" },
+    { name: "FastAPI", category: "High Throughput", iconSrc: "/icons/tech/fastapi.svg", color: "bg-teal-50 border-teal-200 text-teal-900" },
+    { name: "PostgreSQL", category: "Relational DB", iconSrc: "/icons/tech/postgres.svg", color: "bg-blue-50 border-blue-200 text-blue-900" },
+    { name: "MongoDB", category: "Document Store", iconSrc: "/icons/tech/mongodb.svg", color: "bg-green-50 border-green-200 text-green-900" },
+    { name: "Docker & CI/CD", category: "DevOps", iconSrc: "/icons/tech/docker.svg", color: "bg-sky-50 border-sky-200 text-sky-900" },
+    { name: "Discord.py", category: "Automation", iconSrc: "/icons/tech/discord.svg", color: "bg-indigo-50 border-indigo-200 text-indigo-900" },
+    { name: "SQLDelight", category: "Local-First Sync", iconFallback: <Database className="w-4 h-4 text-slate-700" />, color: "bg-slate-50 border-slate-200 text-slate-900" },
+    { name: "WebSockets", category: "Real-Time State", iconFallback: <Radio className="w-4 h-4 text-blue-600" />, color: "bg-blue-50 border-blue-200 text-blue-900" },
 ];
 
 export const TechMarquee = () => {
-    // Duplicate items for continuous seamless loop
+    // Duplicate items for continuous loop
     const items = [...techItems, ...techItems];
 
     return (
@@ -62,8 +53,18 @@ export const TechMarquee = () => {
                         key={idx}
                         className={`inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl border shadow-xs transition-all hover:scale-105 cursor-default ${tech.color}`}
                     >
-                        <span className="p-1 rounded-md bg-white shadow-xs">
-                            {tech.icon}
+                        <span className="p-1 rounded-md bg-white shadow-xs flex items-center justify-center w-6 h-6 shrink-0">
+                            {tech.iconSrc ? (
+                                <Image
+                                    src={tech.iconSrc}
+                                    alt={`${tech.name} logo`}
+                                    width={16}
+                                    height={16}
+                                    className="w-4 h-4 object-contain"
+                                />
+                            ) : (
+                                tech.iconFallback
+                            )}
                         </span>
                         <div>
                             <div className="text-xs font-bold font-mono tracking-tight text-slate-900">
