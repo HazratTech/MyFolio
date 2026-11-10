@@ -516,7 +516,8 @@ export default function LeadsAdminPage() {
                                                 href={lead.sourceUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="text-[11px] font-medium text-slate-500 hover:text-blue-600 flex items-center gap-1 transition-colors"
+                                                className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-700 bg-blue-50/90 hover:bg-blue-100/90 border border-blue-200/80 px-2 py-0.5 rounded-md transition-colors"
+                                                title="Open original live source posting"
                                             >
                                                 <span>{lead.source}</span>
                                                 <ExternalLink className="w-3 h-3" />
@@ -666,9 +667,21 @@ export default function LeadsAdminPage() {
                                             </a>
                                         </div>
 
-                                        <div className="flex items-center gap-1 text-slate-500">
-                                            <span className="font-medium">Source:</span>
-                                            <span>{selectedLead.source}</span>
+                                        <div className="flex items-center gap-1.5 text-slate-500">
+                                            <span className="font-medium">Original Posting:</span>
+                                            {selectedLead.sourceUrl ? (
+                                                <a 
+                                                    href={selectedLead.sourceUrl} 
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer"
+                                                    className="font-semibold text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"
+                                                >
+                                                    <span>{selectedLead.source}</span>
+                                                    <ExternalLink className="w-3 h-3" />
+                                                </a>
+                                            ) : (
+                                                <span>{selectedLead.source}</span>
+                                            )}
                                         </div>
                                     </div>
 
