@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, FolderKanban, MessageSquare, LogOut, User, Menu, X, FileText, Command, Image as ImageIcon, Globe } from "lucide-react";
+import { LayoutDashboard, Target, FolderKanban, MessageSquare, LogOut, User, Menu, X, FileText, Command, Image as ImageIcon, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
@@ -38,6 +38,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     const navItems = [
         { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+        { name: "Lead Radar", href: "/admin/leads", icon: Target },
         { name: "Projects", href: "/admin/projects", icon: FolderKanban },
         { name: "Blog Posts", href: "/admin/blog", icon: FileText },
         { name: "Categories", href: "/admin/categories", icon: Command },
