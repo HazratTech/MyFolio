@@ -59,3 +59,4 @@ if (mongoose.models.Lead) {
 const Lead = models.Lead || model<ILead>('Lead', LeadSchema);
 
 export default Lead;
+

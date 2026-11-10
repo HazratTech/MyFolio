@@ -9,26 +9,19 @@ import {
     Copy, 
     Check, 
     ExternalLink, 
-    Mail, 
     Send, 
     Flame, 
-    CheckCircle2, 
-    Clock, 
-    MessageSquare, 
     Trash2, 
     Filter,
-    ChevronRight,
     Bot,
     Smartphone,
-    Cpu,
     Server,
     X,
     Eye
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 interface Lead {
     _id: string;
@@ -156,15 +149,30 @@ export default function LeadsAdminPage() {
     const getCategoryIcon = (category: string) => {
         switch (category) {
             case "Discord Bots":
-                return <Bot className="w-4 h-4 text-indigo-400" />;
+                return <Bot className="w-3.5 h-3.5 text-indigo-600" />;
             case "Mobile Apps":
-                return <Smartphone className="w-4 h-4 text-emerald-400" />;
+                return <Smartphone className="w-3.5 h-3.5 text-emerald-600" />;
             case "AI & Chatbots":
-                return <Sparkles className="w-4 h-4 text-amber-400" />;
+                return <Sparkles className="w-3.5 h-3.5 text-violet-600" />;
             case "Backend":
-                return <Server className="w-4 h-4 text-blue-400" />;
+                return <Server className="w-3.5 h-3.5 text-blue-600" />;
             default:
-                return <Target className="w-4 h-4 text-primary" />;
+                return <Target className="w-3.5 h-3.5 text-slate-700" />;
+        }
+    };
+
+    const getCategoryBadgeClass = (category: string) => {
+        switch (category) {
+            case "Discord Bots":
+                return "bg-indigo-50 text-indigo-700 border-indigo-200/80";
+            case "Mobile Apps":
+                return "bg-emerald-50 text-emerald-700 border-emerald-200/80";
+            case "AI & Chatbots":
+                return "bg-violet-50 text-violet-700 border-violet-200/80";
+            case "Backend":
+                return "bg-blue-50 text-blue-700 border-blue-200/80";
+            default:
+                return "bg-slate-100 text-slate-700 border-slate-200";
         }
     };
 
@@ -177,18 +185,14 @@ export default function LeadsAdminPage() {
 
     return (
         <div className="space-y-6 pb-20">
-            {/* Header with Title & Live Scan Trigger */}
+            {/* Header: Confident, Clean, Zero Slop */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 mb-2">
-                        <Target className="w-3.5 h-3.5 text-blue-400" />
-                        <span>Autonomous Lead Radar · 100% Anti-Slop</span>
-                    </div>
-                    <h1 className="text-3xl font-black font-heading tracking-tight text-white">
-                        Lead Pipeline &amp; Outreach
+                    <h1 className="text-3xl font-bold font-heading tracking-tight text-slate-950">
+                        Lead Pipeline
                     </h1>
-                    <p className="text-sm text-slate-400 mt-1">
-                        High-intent client requests harvested from live developer networks with company-tailored pitches.
+                    <p className="text-sm text-slate-600 mt-1">
+                        Active client inquiries harvested from developer networks with tailored engineering pitches.
                     </p>
                 </div>
 
@@ -196,69 +200,78 @@ export default function LeadsAdminPage() {
                     <Button
                         onClick={handleSyncFeeds}
                         disabled={syncing}
-                        className="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs h-10 px-4 rounded-xl shadow-lg shadow-blue-600/20 transition-all flex items-center gap-2 cursor-pointer"
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs h-10 px-4 rounded-xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer"
                     >
                         <RefreshCw className={`w-3.5 h-3.5 ${syncing ? "animate-spin" : ""}`} />
-                        <span>{syncing ? "Scanning Developer Feeds..." : "⚡ Scan Live Feeds"}</span>
+                        <span>{syncing ? "Scanning Feeds..." : "Scan Live Feeds"}</span>
                     </Button>
                 </div>
             </div>
 
             {/* Notification Bar */}
             {syncMessage && (
-                <div className="p-3.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-300 flex items-center justify-between">
-                    <span>{syncMessage}</span>
-                    <button onClick={() => setSyncMessage(null)} className="text-blue-400 hover:text-white">
+                <div className="p-3.5 rounded-xl bg-blue-50 border border-blue-200 text-xs text-blue-900 flex items-center justify-between shadow-2xs">
+                    <span className="font-medium">{syncMessage}</span>
+                    <button 
+                        onClick={() => setSyncMessage(null)} 
+                        className="text-blue-500 hover:text-blue-900 p-1 rounded-md transition-colors"
+                        aria-label="Dismiss message"
+                    >
                         <X className="w-4 h-4" />
                     </button>
                 </div>
             )}
 
-            {/* Metrics Ribbon (Axiom / Attio Style) */}
+            {/* Metrics Ribbon (Attio / Axiom Clean High-Contrast Enterprise Cards) */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                <div className="p-4 rounded-xl bg-[#121215] border border-white/10 flex flex-col justify-between">
-                    <span className="text-xs text-slate-400">Total Leads</span>
-                    <span className="text-2xl font-black font-mono text-white mt-1">{leads.length}</span>
+                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between hover:border-slate-300 transition-colors">
+                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Leads</span>
+                    <span className="text-2xl font-black font-mono text-slate-950 mt-1.5">{leads.length}</span>
                 </div>
-                <div className="p-4 rounded-xl bg-[#121215] border border-amber-500/20 flex flex-col justify-between">
-                    <span className="text-xs text-amber-400 flex items-center gap-1">
-                        <Flame className="w-3.5 h-3.5" />
+
+                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between hover:border-amber-300 transition-colors">
+                    <span className="text-xs font-semibold text-amber-700 flex items-center gap-1.5 uppercase tracking-wider">
+                        <Flame className="w-3.5 h-3.5 text-amber-600 fill-amber-500" />
                         <span>Hot (90+)</span>
                     </span>
-                    <span className="text-2xl font-black font-mono text-amber-300 mt-1">{hotLeadsCount}</span>
+                    <span className="text-2xl font-black font-mono text-amber-800 mt-1.5">{hotLeadsCount}</span>
                 </div>
-                <div className="p-4 rounded-xl bg-[#121215] border border-indigo-500/20 flex flex-col justify-between">
-                    <span className="text-xs text-indigo-400 flex items-center gap-1">
-                        <Bot className="w-3.5 h-3.5" />
+
+                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between hover:border-indigo-300 transition-colors">
+                    <span className="text-xs font-semibold text-indigo-700 flex items-center gap-1.5 uppercase tracking-wider">
+                        <Bot className="w-3.5 h-3.5 text-indigo-600" />
                         <span>Discord Bots</span>
                     </span>
-                    <span className="text-2xl font-black font-mono text-indigo-300 mt-1">{discordCount}</span>
+                    <span className="text-2xl font-black font-mono text-indigo-950 mt-1.5">{discordCount}</span>
                 </div>
-                <div className="p-4 rounded-xl bg-[#121215] border border-emerald-500/20 flex flex-col justify-between">
-                    <span className="text-xs text-emerald-400 flex items-center gap-1">
-                        <Smartphone className="w-3.5 h-3.5" />
+
+                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between hover:border-emerald-300 transition-colors">
+                    <span className="text-xs font-semibold text-emerald-700 flex items-center gap-1.5 uppercase tracking-wider">
+                        <Smartphone className="w-3.5 h-3.5 text-emerald-600" />
                         <span>Mobile Apps</span>
                     </span>
-                    <span className="text-2xl font-black font-mono text-emerald-300 mt-1">{mobileCount}</span>
+                    <span className="text-2xl font-black font-mono text-emerald-950 mt-1.5">{mobileCount}</span>
                 </div>
-                <div className="p-4 rounded-xl bg-[#121215] border border-amber-500/20 flex flex-col justify-between">
-                    <span className="text-xs text-amber-400 flex items-center gap-1">
-                        <Sparkles className="w-3.5 h-3.5" />
+
+                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between hover:border-violet-300 transition-colors">
+                    <span className="text-xs font-semibold text-violet-700 flex items-center gap-1.5 uppercase tracking-wider">
+                        <Sparkles className="w-3.5 h-3.5 text-violet-600" />
                         <span>AI &amp; Chatbots</span>
                     </span>
-                    <span className="text-2xl font-black font-mono text-amber-300 mt-1">{aiCount}</span>
+                    <span className="text-2xl font-black font-mono text-violet-950 mt-1.5">{aiCount}</span>
                 </div>
-                <div className="p-4 rounded-xl bg-[#121215] border border-blue-500/20 flex flex-col justify-between">
-                    <span className="text-xs text-blue-400 flex items-center gap-1">
-                        <Server className="w-3.5 h-3.5" />
+
+                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between hover:border-blue-300 transition-colors">
+                    <span className="text-xs font-semibold text-blue-700 flex items-center gap-1.5 uppercase tracking-wider">
+                        <Server className="w-3.5 h-3.5 text-blue-600" />
                         <span>Backend</span>
                     </span>
-                    <span className="text-2xl font-black font-mono text-blue-300 mt-1">{backendCount}</span>
+                    <span className="text-2xl font-black font-mono text-blue-950 mt-1.5">{backendCount}</span>
                 </div>
             </div>
 
-            {/* Filter Bar & Search */}
-            <div className="space-y-3 p-4 rounded-2xl bg-[#121215] border border-white/10">
+            {/* Filter Bar & Search (Pure White Card Container) */}
+            <div className="space-y-3 p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                     {/* Search Form */}
                     <form onSubmit={handleSearch} className="relative w-full md:w-96">
@@ -267,13 +280,13 @@ export default function LeadsAdminPage() {
                             placeholder="Search company, tech keyword, or founder..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="h-10 pl-10 bg-white/5 border-white/10 text-xs text-white placeholder:text-slate-500 rounded-xl w-full"
+                            className="h-10 pl-10 bg-slate-50 border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-blue-600 focus:ring-1 focus:ring-blue-600 rounded-xl w-full shadow-2xs"
                         />
                     </form>
 
                     {/* Status Filter */}
                     <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto">
-                        <span className="text-xs text-slate-400 mr-2 flex items-center gap-1">
+                        <span className="text-xs font-medium text-slate-500 mr-2 flex items-center gap-1">
                             <Filter className="w-3.5 h-3.5" />
                             <span>Status:</span>
                         </span>
@@ -281,10 +294,10 @@ export default function LeadsAdminPage() {
                             <button
                                 key={status}
                                 onClick={() => setSelectedStatus(status)}
-                                className={`text-xs px-2.5 py-1 rounded-lg transition-colors cursor-pointer ${
+                                className={`text-xs px-3 py-1 rounded-lg transition-colors cursor-pointer ${
                                     selectedStatus === status
-                                        ? "bg-white/20 text-white font-semibold"
-                                        : "text-slate-400 hover:text-white hover:bg-white/5"
+                                        ? "bg-slate-900 text-white font-medium shadow-2xs"
+                                        : "text-slate-600 hover:text-slate-950 hover:bg-slate-100 font-medium"
                                 }`}
                             >
                                 {status}
@@ -294,7 +307,7 @@ export default function LeadsAdminPage() {
                 </div>
 
                 {/* Category Tabs */}
-                <div className="flex items-center gap-2 overflow-x-auto pt-2 border-t border-white/5">
+                <div className="flex items-center gap-2 overflow-x-auto pt-3 border-t border-slate-100">
                     {categories.map((cat) => {
                         const count = cat === "All" ? leads.length : leads.filter(l => l.category === cat).length;
                         const isSelected = selectedCategory === cat;
@@ -302,15 +315,15 @@ export default function LeadsAdminPage() {
                             <button
                                 key={cat}
                                 onClick={() => setSelectedCategory(cat)}
-                                className={`text-xs font-semibold px-3 py-1.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
+                                className={`text-xs font-semibold px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
                                     isSelected
-                                        ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
-                                        : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10"
+                                        ? "bg-blue-600 text-white shadow-xs"
+                                        : "bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200/80 font-medium"
                                 }`}
                             >
                                 <span>{cat}</span>
                                 <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-mono ${
-                                    isSelected ? "bg-white/20 text-white" : "bg-black/30 text-slate-400"
+                                    isSelected ? "bg-white/20 text-white" : "bg-slate-200/80 text-slate-700"
                                 }`}>
                                     {count}
                                 </span>
@@ -324,18 +337,18 @@ export default function LeadsAdminPage() {
             {loading ? (
                 <div className="space-y-3">
                     {[1, 2, 3, 4].map(i => (
-                        <div key={i} className="h-28 rounded-2xl bg-[#121215] border border-white/10 animate-pulse p-6" />
+                        <div key={i} className="h-32 rounded-2xl bg-white border border-slate-200/90 shadow-xs animate-pulse p-6" />
                     ))}
                 </div>
             ) : leads.length === 0 ? (
-                <div className="text-center py-16 bg-[#121215] rounded-2xl border border-white/10 border-dashed">
-                    <Target className="w-12 h-12 text-slate-500 mx-auto mb-3 opacity-60" />
-                    <h3 className="text-lg font-bold text-white mb-1">No Leads Found</h3>
-                    <p className="text-xs text-slate-400 max-w-md mx-auto mb-4">
-                        No opportunities matched the active filters. Run the live feed scanner to harvest fresh requests.
+                <div className="text-center py-16 bg-white rounded-2xl border border-slate-200/90 border-dashed shadow-xs">
+                    <Target className="w-12 h-12 text-slate-400 mx-auto mb-3 opacity-60" />
+                    <h3 className="text-base font-bold text-slate-900 mb-1">No Leads Found</h3>
+                    <p className="text-xs text-slate-500 max-w-md mx-auto mb-4">
+                        No opportunities matched the active filters. Scan live feeds to discover new client inquiries.
                     </p>
-                    <Button onClick={handleSyncFeeds} size="sm" className="bg-blue-600 hover:bg-blue-500 text-white text-xs">
-                        Run Live Feed Scanner
+                    <Button onClick={handleSyncFeeds} size="sm" className="bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-xl shadow-xs">
+                        Scan Live Feeds
                     </Button>
                 </div>
             ) : (
@@ -345,23 +358,23 @@ export default function LeadsAdminPage() {
                         return (
                             <div
                                 key={lead._id}
-                                className="p-5 rounded-2xl bg-[#121215] border border-white/10 hover:border-blue-500/40 transition-all duration-200 flex flex-col lg:flex-row lg:items-center justify-between gap-4 group"
+                                className="p-5 rounded-2xl bg-white border border-slate-200/90 hover:border-slate-300 hover:shadow-sm transition-all duration-150 flex flex-col lg:flex-row lg:items-center justify-between gap-4 group"
                             >
                                 {/* Left Content: Details & Stated Need */}
-                                <div className="space-y-2 flex-grow max-w-3xl">
+                                <div className="space-y-2.5 flex-grow max-w-3xl">
                                     <div className="flex flex-wrap items-center gap-2">
                                         {/* Score Pill */}
-                                        <span className={`inline-flex items-center gap-1 text-[11px] font-bold font-mono px-2 py-0.5 rounded-md ${
+                                        <span className={`inline-flex items-center gap-1 text-[11px] font-bold font-mono px-2.5 py-0.5 rounded-md border ${
                                             isHot
-                                                ? "bg-amber-500/10 text-amber-400 border border-amber-500/30"
-                                                : "bg-blue-500/10 text-blue-400 border border-blue-500/30"
+                                                ? "bg-amber-50 text-amber-800 border-amber-200/80"
+                                                : "bg-blue-50 text-blue-800 border-blue-200/80"
                                         }`}>
-                                            {isHot && <Flame className="w-3 h-3 text-amber-400 fill-amber-400" />}
+                                            {isHot && <Flame className="w-3 h-3 text-amber-600 fill-amber-500" />}
                                             <span>Score {lead.score}</span>
                                         </span>
 
                                         {/* Category Pill */}
-                                        <span className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-slate-300">
+                                        <span className={`inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-0.5 rounded-md border ${getCategoryBadgeClass(lead.category)}`}>
                                             {getCategoryIcon(lead.category)}
                                             <span>{lead.category}</span>
                                         </span>
@@ -372,32 +385,32 @@ export default function LeadsAdminPage() {
                                                 href={lead.sourceUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="text-[11px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                                                className="text-[11px] font-medium text-slate-500 hover:text-blue-600 flex items-center gap-1 transition-colors"
                                             >
                                                 <span>{lead.source}</span>
                                                 <ExternalLink className="w-3 h-3" />
                                             </a>
                                         ) : (
-                                            <span className="text-[11px] text-slate-500">{lead.source}</span>
+                                            <span className="text-[11px] font-medium text-slate-500">{lead.source}</span>
                                         )}
                                     </div>
 
                                     {/* Company & Stated Need */}
                                     <div>
-                                        <h3 className="text-base font-bold text-white group-hover:text-blue-400 transition-colors flex items-center gap-2">
+                                        <h3 className="text-base font-bold text-slate-950 group-hover:text-blue-600 transition-colors flex items-center gap-2">
                                             <span>{lead.company}</span>
-                                            <span className="text-xs font-normal text-slate-500">· {lead.decisionMaker}</span>
+                                            <span className="text-xs font-normal text-slate-500 font-mono">· {lead.decisionMaker}</span>
                                         </h3>
-                                        <p className="text-xs text-slate-400 line-clamp-2 mt-1 leading-relaxed">
-                                            <strong className="text-slate-300 font-medium">Stated Pain: </strong>
+                                        <div className="mt-1.5 p-3 rounded-xl bg-slate-50 border border-slate-200/70 text-xs text-slate-700 leading-relaxed">
+                                            <span className="font-semibold text-slate-900 mr-1.5">Stated Need:</span>
                                             {lead.painSignal}
-                                        </p>
+                                        </div>
                                     </div>
 
                                     {/* Tech Stack Pills */}
                                     <div className="flex flex-wrap gap-1.5 pt-0.5">
                                         {lead.techStack?.map((t, i) => (
-                                            <span key={i} className="text-[10px] font-mono bg-white/5 text-slate-400 px-2 py-0.5 rounded border border-white/5">
+                                            <span key={i} className="text-[11px] font-mono bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md border border-slate-200/80">
                                                 {t}
                                             </span>
                                         ))}
@@ -405,12 +418,12 @@ export default function LeadsAdminPage() {
                                 </div>
 
                                 {/* Right Actions: Status & Pitch Trigger */}
-                                <div className="flex flex-col sm:flex-row lg:flex-col items-start lg:items-end justify-between gap-3 shrink-0 pt-3 lg:pt-0 border-t lg:border-t-0 border-white/5">
+                                <div className="flex flex-col sm:flex-row lg:flex-col items-start lg:items-end justify-between gap-3 shrink-0 pt-3 lg:pt-0 border-t lg:border-t-0 border-slate-100">
                                     {/* Status Selector */}
                                     <select
                                         value={lead.status}
                                         onChange={(e) => updateLeadStatus(lead._id, e.target.value)}
-                                        className="text-xs bg-[#18181b] border border-white/10 text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 cursor-pointer"
+                                        className="text-xs font-medium bg-white border border-slate-200 text-slate-800 rounded-xl px-3 py-1.5 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 shadow-2xs cursor-pointer"
                                     >
                                         <option value="New">Status: New 🟢</option>
                                         <option value="Contacted">Status: Contacted 🟡</option>
@@ -424,7 +437,7 @@ export default function LeadsAdminPage() {
                                         <Button
                                             onClick={() => setSelectedLead(lead)}
                                             size="sm"
-                                            className="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs h-9 px-3.5 rounded-xl transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
+                                            className="bg-slate-950 hover:bg-black text-white font-medium text-xs h-9 px-4 rounded-xl transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
                                         >
                                             <Eye className="w-3.5 h-3.5" />
                                             <span>View Tailored Pitch</span>
@@ -434,7 +447,7 @@ export default function LeadsAdminPage() {
                                             onClick={() => deleteLead(lead._id)}
                                             variant="ghost"
                                             size="icon"
-                                            className="h-9 w-9 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-xl"
+                                            className="h-9 w-9 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
                                             title="Delete lead"
                                         >
                                             <Trash2 className="w-4 h-4" />
@@ -449,68 +462,69 @@ export default function LeadsAdminPage() {
 
             {/* Personalized Email Modal / Inspector */}
             <Dialog open={!!selectedLead} onOpenChange={(open) => !open && setSelectedLead(null)}>
-                <DialogContent showCloseButton={false} className="max-w-[95vw] w-full md:max-w-3xl bg-[#121215] border border-white/10 text-white p-0 overflow-hidden rounded-3xl shadow-2xl">
+                <DialogContent showCloseButton={false} className="max-w-[95vw] w-full md:max-w-2xl bg-white border border-slate-200 text-slate-900 p-0 overflow-hidden rounded-3xl shadow-2xl">
                     {selectedLead && (
                         <div className="flex flex-col max-h-[85vh]">
                             {/* Modal Header */}
-                            <div className="p-6 border-b border-white/10 flex items-start justify-between bg-[#18181b]">
+                            <div className="p-6 border-b border-slate-200 bg-slate-50/70 flex items-start justify-between">
                                 <div>
                                     <div className="flex items-center gap-2 mb-1.5">
-                                        <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                                        <span className={`text-[10px] font-bold font-mono px-2 py-0.5 rounded border ${getCategoryBadgeClass(selectedLead.category)}`}>
                                             {selectedLead.category}
                                         </span>
-                                        <span className="text-xs text-slate-400">Target: {selectedLead.company}</span>
+                                        <span className="text-xs font-medium text-slate-500">Target: {selectedLead.company}</span>
                                     </div>
-                                    <DialogTitle className="text-xl font-bold font-heading text-white">
-                                        100% Personalized Outreach Pitch
+                                    <DialogTitle className="text-xl font-bold font-heading text-slate-950">
+                                        Tailored Outreach Pitch
                                     </DialogTitle>
-                                    <p className="text-xs text-slate-400 mt-1">
-                                        Peer-to-peer engineering voice · Zero AI slop · Tailored for {selectedLead.decisionMaker}
+                                    <p className="text-xs text-slate-500 mt-1">
+                                        Personalized technical outreach tailored for {selectedLead.decisionMaker}
                                     </p>
                                 </div>
 
                                 <button
                                     onClick={() => setSelectedLead(null)}
-                                    className="p-2 rounded-full hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+                                    className="p-2 rounded-xl hover:bg-slate-200/80 text-slate-400 hover:text-slate-900 transition-colors"
+                                    aria-label="Close modal"
                                 >
                                     <X className="w-5 h-5" />
                                 </button>
                             </div>
 
                             {/* Modal Body */}
-                            <div className="p-6 overflow-y-auto space-y-6 flex-grow">
+                            <div className="p-6 overflow-y-auto space-y-5 flex-grow">
                                 {/* Lead Meta Summary */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-xl bg-white/5 border border-white/10 text-xs">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs">
                                     <div>
-                                        <span className="text-slate-400 block mb-0.5">Recipient:</span>
-                                        <span className="font-semibold text-white">{selectedLead.decisionMaker}</span>
+                                        <span className="text-slate-500 block mb-0.5 font-medium">Recipient:</span>
+                                        <span className="font-semibold text-slate-950">{selectedLead.decisionMaker}</span>
                                     </div>
                                     <div>
-                                        <span className="text-slate-400 block mb-0.5">Direct Email:</span>
-                                        <a href={`mailto:${selectedLead.email}`} className="font-mono text-blue-400 hover:underline">
+                                        <span className="text-slate-500 block mb-0.5 font-medium">Direct Email:</span>
+                                        <a href={`mailto:${selectedLead.email}`} className="font-mono text-blue-600 hover:underline">
                                             {selectedLead.email}
                                         </a>
                                     </div>
                                     <div className="md:col-span-2">
-                                        <span className="text-slate-400 block mb-0.5">Client's Stated Request:</span>
-                                        <p className="text-slate-300 italic bg-black/30 p-2.5 rounded-lg border border-white/5">
+                                        <span className="text-slate-500 block mb-0.5 font-medium">Client's Stated Request:</span>
+                                        <p className="text-slate-700 italic bg-white p-3 rounded-xl border border-slate-200/80">
                                             "{selectedLead.painSignal}"
                                         </p>
                                     </div>
                                 </div>
 
                                 {/* Subject Line Section */}
-                                <div className="space-y-2">
+                                <div className="space-y-1.5">
                                     <div className="flex items-center justify-between">
-                                        <label className="text-xs font-semibold text-slate-300">Subject Line</label>
+                                        <label className="text-xs font-semibold text-slate-900">Subject Line</label>
                                         <button
                                             onClick={() => copyToClipboard(selectedLead.personalizedEmail.subject, "subject")}
-                                            className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                                            className="text-xs font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1 cursor-pointer"
                                         >
                                             {copiedField === "subject" ? (
                                                 <>
-                                                    <Check className="w-3.5 h-3.5 text-emerald-400" />
-                                                    <span className="text-emerald-400">Copied!</span>
+                                                    <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                                    <span className="text-emerald-700 font-semibold">Copied!</span>
                                                 </>
                                             ) : (
                                                 <>
@@ -520,40 +534,40 @@ export default function LeadsAdminPage() {
                                             )}
                                         </button>
                                     </div>
-                                    <div className="p-3 rounded-xl bg-black/40 border border-white/10 font-mono text-xs text-slate-200">
+                                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 font-mono text-xs text-slate-900 font-semibold">
                                         {selectedLead.personalizedEmail.subject}
                                     </div>
                                 </div>
 
                                 {/* Email Body Section */}
-                                <div className="space-y-2">
+                                <div className="space-y-1.5">
                                     <div className="flex items-center justify-between">
-                                        <label className="text-xs font-semibold text-slate-300">Email Body (Anti-Slop Peer Voice)</label>
+                                        <label className="text-xs font-semibold text-slate-900">Email Message</label>
                                         <button
                                             onClick={() => copyToClipboard(selectedLead.personalizedEmail.body, "body")}
-                                            className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                                            className="text-xs font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1 cursor-pointer"
                                         >
                                             {copiedField === "body" ? (
                                                 <>
-                                                    <Check className="w-3.5 h-3.5 text-emerald-400" />
-                                                    <span className="text-emerald-400">Copied Body!</span>
+                                                    <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                                    <span className="text-emerald-700 font-semibold">Copied Message!</span>
                                                 </>
                                             ) : (
                                                 <>
                                                     <Copy className="w-3.5 h-3.5" />
-                                                    <span>Copy Body</span>
+                                                    <span>Copy Message</span>
                                                 </>
                                             )}
                                         </button>
                                     </div>
-                                    <div className="p-4 rounded-xl bg-black/40 border border-white/10 font-sans text-xs text-slate-200 leading-relaxed whitespace-pre-wrap">
+                                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 font-sans text-xs text-slate-800 leading-relaxed whitespace-pre-wrap">
                                         {selectedLead.personalizedEmail.body}
                                     </div>
                                 </div>
                             </div>
 
                             {/* Modal Footer / Dispatch Actions */}
-                            <div className="p-5 border-t border-white/10 bg-[#18181b] flex flex-wrap items-center justify-between gap-3">
+                            <div className="p-5 border-t border-slate-200 bg-slate-50/70 flex flex-wrap items-center justify-between gap-3">
                                 <div className="flex items-center gap-2">
                                     <Button
                                         onClick={() => {
@@ -563,12 +577,12 @@ export default function LeadsAdminPage() {
                                             );
                                         }}
                                         variant="outline"
-                                        className="border-white/10 text-xs text-white hover:bg-white/10 h-10 px-4 rounded-xl flex items-center gap-2"
+                                        className="border-slate-200 text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 h-10 px-4 rounded-xl flex items-center gap-2 cursor-pointer shadow-2xs"
                                     >
                                         {copiedField === "all" ? (
                                             <>
-                                                <Check className="w-3.5 h-3.5 text-emerald-400" />
-                                                <span className="text-emerald-400 font-semibold">Entire Email Copied!</span>
+                                                <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                                <span className="text-emerald-700 font-semibold">Entire Email Copied!</span>
                                             </>
                                         ) : (
                                             <>
@@ -583,7 +597,7 @@ export default function LeadsAdminPage() {
                                             updateLeadStatus(selectedLead._id, "Contacted");
                                         }}
                                         variant="ghost"
-                                        className="text-xs text-amber-400 hover:bg-amber-500/10 h-10 px-3 rounded-xl"
+                                        className="text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 h-10 px-3 rounded-xl cursor-pointer"
                                     >
                                         Mark as Contacted
                                     </Button>
@@ -593,9 +607,9 @@ export default function LeadsAdminPage() {
                                     href={`mailto:${selectedLead.email}?subject=${encodeURIComponent(selectedLead.personalizedEmail.subject)}&body=${encodeURIComponent(selectedLead.personalizedEmail.body)}`}
                                     className="inline-flex"
                                 >
-                                    <Button className="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs h-10 px-5 rounded-xl shadow-lg shadow-blue-600/30 flex items-center gap-2 cursor-pointer">
+                                    <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs h-10 px-5 rounded-xl shadow-xs flex items-center gap-2 cursor-pointer">
                                         <Send className="w-3.5 h-3.5" />
-                                        <span>Open in Email App (Pre-filled)</span>
+                                        <span>Open in Email App</span>
                                     </Button>
                                 </a>
                             </div>
