@@ -595,12 +595,18 @@ export default function LeadsAdminPage() {
             <Dialog open={!!selectedLead} onOpenChange={(open) => !open && setSelectedLead(null)}>
                 <DialogContent 
                     showCloseButton={false} 
-                    className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[100] w-[95vw] max-w-3xl h-[88vh] max-h-[820px] flex flex-col p-0 gap-0 overflow-hidden rounded-2xl bg-white border border-slate-200 text-slate-900 shadow-2xl focus:outline-none"
+                    style={{
+                        maxHeight: "calc(100vh - 48px)",
+                        height: "min(84vh, 720px)",
+                        maxWidth: "860px",
+                        width: "95vw"
+                    }}
+                    className="sm:max-w-[860px] w-[95vw] flex flex-col p-0 gap-0 overflow-hidden rounded-2xl bg-white border border-slate-200 text-slate-900 shadow-2xl focus:outline-none"
                 >
                     {selectedLead && (
-                        <>
+                        <div className="flex flex-col h-full max-h-full overflow-hidden">
                             {/* 1. Anchored Header (Always visible at top) */}
-                            <div className="shrink-0 px-5 py-3.5 border-b border-slate-200 bg-slate-50/90 flex items-center justify-between gap-4">
+                            <div className="shrink-0 px-5 py-3 border-b border-slate-200 bg-slate-50/90 flex items-center justify-between gap-4">
                                 <div>
                                     <div className="flex items-center gap-2 mb-0.5">
                                         <span className={`text-[10px] font-bold font-mono px-2 py-0.5 rounded border ${getCategoryBadgeClass(selectedLead.category)}`}>
@@ -643,9 +649,9 @@ export default function LeadsAdminPage() {
                             </div>
 
                             {/* 2. Scrollable Dynamic Body (Smooth vertical scrolling inside constrained window) */}
-                            <div className="flex-1 min-h-0 overflow-y-auto p-5 space-y-4 text-xs">
+                            <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-5 space-y-3.5 text-xs">
                                 {/* Lead Intelligence Strip */}
-                                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+                                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
                                     <div className="flex flex-wrap items-center justify-between gap-2 text-[11px]">
                                         <div className="flex items-center gap-2">
                                             <span className="font-semibold text-slate-700">Contact:</span>
@@ -666,7 +672,7 @@ export default function LeadsAdminPage() {
                                         </div>
                                     </div>
 
-                                    <div className="text-[11px] text-slate-600 bg-white p-2.5 rounded-lg border border-slate-200/70 italic">
+                                    <div className="text-[11px] text-slate-600 bg-white p-2 rounded-lg border border-slate-200/70 italic">
                                         <span className="font-semibold text-slate-800 not-italic mr-1.5">Stated Request:</span>
                                         "{selectedLead.painSignal}"
                                     </div>
@@ -696,7 +702,7 @@ export default function LeadsAdminPage() {
                                                 <Cpu className="w-3.5 h-3.5 text-blue-600" />
                                                 <span>Technical Peer</span>
                                             </div>
-                                            <p className="text-[10px] text-slate-500 mt-1 line-clamp-1">Guardrails, schemas &amp; architecture</p>
+                                            <p className="text-[10px] text-slate-500 mt-0.5 line-clamp-1">Guardrails, schemas &amp; architecture</p>
                                         </button>
 
                                         <button
@@ -712,7 +718,7 @@ export default function LeadsAdminPage() {
                                                 <Zap className="w-3.5 h-3.5 text-amber-600" />
                                                 <span>Concise DM</span>
                                             </div>
-                                            <p className="text-[10px] text-slate-500 mt-1 line-clamp-1">3 sentences, direct question</p>
+                                            <p className="text-[10px] text-slate-500 mt-0.5 line-clamp-1">3 sentences, direct question</p>
                                         </button>
 
                                         <button
@@ -728,7 +734,7 @@ export default function LeadsAdminPage() {
                                                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
                                                 <span>Proof &amp; Case Study</span>
                                             </div>
-                                            <p className="text-[10px] text-slate-500 mt-1 line-clamp-1">Live metrics &amp; codebase proof</p>
+                                            <p className="text-[10px] text-slate-500 mt-0.5 line-clamp-1">Live metrics &amp; codebase proof</p>
                                         </button>
                                     </div>
                                 </div>
@@ -773,7 +779,7 @@ export default function LeadsAdminPage() {
                                 {activeTab === "edit" ? (
                                     <>
                                         {/* Editable Subject */}
-                                        <div className="space-y-1.5">
+                                        <div className="space-y-1">
                                             <div className="flex items-center justify-between">
                                                 <label className="text-xs font-semibold text-slate-900">
                                                     Subject Line
@@ -799,7 +805,7 @@ export default function LeadsAdminPage() {
                                             <Input
                                                 value={editableSubject}
                                                 onChange={(e) => setEditableSubject(e.target.value)}
-                                                className="bg-white border-slate-300 font-mono text-xs text-slate-900 font-semibold h-9 rounded-xl shadow-2xs focus:ring-1 focus:ring-blue-600"
+                                                className="bg-white border-slate-300 font-mono text-xs text-slate-900 font-semibold h-8 rounded-xl shadow-2xs focus:ring-1 focus:ring-blue-600"
                                             />
                                         </div>
 
@@ -812,7 +818,7 @@ export default function LeadsAdminPage() {
                                                 <button
                                                     type="button"
                                                     onClick={() => handleInsertSnippet("Feel free to pick 15 minutes directly on my calendar: https://cal.com/hazratummar")}
-                                                    className="px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-medium transition-colors flex items-center gap-1 cursor-pointer"
+                                                    className="px-2 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-medium transition-colors flex items-center gap-1 cursor-pointer"
                                                 >
                                                     <Plus className="w-2.5 h-2.5" />
                                                     <span>+ Add Calendly</span>
@@ -821,7 +827,7 @@ export default function LeadsAdminPage() {
                                                 <button
                                                     type="button"
                                                     onClick={() => handleInsertSnippet("Telegram: @hazratummar | Direct mobile: +91 91702 47365")}
-                                                    className="px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-medium transition-colors flex items-center gap-1 cursor-pointer"
+                                                    className="px-2 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-medium transition-colors flex items-center gap-1 cursor-pointer"
                                                 >
                                                     <Plus className="w-2.5 h-2.5" />
                                                     <span>+ Add Contact Info</span>
@@ -830,7 +836,7 @@ export default function LeadsAdminPage() {
                                                 <button
                                                     type="button"
                                                     onClick={() => handleInsertSnippet("I work on a 100% approval milestone: you test and verify the running code in staging before release.")}
-                                                    className="px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-medium transition-colors flex items-center gap-1 cursor-pointer"
+                                                    className="px-2 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-medium transition-colors flex items-center gap-1 cursor-pointer"
                                                 >
                                                     <Plus className="w-2.5 h-2.5" />
                                                     <span>+ Milestone Guarantee</span>
@@ -839,7 +845,7 @@ export default function LeadsAdminPage() {
                                                 <button
                                                     type="button"
                                                     onClick={() => handleInsertSnippet("Full IP assignment and repository transfer upon milestone completion with standard contractor NDA.")}
-                                                    className="px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-medium transition-colors flex items-center gap-1 cursor-pointer"
+                                                    className="px-2 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-medium transition-colors flex items-center gap-1 cursor-pointer"
                                                 >
                                                     <Plus className="w-2.5 h-2.5" />
                                                     <span>+ IP &amp; NDA Transfer</span>
@@ -848,7 +854,7 @@ export default function LeadsAdminPage() {
                                         </div>
 
                                         {/* Editable Email Message */}
-                                        <div className="space-y-1.5">
+                                        <div className="space-y-1">
                                             <div className="flex items-center justify-between">
                                                 <label className="text-xs font-semibold text-slate-900">
                                                     Email Message
@@ -872,16 +878,16 @@ export default function LeadsAdminPage() {
                                                 </button>
                                             </div>
                                             <textarea
-                                                rows={9}
+                                                rows={6}
                                                 value={editableBody}
                                                 onChange={(e) => setEditableBody(e.target.value)}
-                                                className="w-full font-sans text-xs text-slate-800 bg-white border border-slate-300 rounded-xl p-3.5 leading-relaxed focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 shadow-2xs resize-y"
+                                                className="w-full font-sans text-xs text-slate-800 bg-white border border-slate-300 rounded-xl p-3 leading-relaxed focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 shadow-2xs resize-none"
                                                 placeholder="Write or customize your personalized message..."
                                             />
                                         </div>
 
                                         {/* Internal Lead Notes */}
-                                        <div className="space-y-1 pt-1">
+                                        <div className="space-y-1 pt-0.5">
                                             <label className="text-[11px] font-semibold text-slate-600 flex items-center gap-1">
                                                 <FileText className="w-3 h-3 text-slate-400" />
                                                 <span>Internal Notes for this Opportunity (Private)</span>
@@ -897,7 +903,7 @@ export default function LeadsAdminPage() {
                                 ) : (
                                     /* Recipient Preview Mode (Simulated Inbox View) */
                                     <div className="rounded-2xl border border-slate-200 bg-white shadow-xs overflow-hidden">
-                                        <div className="bg-slate-50 border-b border-slate-200 p-4 space-y-1.5 text-xs">
+                                        <div className="bg-slate-50 border-b border-slate-200 p-3.5 space-y-1 text-xs">
                                             <div className="flex items-center gap-2">
                                                 <span className="font-semibold text-slate-500 w-14">From:</span>
                                                 <span className="font-medium text-slate-900">Hazrat Ummar &lt;hazratummar9@gmail.com&gt;</span>
@@ -911,7 +917,7 @@ export default function LeadsAdminPage() {
                                                 <span className="font-bold text-slate-950 font-mono">{editableSubject}</span>
                                             </div>
                                         </div>
-                                        <div className="p-5 font-sans text-xs text-slate-800 leading-relaxed whitespace-pre-wrap">
+                                        <div className="p-4 font-sans text-xs text-slate-800 leading-relaxed whitespace-pre-wrap">
                                             {editableBody}
                                         </div>
                                     </div>
@@ -919,7 +925,7 @@ export default function LeadsAdminPage() {
                             </div>
 
                             {/* 3. Anchored Footer (Always visible at bottom) */}
-                            <div className="shrink-0 px-5 py-3.5 border-t border-slate-200 bg-slate-50/90 flex flex-wrap items-center justify-between gap-3">
+                            <div className="shrink-0 px-5 py-3 border-t border-slate-200 bg-slate-50/90 flex flex-wrap items-center justify-between gap-3">
                                 <div className="flex items-center gap-2">
                                     {/* Save Pitch & Changes to MongoDB */}
                                     <Button
@@ -927,12 +933,12 @@ export default function LeadsAdminPage() {
                                         disabled={isSaving}
                                         variant="outline"
                                         size="sm"
-                                        className="border-slate-300 text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 h-9 px-3 rounded-xl flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                                        className="border-slate-300 text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 h-8 px-3 rounded-xl flex items-center gap-1.5 cursor-pointer shadow-2xs"
                                     >
                                         {saveSuccess ? (
                                             <>
                                                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                                                <span className="text-emerald-700 font-semibold">Saved to Lead!</span>
+                                                <span className="text-emerald-700 font-semibold">Saved!</span>
                                             </>
                                         ) : (
                                             <>
@@ -949,12 +955,12 @@ export default function LeadsAdminPage() {
                                         }}
                                         variant="ghost"
                                         size="sm"
-                                        className="text-xs font-medium text-slate-700 hover:text-slate-950 hover:bg-slate-200/60 h-9 px-3 rounded-xl flex items-center gap-1.5 cursor-pointer"
+                                        className="text-xs font-medium text-slate-700 hover:text-slate-950 hover:bg-slate-200/60 h-8 px-3 rounded-xl flex items-center gap-1.5 cursor-pointer"
                                     >
                                         {copiedField === "all" ? (
                                             <>
                                                 <Check className="w-3.5 h-3.5 text-emerald-600" />
-                                                <span className="text-emerald-700 font-semibold">Entire Pitch Copied!</span>
+                                                <span className="text-emerald-700 font-semibold">Pitch Copied!</span>
                                             </>
                                         ) : (
                                             <>
@@ -979,7 +985,7 @@ export default function LeadsAdminPage() {
                                         }}
                                         variant="ghost"
                                         size="sm"
-                                        className="text-xs text-slate-500 hover:text-slate-900 h-9 px-2.5 rounded-xl flex items-center gap-1"
+                                        className="text-xs text-slate-500 hover:text-slate-900 h-8 px-2.5 rounded-xl flex items-center gap-1"
                                         title="Reset message to original template"
                                     >
                                         <RotateCcw className="w-3 h-3" />
@@ -997,14 +1003,14 @@ export default function LeadsAdminPage() {
                                             }
                                         }}
                                     >
-                                        <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs h-9 px-4 rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer">
+                                        <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs h-8 px-4 rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer">
                                             <Send className="w-3.5 h-3.5" />
                                             <span>Open in Email App</span>
                                         </Button>
                                     </a>
                                 </div>
                             </div>
-                        </>
+                        </div>
                     )}
                 </DialogContent>
             </Dialog>
