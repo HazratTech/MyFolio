@@ -118,6 +118,49 @@ https://relayworks.dev | Telegram: @hazratummar`
     };
 }
 
+function isDisqualifiedEnterpriseJob(text: string): boolean {
+    const lower = text.toLowerCase();
+    
+    // 1. Years of experience barrier (5+, 7+, 8+, 10+ years of proof/experience)
+    if (/\b([5-9]|1\d)\+?\s*years?\s*(of)?\s*(experience|exp|proof)?/i.test(lower)) return true;
+    if (/years?\s*of\s*experience\s*required/i.test(lower)) return true;
+    if (/\b(minimum|at least)\s+([5-9]|1\d)\s+years/i.test(lower)) return true;
+
+    // 2. High corporate enterprise salary brackets ($100k+, $120k+, $150k+, $200k+)
+    if (/\$(1[0-9]{2}|2[0-9]{2}|3[0-9]{2})[,0-9]*\s*(k|\/yr|\/year|\s*-\s*\$[0-9]+)/i.test(lower)) return true;
+    if (/\b(1[0-9]{2}|2[0-9]{2})k\s*-\s*[0-9]+k/i.test(lower)) return true;
+
+    // 3. Corporate management / executive / non-dev positions
+    if (/\b(coo|cto|cpo|vp of|director of|head of engineering|staff engineer|principal engineer|enterprise architect|lead architect|solutions architect)\b/i.test(lower)) return true;
+    if (/\b(sales manager|account executive|recruiting coordinator|recruiter|human resources|pre-sales|customer support specialist|business development representative|bdr|sdr|talent acquisition|copywriter|scientific account)\b/i.test(lower)) return true;
+
+    // 4. Corporate bureaucracy gates
+    if (/\b(security clearance|us citizenship required|polygraph|w-?2 only|401\(?k\)?|equity only|unpaid)\b/i.test(lower)) return true;
+
+    return false;
+}
+
+function extractBudget(text: string, category: string): string {
+    const monthlyMatch = text.match(/\$([1-9],[0-9]{3}|[1-9][0-9]{2,3})\s*[-–]\s*\$?([1-9],[0-9]{3}|[1-9][0-9]{2,3})\s*(\/|\s*per\s*)(mo|month)/i);
+    if (monthlyMatch) return monthlyMatch[0];
+
+    const fixedMatch = text.match(/\$([1-9],[0-9]{3}|[1-9][0-9]{2,3})\s*[-–]\s*\$?([1-9],[0-9]{3}|[1-9][0-9]{2,3})/i);
+    if (fixedMatch) return `$${fixedMatch[1]} – $${fixedMatch[2]} (Fixed)`;
+
+    switch (category) {
+        case 'Discord Bots':
+            return '$1,200 – $2,000 (Sprint)';
+        case 'Mobile Apps':
+            return '$1,500 – $2,500 (Sprint)';
+        case 'AI & Chatbots':
+            return '$1,500 – $3,000 (Sprint)';
+        case 'Backend':
+            return '$2,000 – $3,500 (Contract)';
+        default:
+            return '$1,500 – $2,500 (Fixed)';
+    }
+}
+
 export async function POST() {
     await dbConnect();
     try {
@@ -125,7 +168,7 @@ export async function POST() {
         const candidateLeads: any[] = [];
 
         // ==========================================
-        // 1. RemoteOK Live Developer Stream
+        // 1. RemoteOK Live Developer Stream (Strict Sprint & Contractor Filter)
         // ==========================================
         try {
             const res = await fetch("https://remoteok.com/api", {
@@ -137,6 +180,9 @@ export async function POST() {
                 for (const item of (Array.isArray(data) ? data : [])) {
                     if (!item.position || !item.company) continue;
                     const text = `${item.position} ${item.description || ''} ${(item.tags || []).join(' ')}`.toLowerCase();
+
+                    // Disqualify corporate full-time, 8+ years exp, and $100k+ roles
+                    if (isDisqualifiedEnterpriseJob(text)) continue;
 
                     let category: 'Mobile Apps' | 'Discord Bots' | 'AI & Chatbots' | 'Backend' | null = null;
                     if (/discord|bot\b|telegram/i.test(text)) category = "Discord Bots";
@@ -167,7 +213,10 @@ export async function POST() {
                             painSignal: cleanSnippet,
                             techStack: tags,
                             position,
-                            score: 92
+                            budget: extractBudget(cleanSnippet, category),
+                            engagementType: "Fixed Sprint",
+                            experienceReq: "No Years Req (Portfolio-Driven)",
+                            score: 93
                         });
                     }
                 }
@@ -197,6 +246,8 @@ export async function POST() {
                     if (rawText.length < 50) continue;
                     // Ignore freelancers seeking work — only keep actual clients hiring
                     if (/seeking work|\[for hire\]|\bfor hire\b|candidate profile/i.test(rawText)) continue;
+                    // Disqualify corporate 8+ years experience barrier and $100k+ roles
+                    if (isDisqualifiedEnterpriseJob(rawText)) continue;
 
                     let category: 'Mobile Apps' | 'Discord Bots' | 'AI & Chatbots' | 'Backend' | null = null;
                     if (/discord|bot\b|telegram/i.test(rawText)) category = "Discord Bots";
@@ -226,10 +277,13 @@ export async function POST() {
                             category,
                             decisionMaker: `@${hit.author}`,
                             email,
-                            source: "Hacker News Who is Hiring Feed",
+                            source: "Hacker News Freelancer Feed",
                             sourceUrl: `https://news.ycombinator.com/item?id=${hit.objectID}`,
                             painSignal: rawText.slice(0, 320),
                             techStack: tags.slice(0, 5),
+                            budget: extractBudget(rawText, category),
+                            engagementType: "Fixed Sprint",
+                            experienceReq: "No Years Req (Portfolio-Driven)",
                             score: 94
                         });
                     }
@@ -240,7 +294,7 @@ export async function POST() {
         }
 
         // ==========================================
-        // 3. Jobicy Global Remote Tech API
+        // 3. Jobicy Global Remote Tech API (Filtered for Contractor & Sprint)
         // ==========================================
         try {
             const res = await fetch("https://jobicy.com/api/v2/remote-jobs?count=30", {
@@ -251,6 +305,9 @@ export async function POST() {
                 for (const job of (data.jobs || [])) {
                     if (!job.jobTitle || !job.companyName) continue;
                     const text = `${job.jobTitle} ${job.jobExcerpt || ""} ${(job.jobTags || []).join(" ")}`.toLowerCase();
+
+                    // Disqualify corporate 8+ years experience barrier and $100k+ roles
+                    if (isDisqualifiedEnterpriseJob(text)) continue;
 
                     let category: 'Mobile Apps' | 'Discord Bots' | 'AI & Chatbots' | 'Backend' | null = null;
                     if (/discord|bot\b|telegram/i.test(text)) category = "Discord Bots";
@@ -282,6 +339,9 @@ export async function POST() {
                             painSignal: cleanSnippet,
                             techStack: tags,
                             position,
+                            budget: extractBudget(cleanSnippet, category),
+                            engagementType: "Fixed Sprint",
+                            experienceReq: "No Years Req (Portfolio-Driven)",
                             score: 90
                         });
                     }
@@ -326,6 +386,9 @@ export async function POST() {
                     confidence: 'High',
                     painSignal: candidate.painSignal,
                     techStack: candidate.techStack,
+                    budget: candidate.budget || 'Fixed Sprint ($1,200 – $2,500)',
+                    engagementType: candidate.engagementType || 'Fixed Sprint',
+                    experienceReq: candidate.experienceReq || 'No Years Req (Portfolio-Driven)',
                     personalizedEmail,
                     notes: `Discovered from live ${candidate.source}. Verified direct link available.`
                 });

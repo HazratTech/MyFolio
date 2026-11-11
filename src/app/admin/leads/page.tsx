@@ -51,18 +51,68 @@ interface Lead {
         subject: string;
         body: string;
     };
+    budget?: string;
+    engagementType?: string;
+    experienceReq?: string;
     notes?: string;
     createdAt: string;
 }
 
+interface LeadStats {
+    total: number;
+    hot: number;
+    newlyAdded: number;
+    sprintReady?: number;
+    categories: Record<string, number>;
+    statuses: Record<string, number>;
+}
+
+const initialStats: LeadStats = {
+    total: 0,
+    hot: 0,
+    newlyAdded: 0,
+    sprintReady: 0,
+    categories: {
+        "All": 0,
+        "Discord Bots": 0,
+        "Mobile Apps": 0,
+        "AI & Chatbots": 0,
+        "Backend": 0,
+    },
+    statuses: {
+        "All": 0,
+        "New": 0,
+        "Contacted": 0,
+        "In Discussion": 0,
+        "Closed": 0,
+    },
+};
+
 export default function LeadsAdminPage() {
     const [leads, setLeads] = useState<Lead[]>([]);
+    const [stats, setStats] = useState<LeadStats>(initialStats);
     const [loading, setLoading] = useState(true);
     const [syncing, setSyncing] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [selectedStatus, setSelectedStatus] = useState("All");
     const [searchQuery, setSearchQuery] = useState("");
     const [syncMessage, setSyncMessage] = useState<string | null>(null);
+    const [filterNewlyAdded, setFilterNewlyAdded] = useState(false);
+    const [filterSprintOnly, setFilterSprintOnly] = useState(false);
+    const [sortBy, setSortBy] = useState<"score" | "newest">("score");
+
+    // Add Lead Modal State
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [newCompany, setNewCompany] = useState("");
+    const [newCategory, setNewCategory] = useState<"Mobile Apps" | "Discord Bots" | "AI & Chatbots" | "Backend">("Backend");
+    const [newDecisionMaker, setNewDecisionMaker] = useState("");
+    const [newEmail, setNewEmail] = useState("");
+    const [newSource, setNewSource] = useState("LinkedIn");
+    const [newSourceUrl, setNewSourceUrl] = useState("");
+    const [newPainSignal, setNewPainSignal] = useState("");
+    const [newTechStack, setNewTechStack] = useState("");
+    const [newBudget, setNewBudget] = useState("Fixed Sprint ($1,200 – $2,500)");
+    const [isSubmittingNewLead, setIsSubmittingNewLead] = useState(false);
 
     // Modal Dynamic State
     const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
@@ -86,11 +136,21 @@ export default function LeadsAdminPage() {
             if (selectedCategory !== "All") params.set("category", selectedCategory);
             if (selectedStatus !== "All") params.set("status", selectedStatus);
             if (searchQuery.trim()) params.set("search", searchQuery.trim());
+            if (filterNewlyAdded) params.set("newlyAdded", "true");
+            if (filterSprintOnly) params.set("sprintOnly", "true");
+            if (sortBy) params.set("sortBy", sortBy);
 
             const res = await fetch(`/api/admin/leads?${params.toString()}`);
             if (res.ok) {
                 const data = await res.json();
-                setLeads(data);
+                if (data && data.leads) {
+                    setLeads(data.leads);
+                    if (data.stats) {
+                        setStats(data.stats);
+                    }
+                } else if (Array.isArray(data)) {
+                    setLeads(data);
+                }
             }
         } catch (error) {
             console.error("Failed to fetch leads:", error);
@@ -101,7 +161,7 @@ export default function LeadsAdminPage() {
 
     useEffect(() => {
         fetchLeads();
-    }, [selectedCategory, selectedStatus]);
+    }, [selectedCategory, selectedStatus, filterNewlyAdded, filterSprintOnly, sortBy]);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -303,12 +363,59 @@ export default function LeadsAdminPage() {
         }
     };
 
-    // Metrics calculations
-    const hotLeadsCount = leads.filter(l => l.score >= 90).length;
-    const discordCount = leads.filter(l => l.category === "Discord Bots").length;
-    const mobileCount = leads.filter(l => l.category === "Mobile Apps").length;
-    const aiCount = leads.filter(l => l.category === "AI & Chatbots").length;
-    const backendCount = leads.filter(l => l.category === "Backend").length;
+    const handleCreateLead = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!newCompany.trim() || !newPainSignal.trim()) {
+            alert("Please provide at least a Company name and the Stated Need / Project Requirement.");
+            return;
+        }
+
+        try {
+            setIsSubmittingNewLead(true);
+            const stackArray = newTechStack.split(",").map(s => s.trim()).filter(Boolean);
+            
+            const payload = {
+                company: newCompany.trim(),
+                category: newCategory,
+                decisionMaker: newDecisionMaker.trim() || "Hiring Lead",
+                email: newEmail.trim() || `${newCompany.toLowerCase().replace(/[^a-z0-9]/g, "")}@example.com`,
+                source: newSource,
+                sourceUrl: newSourceUrl.trim() || undefined,
+                painSignal: newPainSignal.trim(),
+                techStack: stackArray.length > 0 ? stackArray : ["TypeScript", "Python"],
+                budget: newBudget || "Fixed Sprint ($1,200 – $2,500)",
+                engagementType: "Fixed Sprint",
+                experienceReq: "No Years Req (Portfolio-Driven)",
+                score: 95,
+            };
+
+            const res = await fetch("/api/admin/leads", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+
+            if (res.ok) {
+                setShowAddModal(false);
+                setNewCompany("");
+                setNewDecisionMaker("");
+                setNewEmail("");
+                setNewSourceUrl("");
+                setNewPainSignal("");
+                setNewTechStack("");
+                setNewBudget("Fixed Sprint ($1,200 – $2,500)");
+                setSyncMessage(`Successfully added lead for ${payload.company} with tailored pitch!`);
+                fetchLeads();
+            } else {
+                const err = await res.json();
+                alert(err.error || "Failed to create lead");
+            }
+        } catch (err: any) {
+            alert(err.message || "Network error adding lead");
+        } finally {
+            setIsSubmittingNewLead(false);
+        }
+    };
 
     // Word and character calculation
     const wordCount = editableBody.trim() ? editableBody.trim().split(/\s+/).length : 0;
@@ -327,7 +434,15 @@ export default function LeadsAdminPage() {
                     </p>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5">
+                    <Button
+                        onClick={() => setShowAddModal(true)}
+                        className="bg-slate-950 hover:bg-black text-white font-medium text-xs h-10 px-4 rounded-xl shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+                    >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Add New Lead</span>
+                    </Button>
+
                     <Button
                         onClick={handleSyncFeeds}
                         disabled={syncing}
@@ -355,57 +470,85 @@ export default function LeadsAdminPage() {
 
             {/* Metrics Ribbon (Attio / Axiom Clean High-Contrast Enterprise Cards) */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between hover:border-slate-300 transition-colors">
+                <button 
+                    onClick={() => { setSelectedCategory("All"); setFilterNewlyAdded(false); }}
+                    className={`p-4 rounded-2xl bg-white border text-left shadow-xs flex flex-col justify-between transition-all cursor-pointer ${
+                        selectedCategory === "All" && !filterNewlyAdded ? "border-slate-900 ring-1 ring-slate-900" : "border-slate-200/90 hover:border-slate-300"
+                    }`}
+                >
                     <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Leads</span>
-                    <span className="text-2xl font-black font-mono text-slate-950 mt-1.5">{leads.length}</span>
-                </div>
+                    <span className="text-2xl font-black font-mono text-slate-950 mt-1.5">{stats.total || leads.length}</span>
+                </button>
 
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between hover:border-amber-300 transition-colors">
+                <button 
+                    onClick={() => { setSelectedCategory("All"); setSortBy("score"); }}
+                    className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between hover:border-amber-300 transition-all text-left cursor-pointer"
+                >
                     <span className="text-xs font-semibold text-amber-700 flex items-center gap-1.5 uppercase tracking-wider">
                         <Flame className="w-3.5 h-3.5 text-amber-600 fill-amber-500" />
                         <span>Hot (90+)</span>
                     </span>
-                    <span className="text-2xl font-black font-mono text-amber-800 mt-1.5">{hotLeadsCount}</span>
-                </div>
+                    <span className="text-2xl font-black font-mono text-amber-800 mt-1.5">{stats.hot || 0}</span>
+                </button>
 
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between hover:border-indigo-300 transition-colors">
+                <button 
+                    onClick={() => setSelectedCategory("Discord Bots")}
+                    className={`p-4 rounded-2xl bg-white border text-left shadow-xs flex flex-col justify-between transition-all cursor-pointer ${
+                        selectedCategory === "Discord Bots" ? "border-indigo-600 ring-1 ring-indigo-600" : "border-slate-200/90 hover:border-indigo-300"
+                    }`}
+                >
                     <span className="text-xs font-semibold text-indigo-700 flex items-center gap-1.5 uppercase tracking-wider">
                         <Bot className="w-3.5 h-3.5 text-indigo-600" />
                         <span>Discord Bots</span>
                     </span>
-                    <span className="text-2xl font-black font-mono text-indigo-950 mt-1.5">{discordCount}</span>
-                </div>
+                    <span className="text-2xl font-black font-mono text-indigo-950 mt-1.5">{stats.categories["Discord Bots"] ?? 0}</span>
+                </button>
 
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between hover:border-emerald-300 transition-colors">
+                <button 
+                    onClick={() => setSelectedCategory("Mobile Apps")}
+                    className={`p-4 rounded-2xl bg-white border text-left shadow-xs flex flex-col justify-between transition-all cursor-pointer ${
+                        selectedCategory === "Mobile Apps" ? "border-emerald-600 ring-1 ring-emerald-600" : "border-slate-200/90 hover:border-emerald-300"
+                    }`}
+                >
                     <span className="text-xs font-semibold text-emerald-700 flex items-center gap-1.5 uppercase tracking-wider">
                         <Smartphone className="w-3.5 h-3.5 text-emerald-600" />
                         <span>Mobile Apps</span>
                     </span>
-                    <span className="text-2xl font-black font-mono text-emerald-950 mt-1.5">{mobileCount}</span>
-                </div>
+                    <span className="text-2xl font-black font-mono text-emerald-950 mt-1.5">{stats.categories["Mobile Apps"] ?? 0}</span>
+                </button>
 
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between hover:border-violet-300 transition-colors">
+                <button 
+                    onClick={() => setSelectedCategory("AI & Chatbots")}
+                    className={`p-4 rounded-2xl bg-white border text-left shadow-xs flex flex-col justify-between transition-all cursor-pointer ${
+                        selectedCategory === "AI & Chatbots" ? "border-violet-600 ring-1 ring-violet-600" : "border-slate-200/90 hover:border-violet-300"
+                    }`}
+                >
                     <span className="text-xs font-semibold text-violet-700 flex items-center gap-1.5 uppercase tracking-wider">
                         <Sparkles className="w-3.5 h-3.5 text-violet-600" />
                         <span>AI &amp; Chatbots</span>
                     </span>
-                    <span className="text-2xl font-black font-mono text-violet-950 mt-1.5">{aiCount}</span>
-                </div>
+                    <span className="text-2xl font-black font-mono text-violet-950 mt-1.5">{stats.categories["AI & Chatbots"] ?? 0}</span>
+                </button>
 
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between hover:border-blue-300 transition-colors">
+                <button 
+                    onClick={() => setSelectedCategory("Backend")}
+                    className={`p-4 rounded-2xl bg-white border text-left shadow-xs flex flex-col justify-between transition-all cursor-pointer ${
+                        selectedCategory === "Backend" ? "border-blue-600 ring-1 ring-blue-600" : "border-slate-200/90 hover:border-blue-300"
+                    }`}
+                >
                     <span className="text-xs font-semibold text-blue-700 flex items-center gap-1.5 uppercase tracking-wider">
                         <Server className="w-3.5 h-3.5 text-blue-600" />
                         <span>Backend</span>
                     </span>
-                    <span className="text-2xl font-black font-mono text-blue-950 mt-1.5">{backendCount}</span>
-                </div>
+                    <span className="text-2xl font-black font-mono text-blue-950 mt-1.5">{stats.categories["Backend"] ?? 0}</span>
+                </button>
             </div>
 
-            {/* Filter Bar & Search */}
+            {/* Filter Bar, Search, and Quick Filters */}
             <div className="space-y-3 p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs">
-                <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-3">
                     {/* Search Form */}
-                    <form onSubmit={handleSearch} className="relative w-full md:w-96">
+                    <form onSubmit={handleSearch} className="relative w-full md:w-80">
                         <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                         <Input
                             placeholder="Search company, tech keyword, or founder..."
@@ -415,36 +558,105 @@ export default function LeadsAdminPage() {
                         />
                     </form>
 
-                    {/* Status Filter */}
-                    <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto">
-                        <span className="text-xs font-medium text-slate-500 mr-2 flex items-center gap-1">
-                            <Filter className="w-3.5 h-3.5" />
-                            <span>Status:</span>
-                        </span>
-                        {statuses.map((status) => (
+                    {/* Filter Controls: Newly Added + No Years Req + Sort + Status */}
+                    <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+                        {/* No Years Req / Sprints Filter Chip */}
+                        <button
+                            type="button"
+                            onClick={() => setFilterSprintOnly(!filterSprintOnly)}
+                            className={`text-xs px-3 py-2 rounded-xl border transition-all flex items-center gap-1.5 cursor-pointer font-semibold ${
+                                filterSprintOnly
+                                    ? "bg-emerald-600 text-white border-emerald-700 shadow-xs ring-1 ring-emerald-600"
+                                    : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900"
+                            }`}
+                            title="Filter for client sprints & MVPs that don't need 8+ years proof experience"
+                        >
+                            <ShieldCheck className={`w-3.5 h-3.5 ${filterSprintOnly ? "text-emerald-100" : "text-emerald-600"}`} />
+                            <span>No Years Req</span>
+                            <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${
+                                filterSprintOnly ? "bg-black/25 text-white" : "bg-slate-200 text-slate-800"
+                            }`}>
+                                {stats.sprintReady || leads.length}
+                            </span>
+                        </button>
+
+                        {/* Newly Added Filter Chip */}
+                        <button
+                            type="button"
+                            onClick={() => setFilterNewlyAdded(!filterNewlyAdded)}
+                            className={`text-xs px-3 py-2 rounded-xl border transition-all flex items-center gap-1.5 cursor-pointer font-semibold ${
+                                filterNewlyAdded
+                                    ? "bg-amber-500 text-white border-amber-600 shadow-xs ring-1 ring-amber-500"
+                                    : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900"
+                            }`}
+                            title="Filter leads added in the past 48 hours"
+                        >
+                            <Sparkles className={`w-3.5 h-3.5 ${filterNewlyAdded ? "text-amber-100 fill-amber-100" : "text-amber-500"}`} />
+                            <span>Newly Added</span>
+                            <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${
+                                filterNewlyAdded ? "bg-black/25 text-white" : "bg-slate-200 text-slate-800"
+                            }`}>
+                                {stats.newlyAdded}
+                            </span>
+                        </button>
+
+                        {/* Sort Toggle */}
+                        <div className="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200/80">
                             <button
-                                key={status}
-                                onClick={() => setSelectedStatus(status)}
-                                className={`text-xs px-3 py-1 rounded-lg transition-colors cursor-pointer ${
-                                    selectedStatus === status
-                                        ? "bg-slate-900 text-white font-medium shadow-2xs"
-                                        : "text-slate-600 hover:text-slate-950 hover:bg-slate-100 font-medium"
+                                type="button"
+                                onClick={() => setSortBy("score")}
+                                className={`text-[11px] px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer font-medium flex items-center gap-1 ${
+                                    sortBy === "score" ? "bg-white text-slate-950 shadow-2xs font-bold" : "text-slate-600 hover:text-slate-900"
                                 }`}
                             >
-                                {status}
+                                <Flame className="w-3 h-3 text-amber-500" />
+                                <span>Highest Score</span>
                             </button>
-                        ))}
+                            <button
+                                type="button"
+                                onClick={() => setSortBy("newest")}
+                                className={`text-[11px] px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer font-medium flex items-center gap-1 ${
+                                    sortBy === "newest" ? "bg-white text-slate-950 shadow-2xs font-bold" : "text-slate-600 hover:text-slate-900"
+                                }`}
+                            >
+                                <Sparkles className="w-3 h-3 text-blue-500" />
+                                <span>Newest Added</span>
+                            </button>
+                        </div>
+
+                        {/* Status Filter */}
+                        <div className="flex items-center gap-1 overflow-x-auto">
+                            <span className="text-xs font-medium text-slate-500 mr-1 flex items-center gap-1">
+                                <Filter className="w-3.5 h-3.5" />
+                                <span className="hidden sm:inline">Status:</span>
+                            </span>
+                            {statuses.map((status) => (
+                                <button
+                                    key={status}
+                                    type="button"
+                                    onClick={() => setSelectedStatus(status)}
+                                    className={`text-xs px-2.5 py-1 rounded-lg transition-colors cursor-pointer ${
+                                        selectedStatus === status
+                                            ? "bg-slate-900 text-white font-medium shadow-2xs"
+                                            : "text-slate-600 hover:text-slate-950 hover:bg-slate-100 font-medium"
+                                    }`}
+                                >
+                                    {status}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
                 {/* Category Tabs */}
                 <div className="flex items-center gap-2 overflow-x-auto pt-3 border-t border-slate-100">
                     {categories.map((cat) => {
-                        const count = cat === "All" ? leads.length : leads.filter(l => l.category === cat).length;
+                        const count = stats.categories[cat] !== undefined ? stats.categories[cat] : (cat === "All" ? (stats.total || leads.length) : 0);
                         const isSelected = selectedCategory === cat;
                         return (
                             <button
                                 key={cat}
+                                type="button"
                                 onClick={() => setSelectedCategory(cat)}
                                 className={`text-xs font-semibold px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
                                     isSelected
@@ -486,6 +698,7 @@ export default function LeadsAdminPage() {
                 <div className="space-y-3">
                     {leads.map((lead) => {
                         const isHot = lead.score >= 90;
+                        const isNew = lead.createdAt && (Date.now() - new Date(lead.createdAt).getTime()) < 48 * 60 * 60 * 1000;
                         return (
                             <div
                                 key={lead._id}
@@ -509,6 +722,25 @@ export default function LeadsAdminPage() {
                                             {getCategoryIcon(lead.category)}
                                             <span>{lead.category}</span>
                                         </span>
+
+                                        {/* No Experience Barrier Pill */}
+                                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-800 bg-emerald-50/90 border border-emerald-200/90 px-2 py-0.5 rounded-md">
+                                            <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                                            <span>No 8yr Barrier</span>
+                                        </span>
+
+                                        {/* Realistic Sprint Budget */}
+                                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-800 bg-slate-100/90 border border-slate-200/90 px-2 py-0.5 rounded-md font-mono">
+                                            <span>{lead.budget || "Fixed Sprint ($1,200 – $2,500)"}</span>
+                                        </span>
+
+                                        {/* Newly Added Indicator */}
+                                        {isNew && (
+                                            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-300/80 shadow-2xs">
+                                                <Sparkles className="w-3 h-3 text-amber-600 fill-amber-500" />
+                                                <span>New</span>
+                                            </span>
+                                        )}
 
                                         {/* Source Indicator */}
                                         {lead.sourceUrl ? (
@@ -1025,6 +1257,148 @@ export default function LeadsAdminPage() {
                             </div>
                         </div>
                     )}
+                </DialogContent>
+            </Dialog>
+
+            {/* MANUAL LEAD ENTRY MODAL */}
+            <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
+                <DialogContent className="sm:max-w-[620px] w-[95vw] rounded-2xl bg-white border border-slate-200 text-slate-900 shadow-2xl p-6">
+                    <DialogTitle className="text-xl font-bold font-heading text-slate-950 flex items-center gap-2">
+                        <Plus className="w-5 h-5 text-blue-600" />
+                        <span>Add New Client Lead</span>
+                    </DialogTitle>
+                    <p className="text-xs text-slate-500 -mt-2">
+                        Add a manual contract inquiry from LinkedIn, Twitter, Upwork, or referrals. A tailored outreach pitch will be generated automatically.
+                    </p>
+
+                    <form onSubmit={handleCreateLead} className="space-y-4 pt-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div className="space-y-1">
+                                <label className="text-[11px] font-semibold text-slate-700">Company / Project Name *</label>
+                                <Input
+                                    required
+                                    placeholder="e.g. Acme Studio or @founder"
+                                    value={newCompany}
+                                    onChange={(e) => setNewCompany(e.target.value)}
+                                    className="h-9 text-xs rounded-xl"
+                                />
+                            </div>
+
+                            <div className="space-y-1">
+                                <label className="text-[11px] font-semibold text-slate-700">Engineering Category *</label>
+                                <select
+                                    value={newCategory}
+                                    onChange={(e) => setNewCategory(e.target.value as any)}
+                                    className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3 text-xs text-slate-900 focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
+                                >
+                                    <option value="Mobile Apps">Mobile Apps</option>
+                                    <option value="Discord Bots">Discord Bots</option>
+                                    <option value="AI & Chatbots">AI &amp; Chatbots</option>
+                                    <option value="Backend">Backend</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div className="space-y-1">
+                                <label className="text-[11px] font-semibold text-slate-700">Decision Maker Name / Handle</label>
+                                <Input
+                                    placeholder="e.g. Alex (Founder) or @alex_eth"
+                                    value={newDecisionMaker}
+                                    onChange={(e) => setNewDecisionMaker(e.target.value)}
+                                    className="h-9 text-xs rounded-xl"
+                                />
+                            </div>
+
+                            <div className="space-y-1">
+                                <label className="text-[11px] font-semibold text-slate-700">Contact Email or Telegram</label>
+                                <Input
+                                    placeholder="e.g. alex@acme.com or @alex"
+                                    value={newEmail}
+                                    onChange={(e) => setNewEmail(e.target.value)}
+                                    className="h-9 text-xs rounded-xl"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div className="space-y-1">
+                                <label className="text-[11px] font-semibold text-slate-700">Lead Source</label>
+                                <select
+                                    value={newSource}
+                                    onChange={(e) => setNewSource(e.target.value)}
+                                    className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3 text-xs text-slate-900 focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
+                                >
+                                    <option value="LinkedIn Inbound">LinkedIn</option>
+                                    <option value="Twitter / X Direct">Twitter / X</option>
+                                    <option value="Upwork Contract">Upwork</option>
+                                    <option value="Direct Referral">Direct Referral</option>
+                                    <option value="Hacker News">Hacker News</option>
+                                    <option value="Discord Server">Discord Community</option>
+                                </select>
+                            </div>
+
+                            <div className="space-y-1">
+                                <label className="text-[11px] font-semibold text-slate-700">Target Sprint Budget</label>
+                                <Input
+                                    placeholder="e.g. $1,200 – $2,500 (Sprint)"
+                                    value={newBudget}
+                                    onChange={(e) => setNewBudget(e.target.value)}
+                                    className="h-9 text-xs rounded-xl font-mono"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-[11px] font-semibold text-slate-700">Live Post / Profile URL (Optional)</label>
+                            <Input
+                                placeholder="https://linkedin.com/in/... or https://x.com/..."
+                                value={newSourceUrl}
+                                onChange={(e) => setNewSourceUrl(e.target.value)}
+                                className="h-9 text-xs rounded-xl"
+                            />
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-[11px] font-semibold text-slate-700">Stated Need / Project Requirement *</label>
+                            <textarea
+                                required
+                                rows={3}
+                                placeholder="Describe the client's problem (e.g. Need a custom Discord bot to automate bounty payouts with TikTok API)..."
+                                value={newPainSignal}
+                                onChange={(e) => setNewPainSignal(e.target.value)}
+                                className="w-full rounded-xl border border-slate-200 p-3 text-xs text-slate-900 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none"
+                            />
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-[11px] font-semibold text-slate-700">Tech Stack (comma separated)</label>
+                            <Input
+                                placeholder="e.g. Python, discord.py, SQLite, Redis"
+                                value={newTechStack}
+                                onChange={(e) => setNewTechStack(e.target.value)}
+                                className="h-9 text-xs rounded-xl"
+                            />
+                        </div>
+
+                        <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                onClick={() => setShowAddModal(false)}
+                                className="text-xs text-slate-600 hover:text-slate-900 h-9 px-4 rounded-xl"
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                disabled={isSubmittingNewLead}
+                                className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs h-9 px-5 rounded-xl shadow-xs"
+                            >
+                                {isSubmittingNewLead ? "Adding..." : "Add Lead & Generate Pitch"}
+                            </Button>
+                        </div>
+                    </form>
                 </DialogContent>
             </Dialog>
         </div>

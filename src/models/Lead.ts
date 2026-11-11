@@ -18,6 +18,9 @@ export interface ILead {
         subject: string;
         body: string;
     };
+    budget?: string;
+    engagementType?: 'Fixed Sprint' | 'Contract / Freelance' | 'Hourly' | 'Milestone';
+    experienceReq?: string;
     notes?: string;
     createdAt?: Date;
     updatedAt?: Date;
@@ -48,6 +51,9 @@ const LeadSchema = new Schema<ILead>({
         subject: { type: String, required: true },
         body: { type: String, required: true },
     },
+    budget: { type: String, default: 'Fixed Sprint ($1,200 – $2,500)' },
+    engagementType: { type: String, default: 'Fixed Sprint' },
+    experienceReq: { type: String, default: 'No Years Req (Portfolio-Driven)' },
     notes: { type: String, default: '' },
 }, { timestamps: true });
 
