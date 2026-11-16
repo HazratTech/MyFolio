@@ -47,8 +47,8 @@ export async function POST(request: Request) {
             ? ['US', 'GB', 'AU', 'CA', 'DE'] 
             : [requestedCountry];
 
-        let addedCount = 0;
-        const candidatePartners: any[] = [];
+        const candidatePartners: { handle: string; name: string; country: string; partnerDirectoryUrl: string }[] = [];
+        const seenHandles = new Set<string>();
 
         for (const country of targetCountries) {
             const dirUrl = `https://www.shopify.com/in/partners/directory/services/store_building?location=${country}`;
@@ -60,7 +60,8 @@ export async function POST(request: Request) {
             while ((match = regex.exec(dirHtml)) !== null) {
                 const handle = match[1];
                 const name = match[2]?.trim();
-                if (handle && name && !candidatePartners.some(p => p.handle === handle)) {
+                if (handle && name && !seenHandles.has(handle)) {
+                    seenHandles.add(handle);
                     candidatePartners.push({
                         handle,
                         name,
@@ -68,54 +69,82 @@ export async function POST(request: Request) {
                         partnerDirectoryUrl: `https://www.shopify.com/in/partners/directory/partner/${handle}`
                     });
                 }
-                if (candidatePartners.length >= batchLimit * 2) break;
             }
         }
 
-        // Process candidate partners and check which ones are not yet in DB
-        for (const candidate of candidatePartners) {
-            if (addedCount >= batchLimit) break;
+        // Single batch query: find which candidates already exist in MongoDB
+        const allHandles = candidatePartners.map(c => c.handle);
+        const existingDocs = await Partner.find({ handle: { $in: allHandles } }, { handle: 1 }).lean();
+        const existingHandles = new Set(existingDocs.map((p: any) => p.handle));
 
-            const existing = await Partner.findOne({ handle: candidate.handle });
-            if (existing) continue;
+        // Filter for candidates that do NOT exist in DB yet
+        const newCandidates = candidatePartners.filter(c => !existingHandles.has(c.handle));
+        const batchToProcess = newCandidates.slice(0, batchLimit);
 
-            // Fetch individual profile for deep details
-            const profileHtml = await fetchHtml(candidate.partnerDirectoryUrl);
-            const desc = (profileHtml.match(/<meta\s+name=\"description\"\s+content=\"([^\"]+)\"/i) || [])[1] || '';
-            const websiteUrl = extractWebsite(profileHtml);
-
-            // Infer services from description or defaults
-            const services = ['Store building'];
-            const lowerDesc = desc.toLowerCase();
-            if (lowerDesc.includes('design') || lowerDesc.includes('ux') || lowerDesc.includes('ui')) services.push('Store design');
-            if (lowerDesc.includes('conversion') || lowerDesc.includes('cro') || lowerDesc.includes('optimization')) services.push('CRO');
-            if (lowerDesc.includes('migration') || lowerDesc.includes('plus')) services.push('Shopify Plus Migration');
-            if (lowerDesc.includes('seo') || lowerDesc.includes('marketing')) services.push('Marketing & SEO');
-
-            await Partner.create({
-                name: candidate.name,
-                handle: candidate.handle,
-                websiteUrl: websiteUrl || undefined,
-                partnerDirectoryUrl: candidate.partnerDirectoryUrl,
-                country: candidate.country,
-                location: `${candidate.country}`,
-                services,
-                description: desc || `${candidate.name} is a verified Shopify Partner specializing in store building and design.`,
-                startingBudget: '$1,000 - $5,000',
-                teamSize: '2 - 9',
-                status: 'New',
-                notes: `Harvested from Shopify Partner Directory (${candidate.country}).`
+        if (batchToProcess.length === 0) {
+            const totalPartners = await Partner.countDocuments({});
+            return NextResponse.json({
+                success: true,
+                addedCount: 0,
+                totalPartners,
+                remainingAvailable: 0,
+                message: `All ${candidatePartners.length} partner agencies found in the directory for ${requestedCountry} are already saved in your pipeline!`
             });
+        }
 
-            addedCount++;
+        // Process profile fetching in concurrent chunks of 5 for high speed
+        const chunkSize = 5;
+        const partnersToInsert: any[] = [];
+
+        for (let i = 0; i < batchToProcess.length; i += chunkSize) {
+            const chunk = batchToProcess.slice(i, i + chunkSize);
+            const chunkProfiles = await Promise.all(
+                chunk.map(async (candidate) => {
+                    const profileHtml = await fetchHtml(candidate.partnerDirectoryUrl);
+                    const desc = (profileHtml.match(/<meta\s+name=\"description\"\s+content=\"([^\"]+)\"/i) || [])[1] || '';
+                    const websiteUrl = extractWebsite(profileHtml);
+
+                    const services = ['Store building'];
+                    const lowerDesc = desc.toLowerCase();
+                    if (lowerDesc.includes('design') || lowerDesc.includes('ux') || lowerDesc.includes('ui')) services.push('Store design');
+                    if (lowerDesc.includes('conversion') || lowerDesc.includes('cro') || lowerDesc.includes('optimization')) services.push('CRO');
+                    if (lowerDesc.includes('migration') || lowerDesc.includes('plus')) services.push('Shopify Plus Migration');
+                    if (lowerDesc.includes('seo') || lowerDesc.includes('marketing')) services.push('Marketing & SEO');
+
+                    return {
+                        name: candidate.name,
+                        handle: candidate.handle,
+                        websiteUrl: websiteUrl || undefined,
+                        partnerDirectoryUrl: candidate.partnerDirectoryUrl,
+                        country: candidate.country,
+                        location: `${candidate.country}`,
+                        services,
+                        description: desc || `${candidate.name} is a verified Shopify Partner specializing in store building and design.`,
+                        startingBudget: '$1,000 - $5,000',
+                        teamSize: '2 - 9',
+                        status: 'New',
+                        notes: `Harvested from Shopify Partner Directory (${candidate.country}).`
+                    };
+                })
+            );
+            partnersToInsert.push(...chunkProfiles);
+        }
+
+        if (partnersToInsert.length > 0) {
+            await Partner.insertMany(partnersToInsert, { ordered: false }).catch(err => {
+                console.warn('Batch insert partial collision:', err?.message);
+            });
         }
 
         const totalPartners = await Partner.countDocuments({});
+        const remaining = newCandidates.length - partnersToInsert.length;
+
         return NextResponse.json({
             success: true,
-            addedCount,
+            addedCount: partnersToInsert.length,
             totalPartners,
-            message: `Scanned Shopify Partner Directory. Successfully added ${addedCount} new verified partner agencies!`
+            remainingAvailable: remaining,
+            message: `Scanned directory. Successfully added ${partnersToInsert.length} new partner agencies! (Total in DB: ${totalPartners}, ${remaining} more available in directory)`
         });
     } catch (error: any) {
         return NextResponse.json({ success: false, error: error.message || 'Partner sync failed' }, { status: 500 });

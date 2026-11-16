@@ -107,6 +107,8 @@ export default function ShopifyPartnersPage() {
     const [selectedStatus, setSelectedStatus] = useState("All");
     const [searchQuery, setSearchQuery] = useState("");
     const [syncMessage, setSyncMessage] = useState<string | null>(null);
+    const [displayLimit, setDisplayLimit] = useState<number>(100);
+    const [syncBatchSize, setSyncBatchSize] = useState<number>(25);
 
     // AI Pitch Modal State
     const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
@@ -150,8 +152,11 @@ export default function ShopifyPartnersPage() {
             if (selectedCountry !== "All") params.set("country", selectedCountry);
             if (selectedStatus !== "All") params.set("status", selectedStatus);
             if (searchQuery.trim()) params.set("search", searchQuery.trim());
+            params.set("limit", String(displayLimit));
 
-            const res = await fetch(`/api/admin/partners?${params.toString()}`);
+            const res = await fetch(`/api/admin/partners?${params.toString()}`, {
+                cache: "no-store",
+            });
             if (res.ok) {
                 const data = await res.json();
                 setPartners(data.partners || []);
@@ -166,7 +171,7 @@ export default function ShopifyPartnersPage() {
 
     useEffect(() => {
         fetchPartners();
-    }, [selectedCountry, selectedStatus]);
+    }, [selectedCountry, selectedStatus, displayLimit]);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -177,7 +182,7 @@ export default function ShopifyPartnersPage() {
         try {
             setSyncing(true);
             setSyncMessage(null);
-            const res = await fetch(`/api/admin/partners/sync?country=${syncCountry}&limit=25`, {
+            const res = await fetch(`/api/admin/partners/sync?country=${syncCountry}&limit=${syncBatchSize}`, {
                 method: "POST"
             });
             const data = await res.json();
@@ -196,7 +201,11 @@ export default function ShopifyPartnersPage() {
 
     const updatePartnerStatus = async (id: string, newStatus: string) => {
         try {
-            // Optimistic update: filter out if filtered by a specific status, otherwise update in place
+            const currentPartner = partners.find(p => p._id === id);
+            const oldStatus = currentPartner?.status;
+
+            // 1. Instant optimistic UI update:
+            // Remove from list immediately if viewing a specific status filter that no longer matches
             setPartners(prev => {
                 if (selectedStatus !== "All" && newStatus !== selectedStatus) {
                     return prev.filter(p => p._id !== id);
@@ -204,10 +213,32 @@ export default function ShopifyPartnersPage() {
                 return prev.map(p => p._id === id ? { ...p, status: newStatus as any } : p);
             });
 
+            // Optimistic stats counters update so pills update without any UI lag
+            if (oldStatus && oldStatus !== newStatus) {
+                setStats(prev => {
+                    const next = { ...prev };
+                    if (oldStatus === "New") next.new = Math.max(0, next.new - 1);
+                    else if (oldStatus === "Pitched") next.pitched = Math.max(0, next.pitched - 1);
+                    else if (oldStatus === "In Discussion") next.inDiscussion = Math.max(0, next.inDiscussion - 1);
+                    else if (oldStatus === "Partnered") next.partnered = Math.max(0, next.partnered - 1);
+
+                    if (newStatus === "New") next.new += 1;
+                    else if (newStatus === "Pitched") next.pitched += 1;
+                    else if (newStatus === "In Discussion") next.inDiscussion += 1;
+                    else if (newStatus === "Partnered") next.partnered += 1;
+
+                    if (selectedStatus !== "All" && newStatus !== selectedStatus) {
+                        next.filtered = Math.max(0, next.filtered - 1);
+                    }
+                    return next;
+                });
+            }
+
             if (selectedPartner && selectedPartner._id === id) {
                 setSelectedPartner(prev => prev ? { ...prev, status: newStatus as any } : null);
             }
 
+            // 2. Persist to MongoDB
             const res = await fetch(`/api/admin/partners/${id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
@@ -215,7 +246,7 @@ export default function ShopifyPartnersPage() {
             });
 
             if (res.ok) {
-                // Silently refresh to update all stats counters and keep state 100% in sync
+                // Silently refresh to keep all stats and pagination 100% in sync
                 fetchPartners(true);
             }
         } catch (error) {
@@ -415,6 +446,18 @@ export default function ShopifyPartnersPage() {
                         <option value="CA">🇨🇦 Canada</option>
                         <option value="DE">🇩🇪 Germany</option>
                         <option value="ALL">🌐 Multi-Region Batch</option>
+                    </select>
+
+                    {/* Batch Size Selector for Sync */}
+                    <select
+                        value={syncBatchSize}
+                        onChange={(e) => setSyncBatchSize(Number(e.target.value))}
+                        className="h-10 text-xs font-semibold rounded-xl border border-slate-200 bg-white px-3 text-slate-800 shadow-2xs focus:border-blue-600 cursor-pointer"
+                        title="Number of new agencies to import per scan"
+                    >
+                        <option value={25}>+25 per scan</option>
+                        <option value={50}>+50 per scan</option>
+                        <option value={100}>+100 per scan</option>
                     </select>
 
                     {/* Scan Shopify Partner Directory Button */}
@@ -739,6 +782,23 @@ export default function ShopifyPartnersPage() {
                             </div>
                         );
                     })}
+
+                    {/* Load More Agencies Button */}
+                    {partners.length < stats.filtered && (
+                        <div className="pt-6 pb-2 flex flex-col items-center justify-center gap-2.5">
+                            <p className="text-xs text-slate-500 font-medium">
+                                Showing <span className="font-bold text-slate-900">{partners.length}</span> of <span className="font-bold text-slate-900">{stats.filtered}</span> partner agencies
+                            </p>
+                            <Button
+                                onClick={() => setDisplayLimit(prev => prev + 50)}
+                                variant="outline"
+                                className="bg-white hover:bg-slate-50 border-slate-300 text-slate-800 text-xs font-semibold h-10 px-6 rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-2"
+                            >
+                                <Plus className="w-3.5 h-3.5 text-blue-600" />
+                                <span>Load Next 50 Agencies</span>
+                            </Button>
+                        </div>
+                    )}
                 </div>
             )}
 
