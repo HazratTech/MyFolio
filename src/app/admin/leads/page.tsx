@@ -239,7 +239,7 @@ export default function LeadsAdminPage() {
         
         // Preset 1: Technical Peer (In-depth engineering & architectural guardrails)
         const technicalSubject = lead.personalizedEmail?.subject || `re: HN post (${lead.category} engineering for ${lead.company})`;
-        const technicalBody = lead.personalizedEmail?.body || `Hi ${lead.decisionMaker},\n\nSaw your note regarding ${lead.company}'s requirements around ${lead.painSignal}.\n\nI run RelayWorks (https://relayworks.dev) — I build production-grade ${lead.category.toLowerCase()} systems using ${tech}.\n\nWould love to discuss how I can help your team ship faster on a fixed sprint or contractor agreement.\n\nBest,\nHazrat Ummar\nhttps://relayworks.dev | Telegram: @hazratummar`;
+        const technicalBody = lead.personalizedEmail?.body || `Hi ${lead.decisionMaker},\n\nSaw your note regarding ${lead.company}'s requirements around ${lead.painSignal}.\n\nI build production-grade ${lead.category.toLowerCase()} systems at RelayWorks (https://relayworks.dev) using ${tech}.\n\nWould love to discuss how I can help your team ship faster on a fixed sprint or contractor agreement.\n\nBest,\nHazrat Ummar\nhttps://relayworks.dev | Telegram: @hazratummar`;
 
         // Preset 2: Direct 3-Sentence DM (Ultra concise cold message)
         const conciseSubject = `Quick question re: ${lead.company} ${lead.category.toLowerCase()}`;
@@ -829,15 +829,15 @@ export default function LeadsAdminPage() {
                 <DialogContent 
                     showCloseButton={false} 
                     style={{
-                        maxHeight: "calc(100vh - 48px)",
-                        height: "min(84vh, 720px)",
+                        maxHeight: "calc(100dvh - 2.5rem)",
+                        height: "min(88dvh, 720px)",
                         maxWidth: "860px",
                         width: "95vw"
                     }}
-                    className="sm:max-w-[860px] w-[95vw] flex flex-col p-0 gap-0 overflow-hidden rounded-2xl bg-white border border-slate-200 text-slate-900 shadow-2xl focus:outline-none"
+                    className="sm:max-w-[860px] w-[95vw] max-h-[calc(100dvh-2.5rem)] h-[min(88dvh,720px)] flex flex-col p-0 gap-0 overflow-hidden rounded-2xl bg-white border border-slate-200 text-slate-900 shadow-2xl focus:outline-none"
                 >
                     {selectedLead && (
-                        <div className="flex flex-col h-full max-h-full overflow-hidden">
+                        <div className="flex flex-col h-full max-h-full min-h-0 overflow-hidden">
                             {/* 1. Anchored Header (Always visible at top) */}
                             <div className="shrink-0 px-5 py-3 border-b border-slate-200 bg-slate-50/90 flex items-center justify-between gap-4">
                                 <div>

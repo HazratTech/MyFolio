@@ -25,7 +25,10 @@ import {
     Store,
     Layers,
     DollarSign,
-    CheckCircle
+    CheckCircle,
+    Cpu,
+    Zap,
+    Bot
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,6 +55,7 @@ interface Partner {
         subject: string;
         body: string;
         angle?: "white-label" | "concise" | "technical-audit";
+        modelUsed?: string;
         generatedAt?: string;
     };
     notes?: string;
@@ -92,6 +96,7 @@ export default function ShopifyPartnersPage() {
     // AI Pitch Modal State
     const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
     const [activeAngle, setActiveAngle] = useState<"white-label" | "concise" | "technical-audit">("white-label");
+    const [pitchModel, setPitchModel] = useState<"gpt-4o" | "gpt-4o-mini" | "gemini">("gpt-4o");
     const [editableSubject, setEditableSubject] = useState("");
     const [editableBody, setEditableBody] = useState("");
     const [isGeneratingPitch, setIsGeneratingPitch] = useState(false);
@@ -222,14 +227,21 @@ export default function ShopifyPartnersPage() {
         }
     };
 
-    const generatePitchForPartner = async (partner: Partner, angle: "white-label" | "concise" | "technical-audit") => {
+    const generatePitchForPartner = async (
+        partner: Partner, 
+        angle: "white-label" | "concise" | "technical-audit",
+        modelOverride?: "gpt-4o" | "gpt-4o-mini" | "gemini"
+    ) => {
         try {
             setIsGeneratingPitch(true);
             setActiveAngle(angle);
+            const targetModel = modelOverride || pitchModel;
+            if (modelOverride) setPitchModel(modelOverride);
+
             const res = await fetch(`/api/admin/partners/${partner._id}/pitch`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ angle })
+                body: JSON.stringify({ angle, model: targetModel })
             });
             const data = await res.json();
             if (res.ok && data.pitch) {
@@ -658,17 +670,17 @@ export default function ShopifyPartnersPage() {
                 <DialogContent
                     showCloseButton={false}
                     style={{
-                        maxHeight: "calc(100vh - 48px)",
-                        height: "min(86vh, 740px)",
+                        maxHeight: "calc(100dvh - 2.5rem)",
+                        height: "min(88dvh, 720px)",
                         maxWidth: "860px",
                         width: "95vw"
                     }}
-                    className="sm:max-w-[860px] w-[95vw] flex flex-col p-0 gap-0 overflow-hidden rounded-2xl bg-white border border-slate-200 text-slate-900 shadow-2xl focus:outline-none"
+                    className="sm:max-w-[860px] w-[95vw] max-h-[calc(100dvh-2.5rem)] h-[min(88dvh,720px)] flex flex-col p-0 gap-0 overflow-hidden rounded-2xl bg-white border border-slate-200 text-slate-900 shadow-2xl focus:outline-none"
                 >
                     {selectedPartner && (
-                        <div className="flex flex-col h-full max-h-full overflow-hidden">
+                        <div className="flex flex-col h-full max-h-full min-h-0 overflow-hidden">
                             {/* 1. Anchored Header */}
-                            <div className="shrink-0 px-5 py-3.5 border-b border-slate-200 bg-slate-50/90 flex items-center justify-between gap-4">
+                            <div className="shrink-0 px-5 py-3 border-b border-slate-200 bg-slate-50/90 flex items-center justify-between gap-4">
                                 <div>
                                     <div className="flex items-center gap-2 mb-0.5">
                                         <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded bg-blue-100 text-blue-800 border border-blue-200">
@@ -676,9 +688,12 @@ export default function ShopifyPartnersPage() {
                                         </span>
                                         <span className="text-xs font-semibold text-slate-700">Target: {selectedPartner.name}</span>
                                     </div>
-                                    <DialogTitle className="text-lg font-bold font-heading text-slate-950 flex items-center gap-2">
+                                    <DialogTitle className="text-lg font-bold font-heading text-slate-950 flex flex-wrap items-center gap-2">
                                         <span>Bespoke Subcontracting Pitch Studio</span>
-                                        <span className="text-xs font-normal text-slate-500 hidden sm:inline">· Powered by Google Gemini</span>
+                                        <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 inline-flex items-center gap-1 font-normal">
+                                            <Cpu className="w-3 h-3 text-blue-600" />
+                                            <span>Model: {selectedPartner.personalizedPitch?.modelUsed || pitchModel}</span>
+                                        </span>
                                     </DialogTitle>
                                 </div>
 
@@ -707,7 +722,7 @@ export default function ShopifyPartnersPage() {
                             </div>
 
                             {/* 2. Scrollable Dynamic Body */}
-                            <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-5 space-y-4 text-xs">
+                            <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-5 space-y-3.5 text-xs">
                                 {/* Agency Intelligence Strip */}
                                 <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
                                     <div className="flex flex-wrap items-center justify-between gap-2 text-[11px]">
@@ -751,20 +766,60 @@ export default function ShopifyPartnersPage() {
                                     )}
                                 </div>
 
-                                {/* Dynamic Angle Selector */}
-                                <div className="space-y-1.5">
-                                    <div className="flex items-center justify-between">
+                                {/* Dynamic Model & Angle Selector */}
+                                <div className="space-y-2">
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                                         <label className="text-[11px] font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
                                             <Sparkles className="w-3 h-3 text-amber-500" />
-                                            <span>Pitch Angle (Click to Regenerate with AI)</span>
+                                            <span>AI Model &amp; Tone Engine</span>
                                         </label>
-                                        {isGeneratingPitch && (
-                                            <span className="text-[11px] text-blue-600 font-medium animate-pulse flex items-center gap-1">
-                                                <RefreshCw className="w-3 h-3 animate-spin" />
-                                                <span>Gemini is tailoring pitch...</span>
-                                            </span>
-                                        )}
+                                        
+                                        <div className="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200/80">
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    generatePitchForPartner(selectedPartner, activeAngle, "gpt-4o");
+                                                }}
+                                                className={`text-[11px] px-2.5 py-1 rounded-lg transition-colors cursor-pointer font-medium flex items-center gap-1 ${
+                                                    pitchModel === "gpt-4o" ? "bg-white text-slate-950 shadow-2xs font-bold" : "text-slate-600 hover:text-slate-900"
+                                                }`}
+                                            >
+                                                <Cpu className="w-3 h-3 text-blue-600" />
+                                                <span>GPT-4o (Senior Voice)</span>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    generatePitchForPartner(selectedPartner, activeAngle, "gpt-4o-mini");
+                                                }}
+                                                className={`text-[11px] px-2.5 py-1 rounded-lg transition-colors cursor-pointer font-medium flex items-center gap-1 ${
+                                                    pitchModel === "gpt-4o-mini" ? "bg-white text-slate-950 shadow-2xs font-bold" : "text-slate-600 hover:text-slate-900"
+                                                }`}
+                                            >
+                                                <Zap className="w-3 h-3 text-amber-500" />
+                                                <span>GPT-4o Mini</span>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    generatePitchForPartner(selectedPartner, activeAngle, "gemini");
+                                                }}
+                                                className={`text-[11px] px-2.5 py-1 rounded-lg transition-colors cursor-pointer font-medium flex items-center gap-1 ${
+                                                    pitchModel === "gemini" ? "bg-white text-slate-950 shadow-2xs font-bold" : "text-slate-600 hover:text-slate-900"
+                                                }`}
+                                            >
+                                                <Sparkles className="w-3 h-3 text-purple-600" />
+                                                <span>Gemini</span>
+                                            </button>
+                                        </div>
                                     </div>
+
+                                    {isGeneratingPitch && (
+                                        <div className="text-[11px] text-blue-600 font-medium animate-pulse flex items-center gap-1.5 p-2 rounded-lg bg-blue-50 border border-blue-200/80">
+                                            <RefreshCw className="w-3 h-3 animate-spin" />
+                                            <span>{pitchModel.toUpperCase()} is writing a human peer-to-peer pitch for {selectedPartner.name}...</span>
+                                        </div>
+                                    )}
 
                                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                                         <button

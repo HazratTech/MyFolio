@@ -21,6 +21,7 @@ export interface IPartner {
         subject: string;
         body: string;
         angle?: 'white-label' | 'concise' | 'technical-audit';
+        modelUsed?: string;
         generatedAt?: Date;
     };
     notes?: string;
@@ -52,6 +53,7 @@ const PartnerSchema = new Schema<IPartner>({
         subject: { type: String },
         body: { type: String },
         angle: { type: String, default: 'white-label' },
+        modelUsed: { type: String, default: 'gpt-4o' },
         generatedAt: { type: Date }
     },
     notes: { type: String, default: '' },
