@@ -129,9 +129,9 @@ export default function LeadsAdminPage() {
     const categories = ["All", "Discord Bots", "Mobile Apps", "AI & Chatbots", "Backend"];
     const statuses = ["All", "New", "Contacted", "In Discussion", "Closed"];
 
-    const fetchLeads = async () => {
+    const fetchLeads = async (silent = false) => {
         try {
-            setLoading(true);
+            if (!silent) setLoading(true);
             const params = new URLSearchParams();
             if (selectedCategory !== "All") params.set("category", selectedCategory);
             if (selectedStatus !== "All") params.set("status", selectedStatus);
@@ -155,7 +155,7 @@ export default function LeadsAdminPage() {
         } catch (error) {
             console.error("Failed to fetch leads:", error);
         } finally {
-            setLoading(false);
+            if (!silent) setLoading(false);
         }
     };
 
@@ -176,7 +176,7 @@ export default function LeadsAdminPage() {
             const data = await res.json();
             if (res.ok) {
                 setSyncMessage(data.message || `Found ${data.addedCount} new leads.`);
-                fetchLeads();
+                fetchLeads(true);
             } else {
                 setSyncMessage(data.error || "Failed to scan feeds");
             }
@@ -189,35 +189,49 @@ export default function LeadsAdminPage() {
 
     const updateLeadStatus = async (id: string, newStatus: string) => {
         try {
+            // Optimistic update: filter out if filtered by a specific status, otherwise update in place
+            setLeads(prev => {
+                if (selectedStatus !== "All" && newStatus !== selectedStatus) {
+                    return prev.filter(l => l._id !== id);
+                }
+                return prev.map(l => l._id === id ? { ...l, status: newStatus as any } : l);
+            });
+
+            if (selectedLead && selectedLead._id === id) {
+                setSelectedLead(prev => prev ? { ...prev, status: newStatus as any } : null);
+                setEditableStatus(newStatus);
+            }
+
             const res = await fetch(`/api/admin/leads/${id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ status: newStatus }),
             });
+
             if (res.ok) {
-                setLeads(prev => prev.map(l => l._id === id ? { ...l, status: newStatus as any } : l));
-                if (selectedLead && selectedLead._id === id) {
-                    setSelectedLead(prev => prev ? { ...prev, status: newStatus as any } : null);
-                    setEditableStatus(newStatus);
-                }
+                // Silently refresh to update all stats counters and keep state 100% in sync
+                fetchLeads(true);
             }
         } catch (error) {
             console.error("Failed to update status:", error);
+            fetchLeads(true);
         }
     };
 
     const deleteLead = async (id: string) => {
         if (!confirm("Are you sure you want to remove this lead?")) return;
         try {
+            setLeads(prev => prev.filter(l => l._id !== id));
+            if (selectedLead && selectedLead._id === id) {
+                setSelectedLead(null);
+            }
             const res = await fetch(`/api/admin/leads/${id}`, { method: "DELETE" });
             if (res.ok) {
-                setLeads(prev => prev.filter(l => l._id !== id));
-                if (selectedLead && selectedLead._id === id) {
-                    setSelectedLead(null);
-                }
+                fetchLeads(true);
             }
         } catch (error) {
             console.error("Failed to delete lead:", error);
+            fetchLeads(true);
         }
     };
 

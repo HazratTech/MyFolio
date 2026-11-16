@@ -136,9 +136,9 @@ export default function ShopifyPartnersPage() {
 
     const statuses = ["All", "New", "Pitched", "In Discussion", "Partnered"];
 
-    const fetchPartners = async () => {
+    const fetchPartners = async (silent = false) => {
         try {
-            setLoading(true);
+            if (!silent) setLoading(true);
             const params = new URLSearchParams();
             if (selectedCountry !== "All") params.set("country", selectedCountry);
             if (selectedStatus !== "All") params.set("status", selectedStatus);
@@ -153,7 +153,7 @@ export default function ShopifyPartnersPage() {
         } catch (error) {
             console.error("Failed to fetch partners:", error);
         } finally {
-            setLoading(false);
+            if (!silent) setLoading(false);
         }
     };
 
@@ -176,7 +176,7 @@ export default function ShopifyPartnersPage() {
             const data = await res.json();
             if (res.ok) {
                 setSyncMessage(data.message || `Added ${data.addedCount} new partners.`);
-                fetchPartners();
+                fetchPartners(true);
             } else {
                 setSyncMessage(data.error || "Failed to scan partners");
             }
@@ -189,34 +189,48 @@ export default function ShopifyPartnersPage() {
 
     const updatePartnerStatus = async (id: string, newStatus: string) => {
         try {
+            // Optimistic update: filter out if filtered by a specific status, otherwise update in place
+            setPartners(prev => {
+                if (selectedStatus !== "All" && newStatus !== selectedStatus) {
+                    return prev.filter(p => p._id !== id);
+                }
+                return prev.map(p => p._id === id ? { ...p, status: newStatus as any } : p);
+            });
+
+            if (selectedPartner && selectedPartner._id === id) {
+                setSelectedPartner(prev => prev ? { ...prev, status: newStatus as any } : null);
+            }
+
             const res = await fetch(`/api/admin/partners/${id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ status: newStatus }),
             });
+
             if (res.ok) {
-                setPartners(prev => prev.map(p => p._id === id ? { ...p, status: newStatus as any } : p));
-                if (selectedPartner && selectedPartner._id === id) {
-                    setSelectedPartner(prev => prev ? { ...prev, status: newStatus as any } : null);
-                }
+                // Silently refresh to update all stats counters and keep state 100% in sync
+                fetchPartners(true);
             }
         } catch (error) {
             console.error("Failed to update status:", error);
+            fetchPartners(true);
         }
     };
 
     const deletePartner = async (id: string) => {
         if (!confirm("Are you sure you want to remove this partner agency?")) return;
         try {
+            setPartners(prev => prev.filter(p => p._id !== id));
+            if (selectedPartner && selectedPartner._id === id) {
+                setSelectedPartner(null);
+            }
             const res = await fetch(`/api/admin/partners/${id}`, { method: "DELETE" });
             if (res.ok) {
-                setPartners(prev => prev.filter(p => p._id !== id));
-                if (selectedPartner && selectedPartner._id === id) {
-                    setSelectedPartner(null);
-                }
+                fetchPartners(true);
             }
         } catch (error) {
             console.error("Failed to delete partner:", error);
+            fetchPartners(true);
         }
     };
 
@@ -423,45 +437,75 @@ export default function ShopifyPartnersPage() {
 
             {/* Metrics Ribbon */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between">
+                <button
+                    type="button"
+                    onClick={() => setSelectedStatus("All")}
+                    className={`p-4 rounded-2xl bg-white border text-left shadow-xs flex flex-col justify-between transition-all cursor-pointer ${
+                        selectedStatus === "All" ? "border-slate-900 ring-1 ring-slate-900" : "border-slate-200/90 hover:border-slate-300"
+                    }`}
+                >
                     <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                         <Building2 className="w-3.5 h-3.5 text-slate-600" />
                         <span>Total Agencies</span>
                     </span>
                     <span className="text-2xl font-black font-mono text-slate-950 mt-1.5">{stats.total}</span>
-                </div>
+                </button>
 
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between">
+                <button
+                    type="button"
+                    onClick={() => setSelectedStatus("New")}
+                    className={`p-4 rounded-2xl bg-white border text-left shadow-xs flex flex-col justify-between transition-all cursor-pointer ${
+                        selectedStatus === "New" ? "border-emerald-600 ring-1 ring-emerald-600" : "border-slate-200/90 hover:border-emerald-300"
+                    }`}
+                >
                     <span className="text-xs font-semibold text-emerald-700 uppercase tracking-wider flex items-center gap-1.5">
                         <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
                         <span>New &amp; Uncontacted</span>
                     </span>
                     <span className="text-2xl font-black font-mono text-emerald-950 mt-1.5">{stats.new}</span>
-                </div>
+                </button>
 
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between">
+                <button
+                    type="button"
+                    onClick={() => setSelectedStatus("Pitched")}
+                    className={`p-4 rounded-2xl bg-white border text-left shadow-xs flex flex-col justify-between transition-all cursor-pointer ${
+                        selectedStatus === "Pitched" ? "border-amber-500 ring-1 ring-amber-500" : "border-slate-200/90 hover:border-amber-300"
+                    }`}
+                >
                     <span className="text-xs font-semibold text-amber-700 uppercase tracking-wider flex items-center gap-1.5">
                         <Send className="w-3.5 h-3.5 text-amber-600" />
                         <span>Pitched</span>
                     </span>
                     <span className="text-2xl font-black font-mono text-amber-950 mt-1.5">{stats.pitched}</span>
-                </div>
+                </button>
 
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between">
+                <button
+                    type="button"
+                    onClick={() => setSelectedStatus("In Discussion")}
+                    className={`p-4 rounded-2xl bg-white border text-left shadow-xs flex flex-col justify-between transition-all cursor-pointer ${
+                        selectedStatus === "In Discussion" ? "border-blue-600 ring-1 ring-blue-600" : "border-slate-200/90 hover:border-blue-300"
+                    }`}
+                >
                     <span className="text-xs font-semibold text-blue-700 uppercase tracking-wider flex items-center gap-1.5">
                         <Briefcase className="w-3.5 h-3.5 text-blue-600" />
                         <span>In Discussion</span>
                     </span>
                     <span className="text-2xl font-black font-mono text-blue-950 mt-1.5">{stats.inDiscussion}</span>
-                </div>
+                </button>
 
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between">
+                <button
+                    type="button"
+                    onClick={() => setSelectedStatus("Partnered")}
+                    className={`p-4 rounded-2xl bg-white border text-left shadow-xs flex flex-col justify-between transition-all cursor-pointer ${
+                        selectedStatus === "Partnered" ? "border-indigo-600 ring-1 ring-indigo-600" : "border-slate-200/90 hover:border-indigo-300"
+                    }`}
+                >
                     <span className="text-xs font-semibold text-indigo-700 uppercase tracking-wider flex items-center gap-1.5">
                         <Handshake className="w-3.5 h-3.5 text-indigo-600" />
                         <span>Partnered</span>
                     </span>
                     <span className="text-2xl font-black font-mono text-indigo-950 mt-1.5">{stats.partnered}</span>
-                </div>
+                </button>
             </div>
 
             {/* Filter Bar & Region Selector */}
@@ -484,20 +528,32 @@ export default function ShopifyPartnersPage() {
                             <Filter className="w-3.5 h-3.5" />
                             <span>Status:</span>
                         </span>
-                        {statuses.map((status) => (
-                            <button
-                                key={status}
-                                type="button"
-                                onClick={() => setSelectedStatus(status)}
-                                className={`text-xs px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer ${
-                                    selectedStatus === status
-                                        ? "bg-slate-900 text-white font-semibold shadow-2xs"
-                                        : "text-slate-600 hover:text-slate-950 hover:bg-slate-100 font-medium"
-                                }`}
-                            >
-                                {status}
-                            </button>
-                        ))}
+                        {statuses.map((status) => {
+                            const count = status === "All" ? stats.total
+                                : status === "New" ? stats.new
+                                : status === "Pitched" ? stats.pitched
+                                : status === "In Discussion" ? stats.inDiscussion
+                                : stats.partnered;
+                            return (
+                                <button
+                                    key={status}
+                                    type="button"
+                                    onClick={() => setSelectedStatus(status)}
+                                    className={`text-xs px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 ${
+                                        selectedStatus === status
+                                            ? "bg-slate-900 text-white font-semibold shadow-2xs"
+                                            : "text-slate-600 hover:text-slate-950 hover:bg-slate-100 font-medium"
+                                    }`}
+                                >
+                                    <span>{status}</span>
+                                    <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono ${
+                                        selectedStatus === status ? "bg-white/20 text-white" : "bg-slate-200 text-slate-700"
+                                    }`}>
+                                        {count}
+                                    </span>
+                                </button>
+                            );
+                        })}
                     </div>
                 </div>
 
