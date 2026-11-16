@@ -25,11 +25,18 @@ export interface IPartner {
         generatedAt?: Date;
     };
     websiteContext?: {
+        source?: 'combined' | 'website' | 'shopify-directory';
         title?: string;
         description?: string;
+        location?: string;
+        teamSize?: string;
+        partnerSince?: string;
+        industries?: string;
+        specialties?: string;
         headings?: string[];
         techKeywords?: string[];
         snippet?: string;
+        directorySnippet?: string;
         lastScrapedAt?: Date;
     };
     notes?: string;
@@ -65,11 +72,18 @@ const PartnerSchema = new Schema<IPartner>({
         generatedAt: { type: Date }
     },
     websiteContext: {
+        source: { type: String },
         title: { type: String },
         description: { type: String },
+        location: { type: String },
+        teamSize: { type: String },
+        partnerSince: { type: String },
+        industries: { type: String },
+        specialties: { type: String },
         headings: [{ type: String }],
         techKeywords: [{ type: String }],
         snippet: { type: String },
+        directorySnippet: { type: String },
         lastScrapedAt: { type: Date }
     },
     notes: { type: String, default: '' },

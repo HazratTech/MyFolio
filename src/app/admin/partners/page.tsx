@@ -59,11 +59,18 @@ interface Partner {
         generatedAt?: string;
     };
     websiteContext?: {
+        source?: 'combined' | 'website' | 'shopify-directory';
         title?: string;
         description?: string;
+        location?: string;
+        teamSize?: string;
+        partnerSince?: string;
+        industries?: string;
+        specialties?: string;
         headings?: string[];
         techKeywords?: string[];
         snippet?: string;
+        directorySnippet?: string;
         lastScrapedAt?: string;
     };
     notes?: string;
@@ -255,7 +262,8 @@ export default function ShopifyPartnersPage() {
     const generatePitchForPartner = async (
         partner: Partner, 
         angle: "white-label" | "concise" | "technical-audit" | "ai-automation",
-        modelOverride?: "gpt-4o" | "gpt-4o-mini" | "gemini"
+        modelOverride?: "gpt-4o" | "gpt-4o-mini" | "gemini",
+        forceRefresh?: boolean
     ) => {
         try {
             setIsGeneratingPitch(true);
@@ -266,7 +274,7 @@ export default function ShopifyPartnersPage() {
             const res = await fetch(`/api/admin/partners/${partner._id}/pitch`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ angle, model: targetModel })
+                body: JSON.stringify({ angle, model: targetModel, forceRefresh })
             });
             const data = await res.json();
             if (res.ok && data.pitch) {
@@ -838,18 +846,57 @@ export default function ShopifyPartnersPage() {
                                     )}
 
                                     {selectedPartner.websiteContext && (
-                                        <div className="p-2.5 rounded-lg bg-white border border-slate-200/90 space-y-1 text-[11px]">
+                                        <div className="p-3 rounded-xl bg-white border border-slate-200/90 space-y-2 text-[11px]">
                                             <div className="flex items-center justify-between text-slate-700">
                                                 <span className="font-semibold flex items-center gap-1.5 text-blue-700">
-                                                    <Globe className="w-3 h-3 text-blue-600" />
-                                                    <span>Live Website Context Verified</span>
+                                                    <Globe className="w-3.5 h-3.5 text-blue-600" />
+                                                    <span>Verified Intelligence (Directory &amp; Website)</span>
                                                 </span>
-                                                {selectedPartner.websiteContext.lastScrapedAt && (
-                                                    <span className="text-[10px] text-slate-400 font-mono">
-                                                        Scraped {new Date(selectedPartner.websiteContext.lastScrapedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                    </span>
-                                                )}
+                                                <div className="flex items-center gap-2">
+                                                    {selectedPartner.websiteContext.lastScrapedAt && (
+                                                        <span className="text-[10px] text-slate-400 font-mono">
+                                                            Updated {new Date(selectedPartner.websiteContext.lastScrapedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                        </span>
+                                                    )}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => generatePitchForPartner(selectedPartner, activeAngle, pitchModel, true)}
+                                                        disabled={isGeneratingPitch}
+                                                        className="text-[10px] text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1 hover:underline cursor-pointer"
+                                                        title="Force re-scrape of live website and Shopify Directory"
+                                                    >
+                                                        <RefreshCw className={`w-2.5 h-2.5 ${isGeneratingPitch ? "animate-spin" : ""}`} />
+                                                        <span>Re-scan</span>
+                                                    </button>
+                                                </div>
                                             </div>
+
+                                            {/* Directory Specific Insights */}
+                                            {(selectedPartner.websiteContext.partnerSince || selectedPartner.websiteContext.teamSize || selectedPartner.websiteContext.location || selectedPartner.websiteContext.industries) && (
+                                                <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-100">
+                                                    {selectedPartner.websiteContext.partnerSince && (
+                                                        <span className="font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                                                            Partner Since {selectedPartner.websiteContext.partnerSince}
+                                                        </span>
+                                                    )}
+                                                    {selectedPartner.websiteContext.location && (
+                                                        <span className="text-slate-700 bg-white px-2 py-0.5 rounded border border-slate-200">
+                                                            📍 {selectedPartner.websiteContext.location}
+                                                        </span>
+                                                    )}
+                                                    {selectedPartner.websiteContext.teamSize && (
+                                                        <span className="text-slate-700 bg-white px-2 py-0.5 rounded border border-slate-200">
+                                                            👥 {selectedPartner.websiteContext.teamSize}
+                                                        </span>
+                                                    )}
+                                                    {selectedPartner.websiteContext.industries && (
+                                                        <span className="text-purple-800 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">
+                                                            🎯 {selectedPartner.websiteContext.industries}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            )}
+
                                             {selectedPartner.websiteContext.title && (
                                                 <p className="font-medium text-slate-900 line-clamp-1">
                                                     {selectedPartner.websiteContext.title}
