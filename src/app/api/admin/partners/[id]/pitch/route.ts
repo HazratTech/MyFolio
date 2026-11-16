@@ -54,7 +54,8 @@ async function scrapeWebsiteContext(websiteUrl?: string, directoryUrl?: string):
                     const knownTech = [
                         'Shopify Plus', 'Headless', 'Hydrogen', 'Next.js', 'Klaviyo', 'Recharge',
                         'NetSuite', 'ERP', 'B2B', 'Algolia', 'Checkout Extensions', 'Shopify Functions',
-                        'Migrations', 'CRO', 'Custom Apps', 'Liquid', 'FastAPI', 'Python', 'Subscriptions'
+                        'Migrations', 'CRO', 'Custom Apps', 'Liquid', 'FastAPI', 'Python', 'Subscriptions',
+                        'AI Agents', 'Chatbots', 'Autonomous'
                     ];
                     const detectedTech = knownTech.filter(k => new RegExp(`\\b${k}\\b`, 'i').test(cleaned));
 
@@ -110,21 +111,40 @@ function generateFallbackPitch(
     partnerName: string,
     services: string[],
     desc: string,
-    angle: 'white-label' | 'concise' | 'technical-audit' = 'white-label',
+    angle: 'white-label' | 'concise' | 'technical-audit' | 'ai-automation' = 'white-label',
     siteContext?: ScrapedContext | null
 ) {
     const isDesignOrCro = /design|cro|conversion|brand|creative|ui|ux/i.test(services.join(' ') + ' ' + desc);
     const serviceHighlight = siteContext?.description?.slice(0, 80) 
         || (isDesignOrCro ? 'store design, UX, and CRO' : 'store building and merchant growth');
 
+    if (angle === 'ai-automation') {
+        return {
+            subject: `ai store agents & automations for ${partnerName}?`,
+            body: `Hey team at ${partnerName},
+
+Saw your focus around ${serviceHighlight}.
+
+When your merchant clients ask for 24/7 AI shopping concierges (catalog RAG discovery, instant order lookup) or automated webhook syncs between Shopify and their warehouse/CRM, who builds that technical execution for you?
+
+I engineer deterministic AI chatbots and custom workflow automations at RelayWorks (https://relayworks.dev) using Python FastAPI, LangGraph, and pgvector. I white-label for partner agencies on fixed 1-2 week sprints ($400 - $600).
+
+If you have an upcoming build requiring AI assistants or custom webhook pipelines, happy to take a small trial sprint ($250 - $350) to prove the turnaround.
+
+Best,
+Hazrat Ummar
+https://relayworks.dev | Telegram: @hazratummar`
+        };
+    }
+
     if (angle === 'concise') {
         return {
-            subject: `dev overflow for ${partnerName}?`,
+            subject: `custom app & automation capacity for ${partnerName}?`,
             body: `Hey there,
 
-Who handles your technical overflow when a merchant asks for custom checkout extensions or external API/webhook syncs?
+Who handles your technical overflow when a merchant asks for custom checkout extensions, AI chatbots, or external API/webhook syncs?
 
-I white-label custom Shopify apps and Python backends for boutique agencies on fixed 1-week sprints ($250 - $400).
+I white-label custom Shopify apps, AI agents, and Python backends for boutique agencies on fixed 1-week sprints ($250 - $400).
 
 Happy to pick up an overflow ticket if your team is at capacity: Telegram @hazratummar or https://relayworks.dev.
 
@@ -135,16 +155,16 @@ Hazrat`
 
     if (angle === 'technical-audit') {
         return {
-            subject: `checkout extensions & theme speed for ${partnerName}`,
+            subject: `checkout extensions & store automations for ${partnerName}`,
             body: `Hey team at ${partnerName},
 
 Saw your work around ${serviceHighlight}.
 
 When custom stores scale, technical bottlenecks often crop up: checkout UI extensions (Shopify Functions), Liquid theme speed bloat, or brittle third-party ERP webhook syncs.
 
-I specialize strictly in Shopify backend performance and custom apps. I partner with agencies on fixed sprints ($350 - $550) to handle the technical plumbing so your creative team can launch stores on schedule with zero client friction.
+I specialize in Shopify backend performance, custom apps, and automated pipelines. I partner with agencies on fixed sprints ($350 - $550) to handle the technical plumbing so your creative team can launch stores on schedule with zero client friction.
 
-Let me know if you have a build coming up with custom backend requirements.
+Let me know if you have a build coming up with custom technical requirements.
 
 Best,
 Hazrat Ummar
@@ -154,16 +174,16 @@ https://relayworks.dev | Telegram: @hazratummar`
 
     // Default: white-label
     return {
-        subject: `dev overflow for ${partnerName}?`,
+        subject: `custom app & automation overflow for ${partnerName}?`,
         body: `Hey team at ${partnerName},
 
 Saw your work on the Shopify directory focusing on ${serviceHighlight}.
 
-When your clients ask for custom backend logic (custom checkout UI extensions, ERP/warehouse webhook synchronization, or custom private apps), who handles that overflow for your team?
+When your clients ask for custom technical logic (custom checkout UI extensions, AI shopping assistants, or ERP/warehouse webhook synchronization), who handles that overflow for your team?
 
-I'm an independent backend/Shopify developer at RelayWorks. I white-label for a few boutique partner agencies on fixed 1-2 week sprints ($400 - $600), taking custom app and Python microservice tickets off your plate so your theme devs never get bottlenecked.
+I'm an independent engineer at RelayWorks. I white-label custom Shopify apps, AI chatbots, and automation pipelines for partner agencies on fixed 1-2 week sprints ($400 - $600), taking custom tickets off your plate so your theme devs never get bottlenecked.
 
-If you have any tricky backend tickets on your backlog or an upcoming build, happy to take a small trial sprint ($250 - $350) to prove the turnaround.
+If you have any tricky technical tickets on your backlog or an upcoming build, happy to take a small trial sprint ($250 - $350) to prove the turnaround.
 
 Best,
 Hazrat Ummar
@@ -177,6 +197,8 @@ function cleanAntiSlop(text: string): string {
         .replace(/–/g, ' - ')
         .replace(/\b(is|are|was)\s+impressive\b/gi, 'stands out')
         .replace(/\bimpressive\s+/gi, '')
+        .replace(/\baligns?\s+perfect(ly)?\b/gi, 'connects directly')
+        .replace(/\bintrigued\s+by\b/gi, 'saw your work on')
         .replace(/I hope (this email|you are|this message)[\s\S]*?[.!?]\s*/gi, '')
         .replace(/My name is Hazrat Ummar,?\s*(and\s*)?/gi, '')
         .replace(/I am reaching out (to you )?because\s*/gi, '')
@@ -184,83 +206,102 @@ function cleanAntiSlop(text: string): string {
         .trim();
 }
 
-const SYSTEM_PROMPT = `You are Hazrat Ummar, senior backend & custom Shopify engineer at RelayWorks (https://relayworks.dev).
+const SYSTEM_PROMPT = `You are Hazrat Ummar, senior engineer at RelayWorks (https://relayworks.dev).
 You write direct, ultra-personalized cold emails to founders or technical leads at Shopify Partner agencies.
 
-YOUR PRICING & SPRINT RULES (STRICT):
+YOUR COMPLETE TECHNICAL CAPABILITIES (NOT JUST BACKEND):
+You are an independent technical partner for boutique Shopify agencies delivering:
+1. AI Chatbots & Store Assistants: 24/7 AI shopping concierges, catalog RAG discovery bots (answering product sizing, inventory, and order tracking questions with zero hallucination), WhatsApp/Telegram/Discord merchant bots.
+2. Custom Automations & Webhooks: Event-driven syncs between Shopify and ERPs/CRMs/warehouse APIs, automated order routing, inventory syncs, background worker pipelines.
+3. Custom Shopify Apps & Extensions: Shopify Functions (custom discount/pricing/bundle logic), Checkout UI extensions, private custom apps.
+4. Robust Backend Architecture: Python FastAPI microservices, pgvector, LangGraph, high-throughput APIs.
+
+CRITICAL PRICING & SPRINT RULES:
 - Quote realistic, low-friction fixed sprints in the $250 - $600 range:
   * For a standard 2-week sprint: quote $400 - $600 flat fixed.
   * For a quick 1-week sprint or trial ticket: quote $250 - $400 flat fixed.
   * Vary the numbers naturally between $250 - $600 depending on the scope.
 - NEVER, UNDER ANY CIRCUMSTANCES, MENTION A DAILY RATE ($30-$40/day) OR HOURLY RATE. Agency owners want flat-rate sprint certainty. Quote only flat-rate sprint numbers ($250 - $600).
 
+SUBJECT LINE RULES (CRITICAL):
+- ABSOLUTELY NEVER use the same repetitive subject like "backend support for [Agency]?".
+- Generate a dynamic, unique, contextual subject line (3 to 6 words) that directly reflects what they do.
+- Examples based on the agency's actual focus:
+  * "ai store agents & automations for [Agency]?"
+  * "custom AI chatbots & app overflow for [Agency]"
+  * "checkout extensions & store automations for [Agency]?"
+  * "bundle logic & AI chatbots for [Agency]?"
+  * "catalog AI assistant & webhook syncs for [Agency]"
+  * "quick technical question re: [Agency] builds"
+
 ANTI-SLOP & ANTI-AI RULES:
 1. NEVER start with 'My name is...', 'I am reaching out...', 'I run RelayWorks...', or 'I hope this email finds you well'.
-2. NEVER use fake compliments ('impressive work', 'admire your expertise', 'spot on'). State their focus matter-of-factly without flattery.
+2. NEVER use fake compliments ('impressive work', 'admire your expertise', 'spot on', 'intrigued by', 'aligns perfectly'). State their focus matter-of-factly without flattery.
 3. NEVER lecture them on agency margins, salary overheads, or 'extending their capabilities'. Treat them as an equal peer.
 4. ABSOLUTELY NO em-dashes (—) or en-dashes (–). Use plain commas, colons, or parentheses.
 5. NO corporate buzzwords: 'synergy', 'streamline', 'game-changer', 'leverage', 'robust', 'holistic', 'bespoke'.
-6. Keep the email punchy, natural, and brief (70 to 110 words total).
+6. Keep the email punchy, natural, and brief with greeting and signature (70 to 110 words total).
 
-LIVE WEBSITE PERSONALIZATION (CRITICAL):
-You MUST inspect the provided LIVE WEBSITE CONTEXT and weave in:
-1. Specific brands/clients they have built or featured on their website.
-2. Their exact niche (e.g. NetSuite ERP integrations, D2C luxury apparel, BigCommerce/Shopify Plus replatforms).
-3. If founder name is identified (e.g. Jessie), use 'Hey Jessie,', otherwise 'Hey team at [Agency],'.
+LIVE WEBSITE PERSONALIZATION:
+You MUST inspect the provided LIVE WEBSITE CONTEXT and align your offer to their actual positioning:
+- If they do AI, autonomous commerce, or modern D2C (like Nexus Commerce): prominently lead with AI chatbots, autonomous agent pipelines, and custom workflow automations!
+- If they do food & beverage or subscription brands (like Wren Digital): lead with bundle builders, subscription syncs, and AI flavor/catalog assistants!
+- If they do B2B or ERP integrations (like Snapshot): lead with ERP automations, custom pricing checkout functions, and webhook syncs!
+- If founder name is identified (e.g. Jessie), use 'Hey Jessie,', otherwise 'Hey team at [Agency],'.
 
 GOLDEN TONE EXAMPLES:
 
-Example 1 (white-label):
-Subject: dev overflow for Hand Hugs?
+Example 1 (AI Chatbot & Automation Angle):
+Subject: ai store agents & automations for Nexus?
 Body:
-Hey Jessie,
+Hey team at Nexus,
 
-Saw your recent work on Hand Hugs with Boulder brands like Shwood Eyewear and Moonchaser Farm.
+Saw your focus on autonomous commerce and AI agent workflows for Shopify brands.
 
-When your client builds demand custom backend logic (custom checkout UI extensions, private apps, or webhook syncs), who handles that technical overflow for you?
+When your merchants ask for custom AI shopping concierges (catalog RAG discovery, instant order tracking) or automated webhook pipelines connecting Shopify to their warehouse or CRM, who builds that technical execution for you?
 
-I'm an independent backend developer at RelayWorks. I white-label for boutique Shopify agencies on fixed 1-2 week sprints ($400 - $600), taking custom app and backend tickets off your plate so you can stay 100% focused on storefront design.
+I build deterministic AI chatbots and custom Shopify automations at RelayWorks (https://relayworks.dev) with strict guardrails (Python FastAPI, LangGraph, and pgvector). I white-label for agencies on fixed 1-2 week sprints ($400 - $600).
 
-If you have a tricky backend ticket on your backlog, happy to take a small trial sprint ($250 - $350) to prove the turnaround.
+If you have an AI agent integration or custom automation ticket on your plate, happy to take a small trial sprint ($250 - $350) to prove the turnaround.
 
 Best,
 Hazrat Ummar
 https://relayworks.dev | Telegram: @hazratummar
 
-Example 2 (concise):
-Subject: quick question re: backend overflow
+Example 2 (White-Label Engineering Partner):
+Subject: custom app & automation overflow for Shugert?
+Body:
+Hey team at Shugert,
+
+Saw your work on the Shopify directory around Shopify Plus builds and store migrations.
+
+When your clients ask for custom technical logic (custom checkout UI extensions, AI customer assistants, or webhook syncs with CRMs/ERPs), who handles that overflow for your team?
+
+I am an independent engineer at RelayWorks. I white-label custom apps, AI chatbots, and automation pipelines for agencies on fixed 1-2 week sprints ($400 - $600) so your design team never gets bottlenecked.
+
+If you have a tricky technical ticket on your backlog, happy to take a small trial sprint ($250 - $350) to prove the turnaround.
+
+Best,
+Hazrat Ummar
+https://relayworks.dev | Telegram: @hazratummar
+
+Example 3 (Concise 3-Sentence DM):
+Subject: quick question re: AI & custom app overflow
 Body:
 Hey there,
 
-Who handles your technical overflow when a merchant asks for custom checkout extensions or external API/webhook syncs?
+Who handles your technical overflow when a merchant asks for custom AI chatbots, checkout extensions, or external API/webhook syncs?
 
-I white-label custom Shopify apps and Python backends for agencies on fixed 1-week sprints ($250 - $400).
+I white-label custom Shopify apps, AI assistants, and backend automations for agencies on fixed 1-week sprints ($250 - $400).
 
 Happy to pick up an overflow ticket if your team is at capacity: Telegram @hazratummar or https://relayworks.dev.
 
 Best,
 Hazrat
 
-Example 3 (technical-audit):
-Subject: checkout extensions & theme speed for Shugert
-Body:
-Hey team at Shugert,
-
-Noticed your focus on high-converting storefronts and CRO for Plus merchants.
-
-Often when custom stores scale, technical bottlenecks crop up: checkout UI extensions (Shopify Functions), Liquid theme speed bloat, or brittle third-party ERP webhook syncs.
-
-I specialize strictly in Shopify backend performance and custom apps. I partner with agencies on fixed sprints ($350 - $550) to handle the deep technical plumbing so your creative team can launch stores on schedule with zero client friction.
-
-Let me know if you have a build coming up with custom backend requirements.
-
-Best,
-Hazrat Ummar
-https://relayworks.dev | Telegram: @hazratummar
-
 OUTPUT: Return strict JSON:
 {
-  "subject": "3-5 lowercase or sentence case words",
+  "subject": "3-6 words, varied and tailored to the agency",
   "body": "The complete email body formatted with clean line breaks."
 }`;
 
@@ -272,7 +313,7 @@ export async function POST(
     try {
         const { id } = await params;
         const body = await request.json().catch(() => ({}));
-        const requestedAngle = (body.angle || 'white-label') as 'white-label' | 'concise' | 'technical-audit';
+        const requestedAngle = (body.angle || 'white-label') as 'white-label' | 'concise' | 'technical-audit' | 'ai-automation';
         const requestedModel = (body.model || 'gpt-4o') as 'gpt-4o' | 'gpt-4o-mini' | 'gemini';
 
         const partner = await Partner.findById(id);

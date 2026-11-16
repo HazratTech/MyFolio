@@ -20,7 +20,7 @@ export interface IPartner {
     personalizedPitch?: {
         subject: string;
         body: string;
-        angle?: 'white-label' | 'concise' | 'technical-audit';
+        angle?: 'white-label' | 'concise' | 'technical-audit' | 'ai-automation';
         modelUsed?: string;
         generatedAt?: Date;
     };

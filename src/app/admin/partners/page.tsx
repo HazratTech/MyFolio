@@ -54,7 +54,7 @@ interface Partner {
     personalizedPitch?: {
         subject: string;
         body: string;
-        angle?: "white-label" | "concise" | "technical-audit";
+        angle?: "white-label" | "concise" | "technical-audit" | "ai-automation";
         modelUsed?: string;
         generatedAt?: string;
     };
@@ -103,7 +103,7 @@ export default function ShopifyPartnersPage() {
 
     // AI Pitch Modal State
     const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
-    const [activeAngle, setActiveAngle] = useState<"white-label" | "concise" | "technical-audit">("white-label");
+    const [activeAngle, setActiveAngle] = useState<"white-label" | "concise" | "technical-audit" | "ai-automation">("white-label");
     const [pitchModel, setPitchModel] = useState<"gpt-4o" | "gpt-4o-mini" | "gemini">("gpt-4o");
     const [editableSubject, setEditableSubject] = useState("");
     const [editableBody, setEditableBody] = useState("");
@@ -244,14 +244,17 @@ export default function ShopifyPartnersPage() {
             setEditableBody(partner.personalizedPitch.body);
             setActiveAngle(partner.personalizedPitch.angle || "white-label");
         } else {
-            // Trigger automatic initial generation
-            await generatePitchForPartner(partner, "white-label");
+            // Check if agency name, description, or services emphasize AI, chatbots, or automations
+            const textContext = `${partner.name} ${partner.description || ''} ${partner.services?.join(' ') || ''}`.toLowerCase();
+            const prefersAi = /ai|agent|autonomous|chatbot|concierge|intelligence|automation/i.test(textContext);
+            const initialAngle = prefersAi ? "ai-automation" : "white-label";
+            await generatePitchForPartner(partner, initialAngle);
         }
     };
 
     const generatePitchForPartner = async (
         partner: Partner, 
-        angle: "white-label" | "concise" | "technical-audit",
+        angle: "white-label" | "concise" | "technical-audit" | "ai-automation",
         modelOverride?: "gpt-4o" | "gpt-4o-mini" | "gemini"
     ) => {
         try {
@@ -920,37 +923,37 @@ export default function ShopifyPartnersPage() {
                                         </div>
                                     )}
 
-                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => generatePitchForPartner(selectedPartner, "ai-automation")}
+                                            className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                                                activeAngle === "ai-automation"
+                                                    ? "bg-purple-50/80 border-purple-600 text-purple-950 ring-1 ring-purple-600 shadow-2xs"
+                                                    : "bg-white border-slate-200 hover:border-slate-300 text-slate-700"
+                                            }`}
+                                        >
+                                            <p className="font-bold text-xs flex items-center gap-1">
+                                                <Bot className="w-3.5 h-3.5 text-purple-600" />
+                                                <span>AI Chatbots &amp; Automations</span>
+                                            </p>
+                                            <p className="text-[10px] text-slate-500 mt-0.5">24/7 Concierge, RAG &amp; webhooks</p>
+                                        </button>
+
                                         <button
                                             type="button"
                                             onClick={() => generatePitchForPartner(selectedPartner, "white-label")}
                                             className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
                                                 activeAngle === "white-label"
-                                                    ? "bg-blue-50/80 border-blue-600 text-blue-950 ring-1 ring-blue-600"
+                                                    ? "bg-blue-50/80 border-blue-600 text-blue-950 ring-1 ring-blue-600 shadow-2xs"
                                                     : "bg-white border-slate-200 hover:border-slate-300 text-slate-700"
                                             }`}
                                         >
                                             <p className="font-bold text-xs flex items-center gap-1">
-                                                <Handshake className="w-3 h-3 text-blue-600" />
+                                                <Handshake className="w-3.5 h-3.5 text-blue-600" />
                                                 <span>White-Label Partner</span>
                                             </p>
-                                            <p className="text-[10px] text-slate-500 mt-0.5">Overflow engineering subcontracting</p>
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            onClick={() => generatePitchForPartner(selectedPartner, "concise")}
-                                            className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
-                                                activeAngle === "concise"
-                                                    ? "bg-blue-50/80 border-blue-600 text-blue-950 ring-1 ring-blue-600"
-                                                    : "bg-white border-slate-200 hover:border-slate-300 text-slate-700"
-                                            }`}
-                                        >
-                                            <p className="font-bold text-xs flex items-center gap-1">
-                                                <Send className="w-3 h-3 text-emerald-600" />
-                                                <span>Concise 3-Sentence DM</span>
-                                            </p>
-                                            <p className="text-[10px] text-slate-500 mt-0.5">Fast outreach for LinkedIn / Founder</p>
+                                            <p className="text-[10px] text-slate-500 mt-0.5">Full engineering subcontracting</p>
                                         </button>
 
                                         <button
@@ -958,15 +961,31 @@ export default function ShopifyPartnersPage() {
                                             onClick={() => generatePitchForPartner(selectedPartner, "technical-audit")}
                                             className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
                                                 activeAngle === "technical-audit"
-                                                    ? "bg-blue-50/80 border-blue-600 text-blue-950 ring-1 ring-blue-600"
+                                                    ? "bg-indigo-50/80 border-indigo-600 text-indigo-950 ring-1 ring-indigo-600 shadow-2xs"
                                                     : "bg-white border-slate-200 hover:border-slate-300 text-slate-700"
                                             }`}
                                         >
                                             <p className="font-bold text-xs flex items-center gap-1">
-                                                <Layers className="w-3 h-3 text-indigo-600" />
+                                                <Layers className="w-3.5 h-3.5 text-indigo-600" />
                                                 <span>Checkout &amp; Speed Audit</span>
                                             </p>
-                                            <p className="text-[10px] text-slate-500 mt-0.5">Custom checkout &amp; backend scope</p>
+                                            <p className="text-[10px] text-slate-500 mt-0.5">Shopify Functions &amp; Liquid speed</p>
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => generatePitchForPartner(selectedPartner, "concise")}
+                                            className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                                                activeAngle === "concise"
+                                                    ? "bg-emerald-50/80 border-emerald-600 text-emerald-950 ring-1 ring-emerald-600 shadow-2xs"
+                                                    : "bg-white border-slate-200 hover:border-slate-300 text-slate-700"
+                                            }`}
+                                        >
+                                            <p className="font-bold text-xs flex items-center gap-1">
+                                                <Send className="w-3.5 h-3.5 text-emerald-600" />
+                                                <span>Concise 3-Sentence DM</span>
+                                            </p>
+                                            <p className="text-[10px] text-slate-500 mt-0.5">Fast DM for Founder / Telegram</p>
                                         </button>
                                     </div>
                                 </div>
