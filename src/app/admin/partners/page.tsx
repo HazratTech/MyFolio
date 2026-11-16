@@ -58,6 +58,14 @@ interface Partner {
         modelUsed?: string;
         generatedAt?: string;
     };
+    websiteContext?: {
+        title?: string;
+        description?: string;
+        headings?: string[];
+        techKeywords?: string[];
+        snippet?: string;
+        lastScrapedAt?: string;
+    };
     notes?: string;
     createdAt?: string;
 }
@@ -250,10 +258,15 @@ export default function ShopifyPartnersPage() {
                 // Update local state list
                 setPartners(prev => prev.map(p => p._id === partner._id ? {
                     ...p,
-                    personalizedPitch: data.pitch
+                    personalizedPitch: data.pitch,
+                    websiteContext: data.websiteContext || p.websiteContext
                 } : p));
                 if (selectedPartner && selectedPartner._id === partner._id) {
-                    setSelectedPartner(prev => prev ? { ...prev, personalizedPitch: data.pitch } : null);
+                    setSelectedPartner(prev => prev ? { 
+                        ...prev, 
+                        personalizedPitch: data.pitch,
+                        websiteContext: data.websiteContext || prev.websiteContext
+                    } : null);
                 }
             }
         } catch (err) {
@@ -762,6 +775,36 @@ export default function ShopifyPartnersPage() {
                                         <div className="text-[11px] text-slate-600 leading-relaxed border-t border-slate-200/70 pt-1.5">
                                             <span className="font-semibold text-slate-800 mr-1">Agency Focus:</span>
                                             {selectedPartner.description}
+                                        </div>
+                                    )}
+
+                                    {selectedPartner.websiteContext && (
+                                        <div className="p-2.5 rounded-lg bg-white border border-slate-200/90 space-y-1 text-[11px]">
+                                            <div className="flex items-center justify-between text-slate-700">
+                                                <span className="font-semibold flex items-center gap-1.5 text-blue-700">
+                                                    <Globe className="w-3 h-3 text-blue-600" />
+                                                    <span>Live Website Context Verified</span>
+                                                </span>
+                                                {selectedPartner.websiteContext.lastScrapedAt && (
+                                                    <span className="text-[10px] text-slate-400 font-mono">
+                                                        Scraped {new Date(selectedPartner.websiteContext.lastScrapedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            {selectedPartner.websiteContext.title && (
+                                                <p className="font-medium text-slate-900 line-clamp-1">
+                                                    {selectedPartner.websiteContext.title}
+                                                </p>
+                                            )}
+                                            {selectedPartner.websiteContext.techKeywords && selectedPartner.websiteContext.techKeywords.length > 0 && (
+                                                <div className="flex flex-wrap gap-1 pt-0.5">
+                                                    {selectedPartner.websiteContext.techKeywords.map((tech) => (
+                                                        <span key={tech} className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                                                            {tech}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </div>

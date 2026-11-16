@@ -24,6 +24,14 @@ export interface IPartner {
         modelUsed?: string;
         generatedAt?: Date;
     };
+    websiteContext?: {
+        title?: string;
+        description?: string;
+        headings?: string[];
+        techKeywords?: string[];
+        snippet?: string;
+        lastScrapedAt?: Date;
+    };
     notes?: string;
     createdAt?: Date;
     updatedAt?: Date;
@@ -55,6 +63,14 @@ const PartnerSchema = new Schema<IPartner>({
         angle: { type: String, default: 'white-label' },
         modelUsed: { type: String, default: 'gpt-4o' },
         generatedAt: { type: Date }
+    },
+    websiteContext: {
+        title: { type: String },
+        description: { type: String },
+        headings: [{ type: String }],
+        techKeywords: [{ type: String }],
+        snippet: { type: String },
+        lastScrapedAt: { type: Date }
     },
     notes: { type: String, default: '' },
 }, { timestamps: true });
