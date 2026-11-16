@@ -1,0 +1,1033 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { 
+    Building2, 
+    Globe, 
+    ExternalLink, 
+    Sparkles, 
+    RefreshCw, 
+    Search, 
+    Copy, 
+    Check, 
+    Send, 
+    Trash2, 
+    Filter, 
+    Plus, 
+    X, 
+    Eye, 
+    Save, 
+    RotateCcw, 
+    CheckCircle2, 
+    MapPin, 
+    Handshake, 
+    Briefcase,
+    Store,
+    Layers,
+    DollarSign,
+    CheckCircle
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+
+interface Partner {
+    _id: string;
+    name: string;
+    handle: string;
+    websiteUrl?: string;
+    partnerDirectoryUrl: string;
+    country: string;
+    location?: string;
+    services: string[];
+    description?: string;
+    startingBudget?: string;
+    rating?: number;
+    reviewCount?: number;
+    teamSize?: string;
+    email?: string;
+    contactName?: string;
+    status: "New" | "Pitched" | "In Discussion" | "Partnered" | "Archived";
+    personalizedPitch?: {
+        subject: string;
+        body: string;
+        angle?: "white-label" | "concise" | "technical-audit";
+        generatedAt?: string;
+    };
+    notes?: string;
+    createdAt?: string;
+}
+
+interface PartnerStats {
+    total: number;
+    filtered: number;
+    new: number;
+    pitched: number;
+    inDiscussion: number;
+    partnered: number;
+    countries: Record<string, number>;
+}
+
+const initialStats: PartnerStats = {
+    total: 0,
+    filtered: 0,
+    new: 0,
+    pitched: 0,
+    inDiscussion: 0,
+    partnered: 0,
+    countries: { All: 0 },
+};
+
+export default function ShopifyPartnersPage() {
+    const [partners, setPartners] = useState<Partner[]>([]);
+    const [stats, setStats] = useState<PartnerStats>(initialStats);
+    const [loading, setLoading] = useState(true);
+    const [syncing, setSyncing] = useState(false);
+    const [syncCountry, setSyncCountry] = useState("US");
+    const [selectedCountry, setSelectedCountry] = useState("All");
+    const [selectedStatus, setSelectedStatus] = useState("All");
+    const [searchQuery, setSearchQuery] = useState("");
+    const [syncMessage, setSyncMessage] = useState<string | null>(null);
+
+    // AI Pitch Modal State
+    const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
+    const [activeAngle, setActiveAngle] = useState<"white-label" | "concise" | "technical-audit">("white-label");
+    const [editableSubject, setEditableSubject] = useState("");
+    const [editableBody, setEditableBody] = useState("");
+    const [isGeneratingPitch, setIsGeneratingPitch] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const [saveSuccess, setSaveSuccess] = useState(false);
+    const [copiedField, setCopiedField] = useState<string | null>(null);
+
+    // Manual Add Partner Modal
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [newName, setNewName] = useState("");
+    const [newWebsite, setNewWebsite] = useState("");
+    const [newCountry, setNewCountry] = useState("US");
+    const [newDirectoryUrl, setNewDirectoryUrl] = useState("");
+    const [newServices, setNewServices] = useState("Store building, Theme design");
+    const [newDescription, setNewDescription] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const countryOptions = [
+        { code: "All", label: "All Regions" },
+        { code: "US", label: "🇺🇸 United States" },
+        { code: "GB", label: "🇬🇧 United Kingdom" },
+        { code: "AU", label: "🇦🇺 Australia" },
+        { code: "CA", label: "🇨🇦 Canada" },
+        { code: "DE", label: "🇩🇪 Germany" },
+        { code: "FR", label: "🇫🇷 France" },
+        { code: "NL", label: "🇳🇱 Netherlands" },
+        { code: "SE", label: "🇸🇪 Sweden" },
+    ];
+
+    const statuses = ["All", "New", "Pitched", "In Discussion", "Partnered"];
+
+    const fetchPartners = async () => {
+        try {
+            setLoading(true);
+            const params = new URLSearchParams();
+            if (selectedCountry !== "All") params.set("country", selectedCountry);
+            if (selectedStatus !== "All") params.set("status", selectedStatus);
+            if (searchQuery.trim()) params.set("search", searchQuery.trim());
+
+            const res = await fetch(`/api/admin/partners?${params.toString()}`);
+            if (res.ok) {
+                const data = await res.json();
+                setPartners(data.partners || []);
+                if (data.stats) setStats(data.stats);
+            }
+        } catch (error) {
+            console.error("Failed to fetch partners:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchPartners();
+    }, [selectedCountry, selectedStatus]);
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        fetchPartners();
+    };
+
+    const handleSyncPartners = async () => {
+        try {
+            setSyncing(true);
+            setSyncMessage(null);
+            const res = await fetch(`/api/admin/partners/sync?country=${syncCountry}&limit=25`, {
+                method: "POST"
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setSyncMessage(data.message || `Added ${data.addedCount} new partners.`);
+                fetchPartners();
+            } else {
+                setSyncMessage(data.error || "Failed to scan partners");
+            }
+        } catch (err: any) {
+            setSyncMessage(err.message || "Network error syncing partners");
+        } finally {
+            setSyncing(false);
+        }
+    };
+
+    const updatePartnerStatus = async (id: string, newStatus: string) => {
+        try {
+            const res = await fetch(`/api/admin/partners/${id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status: newStatus }),
+            });
+            if (res.ok) {
+                setPartners(prev => prev.map(p => p._id === id ? { ...p, status: newStatus as any } : p));
+                if (selectedPartner && selectedPartner._id === id) {
+                    setSelectedPartner(prev => prev ? { ...prev, status: newStatus as any } : null);
+                }
+            }
+        } catch (error) {
+            console.error("Failed to update status:", error);
+        }
+    };
+
+    const deletePartner = async (id: string) => {
+        if (!confirm("Are you sure you want to remove this partner agency?")) return;
+        try {
+            const res = await fetch(`/api/admin/partners/${id}`, { method: "DELETE" });
+            if (res.ok) {
+                setPartners(prev => prev.filter(p => p._id !== id));
+                if (selectedPartner && selectedPartner._id === id) {
+                    setSelectedPartner(null);
+                }
+            }
+        } catch (error) {
+            console.error("Failed to delete partner:", error);
+        }
+    };
+
+    // Open Pitch Studio and generate AI pitch if not present
+    const handleOpenPitchModal = async (partner: Partner) => {
+        setSelectedPartner(partner);
+        setSaveSuccess(false);
+
+        if (partner.personalizedPitch?.body) {
+            setEditableSubject(partner.personalizedPitch.subject);
+            setEditableBody(partner.personalizedPitch.body);
+            setActiveAngle(partner.personalizedPitch.angle || "white-label");
+        } else {
+            // Trigger automatic initial generation
+            await generatePitchForPartner(partner, "white-label");
+        }
+    };
+
+    const generatePitchForPartner = async (partner: Partner, angle: "white-label" | "concise" | "technical-audit") => {
+        try {
+            setIsGeneratingPitch(true);
+            setActiveAngle(angle);
+            const res = await fetch(`/api/admin/partners/${partner._id}/pitch`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ angle })
+            });
+            const data = await res.json();
+            if (res.ok && data.pitch) {
+                setEditableSubject(data.pitch.subject);
+                setEditableBody(data.pitch.body);
+                // Update local state list
+                setPartners(prev => prev.map(p => p._id === partner._id ? {
+                    ...p,
+                    personalizedPitch: data.pitch
+                } : p));
+                if (selectedPartner && selectedPartner._id === partner._id) {
+                    setSelectedPartner(prev => prev ? { ...prev, personalizedPitch: data.pitch } : null);
+                }
+            }
+        } catch (err) {
+            console.error("Failed to generate AI pitch:", err);
+        } finally {
+            setIsGeneratingPitch(false);
+        }
+    };
+
+    const handleSavePitch = async () => {
+        if (!selectedPartner) return;
+        try {
+            setIsSaving(true);
+            const res = await fetch(`/api/admin/partners/${selectedPartner._id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    personalizedPitch: {
+                        subject: editableSubject,
+                        body: editableBody,
+                        angle: activeAngle,
+                        generatedAt: new Date().toISOString()
+                    }
+                })
+            });
+            if (res.ok) {
+                setPartners(prev => prev.map(p => p._id === selectedPartner._id ? {
+                    ...p,
+                    personalizedPitch: {
+                        subject: editableSubject,
+                        body: editableBody,
+                        angle: activeAngle,
+                        generatedAt: new Date().toISOString()
+                    }
+                } : p));
+                setSaveSuccess(true);
+                setTimeout(() => setSaveSuccess(false), 2000);
+            }
+        } catch (err) {
+            console.error("Failed to save pitch:", err);
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleCreatePartner = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!newName.trim()) return;
+
+        try {
+            setIsSubmitting(true);
+            const serviceArr = newServices.split(",").map(s => s.trim()).filter(Boolean);
+            const res = await fetch("/api/admin/partners", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: newName.trim(),
+                    websiteUrl: newWebsite.trim() || undefined,
+                    country: newCountry,
+                    partnerDirectoryUrl: newDirectoryUrl.trim() || undefined,
+                    services: serviceArr.length > 0 ? serviceArr : ["Store building", "Design"],
+                    description: newDescription.trim() || undefined,
+                })
+            });
+
+            if (res.ok) {
+                setShowAddModal(false);
+                setNewName("");
+                setNewWebsite("");
+                setNewDirectoryUrl("");
+                setNewDescription("");
+                setSyncMessage(`Successfully added partner agency: ${newName}`);
+                fetchPartners();
+            } else {
+                const err = await res.json();
+                alert(err.error || "Failed to add partner");
+            }
+        } catch (err: any) {
+            alert(err.message || "Network error adding partner");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const copyToClipboard = (text: string, fieldName: string) => {
+        navigator.clipboard.writeText(text);
+        setCopiedField(fieldName);
+        setTimeout(() => setCopiedField(null), 2000);
+    };
+
+    return (
+        <div className="space-y-6 pb-20">
+            {/* Header: Clean, Authoritative, Anti-Slop */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold font-heading tracking-tight text-slate-950 flex items-center gap-2.5">
+                        <Handshake className="w-8 h-8 text-blue-600" />
+                        <span>Shopify Partner Network</span>
+                    </h1>
+                    <p className="text-sm text-slate-600 mt-1">
+                        Verified boutique Shopify design &amp; marketing agencies to partner with for white-label engineering overflow.
+                    </p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2.5">
+                    {/* Add Manual Partner Button */}
+                    <Button
+                        onClick={() => setShowAddModal(true)}
+                        className="bg-slate-950 hover:bg-black text-white font-medium text-xs h-10 px-4 rounded-xl shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+                    >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Add Agency</span>
+                    </Button>
+
+                    {/* Country Selector for Sync */}
+                    <select
+                        value={syncCountry}
+                        onChange={(e) => setSyncCountry(e.target.value)}
+                        className="h-10 text-xs font-semibold rounded-xl border border-slate-200 bg-white px-3 text-slate-800 shadow-2xs focus:border-blue-600 cursor-pointer"
+                    >
+                        <option value="US">🇺🇸 United States</option>
+                        <option value="GB">🇬🇧 United Kingdom</option>
+                        <option value="AU">🇦🇺 Australia</option>
+                        <option value="CA">🇨🇦 Canada</option>
+                        <option value="DE">🇩🇪 Germany</option>
+                        <option value="ALL">🌐 Multi-Region Batch</option>
+                    </select>
+
+                    {/* Scan Shopify Partner Directory Button */}
+                    <Button
+                        onClick={handleSyncPartners}
+                        disabled={syncing}
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs h-10 px-4 rounded-xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer"
+                    >
+                        <RefreshCw className={`w-3.5 h-3.5 ${syncing ? "animate-spin" : ""}`} />
+                        <span>{syncing ? "Scanning Directory..." : "Scan Directory"}</span>
+                    </Button>
+                </div>
+            </div>
+
+            {/* Notification Banner */}
+            {syncMessage && (
+                <div className="p-3.5 rounded-xl bg-blue-50 border border-blue-200 text-xs text-blue-900 flex items-center justify-between shadow-2xs">
+                    <span className="font-medium">{syncMessage}</span>
+                    <button 
+                        onClick={() => setSyncMessage(null)} 
+                        className="text-blue-500 hover:text-blue-900 p-1 rounded-md transition-colors"
+                        aria-label="Dismiss message"
+                    >
+                        <X className="w-4 h-4" />
+                    </button>
+                </div>
+            )}
+
+            {/* Metrics Ribbon */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between">
+                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                        <Building2 className="w-3.5 h-3.5 text-slate-600" />
+                        <span>Total Agencies</span>
+                    </span>
+                    <span className="text-2xl font-black font-mono text-slate-950 mt-1.5">{stats.total}</span>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between">
+                    <span className="text-xs font-semibold text-emerald-700 uppercase tracking-wider flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>New &amp; Uncontacted</span>
+                    </span>
+                    <span className="text-2xl font-black font-mono text-emerald-950 mt-1.5">{stats.new}</span>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between">
+                    <span className="text-xs font-semibold text-amber-700 uppercase tracking-wider flex items-center gap-1.5">
+                        <Send className="w-3.5 h-3.5 text-amber-600" />
+                        <span>Pitched</span>
+                    </span>
+                    <span className="text-2xl font-black font-mono text-amber-950 mt-1.5">{stats.pitched}</span>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between">
+                    <span className="text-xs font-semibold text-blue-700 uppercase tracking-wider flex items-center gap-1.5">
+                        <Briefcase className="w-3.5 h-3.5 text-blue-600" />
+                        <span>In Discussion</span>
+                    </span>
+                    <span className="text-2xl font-black font-mono text-blue-950 mt-1.5">{stats.inDiscussion}</span>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between">
+                    <span className="text-xs font-semibold text-indigo-700 uppercase tracking-wider flex items-center gap-1.5">
+                        <Handshake className="w-3.5 h-3.5 text-indigo-600" />
+                        <span>Partnered</span>
+                    </span>
+                    <span className="text-2xl font-black font-mono text-indigo-950 mt-1.5">{stats.partnered}</span>
+                </div>
+            </div>
+
+            {/* Filter Bar & Region Selector */}
+            <div className="space-y-3 p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-3">
+                    {/* Search Form */}
+                    <form onSubmit={handleSearch} className="relative w-full md:w-80">
+                        <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                        <Input
+                            placeholder="Search agency name, website, location..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="h-10 pl-10 bg-slate-50 border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-blue-600 rounded-xl w-full shadow-2xs"
+                        />
+                    </form>
+
+                    {/* Status Filter */}
+                    <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto">
+                        <span className="text-xs font-medium text-slate-500 mr-1 flex items-center gap-1">
+                            <Filter className="w-3.5 h-3.5" />
+                            <span>Status:</span>
+                        </span>
+                        {statuses.map((status) => (
+                            <button
+                                key={status}
+                                type="button"
+                                onClick={() => setSelectedStatus(status)}
+                                className={`text-xs px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer ${
+                                    selectedStatus === status
+                                        ? "bg-slate-900 text-white font-semibold shadow-2xs"
+                                        : "text-slate-600 hover:text-slate-950 hover:bg-slate-100 font-medium"
+                                }`}
+                            >
+                                {status}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Country / Region Tabs */}
+                <div className="flex items-center gap-2 overflow-x-auto pt-3 border-t border-slate-100">
+                    {countryOptions.map((opt) => {
+                        const count = stats.countries[opt.code] || 0;
+                        const isSelected = selectedCountry === opt.code;
+                        return (
+                            <button
+                                key={opt.code}
+                                type="button"
+                                onClick={() => setSelectedCountry(opt.code)}
+                                className={`text-xs font-semibold px-3 py-1.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
+                                    isSelected
+                                        ? "bg-blue-600 text-white shadow-xs"
+                                        : "bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200/80 font-medium"
+                                }`}
+                            >
+                                <span>{opt.label}</span>
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-mono ${
+                                    isSelected ? "bg-white/20 text-white" : "bg-slate-200/80 text-slate-700"
+                                }`}>
+                                    {count}
+                                </span>
+                            </button>
+                        );
+                    })}
+                </div>
+            </div>
+
+            {/* Partner Agency Cards Grid */}
+            {loading ? (
+                <div className="space-y-3">
+                    {[1, 2, 3, 4].map(i => (
+                        <div key={i} className="h-32 rounded-2xl bg-white border border-slate-200/90 shadow-xs animate-pulse p-6" />
+                    ))}
+                </div>
+            ) : partners.length === 0 ? (
+                <div className="text-center py-16 bg-white rounded-2xl border border-slate-200/90 border-dashed shadow-xs">
+                    <Handshake className="w-12 h-12 text-slate-400 mx-auto mb-3 opacity-60" />
+                    <h3 className="text-base font-bold text-slate-900 mb-1">No Partner Agencies Found</h3>
+                    <p className="text-xs text-slate-500 max-w-md mx-auto mb-4">
+                        Scan the Shopify Partner Directory to harvest verified boutique design &amp; marketing agencies.
+                    </p>
+                    <Button onClick={handleSyncPartners} size="sm" className="bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-xl shadow-xs">
+                        Scan Shopify Directory
+                    </Button>
+                </div>
+            ) : (
+                <div className="space-y-3">
+                    {partners.map((partner) => {
+                        const hasPitch = !!partner.personalizedPitch?.body;
+                        return (
+                            <div
+                                key={partner._id}
+                                className="p-5 rounded-2xl bg-white border border-slate-200/90 hover:border-slate-300 hover:shadow-sm transition-all duration-150 flex flex-col lg:flex-row lg:items-center justify-between gap-4 group"
+                            >
+                                {/* Left Content: Agency Profile & Positioning */}
+                                <div className="space-y-2.5 flex-grow max-w-3xl">
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        {/* Country Badge */}
+                                        <span className="inline-flex items-center gap-1 text-[11px] font-bold font-mono px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-800 border border-slate-200">
+                                            <MapPin className="w-3 h-3 text-slate-500" />
+                                            <span>{partner.country}</span>
+                                        </span>
+
+                                        {/* Team Size Pill */}
+                                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200/80">
+                                            <Briefcase className="w-3 h-3 text-blue-600" />
+                                            <span>Team: {partner.teamSize || "2 - 9"}</span>
+                                        </span>
+
+                                        {/* Starting Budget Indicator */}
+                                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200/80 font-mono">
+                                            <span>Budget: {partner.startingBudget || "$1,000 - $5,000"}</span>
+                                        </span>
+
+                                        {/* Verified Shopify Partner Link */}
+                                        <a
+                                            href={partner.partnerDirectoryUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50/90 hover:bg-emerald-100 border border-emerald-200/90 px-2 py-0.5 rounded-md transition-colors"
+                                            title="View verified Shopify Partner listing"
+                                        >
+                                            <Store className="w-3 h-3" />
+                                            <span>Shopify Directory</span>
+                                            <ExternalLink className="w-2.5 h-2.5 opacity-70" />
+                                        </a>
+
+                                        {/* Official Agency Website Link */}
+                                        {partner.websiteUrl && (
+                                            <a
+                                                href={partner.websiteUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-700 bg-blue-50/90 hover:bg-blue-100 border border-blue-200 px-2 py-0.5 rounded-md transition-colors"
+                                                title="Visit official agency website"
+                                            >
+                                                <Globe className="w-3 h-3" />
+                                                <span>Visit Website</span>
+                                                <ExternalLink className="w-2.5 h-2.5 opacity-70" />
+                                            </a>
+                                        )}
+                                    </div>
+
+                                    {/* Agency Name & Description */}
+                                    <div>
+                                        <h3 className="text-base font-bold text-slate-950 group-hover:text-blue-600 transition-colors flex items-center gap-2">
+                                            <span>{partner.name}</span>
+                                            {partner.location && (
+                                                <span className="text-xs font-normal text-slate-500 font-mono">· {partner.location}</span>
+                                            )}
+                                        </h3>
+                                        {partner.description && (
+                                            <div className="mt-1.5 p-3 rounded-xl bg-slate-50 border border-slate-200/70 text-xs text-slate-700 leading-relaxed">
+                                                <span className="font-semibold text-slate-900 mr-1.5">Focus &amp; Specialty:</span>
+                                                {partner.description}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Services Listed */}
+                                    <div className="flex flex-wrap gap-1.5 pt-0.5">
+                                        {partner.services?.map((s, i) => (
+                                            <span key={i} className="text-[11px] font-medium bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md border border-slate-200/80">
+                                                {s}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Right Actions: Status & AI Pitch Trigger */}
+                                <div className="flex flex-col sm:flex-row lg:flex-col items-start lg:items-end justify-between gap-3 shrink-0 pt-3 lg:pt-0 border-t lg:border-t-0 border-slate-100">
+                                    {/* Status Selector */}
+                                    <select
+                                        value={partner.status}
+                                        onChange={(e) => updatePartnerStatus(partner._id, e.target.value)}
+                                        className="text-xs font-medium bg-white border border-slate-200 text-slate-800 rounded-xl px-3 py-1.5 focus:border-blue-600 shadow-2xs cursor-pointer"
+                                    >
+                                        <option value="New">Status: New 🟢</option>
+                                        <option value="Pitched">Status: Pitched 🟡</option>
+                                        <option value="In Discussion">Status: In Discussion 🔵</option>
+                                        <option value="Partnered">Status: Partnered 🏆</option>
+                                        <option value="Archived">Status: Archived 📁</option>
+                                    </select>
+
+                                    {/* AI Pitch Button */}
+                                    <div className="flex items-center gap-2">
+                                        <Button
+                                            onClick={() => handleOpenPitchModal(partner)}
+                                            size="sm"
+                                            className={`font-semibold text-xs h-9 px-4 rounded-xl transition-all shadow-xs flex items-center gap-1.5 cursor-pointer ${
+                                                hasPitch 
+                                                    ? "bg-slate-950 hover:bg-black text-white" 
+                                                    : "bg-blue-600 hover:bg-blue-700 text-white"
+                                            }`}
+                                        >
+                                            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                                            <span>{hasPitch ? "View AI Pitch" : "⚡ Prepare Pitch"}</span>
+                                        </Button>
+
+                                        <Button
+                                            onClick={() => deletePartner(partner._id)}
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-9 w-9 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
+                                            title="Remove partner"
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
+
+            {/* DYNAMIC AI PITCH STUDIO MODAL */}
+            <Dialog open={!!selectedPartner} onOpenChange={(open) => !open && setSelectedPartner(null)}>
+                <DialogContent
+                    showCloseButton={false}
+                    style={{
+                        maxHeight: "calc(100vh - 48px)",
+                        height: "min(86vh, 740px)",
+                        maxWidth: "860px",
+                        width: "95vw"
+                    }}
+                    className="sm:max-w-[860px] w-[95vw] flex flex-col p-0 gap-0 overflow-hidden rounded-2xl bg-white border border-slate-200 text-slate-900 shadow-2xl focus:outline-none"
+                >
+                    {selectedPartner && (
+                        <div className="flex flex-col h-full max-h-full overflow-hidden">
+                            {/* 1. Anchored Header */}
+                            <div className="shrink-0 px-5 py-3.5 border-b border-slate-200 bg-slate-50/90 flex items-center justify-between gap-4">
+                                <div>
+                                    <div className="flex items-center gap-2 mb-0.5">
+                                        <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded bg-blue-100 text-blue-800 border border-blue-200">
+                                            Shopify Partner Agency
+                                        </span>
+                                        <span className="text-xs font-semibold text-slate-700">Target: {selectedPartner.name}</span>
+                                    </div>
+                                    <DialogTitle className="text-lg font-bold font-heading text-slate-950 flex items-center gap-2">
+                                        <span>Bespoke Subcontracting Pitch Studio</span>
+                                        <span className="text-xs font-normal text-slate-500 hidden sm:inline">· Powered by Google Gemini</span>
+                                    </DialogTitle>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                    {/* Inline Status Controller */}
+                                    <select
+                                        value={selectedPartner.status}
+                                        onChange={(e) => updatePartnerStatus(selectedPartner._id, e.target.value)}
+                                        className="text-xs font-medium bg-white border border-slate-200 text-slate-800 rounded-lg px-2.5 py-1.5 focus:border-blue-600 shadow-2xs cursor-pointer"
+                                    >
+                                        <option value="New">🟢 New</option>
+                                        <option value="Pitched">🟡 Pitched</option>
+                                        <option value="In Discussion">🔵 In Discussion</option>
+                                        <option value="Partnered">🏆 Partnered</option>
+                                        <option value="Archived">📁 Archived</option>
+                                    </select>
+
+                                    <button
+                                        onClick={() => setSelectedPartner(null)}
+                                        className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-900 transition-colors cursor-pointer"
+                                        aria-label="Close modal"
+                                    >
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* 2. Scrollable Dynamic Body */}
+                            <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-5 space-y-4 text-xs">
+                                {/* Agency Intelligence Strip */}
+                                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+                                    <div className="flex flex-wrap items-center justify-between gap-2 text-[11px]">
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-semibold text-slate-700">Agency:</span>
+                                            <span className="font-bold text-slate-950">{selectedPartner.name}</span>
+                                            <span className="text-slate-400">·</span>
+                                            {selectedPartner.websiteUrl ? (
+                                                <a
+                                                    href={selectedPartner.websiteUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="font-mono text-blue-600 hover:underline flex items-center gap-1 font-semibold"
+                                                >
+                                                    <Globe className="w-3 h-3" />
+                                                    <span>{selectedPartner.websiteUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')}</span>
+                                                    <ExternalLink className="w-2.5 h-2.5" />
+                                                </a>
+                                            ) : (
+                                                <span className="text-slate-500">Website not listed</span>
+                                            )}
+                                        </div>
+
+                                        <a
+                                            href={selectedPartner.partnerDirectoryUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-emerald-700 hover:underline flex items-center gap-1 font-medium"
+                                        >
+                                            <Store className="w-3 h-3" />
+                                            <span>View Official Shopify Profile</span>
+                                            <ExternalLink className="w-2.5 h-2.5" />
+                                        </a>
+                                    </div>
+
+                                    {selectedPartner.description && (
+                                        <div className="text-[11px] text-slate-600 leading-relaxed border-t border-slate-200/70 pt-1.5">
+                                            <span className="font-semibold text-slate-800 mr-1">Agency Focus:</span>
+                                            {selectedPartner.description}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Dynamic Angle Selector */}
+                                <div className="space-y-1.5">
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-[11px] font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                                            <Sparkles className="w-3 h-3 text-amber-500" />
+                                            <span>Pitch Angle (Click to Regenerate with AI)</span>
+                                        </label>
+                                        {isGeneratingPitch && (
+                                            <span className="text-[11px] text-blue-600 font-medium animate-pulse flex items-center gap-1">
+                                                <RefreshCw className="w-3 h-3 animate-spin" />
+                                                <span>Gemini is tailoring pitch...</span>
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => generatePitchForPartner(selectedPartner, "white-label")}
+                                            className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                                                activeAngle === "white-label"
+                                                    ? "bg-blue-50/80 border-blue-600 text-blue-950 ring-1 ring-blue-600"
+                                                    : "bg-white border-slate-200 hover:border-slate-300 text-slate-700"
+                                            }`}
+                                        >
+                                            <p className="font-bold text-xs flex items-center gap-1">
+                                                <Handshake className="w-3 h-3 text-blue-600" />
+                                                <span>White-Label Partner</span>
+                                            </p>
+                                            <p className="text-[10px] text-slate-500 mt-0.5">Overflow engineering subcontracting</p>
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => generatePitchForPartner(selectedPartner, "concise")}
+                                            className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                                                activeAngle === "concise"
+                                                    ? "bg-blue-50/80 border-blue-600 text-blue-950 ring-1 ring-blue-600"
+                                                    : "bg-white border-slate-200 hover:border-slate-300 text-slate-700"
+                                            }`}
+                                        >
+                                            <p className="font-bold text-xs flex items-center gap-1">
+                                                <Send className="w-3 h-3 text-emerald-600" />
+                                                <span>Concise 3-Sentence DM</span>
+                                            </p>
+                                            <p className="text-[10px] text-slate-500 mt-0.5">Fast outreach for LinkedIn / Founder</p>
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => generatePitchForPartner(selectedPartner, "technical-audit")}
+                                            className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                                                activeAngle === "technical-audit"
+                                                    ? "bg-blue-50/80 border-blue-600 text-blue-950 ring-1 ring-blue-600"
+                                                    : "bg-white border-slate-200 hover:border-slate-300 text-slate-700"
+                                            }`}
+                                        >
+                                            <p className="font-bold text-xs flex items-center gap-1">
+                                                <Layers className="w-3 h-3 text-indigo-600" />
+                                                <span>Checkout &amp; Speed Audit</span>
+                                            </p>
+                                            <p className="text-[10px] text-slate-500 mt-0.5">Custom checkout &amp; backend scope</p>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Subject Line */}
+                                <div className="space-y-1">
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-[11px] font-bold text-slate-800 uppercase tracking-wider">Subject Line</label>
+                                        <button
+                                            type="button"
+                                            onClick={() => copyToClipboard(editableSubject, "subject")}
+                                            className="text-[11px] text-blue-600 hover:underline flex items-center gap-1"
+                                        >
+                                            {copiedField === "subject" ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                                            <span>{copiedField === "subject" ? "Copied" : "Copy Subject"}</span>
+                                        </button>
+                                    </div>
+                                    <Input
+                                        value={editableSubject}
+                                        onChange={(e) => setEditableSubject(e.target.value)}
+                                        className="h-9 text-xs rounded-xl font-mono bg-white border-slate-200"
+                                    />
+                                </div>
+
+                                {/* Email Body */}
+                                <div className="space-y-1">
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-[11px] font-bold text-slate-800 uppercase tracking-wider">Email Message</label>
+                                        <button
+                                            type="button"
+                                            onClick={() => copyToClipboard(editableBody, "body")}
+                                            className="text-[11px] text-blue-600 hover:underline flex items-center gap-1"
+                                        >
+                                            {copiedField === "body" ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                                            <span>{copiedField === "body" ? "Copied" : "Copy Message"}</span>
+                                        </button>
+                                    </div>
+                                    <textarea
+                                        rows={8}
+                                        value={editableBody}
+                                        onChange={(e) => setEditableBody(e.target.value)}
+                                        className="w-full rounded-xl border border-slate-200 p-3 text-xs text-slate-800 leading-relaxed focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none font-sans"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* 3. Anchored Footer */}
+                            <div className="shrink-0 px-5 py-3 border-t border-slate-200 bg-slate-50/90 flex flex-wrap items-center justify-between gap-3">
+                                <div className="flex items-center gap-2">
+                                    <Button
+                                        onClick={handleSavePitch}
+                                        disabled={isSaving}
+                                        variant="outline"
+                                        size="sm"
+                                        className="border-slate-300 text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 h-8 px-3 rounded-xl flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                                    >
+                                        {saveSuccess ? (
+                                            <>
+                                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                                                <span className="text-emerald-700 font-semibold">Saved!</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Save className="w-3.5 h-3.5 text-slate-500" />
+                                                <span>{isSaving ? "Saving..." : "Save Customizations"}</span>
+                                            </>
+                                        )}
+                                    </Button>
+
+                                    <Button
+                                        onClick={() => {
+                                            copyToClipboard(`Subject: ${editableSubject}\n\n${editableBody}`, "all");
+                                        }}
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-xs font-medium text-slate-700 hover:text-slate-950 hover:bg-slate-200/60 h-8 px-3 rounded-xl flex items-center gap-1.5 cursor-pointer"
+                                    >
+                                        {copiedField === "all" ? (
+                                            <>
+                                                <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                                <span className="text-emerald-700 font-semibold">Pitch Copied!</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Copy className="w-3.5 h-3.5 text-slate-500" />
+                                                <span>Copy Full Pitch</span>
+                                            </>
+                                        )}
+                                    </Button>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                    <a
+                                        href={`mailto:contact@${selectedPartner.handle}.com?subject=${encodeURIComponent(editableSubject)}&body=${encodeURIComponent(editableBody)}`}
+                                        className="inline-flex"
+                                        onClick={() => {
+                                            if (selectedPartner.status === "New") {
+                                                updatePartnerStatus(selectedPartner._id, "Pitched");
+                                            }
+                                        }}
+                                    >
+                                        <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs h-8 px-4 rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer">
+                                            <Send className="w-3.5 h-3.5" />
+                                            <span>Open in Email App</span>
+                                        </Button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
+
+            {/* MANUAL ADD PARTNER MODAL */}
+            <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
+                <DialogContent className="sm:max-w-[580px] w-[95vw] rounded-2xl bg-white border border-slate-200 text-slate-900 shadow-2xl p-6">
+                    <DialogTitle className="text-xl font-bold font-heading text-slate-950 flex items-center gap-2">
+                        <Plus className="w-5 h-5 text-blue-600" />
+                        <span>Add Partner Agency</span>
+                    </DialogTitle>
+                    <p className="text-xs text-slate-500 -mt-2">
+                        Manually insert an agency found on Clutch, LinkedIn, or personal referral.
+                    </p>
+
+                    <form onSubmit={handleCreatePartner} className="space-y-4 pt-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div className="space-y-1">
+                                <label className="text-[11px] font-semibold text-slate-700">Agency Name *</label>
+                                <Input
+                                    required
+                                    placeholder="e.g. Bungalow Creative"
+                                    value={newName}
+                                    onChange={(e) => setNewName(e.target.value)}
+                                    className="h-9 text-xs rounded-xl"
+                                />
+                            </div>
+
+                            <div className="space-y-1">
+                                <label className="text-[11px] font-semibold text-slate-700">Country / Region</label>
+                                <select
+                                    value={newCountry}
+                                    onChange={(e) => setNewCountry(e.target.value)}
+                                    className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3 text-xs text-slate-900 focus:border-blue-600"
+                                >
+                                    <option value="US">🇺🇸 United States</option>
+                                    <option value="GB">🇬🇧 United Kingdom</option>
+                                    <option value="AU">🇦🇺 Australia</option>
+                                    <option value="CA">🇨🇦 Canada</option>
+                                    <option value="DE">🇩🇪 Germany</option>
+                                    <option value="Other">🌐 Other Region</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-[11px] font-semibold text-slate-700">Official Website URL</label>
+                            <Input
+                                placeholder="https://agency.com"
+                                value={newWebsite}
+                                onChange={(e) => setNewWebsite(e.target.value)}
+                                className="h-9 text-xs rounded-xl"
+                            />
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-[11px] font-semibold text-slate-700">Shopify Partner / Clutch Profile Link</label>
+                            <Input
+                                placeholder="https://shopify.com/in/partners/directory/partner/..."
+                                value={newDirectoryUrl}
+                                onChange={(e) => setNewDirectoryUrl(e.target.value)}
+                                className="h-9 text-xs rounded-xl"
+                            />
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-[11px] font-semibold text-slate-700">Services Offered (comma separated)</label>
+                            <Input
+                                placeholder="Store building, Theme design, CRO, SEO"
+                                value={newServices}
+                                onChange={(e) => setNewServices(e.target.value)}
+                                className="h-9 text-xs rounded-xl"
+                            />
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-[11px] font-semibold text-slate-700">Agency Description / Specialty</label>
+                            <textarea
+                                rows={3}
+                                placeholder="e.g. Boutique agency specializing in aesthetics-driven storefronts for fashion and lifestyle brands..."
+                                value={newDescription}
+                                onChange={(e) => setNewDescription(e.target.value)}
+                                className="w-full rounded-xl border border-slate-200 p-3 text-xs text-slate-900 focus:border-blue-600 focus:outline-none"
+                            />
+                        </div>
+
+                        <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                onClick={() => setShowAddModal(false)}
+                                className="text-xs text-slate-600 hover:text-slate-900 h-9 px-4 rounded-xl"
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                disabled={isSubmitting}
+                                className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs h-9 px-5 rounded-xl shadow-xs"
+                            >
+                                {isSubmitting ? "Adding..." : "Add Partner Agency"}
+                            </Button>
+                        </div>
+                    </form>
+                </DialogContent>
+            </Dialog>
+        </div>
+    );
+}
