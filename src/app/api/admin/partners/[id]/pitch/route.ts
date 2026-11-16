@@ -157,60 +157,25 @@ function generateFallbackPitch(
     partnerName: string,
     services: string[],
     desc: string,
-    angle: 'white-label' | 'concise' | 'technical-audit' | 'ai-automation' = 'white-label',
+    angle: 'white-label' | 'custom-scripts' | 'concise' | 'technical-audit' | 'ai-automation' = 'white-label',
     siteContext?: ScrapedContext | null
 ) {
     const isDesignOrCro = /design|cro|conversion|brand|creative|ui|ux/i.test(services.join(' ') + ' ' + desc);
     const serviceHighlight = siteContext?.description?.slice(0, 80) 
-        || (isDesignOrCro ? 'store design, UX, and CRO' : 'store building and merchant growth');
+        || (isDesignOrCro ? 'store design, UX, and branding' : 'Shopify store builds and merchant growth');
 
-    if (angle === 'ai-automation') {
+    if (angle === 'custom-scripts' || angle === 'technical-audit') {
         return {
-            subject: `ai store agents & automations for ${partnerName}?`,
+            subject: `custom scripts & webhook overflow for ${partnerName}?`,
             body: `Hey team at ${partnerName},
 
 Saw your focus around ${serviceHighlight}.
 
-When your merchant clients ask for 24/7 AI shopping concierges (catalog RAG discovery, instant sizing or order lookup) or automated webhook syncs between Shopify and their warehouse/CRM, who handles that technical execution for you?
+When your merchant clients ask for custom technical logic outside standard themes—like event-driven webhook syncs with ERPs/warehouses, custom Shopify Functions, or private backend scripts—who handles that execution for you?
 
-I engineer deterministic AI chatbots and custom workflow automations at RelayWorks (https://relayworks.dev) using Python FastAPI, LangGraph, and pgvector. I white-label for partner agencies when internal engineering is at capacity.
+I build custom scripts, private Shopify apps, and automated API pipelines at RelayWorks (https://relayworks.dev). I partner with agencies on a white-label basis to take complex technical tickets off their plate.
 
-If you ever run into a build requiring custom AI assistants or external API pipelines, happy to jump on a quick 5-minute technical chat or connect on Telegram (@hazratummar).
-
-Best,
-Hazrat Ummar
-https://relayworks.dev`
-        };
-    }
-
-    if (angle === 'concise') {
-        return {
-            subject: `custom app & automation capacity for ${partnerName}?`,
-            body: `Hey there,
-
-Who handles your technical overflow when a merchant asks for custom checkout extensions, AI chatbots, or external API/webhook syncs?
-
-I white-label custom Shopify apps, AI agents, and Python backends for boutique agencies when internal dev teams are booked.
-
-Open to an exploratory chat or Telegram connection (@hazratummar) if you occasionally look for reliable technical subcontractors: https://relayworks.dev.
-
-Best,
-Hazrat`
-        };
-    }
-
-    if (angle === 'technical-audit') {
-        return {
-            subject: `checkout extensions & store automations for ${partnerName}`,
-            body: `Hey team at ${partnerName},
-
-Saw your work around ${serviceHighlight}.
-
-When custom stores scale, technical bottlenecks often crop up: checkout UI extensions (Shopify Functions), Liquid theme speed bloat, or brittle third-party ERP webhook syncs.
-
-I specialize in Shopify backend performance, custom apps, and automated pipelines. I partner with agencies to handle the deep technical plumbing so your creative team can launch stores on schedule with zero client friction.
-
-Let me know if your team handles all custom app logic in-house or if you occasionally partner with external engineers.
+Do you typically handle custom script and webhook requests in-house, or do you collaborate with external engineering partners for overflow?
 
 Best,
 Hazrat Ummar
@@ -218,18 +183,34 @@ https://relayworks.dev | Telegram: @hazratummar`
         };
     }
 
+    if (angle === 'concise') {
+        return {
+            subject: `white-label bots & custom apps for ${partnerName}?`,
+            body: `Hey there,
+
+When your clients ask for custom AI chatbots, Telegram/Discord community bots, or companion mobile apps, do you have a go-to technical partner, or do you turn those down?
+
+I white-label these specialized builds for Shopify agencies at RelayWorks (https://relayworks.dev), letting your team expand billable services without hiring full-time engineers.
+
+Open to a brief chat or connecting on Telegram (@hazratummar) if you ever look for a reliable engineering subcontractor.
+
+Best,
+Hazrat`
+        };
+    }
+
     // Default: white-label
     return {
-        subject: `custom app & automation overflow for ${partnerName}?`,
+        subject: `white-label AI chatbots & custom tech for ${partnerName}?`,
         body: `Hey team at ${partnerName},
 
-Saw your work on the Shopify directory focusing on ${serviceHighlight}.
+Saw your track record around ${serviceHighlight}.
 
-When your clients ask for custom technical logic (custom checkout UI extensions, AI shopping assistants, or ERP/warehouse webhook synchronization), who handles that overflow for your team?
+Because your agency focuses heavily on design, branding, and theme development, what happens when a merchant asks for services outside your core scope—like a 24/7 AI shopping chatbot, Telegram/Discord community bots, custom backend scripts, or a companion mobile app?
 
-I am an independent engineer at RelayWorks. I white-label custom Shopify apps, AI chatbots, and automation pipelines for partner agencies, taking custom tickets off your plate so your theme devs never get bottlenecked.
+I run RelayWorks (https://relayworks.dev). We act as a white-label technical engineering partner for boutique Shopify agencies, delivering the AI chatbots, bots, custom scripts, and mobile apps that design teams don't keep in-house. You bill your client, keep the margin, and we handle the build under your brand.
 
-If you ever have a technical backlog or an upcoming build requiring custom engineering, open to a quick 5-minute chat to see if we'd be a fit.
+Do you currently have a go-to partner when clients request these technical builds, or do you handle them internally?
 
 Best,
 Hazrat Ummar
@@ -256,55 +237,58 @@ function cleanAntiSlop(text: string): string {
         .trim();
 }
 
-const SYSTEM_PROMPT = `You are Hazrat Ummar, senior software engineer at RelayWorks (https://relayworks.dev).
-You write direct, ultra-personalized 1-to-1 cold emails to founders or technical directors at Shopify Partner agencies.
+const SYSTEM_PROMPT = `You are Hazrat Ummar, senior software engineer and founder of RelayWorks (https://relayworks.dev).
+You write direct, human, 1-to-1 cold emails to founders or technical leads at Shopify Partner agencies.
 
-YOUR TECHNICAL CAPABILITIES:
-You are an independent technical partner for boutique Shopify agencies:
-1. AI Chatbots & Store Assistants: 24/7 AI shopping concierges, catalog RAG discovery bots (answering sizing, product comparisons, stock & order status with zero hallucination), WhatsApp/Telegram merchant concierges.
-2. Custom Shopify Apps & Extensions: Shopify Functions (custom discount/bundle logic, cart transforms, volume pricing), Checkout UI extensions.
-3. Custom Automations & Webhooks: Event-driven syncs between Shopify and ERPs/CRMs/warehouse APIs, inventory routing, automated background pipelines.
-4. Robust Backend Architecture: Python FastAPI microservices, pgvector, LangGraph, high-throughput Node.js/TypeScript APIs.
+YOUR CORE PROPOSITION:
+You are a white-label technical engineering partner for boutique Shopify agencies.
+You do NOT assist or meddle in their daily design, branding, SEO, or theme work.
+Instead, you offer YOUR OWN specialized engineering services that these agencies typically DO NOT provide in-house:
+1. Chatbots & AI Chatbots: 24/7 AI shopping concierges, catalog RAG discovery, instant order lookup, and customer support bots.
+2. Discord & Telegram Bots: Custom bots for brand communities, VIP buyer clubs, creator view bounties, and merchant order alerts.
+3. Custom Scripts & Webhook Automations: Event-driven webhooks, ERP/warehouse/CRM syncs, inventory routers, background automation scripts, and custom Shopify Functions.
+4. Companion Mobile Apps: Production native Android (Kotlin) and cross-platform companion mobile apps for Shopify brands.
+
+THE WINNING B2B WHITE-LABEL ANGLE:
+Agency founders want to say YES when their merchant clients ask for advanced technical builds (AI chatbots, Telegram/Discord bots, custom scripts, mobile apps), without having to hire a full-time $120k/yr engineer.
+You build it white-label under their agency name. They invoice their client, keep the profit margin, and take zero technical risk.
 
 CRITICAL RULES (ABSOLUTE COMPLIANCE REQUIRED):
 
 1. STRICTLY ZERO PRICING (NO DOLLAR AMOUNTS):
-   - NEVER, UNDER ANY CIRCUMSTANCES, QUOTE A PRICE, SPRINT COST, OR RATE.
+   - NEVER, UNDER ANY CIRCUMSTANCES, QUOTE A PRICE, SPRINT COST, OR RATE ($0 quotes).
    - Do NOT write "$400", "$600", "$250", "$350", "$1,200", or ANY dollar numbers.
-   - Agency founders find unsolicited prices in a first message spammy. Keep this strictly a peer engineering outreach.
+   - Agency founders find unsolicited price quotes spammy. Keep this strictly a peer engineering outreach.
 
-2. BAN FORMULAIC CLOSING LINES:
-   - ABSOLUTELY NEVER write: "If you have an AI or automation project on your radar, happy to take a trial sprint ($250 - $350) to demonstrate the results."
+2. DO NOT MEDDLE IN THEIR CORE WORK:
+   - NEVER give advice on their themes, design, SEO, or client marketing.
+   - Acknowledge what they build (e.g. "Saw your focus scaling 765+ apparel brands on Shopify"), then immediately pivot to: what happens when their clients ask for custom AI chatbots, bots, custom scripts, or mobile apps that fall outside their core offering?
+
+3. NATURAL, CONVERSATIONAL CLOSING:
+   - Ask a direct, low-friction question:
+     * "Do you currently have a go-to technical partner when clients ask for custom AI chatbots, bots, or backend scripts, or do you turn those down?"
+     * "If your clients ever request custom Telegram/Discord bots, mobile apps, or backend automations outside your core scope, open to a quick chat to see if a white-label partnership makes sense."
+     * "Open to connecting on Telegram (@hazratummar) if you ever look for a reliable engineering subcontractor for client builds."
+
+4. NO FORMULAIC TRIAL SPRINT LINES:
+   - ABSOLUTELY NEVER write: "If you have an AI or automation project on your radar, happy to take a trial sprint...".
    - ABSOLUTELY NEVER write: "happy to take a small trial sprint to prove the turnaround" or "demonstrate the results".
-   - ABSOLUTELY NEVER write: "If you have an [X] project on your radar...".
-   - Instead, close with a natural, varied, low-pressure question:
-     * "Do you usually handle custom Shopify app logic and webhook syncs in-house, or do you work with external engineers on technical overflow?"
-     * "If your team ever hits a bottleneck on custom Shopify Functions or external API pipelines, open to connecting on Telegram (@hazratummar) or jumping on a quick 5-minute chat."
-     * "Happy to share a quick video demo or architecture breakdown showing how we build deterministic catalog assistants if helpful."
-     * "Open to an exploratory sync if you are ever looking for a reliable technical subcontractor for client builds."
 
-3. BAN THE 4-PARAGRAPH BOILERPLATE COPY:
-   - Do NOT follow the rigid mad-lib pattern:
-     "Saw your focus on [X]. When your clients ask for [Y], who builds [Z]? I specialize in [W]. If you have [A], happy to take trial sprint [B]."
-   - Every email MUST have a fresh, spontaneous human flow.
-   - Speak directly to their specific client niche (e.g. for clothing/apparel: return rates, automated sizing advisors, custom bundle rules; for food & bev: subscription flows, bundle builders; for high-volume B2B: ERP syncs, custom pricing functions).
-
-4. SUBJECT LINE RULES:
+5. SUBJECT LINE RULES:
    - Generate a dynamic, unique 3 to 6 word subject line that feels handwritten and specific to them.
    - Examples:
-     * "enhancing apparel store efficiency"
-     * "custom sizing & catalog bots for BitBranding"
-     * "shopify functions & webhook overflow"
+     * "white-label bots & custom tech for [Agency]?"
+     * "custom scripts & AI chatbot overflow"
+     * "telegram bots & custom apps for [Agency]"
+     * "mobile apps & AI concierges for your clients?"
      * "quick question re: technical overflow"
-     * "ai concierge & custom apps for clothing brands"
-     * "automations & custom app overflow for [Agency]"
 
-5. ANTI-SLOP & ANTI-AI RULES:
+6. ANTI-SLOP & ANTI-AI RULES:
    - No robotic openings ("My name is...", "I am reaching out...", "I hope this email finds you well").
    - No fake flattery ("impressive work", "admire your expertise", "aligns perfectly").
    - No buzzwords ("synergy", "game-changer", "streamline", "robust", "bespoke").
    - NO em-dashes (—).
-   - Length: 60 to 95 words. Punchy, professional, respected.
+   - Length: 65 to 95 words. Crisp, peer-to-peer, confident.
 
 OUTPUT JSON:
 {
@@ -320,7 +304,7 @@ export async function POST(
     try {
         const { id } = await params;
         const body = await request.json().catch(() => ({}));
-        const requestedAngle = (body.angle || 'white-label') as 'white-label' | 'concise' | 'technical-audit' | 'ai-automation';
+        const requestedAngle = (body.angle || 'white-label') as 'white-label' | 'custom-scripts' | 'concise' | 'technical-audit' | 'ai-automation';
         const requestedModel = (body.model || 'gpt-4o') as 'gpt-4o' | 'gpt-4o-mini' | 'gemini';
 
         const partner = await Partner.findById(id);
@@ -403,6 +387,12 @@ export async function POST(
             siteContext?.snippet ? `Live Website Copy Excerpt: ${siteContext.snippet}` : null,
         ].filter(Boolean).join('\n');
 
+        const angleDescription = (requestedAngle === 'custom-scripts' || requestedAngle === 'technical-audit')
+            ? 'Offer custom backend scripts, webhook pipelines (syncing Shopify with ERPs/CRMs/warehouses), private Shopify apps, and Shopify Functions when their theme devs are bottlenecked.'
+            : (requestedAngle === 'concise'
+                ? 'Ultra-short 3-sentence DM directly to the founder asking if they ever white-label custom AI chatbots, bots, or scripts.'
+                : 'White-Label Engineering Partner: Offer Hazrat\'s specialized services (Chatbots, AI chatbots, Discord/Telegram bots, custom scripts & automations, mobile app dev) so this agency can sell these high-ticket capabilities to their clients without hiring in-house engineers.');
+
         const userPrompt = `TARGET AGENCY INTELLIGENCE:
 Agency Name: ${partner.name}
 Website: ${partner.websiteUrl || 'Not listed'}
@@ -414,11 +404,14 @@ ${directoryFacts || 'Standard certified Shopify Partner'}
 AGENCY WEBSITE INTELLIGENCE (LIVE SCRAPED COPY):
 ${websiteFacts || 'Website details not accessible'}
 
-REQUESTED OUTREACH ANGLE: ${requestedAngle}
+REQUESTED OUTREACH ANGLE: ${requestedAngle} (${angleDescription})
 
 TASK:
-Write a high-converting, human, peer-to-peer cold email (60 to 90 words) strictly tailored to this agency's real work and niche.
-CRITICAL ENFORCEMENT: ZERO PRICES ($0 quotes), NO TRIAL SPRINT REPETITION, NO RIGID 4-PARAGRAPH TEMPLATES.`;
+Write a high-converting, human, peer-to-peer cold email (65 to 95 words) offering Hazrat's specialized services on a white-label basis.
+CRITICAL ENFORCEMENT:
+- DO NOT meddle or give advice on their theme design or marketing.
+- Offer Hazrat's services (Chatbots, AI chatbots, Discord/Telegram bots, custom scripts, mobile dev) as their white-label partner when their clients ask for these capabilities.
+- STRICTLY ZERO PRICES ($0 quotes), NO TRIAL SPRINT REPETITION, NO RIGID 4-PARAGRAPH TEMPLATES.`;
 
         // Attempt 1: OpenAI (GPT-4o or GPT-4o-mini)
         if (openAiKey && requestedModel !== 'gemini') {
