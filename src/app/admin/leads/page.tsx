@@ -39,7 +39,7 @@ interface Lead {
     company: string;
     category: "Mobile Apps" | "Discord Bots" | "AI & Chatbots" | "Backend";
     decisionMaker: string;
-    email: string;
+    email?: string;
     source: string;
     sourceUrl?: string;
     status: "New" | "Contacted" | "In Discussion" | "Closed" | "Archived";
@@ -50,6 +50,7 @@ interface Lead {
     personalizedEmail: {
         subject: string;
         body: string;
+        modelUsed?: string;
     };
     budget?: string;
     engagementType?: string;
@@ -122,6 +123,7 @@ export default function LeadsAdminPage() {
     const [editableNotes, setEditableNotes] = useState("");
     const [activeTab, setActiveTab] = useState<"edit" | "preview">("edit");
     const [activePreset, setActivePreset] = useState<"technical" | "concise" | "caseStudy">("technical");
+    const [isGeneratingPitch, setIsGeneratingPitch] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [saveSuccess, setSaveSuccess] = useState(false);
     const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -140,7 +142,9 @@ export default function LeadsAdminPage() {
             if (filterSprintOnly) params.set("sprintOnly", "true");
             if (sortBy) params.set("sortBy", sortBy);
 
-            const res = await fetch(`/api/admin/leads?${params.toString()}`);
+            const res = await fetch(`/api/admin/leads?${params.toString()}`, {
+                cache: "no-store",
+            });
             if (res.ok) {
                 const data = await res.json();
                 if (data && data.leads) {
@@ -189,6 +193,9 @@ export default function LeadsAdminPage() {
 
     const updateLeadStatus = async (id: string, newStatus: string) => {
         try {
+            const currentLead = leads.find(l => l._id === id);
+            const oldStatus = currentLead?.status;
+
             // Optimistic update: filter out if filtered by a specific status, otherwise update in place
             setLeads(prev => {
                 if (selectedStatus !== "All" && newStatus !== selectedStatus) {
@@ -196,6 +203,15 @@ export default function LeadsAdminPage() {
                 }
                 return prev.map(l => l._id === id ? { ...l, status: newStatus as any } : l);
             });
+
+            if (oldStatus && oldStatus !== newStatus) {
+                setStats(prev => {
+                    const nextStatuses = { ...prev.statuses };
+                    if (oldStatus in nextStatuses) nextStatuses[oldStatus] = Math.max(0, nextStatuses[oldStatus] - 1);
+                    if (newStatus in nextStatuses) nextStatuses[newStatus] = (nextStatuses[newStatus] || 0) + 1;
+                    return { ...prev, statuses: nextStatuses };
+                });
+            }
 
             if (selectedLead && selectedLead._id === id) {
                 setSelectedLead(prev => prev ? { ...prev, status: newStatus as any } : null);
@@ -281,19 +297,37 @@ export default function LeadsAdminPage() {
         };
     };
 
-    const handleApplyPreset = (type: "technical" | "concise" | "caseStudy") => {
+    const handleApplyPreset = async (type: "technical" | "concise" | "caseStudy") => {
         if (!selectedLead) return;
-        const presets = getLeadPresets(selectedLead);
         setActivePreset(type);
-        if (type === "technical") {
-            setEditableSubject(presets.technical.subject);
-            setEditableBody(presets.technical.body);
-        } else if (type === "concise") {
-            setEditableSubject(presets.concise.subject);
-            setEditableBody(presets.concise.body);
-        } else if (type === "caseStudy") {
-            setEditableSubject(presets.caseStudy.subject);
-            setEditableBody(presets.caseStudy.body);
+        try {
+            setIsGeneratingPitch(true);
+            const res = await fetch(`/api/admin/leads/${selectedLead._id}/pitch`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ angle: type, model: "gpt-4o" }),
+            });
+            if (res.ok) {
+                const data = await res.json();
+                if (data.pitch) {
+                    setEditableSubject(data.pitch.subject);
+                    setEditableBody(data.pitch.body);
+                    setLeads(prev => prev.map(l => l._id === selectedLead._id ? { ...l, personalizedEmail: data.pitch } : l));
+                    setSelectedLead(prev => prev ? { ...prev, personalizedEmail: data.pitch } : null);
+                    return;
+                }
+            }
+            // Fallback to local preset if AI endpoint unavailable
+            const presets = getLeadPresets(selectedLead);
+            setEditableSubject(presets[type].subject);
+            setEditableBody(presets[type].body);
+        } catch (err) {
+            console.error("AI pitch generation failed:", err);
+            const presets = getLeadPresets(selectedLead);
+            setEditableSubject(presets[type].subject);
+            setEditableBody(presets[type].body);
+        } finally {
+            setIsGeneratingPitch(false);
         }
     };
 
@@ -392,7 +426,7 @@ export default function LeadsAdminPage() {
                 company: newCompany.trim(),
                 category: newCategory,
                 decisionMaker: newDecisionMaker.trim() || "Hiring Lead",
-                email: newEmail.trim() || `${newCompany.toLowerCase().replace(/[^a-z0-9]/g, "")}@example.com`,
+                email: newEmail.trim(),
                 source: newSource,
                 sourceUrl: newSourceUrl.trim() || undefined,
                 painSignal: newPainSignal.trim(),
@@ -904,13 +938,20 @@ export default function LeadsAdminPage() {
                                             <span className="font-semibold text-slate-700">Contact:</span>
                                             <span className="font-bold text-slate-950">{selectedLead.decisionMaker}</span>
                                             <span className="text-slate-400">·</span>
-                                            <a 
-                                                href={`mailto:${selectedLead.email}`} 
-                                                className="font-mono text-blue-600 hover:underline flex items-center gap-1"
-                                            >
-                                                <Mail className="w-3 h-3" />
-                                                <span>{selectedLead.email}</span>
-                                            </a>
+                                            {selectedLead.email ? (
+                                                <a 
+                                                    href={`mailto:${selectedLead.email}`} 
+                                                    className="font-mono text-blue-600 hover:underline flex items-center gap-1"
+                                                >
+                                                    <Mail className="w-3 h-3" />
+                                                    <span>{selectedLead.email}</span>
+                                                </a>
+                                            ) : (
+                                                <span className="font-mono text-slate-500 flex items-center gap-1">
+                                                    <ExternalLink className="w-3 h-3" />
+                                                    <span>Apply via Original Link</span>
+                                                </span>
+                                            )}
                                         </div>
 
                                         <div className="flex items-center gap-1.5 text-slate-500">
@@ -942,10 +983,25 @@ export default function LeadsAdminPage() {
                                     <div className="flex items-center justify-between">
                                         <span className="text-xs font-semibold text-slate-800 flex items-center gap-1.5">
                                             <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-                                            <span>Dynamic Pitch Angles</span>
+                                            <span>AI Pitch Angles (GPT-4o)</span>
                                         </span>
-                                        <span className="text-[11px] text-slate-500">Click to switch angles instantly</span>
+                                        <button
+                                            type="button"
+                                            disabled={isGeneratingPitch}
+                                            onClick={() => handleApplyPreset(activePreset)}
+                                            className="text-[11px] font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1 cursor-pointer"
+                                        >
+                                            <RefreshCw className={`w-3 h-3 ${isGeneratingPitch ? "animate-spin" : ""}`} />
+                                            <span>{isGeneratingPitch ? "Rewriting with GPT-4o..." : "Regenerate AI Pitch"}</span>
+                                        </button>
                                     </div>
+
+                                    {isGeneratingPitch && (
+                                        <div className="text-[11px] text-blue-600 font-medium animate-pulse flex items-center gap-1.5 p-2 rounded-lg bg-blue-50 border border-blue-200/80">
+                                            <RefreshCw className="w-3 h-3 animate-spin" />
+                                            <span>GPT-4o is writing a clean, zero-slop pitch for {selectedLead.company}...</span>
+                                        </div>
+                                    )}
 
                                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                                         <button
@@ -1169,7 +1225,10 @@ export default function LeadsAdminPage() {
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <span className="font-semibold text-slate-500 w-14">To:</span>
-                                                <span className="font-medium text-slate-900">{selectedLead.decisionMaker} &lt;{selectedLead.email}&gt;</span>
+                                                <span className="font-medium text-slate-900">
+                                                    {selectedLead.decisionMaker}
+                                                    {selectedLead.email ? ` <${selectedLead.email}>` : " (Direct Apply via Link)"}
+                                                </span>
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <span className="font-semibold text-slate-500 w-14">Subject:</span>
@@ -1251,22 +1310,42 @@ export default function LeadsAdminPage() {
                                         <span className="hidden sm:inline">Reset</span>
                                     </Button>
 
-                                    {/* Direct Mailto Dispatch */}
-                                    <a
-                                        href={`mailto:${selectedLead.email}?subject=${encodeURIComponent(editableSubject)}&body=${encodeURIComponent(editableBody)}`}
-                                        className="inline-flex"
-                                        onClick={() => {
-                                            if (editableStatus === "New") {
-                                                setEditableStatus("Contacted");
-                                                updateLeadStatus(selectedLead._id, "Contacted");
-                                            }
-                                        }}
-                                    >
-                                        <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs h-8 px-4 rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer">
-                                            <Send className="w-3.5 h-3.5" />
-                                            <span>Open in Email App</span>
-                                        </Button>
-                                    </a>
+                                    {/* Direct Mailto Dispatch or Original Posting Link */}
+                                    {selectedLead.email ? (
+                                        <a
+                                            href={`mailto:${selectedLead.email}?subject=${encodeURIComponent(editableSubject)}&body=${encodeURIComponent(editableBody)}`}
+                                            className="inline-flex"
+                                            onClick={() => {
+                                                if (editableStatus === "New") {
+                                                    setEditableStatus("Contacted");
+                                                    updateLeadStatus(selectedLead._id, "Contacted");
+                                                }
+                                            }}
+                                        >
+                                            <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs h-8 px-4 rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer">
+                                                <Send className="w-3.5 h-3.5" />
+                                                <span>Open in Email App</span>
+                                            </Button>
+                                        </a>
+                                    ) : selectedLead.sourceUrl ? (
+                                        <a
+                                            href={selectedLead.sourceUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex"
+                                            onClick={() => {
+                                                if (editableStatus === "New") {
+                                                    setEditableStatus("Contacted");
+                                                    updateLeadStatus(selectedLead._id, "Contacted");
+                                                }
+                                            }}
+                                        >
+                                            <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs h-8 px-4 rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer">
+                                                <ExternalLink className="w-3.5 h-3.5" />
+                                                <span>Open Original Posting</span>
+                                            </Button>
+                                        </a>
+                                    ) : null}
                                 </div>
                             </div>
                         </div>

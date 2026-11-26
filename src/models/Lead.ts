@@ -6,7 +6,7 @@ export interface ILead {
     company: string;
     category: 'Mobile Apps' | 'Discord Bots' | 'AI & Chatbots' | 'Backend';
     decisionMaker: string;
-    email: string;
+    email?: string;
     source: string;
     sourceUrl?: string;
     status: 'New' | 'Contacted' | 'In Discussion' | 'Closed' | 'Archived';
@@ -17,6 +17,7 @@ export interface ILead {
     personalizedEmail: {
         subject: string;
         body: string;
+        modelUsed?: string;
     };
     budget?: string;
     engagementType?: 'Fixed Sprint' | 'Contract / Freelance' | 'Hourly' | 'Milestone';
@@ -35,7 +36,7 @@ const LeadSchema = new Schema<ILead>({
         enum: ['Mobile Apps', 'Discord Bots', 'AI & Chatbots', 'Backend'] 
     },
     decisionMaker: { type: String, required: true },
-    email: { type: String, required: true },
+    email: { type: String, required: false, default: '' },
     source: { type: String, required: true },
     sourceUrl: { type: String },
     status: { 
@@ -50,6 +51,7 @@ const LeadSchema = new Schema<ILead>({
     personalizedEmail: {
         subject: { type: String, required: true },
         body: { type: String, required: true },
+        modelUsed: { type: String },
     },
     budget: { type: String, default: 'Fixed Sprint ($1,200 – $2,500)' },
     engagementType: { type: String, default: 'Fixed Sprint' },

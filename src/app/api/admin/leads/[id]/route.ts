@@ -5,12 +5,13 @@ import Lead from '@/models/Lead';
 
 export async function PATCH(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     await dbConnect();
     try {
+        const { id } = await params;
         const body = await request.json();
-        const updatedLead = await Lead.findByIdAndUpdate(params.id, body, {
+        const updatedLead = await Lead.findByIdAndUpdate(id, body, {
             new: true,
             runValidators: true,
         });
@@ -27,11 +28,12 @@ export async function PATCH(
 
 export async function DELETE(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     await dbConnect();
     try {
-        const deletedLead = await Lead.findByIdAndDelete(params.id);
+        const { id } = await params;
+        const deletedLead = await Lead.findByIdAndDelete(id);
         if (!deletedLead) {
             return NextResponse.json({ success: false, error: 'Lead not found' }, { status: 404 });
         }

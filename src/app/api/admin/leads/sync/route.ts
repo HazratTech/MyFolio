@@ -2,407 +2,344 @@ import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 import dbConnect from '@/lib/db';
 import Lead from '@/models/Lead';
+import {
+    LeadCategory,
+    RawLeadCandidate,
+    extractValidEmail,
+    qualifyAndExtractLead,
+    stripHtmlKeepNewlines,
+} from '@/lib/lead-ai';
 
-const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
 
-function decodeHtml(str: string): string {
-    return str
-        .replace(/&#x27;/g, "'")
-        .replace(/&#x2F;/g, "/")
-        .replace(/&quot;/g, '"')
-        .replace(/&amp;/g, '&')
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&#39;/g, "'");
+function classifyStrictCategory(text: string): LeadCategory | null {
+    // Reject obvious physical hardware / medical / non-software spam
+    if (/\b(sidewalk robotics|delivery robot|home health|nursing|caregiver|physical therapist|real estate agent|travel agent|insurance agent|copywriter|sales representative)\b/i.test(text)) {
+        return null;
+    }
+
+    if (/\b(discord|telegram bot|discord\.py|discord\.js)\b/i.test(text)) return 'Discord Bots';
+    if (/\b(android|ios|swiftui|kotlin|kmp|flutter|react native|mobile app)\b/i.test(text)) return 'Mobile Apps';
+    if (/\b(chatbot|ai agent|rag pipeline|langchain|langgraph|pgvector|conversational ai|voice agent)\b/i.test(text)) return 'AI & Chatbots';
+    if (/\b(fastapi|webhook|microservice|backend engineer|backend developer|api integration|python script|automation script)\b/i.test(text)) return 'Backend';
+
+    return null;
 }
 
-function generatePersonalizedEmail(
-    category: 'Mobile Apps' | 'Discord Bots' | 'AI & Chatbots' | 'Backend',
-    company: string,
-    decisionMaker: string,
-    painSignal: string,
-    techStack: string[],
-    position?: string
-) {
-    const safeCompany = company || 'your team';
-    const firstWord = decisionMaker.replace(/[@/u]/g, '').split(' ')[0] || 'there';
-    const cleanRole = position ? ` (${position})` : '';
-
-    if (category === 'Discord Bots') {
-        return {
-            subject: `re: Discord bot & automation requirements for ${safeCompany}`,
-            body: `Hi ${firstWord},
-
-Saw your posting regarding the custom Discord bot and automation needs for ${safeCompany}${cleanRole}.
-
-I run RelayWorks (https://relayworks.dev) — I build high-concurrency Discord bots and automation engines (Python 3.12, modern Discord Components V2, SQLite in WAL mode, and MongoDB).
-
-A few production bots I've recently shipped for clients:
-• ClutchBot: Real-time match recap detection, post-game Claude AI roasts, and dual-timezone squad queueing.
-• Clipping Club: Enterprise creator bounty engine syncing TikTok, YouTube, and X views with automated crypto payroll CSVs.
-• Veridex RPG: 54-module dynamic server progression system with voice-activity stat tracking and faction warfare.
-
-For ${safeCompany}, I can build the exact event handling, permissions, and webhook architecture in 2 to 3 weeks on a fixed sprint ($1,200 – $2,000) with zero ongoing agency overhead.
-
-If you haven't locked in a developer yet, happy to review your spec or jump on a quick call. Available directly on Telegram (@hazratummar) or Discord (@ihazratummar).
-
-Best,
-Hazrat Ummar
-Founder & Lead Engineer, RelayWorks
-Portfolio: https://relayworks.dev
-Telegram: @hazratummar | Discord: @ihazratummar`
-        };
-    }
-
-    if (category === 'Mobile Apps') {
-        return {
-            subject: `re: Mobile engineering for ${safeCompany}`,
-            body: `Hi ${firstWord},
-
-Saw your post regarding the mobile application build for ${safeCompany}${cleanRole}.
-
-I run RelayWorks (https://relayworks.dev) — I build production native Android (Kotlin / Jetpack Compose) and multi-platform companion apps for founders and backend teams.
-
-Two standards I keep to eliminate client risk:
-1. Milestone Testing: You test the APK / live build directly on a physical device before signing off on any milestone.
-2. 100% Store Acceptance: I resolve 100% of store reviewer notes at zero extra cost until your app is live.
-
-Typical delivery is 2 to 4 weeks with a fixed milestone rate ($1,500 – $2,500).
-
-If you have Figma wireframes or an API spec ready, feel free to reply directly or message me on Telegram (@hazratummar).
-
-Best,
-Hazrat Ummar
-https://relayworks.dev | Telegram: @hazratummar`
-        };
-    }
-
-    if (category === 'AI & Chatbots') {
-        return {
-            subject: `re: AI agent & chatbot engineering for ${safeCompany}`,
-            body: `Hi ${firstWord},
-
-Saw your note regarding AI conversational workflows and automations for ${safeCompany}${cleanRole}.
-
-I specialize in building deterministic AI chatbots, RAG knowledge-base agents, and API automations (Python FastAPI, LangGraph, pgvector, and multi-channel connectors for WhatsApp, Telegram, and Discord).
-
-I focus heavily on:
-• Zero-hallucination pipelines with strict schema enforcement (Pydantic).
-• Asynchronous event processing with fast token streaming.
-• Direct integration into your existing database and CRM.
-
-Would love to learn more about the exact workflows you want automated for ${safeCompany}. Available to start immediately on a fixed sprint.
-
-Best,
-Hazrat Ummar
-https://relayworks.dev | Telegram: @hazratummar`
-        };
-    }
-
-    // Backend
-    return {
-        subject: `re: Backend & API engineering for ${safeCompany}`,
-        body: `Hi ${firstWord},
-
-Saw your posting looking for developer support on ${safeCompany}'s backend stack${cleanRole}.
-
-I build resilient, high-throughput backend services and APIs (Node.js, TypeScript, Python FastAPI, PostgreSQL, MongoDB, and Redis).
-
-My background is centered on clean architecture, sub-second latency, and zero-downtime spike tolerance under high concurrency.
-
-Available to jump in immediately on a flexible contractor or fixed sprint agreement. Let me know if you'd like to sync on Telegram (@hazratummar) or review past client builds.
-
-Best,
-Hazrat Ummar
-https://relayworks.dev | Telegram: @hazratummar`
-    };
-}
-
-function isDisqualifiedEnterpriseJob(text: string): boolean {
+function isDisqualifiedEnterpriseOrSeeker(text: string): boolean {
     const lower = text.toLowerCase();
-    
-    // 1. Years of experience barrier (5+, 7+, 8+, 10+ years of proof/experience)
+
+    // Job seekers / applicants / freelancers pitching themselves (including HN "Who wants to be hired?" template)
+    if (/\b(seeking work|seeking freelance|for hire|\[for hire\]|who wants to be hired|candidate profile|looking for a role|open to work|available for work|recently laid off|loved the opportunity|would love to work with you|sent my resume|here is my portfolio|willing to relocate)\b/i.test(lower)) {
+        return true;
+    }
+
+    // Strict onsite-only without remote option
+    if (/\b(onsite\s*\(?5 days|in-office only|onsite only)\b/i.test(lower) && !/\bremote\b/i.test(lower)) {
+        return true;
+    }
+
+    // Years of experience barrier (5+ years)
     if (/\b([5-9]|1\d)\+?\s*years?\s*(of)?\s*(experience|exp|proof)?/i.test(lower)) return true;
     if (/years?\s*of\s*experience\s*required/i.test(lower)) return true;
     if (/\b(minimum|at least)\s+([5-9]|1\d)\s+years/i.test(lower)) return true;
 
-    // 2. High corporate enterprise salary brackets ($100k+, $120k+, $150k+, $200k+)
+    // Corporate $100k+ salaried roles
     if (/\$(1[0-9]{2}|2[0-9]{2}|3[0-9]{2})[,0-9]*\s*(k|\/yr|\/year|\s*-\s*\$[0-9]+)/i.test(lower)) return true;
     if (/\b(1[0-9]{2}|2[0-9]{2})k\s*-\s*[0-9]+k/i.test(lower)) return true;
 
-    // 3. Corporate management / executive / non-dev positions
-    if (/\b(coo|cto|cpo|vp of|director of|head of engineering|staff engineer|principal engineer|enterprise architect|lead architect|solutions architect)\b/i.test(lower)) return true;
-    if (/\b(sales manager|account executive|recruiting coordinator|recruiter|human resources|pre-sales|customer support specialist|business development representative|bdr|sdr|talent acquisition|copywriter|scientific account)\b/i.test(lower)) return true;
+    // Executive / non-dev roles
+    if (/\b(coo|cto|cpo|vp of|director of|head of engineering|staff engineer|principal engineer|enterprise architect|solutions architect)\b/i.test(lower)) return true;
+    if (/\b(sales manager|account executive|recruiter|human resources|business development|bdr|sdr|copywriter)\b/i.test(lower)) return true;
 
-    // 4. Corporate bureaucracy gates
+    // Corporate bureaucracy gates
     if (/\b(security clearance|us citizenship required|polygraph|w-?2 only|401\(?k\)?|equity only|unpaid)\b/i.test(lower)) return true;
 
     return false;
 }
 
-function extractBudget(text: string, category: string): string {
+function extractOptionalBudget(text: string): string {
     const monthlyMatch = text.match(/\$([1-9],[0-9]{3}|[1-9][0-9]{2,3})\s*[-–]\s*\$?([1-9],[0-9]{3}|[1-9][0-9]{2,3})\s*(\/|\s*per\s*)(mo|month)/i);
     if (monthlyMatch) return monthlyMatch[0];
 
     const fixedMatch = text.match(/\$([1-9],[0-9]{3}|[1-9][0-9]{2,3})\s*[-–]\s*\$?([1-9],[0-9]{3}|[1-9][0-9]{2,3})/i);
-    if (fixedMatch) return `$${fixedMatch[1]} – $${fixedMatch[2]} (Fixed)`;
+    if (fixedMatch) return `$${fixedMatch[1]} – $${fixedMatch[2]} (Stated)`;
 
-    switch (category) {
-        case 'Discord Bots':
-            return '$1,200 – $2,000 (Sprint)';
-        case 'Mobile Apps':
-            return '$1,500 – $2,500 (Sprint)';
-        case 'AI & Chatbots':
-            return '$1,500 – $3,000 (Sprint)';
-        case 'Backend':
-            return '$2,000 – $3,500 (Contract)';
-        default:
-            return '$1,500 – $2,500 (Fixed)';
-    }
+    return 'Contract / Sprint';
 }
 
 export async function POST() {
     await dbConnect();
     try {
-        let addedCount = 0;
-        const candidateLeads: any[] = [];
+        const rawCandidates: RawLeadCandidate[] = [];
 
         // ==========================================
-        // 1. RemoteOK Live Developer Stream (Strict Sprint & Contractor Filter)
+        // 1. Dynamic Hacker News Hiring & Freelancer Threads (TOP-LEVEL COMMENTS ONLY)
         // ==========================================
         try {
-            const res = await fetch("https://remoteok.com/api", {
-                headers: { "User-Agent": UA },
-                next: { revalidate: 0 }
-            });
-            if (res.ok) {
-                const data = await res.json();
-                for (const item of (Array.isArray(data) ? data : [])) {
-                    if (!item.position || !item.company) continue;
-                    const text = `${item.position} ${item.description || ''} ${(item.tags || []).join(' ')}`.toLowerCase();
+            const [freelancerStoriesRes, hiringStoriesRes] = await Promise.all([
+                fetch('https://hn.algolia.com/api/v1/search_by_date?query=%22Freelancer%3F+Seeking+freelancer%3F%22&tags=story&hitsPerPage=2', {
+                    headers: { 'User-Agent': UA },
+                    signal: AbortSignal.timeout(8000),
+                }),
+                fetch('https://hn.algolia.com/api/v1/search_by_date?tags=story,author_whoishiring&hitsPerPage=4', {
+                    headers: { 'User-Agent': UA },
+                    signal: AbortSignal.timeout(8000),
+                }),
+            ]);
 
-                    // Disqualify corporate full-time, 8+ years exp, and $100k+ roles
-                    if (isDisqualifiedEnterpriseJob(text)) continue;
+            const storyTargets: { id: string; isFreelancerThread: boolean }[] = [];
 
-                    let category: 'Mobile Apps' | 'Discord Bots' | 'AI & Chatbots' | 'Backend' | null = null;
-                    if (/discord|bot\b|telegram/i.test(text)) category = "Discord Bots";
-                    else if (/android|ios|swift|kotlin|mobile|flutter|react native/i.test(text)) category = "Mobile Apps";
-                    else if (/ai\b|llm|chatbot|agent|rag|openai|langchain|langgraph/i.test(text)) category = "AI & Chatbots";
-                    else if (/backend|fastapi|python|node|postgres|redis|microservice/i.test(text)) category = "Backend";
-
-                    if (category) {
-                        const safeCompany = item.company.trim();
-                        const position = item.position.trim();
-                        const url = item.url || item.apply_url || `https://remoteok.com`;
-                        const cleanSnippet = (item.description || text)
-                            .replace(/<[^>]+>/g, ' ')
-                            .replace(/\s+/g, ' ')
-                            .trim()
-                            .slice(0, 320);
-
-                        const tags = Array.isArray(item.tags) ? item.tags.slice(0, 5) : [category];
-
-                        candidateLeads.push({
-                            title: `${position} · ${safeCompany}`,
-                            company: safeCompany,
-                            category,
-                            decisionMaker: `Hiring Lead @ ${safeCompany}`,
-                            email: `careers@${safeCompany.toLowerCase().replace(/[^a-z0-9]/g, '') || 'company'}.com`,
-                            source: "RemoteOK Live Feed",
-                            sourceUrl: url,
-                            painSignal: cleanSnippet,
-                            techStack: tags,
-                            position,
-                            budget: extractBudget(cleanSnippet, category),
-                            engagementType: "Fixed Sprint",
-                            experienceReq: "No Years Req (Portfolio-Driven)",
-                            score: 93
-                        });
+            if (freelancerStoriesRes.ok) {
+                const fData = await freelancerStoriesRes.json();
+                for (const h of fData.hits || []) {
+                    if (h.objectID && /seeking freelancer/i.test(h.title || '')) {
+                        storyTargets.push({ id: String(h.objectID), isFreelancerThread: true });
                     }
                 }
             }
-        } catch (err: any) {
-            console.error("RemoteOK sync error:", err.message);
-        }
 
-        // ==========================================
-        // 2. Hacker News Live Hiring & Freelancer Threads
-        // ==========================================
-        try {
-            const hnStories = [
-                "story_50338728", // Ask HN: Who is hiring? (November 2026)
-                "story_50338744", // Ask HN: Freelancer? Seeking freelancer? (November 2026)
-                "story_49922572"  // Ask HN: Freelancer? Seeking freelancer? (October 2026)
-            ];
+            if (hiringStoriesRes.ok) {
+                const hData = await hiringStoriesRes.json();
+                const latestHiring = (hData.hits || []).find((h: any) => /who is hiring\?/i.test(h.title || ''));
+                if (latestHiring?.objectID) {
+                    storyTargets.push({ id: String(latestHiring.objectID), isFreelancerThread: false });
+                }
+            }
 
-            for (const storyTag of hnStories) {
-                const url = `https://hn.algolia.com/api/v1/search?tags=comment,${storyTag}&hitsPerPage=50`;
-                const res = await fetch(url, { headers: { "User-Agent": UA } });
+            for (const target of storyTargets) {
+                const res = await fetch(
+                    `https://hn.algolia.com/api/v1/search_by_date?tags=comment,story_${target.id}&hitsPerPage=150`,
+                    { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(8000) }
+                );
                 if (!res.ok) continue;
                 const data = await res.json();
 
-                for (const hit of (data.hits || [])) {
-                    const rawText = decodeHtml((hit.comment_text || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
-                    if (rawText.length < 50) continue;
-                    // Ignore freelancers seeking work — only keep actual clients hiring
-                    if (/seeking work|\[for hire\]|\bfor hire\b|candidate profile/i.test(rawText)) continue;
-                    // Disqualify corporate 8+ years experience barrier and $100k+ roles
-                    if (isDisqualifiedEnterpriseJob(rawText)) continue;
+                for (const hit of data.hits || []) {
+                    // CRITICAL: Skip all nested replies! Replies are applicants/chatter, NOT job postings.
+                    if (String(hit.parent_id) !== String(hit.story_id)) continue;
 
-                    let category: 'Mobile Apps' | 'Discord Bots' | 'AI & Chatbots' | 'Backend' | null = null;
-                    if (/discord|bot\b|telegram/i.test(rawText)) category = "Discord Bots";
-                    else if (/android|ios|swift|kotlin|mobile|flutter/i.test(rawText)) category = "Mobile Apps";
-                    else if (/ai\b|llm|chatbot|agent|rag|openai|langgraph/i.test(rawText)) category = "AI & Chatbots";
-                    else if (/backend|fastapi|python|node|postgres|redis|microservices/i.test(rawText)) category = "Backend";
+                    const cleanText = stripHtmlKeepNewlines(hit.comment_text || '');
+                    if (cleanText.length < 60) continue;
 
-                    if (category) {
-                        const firstLine = rawText.split('\n')[0] || rawText.split('|')[0] || '';
-                        const parts = firstLine.split('|').map((s: string) => s.trim());
-                        const company = parts[0]?.slice(0, 45) || `Founder @${hit.author}`;
-                        
-                        const emailMatch = rawText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}/);
-                        const email = emailMatch ? emailMatch[0].toLowerCase() : `contact@${hit.author}.hn`;
+                    if (isDisqualifiedEnterpriseOrSeeker(cleanText)) continue;
 
-                        const tags: string[] = [category];
-                        if (/python/i.test(rawText)) tags.push("Python");
-                        if (/fastapi/i.test(rawText)) tags.push("FastAPI");
-                        if (/react|next/i.test(rawText)) tags.push("Next.js");
-                        if (/android|kotlin/i.test(rawText)) tags.push("Android / Kotlin");
-                        if (/swift|ios/i.test(rawText)) tags.push("iOS / Swift");
-                        if (/discord/i.test(rawText)) tags.push("discord.py");
-
-                        candidateLeads.push({
-                            title: `${category} Opportunity at ${company}`,
-                            company,
-                            category,
-                            decisionMaker: `@${hit.author}`,
-                            email,
-                            source: "Hacker News Freelancer Feed",
-                            sourceUrl: `https://news.ycombinator.com/item?id=${hit.objectID}`,
-                            painSignal: rawText.slice(0, 320),
-                            techStack: tags.slice(0, 5),
-                            budget: extractBudget(rawText, category),
-                            engagementType: "Fixed Sprint",
-                            experienceReq: "No Years Req (Portfolio-Driven)",
-                            score: 94
-                        });
+                    // In the Freelancer thread, require explicit client/seeking-freelancer intent
+                    if (target.isFreelancerThread) {
+                        const looksLikeClient = /\b(seeking freelancer|hiring|looking for a (dev|developer|engineer|freelancer|contractor)|need a (dev|developer|bot)|we are building|we're building)\b/i.test(cleanText);
+                        if (!looksLikeClient) continue;
+                    } else {
+                        // In Who Is Hiring, prefer posts that mention contract/freelance/part-time OR explicit niche fit without full-time-only restriction
+                        const isContractFriendly = /\b(contract|freelance|part[- ]time|contractor|consulting)\b/i.test(cleanText);
+                        if (!isContractFriendly) continue;
                     }
+
+                    const category = classifyStrictCategory(cleanText);
+                    if (!category) continue;
+
+                    const realEmail = extractValidEmail(cleanText);
+                    const hasUrl = /https?:\/\/\S+/i.test(cleanText);
+                    if (!realEmail && !hasUrl) continue; // Skip uncontactable anonymous posts
+
+                    rawCandidates.push({
+                        rawText: cleanText,
+                        author: hit.author || 'hn-user',
+                        source: target.isFreelancerThread ? 'Hacker News Seeking Freelancer' : 'Hacker News Contract Hiring',
+                        sourceUrl: `https://news.ycombinator.com/item?id=${hit.objectID}`,
+                        extractedEmail: realEmail,
+                        defaultCategory: category,
+                        budget: extractOptionalBudget(cleanText),
+                    });
+                }
+            }
+
+            // Also search globally on HN for explicit "SEEKING FREELANCER" comments
+            const sfRes = await fetch(
+                'https://hn.algolia.com/api/v1/search_by_date?query=%22SEEKING%20FREELANCER%22&tags=comment&hitsPerPage=25',
+                { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(8000) }
+            );
+            if (sfRes.ok) {
+                const sfData = await sfRes.json();
+                for (const hit of sfData.hits || []) {
+                    if (String(hit.parent_id) !== String(hit.story_id)) continue;
+                    const cleanText = stripHtmlKeepNewlines(hit.comment_text || '');
+                    if (cleanText.length < 60 || isDisqualifiedEnterpriseOrSeeker(cleanText)) continue;
+                    if (!/seeking freelancer/i.test(cleanText)) continue;
+
+                    const category = classifyStrictCategory(cleanText) || 'Backend';
+                    const realEmail = extractValidEmail(cleanText);
+                    const hasUrl = /https?:\/\/\S+/i.test(cleanText);
+                    if (!realEmail && !hasUrl) continue;
+
+                    rawCandidates.push({
+                        rawText: cleanText,
+                        author: hit.author || 'hn-user',
+                        source: 'Hacker News Seeking Freelancer',
+                        sourceUrl: `https://news.ycombinator.com/item?id=${hit.objectID}`,
+                        extractedEmail: realEmail,
+                        defaultCategory: category,
+                        budget: extractOptionalBudget(cleanText),
+                    });
                 }
             }
         } catch (err: any) {
-            console.error("Hacker News sync error:", err.message);
+            console.error('HN sync error:', err.message);
         }
 
         // ==========================================
-        // 3. Jobicy Global Remote Tech API (Filtered for Contractor & Sprint)
+        // 2. Remotive Contract & Freelance Software Feed
         // ==========================================
         try {
-            const res = await fetch("https://jobicy.com/api/v2/remote-jobs?count=30", {
-                headers: { "User-Agent": UA }
+            const res = await fetch('https://remotive.com/api/remote-jobs?category=software-dev&limit=40', {
+                headers: { 'User-Agent': UA },
+                signal: AbortSignal.timeout(8000),
             });
             if (res.ok) {
                 const data = await res.json();
-                for (const job of (data.jobs || [])) {
-                    if (!job.jobTitle || !job.companyName) continue;
-                    const text = `${job.jobTitle} ${job.jobExcerpt || ""} ${(job.jobTags || []).join(" ")}`.toLowerCase();
+                for (const job of data.jobs || []) {
+                    const jobType = (job.job_type || '').toLowerCase();
+                    if (!jobType.includes('contract') && !jobType.includes('freelance')) continue;
 
-                    // Disqualify corporate 8+ years experience barrier and $100k+ roles
-                    if (isDisqualifiedEnterpriseJob(text)) continue;
+                    const plainDesc = stripHtmlKeepNewlines(job.description || '');
+                    const combined = `${job.title || ''} ${job.company_name || ''} ${(job.tags || []).join(' ')} ${plainDesc}`;
+                    if (isDisqualifiedEnterpriseOrSeeker(combined)) continue;
 
-                    let category: 'Mobile Apps' | 'Discord Bots' | 'AI & Chatbots' | 'Backend' | null = null;
-                    if (/discord|bot\b|telegram/i.test(text)) category = "Discord Bots";
-                    else if (/android|ios|swift|kotlin|mobile|flutter/i.test(text)) category = "Mobile Apps";
-                    else if (/ai\b|llm|chatbot|agent|rag|openai/i.test(text)) category = "AI & Chatbots";
-                    else if (/backend|fastapi|python|node|postgres|redis|engineer|developer/i.test(text)) category = "Backend";
+                    const category = classifyStrictCategory(combined);
+                    if (!category) continue;
 
-                    if (category) {
-                        const safeCompany = job.companyName.trim();
-                        const position = job.jobTitle.trim();
-                        const cleanSnippet = (job.jobExcerpt || text)
-                            .replace(/<[^>]+>/g, ' ')
-                            .replace(/\s+/g, ' ')
-                            .trim()
-                            .slice(0, 320);
-
-                        const tags = Array.isArray(job.jobTags) && job.jobTags.length > 0 
-                            ? job.jobTags.slice(0, 5) 
-                            : [category, "Remote"];
-
-                        candidateLeads.push({
-                            title: `${position} · ${safeCompany}`,
-                            company: safeCompany,
-                            category,
-                            decisionMaker: `Hiring Team @ ${safeCompany}`,
-                            email: `jobs@${safeCompany.toLowerCase().replace(/[^a-z0-9]/g, '') || 'company'}.com`,
-                            source: "Jobicy Remote Tech Feed",
-                            sourceUrl: job.url,
-                            painSignal: cleanSnippet,
-                            techStack: tags,
-                            position,
-                            budget: extractBudget(cleanSnippet, category),
-                            engagementType: "Fixed Sprint",
-                            experienceReq: "No Years Req (Portfolio-Driven)",
-                            score: 90
-                        });
-                    }
+                    rawCandidates.push({
+                        rawText: `${job.title} at ${job.company_name}\n${plainDesc.slice(0, 1400)}`,
+                        author: job.company_name || 'Hiring Team',
+                        source: 'Remotive Contract Feed',
+                        sourceUrl: job.url,
+                        extractedEmail: extractValidEmail(plainDesc),
+                        defaultCategory: category,
+                        rawCompany: job.company_name,
+                        rawTitle: job.title,
+                        rawTags: Array.isArray(job.tags) ? job.tags.slice(0, 5) : [category],
+                        budget: job.salary || extractOptionalBudget(plainDesc),
+                    });
                 }
             }
         } catch (err: any) {
-            console.error("Jobicy sync error:", err.message);
+            console.error('Remotive sync error:', err.message);
         }
 
         // ==========================================
-        // Deduplicate & Persist to MongoDB
+        // 3. RemoteOK Contract / Freelance Filtered Feed
         // ==========================================
-        for (const candidate of candidateLeads) {
-            // Check if lead with same sourceUrl or same company+title already exists
-            const existing = await Lead.findOne({
-                $or: [
-                    { sourceUrl: candidate.sourceUrl },
-                    { company: candidate.company, title: candidate.title }
-                ]
+        try {
+            const res = await fetch('https://remoteok.com/api', {
+                headers: { 'User-Agent': UA },
+                signal: AbortSignal.timeout(8000),
             });
+            if (res.ok) {
+                const data = await res.json();
+                for (const item of Array.isArray(data) ? data : []) {
+                    if (!item.position || !item.company) continue;
+                    const plainDesc = stripHtmlKeepNewlines(item.description || '');
+                    const tagsStr = Array.isArray(item.tags) ? item.tags.join(' ') : '';
+                    const combined = `${item.position} ${item.company} ${tagsStr} ${plainDesc}`;
 
-            if (!existing) {
-                const personalizedEmail = generatePersonalizedEmail(
-                    candidate.category,
-                    candidate.company,
-                    candidate.decisionMaker,
-                    candidate.painSignal,
-                    candidate.techStack,
-                    candidate.position
-                );
+                    // Strictly require contract/freelance/part-time signal on RemoteOK
+                    if (!/\b(contract|freelance|contractor|part[- ]time|bounty|sprint)\b/i.test(combined)) continue;
+                    if (isDisqualifiedEnterpriseOrSeeker(combined)) continue;
 
-                await Lead.create({
-                    title: candidate.title,
-                    company: candidate.company,
-                    category: candidate.category,
-                    decisionMaker: candidate.decisionMaker,
-                    email: candidate.email,
-                    source: candidate.source,
-                    sourceUrl: candidate.sourceUrl,
-                    status: 'New',
-                    score: candidate.score || 88,
-                    confidence: 'High',
-                    painSignal: candidate.painSignal,
-                    techStack: candidate.techStack,
-                    budget: candidate.budget || 'Fixed Sprint ($1,200 – $2,500)',
-                    engagementType: candidate.engagementType || 'Fixed Sprint',
-                    experienceReq: candidate.experienceReq || 'No Years Req (Portfolio-Driven)',
-                    personalizedEmail,
-                    notes: `Discovered from live ${candidate.source}. Verified direct link available.`
+                    const category = classifyStrictCategory(combined);
+                    if (!category) continue;
+
+                    const sourceUrl = item.url || item.apply_url;
+                    if (!sourceUrl) continue;
+
+                    rawCandidates.push({
+                        rawText: `${item.position} at ${item.company}\n${plainDesc.slice(0, 1400)}`,
+                        author: item.company,
+                        source: 'RemoteOK Contract Feed',
+                        sourceUrl,
+                        extractedEmail: extractValidEmail(plainDesc),
+                        defaultCategory: category,
+                        rawCompany: item.company,
+                        rawTitle: item.position,
+                        rawTags: Array.isArray(item.tags) ? item.tags.slice(0, 5) : [category],
+                        budget: extractOptionalBudget(plainDesc),
+                    });
+                }
+            }
+        } catch (err: any) {
+            console.error('RemoteOK sync error:', err.message);
+        }
+
+        // ==========================================
+        // 4. Batch Deduplicate Before AI Qualification
+        // ==========================================
+        const candidateUrls = rawCandidates.map(c => c.sourceUrl);
+        const existingDocs = await Lead.find({ sourceUrl: { $in: candidateUrls } }, { sourceUrl: 1 });
+        const existingSet = new Set(existingDocs.map(d => d.sourceUrl));
+
+        const freshCandidates = rawCandidates.filter(c => !existingSet.has(c.sourceUrl)).slice(0, 20);
+
+        let addedCount = 0;
+        let rejectedCount = 0;
+
+        // ==========================================
+        // 5. AI Gatekeeper Verification + Entity Extraction (Concurrent chunks of 5)
+        // ==========================================
+        const CHUNK_SIZE = 5;
+        for (let i = 0; i < freshCandidates.length; i += CHUNK_SIZE) {
+            const chunk = freshCandidates.slice(i, i + CHUNK_SIZE);
+            const results = await Promise.all(
+                chunk.map(async (cand) => {
+                    const qualified = await qualifyAndExtractLead(cand);
+                    if (!qualified) return null;
+
+                    return {
+                        title: `${qualified.category} · ${qualified.company}`,
+                        company: qualified.company,
+                        category: qualified.category,
+                        decisionMaker: qualified.decisionMaker,
+                        email: cand.extractedEmail || '',
+                        source: cand.source,
+                        sourceUrl: cand.sourceUrl,
+                        status: 'New' as const,
+                        score: qualified.score,
+                        confidence: cand.extractedEmail ? ('High' as const) : ('Medium' as const),
+                        painSignal: qualified.painSignal,
+                        techStack: qualified.techStack,
+                        budget: cand.budget || qualified.engagementType,
+                        engagementType: qualified.engagementType,
+                        experienceReq: 'No Years Req (Portfolio-Driven)',
+                        personalizedEmail: {
+                            subject: qualified.subject,
+                            body: qualified.body,
+                            modelUsed: qualified.modelUsed,
+                        },
+                        notes: `AI-verified from ${cand.source}. ${cand.extractedEmail ? 'Direct email extracted.' : 'Apply via original posting URL.'}`,
+                    };
+                })
+            );
+
+            const validDocs = results.filter((doc): doc is NonNullable<typeof doc> => doc !== null);
+            rejectedCount += chunk.length - validDocs.length;
+
+            if (validDocs.length > 0) {
+                await Lead.insertMany(validDocs, { ordered: false }).catch((e) => {
+                    console.warn('Partial insert warning:', e.message);
                 });
-
-                addedCount++;
+                addedCount += validDocs.length;
             }
         }
 
         const totalLeads = await Lead.countDocuments({});
+
         return NextResponse.json({
             success: true,
             addedCount,
+            rejectedCount,
+            evaluatedCount: freshCandidates.length,
             totalLeads,
-            message: `Scanned RemoteOK, Hacker News, and Jobicy feeds. Added ${addedCount} new verified leads with live source links.`
+            message: freshCandidates.length === 0
+                ? `All matching leads are already in your pipeline (${totalLeads} total).`
+                : `AI verified ${addedCount} qualified client leads out of ${freshCandidates.length} new posts (filtered out ${rejectedCount} job seekers / non-fits).`,
         });
     } catch (error: any) {
         return NextResponse.json({ success: false, error: error.message || 'Sync failed' }, { status: 500 });
