@@ -322,10 +322,19 @@ function cleanAntiSlop(text: string): string {
         .replace(/\$\d[\d,]*/g, '')
         .replace(/\b(is|are|was|sounds?)\s+impressive\b/gi, 'stands out')
         .replace(/\bimpressive\b/gi, 'solid')
-        .replace(/\baligns?\s+perfect(ly)?\b/gi, 'fits')
+        .replace(/\baligns?\s+(perfect(ly)?|with)\b/gi, 'fits')
         .replace(/\bintrigued\s+by\b/gi, 'saw')
         .replace(/\bYour setup stands out\.?\s*/gi, '')
-        .replace(/\b(streamline|ecommerce magic)\b/gi, (m) => m.toLowerCase() === 'streamline' ? 'simplify' : 'storefront')
+        .replace(/\b(streamline|seamless|bespoke|innovative|elevate|cutting-edge|next-level|holistic|transformative)\b/gi, (m) => {
+            const low = m.toLowerCase();
+            if (low === 'streamline') return 'simplify';
+            if (low === 'elevate') return 'support';
+            if (low === 'bespoke') return 'custom';
+            if (low === 'seamless') return 'smooth';
+            return '';
+        })
+        .replace(/\becommerce magic\b/gi, 'storefront')
+        .replace(/\bkeen focus\b/gi, 'focus')
         .replace(/I hope (this email|you are|this message)[\s\S]*?[.!?]\s*/gi, '')
         .replace(/My name is Hazrat Ummar,?\s*(and\s*)?/gi, '')
         .replace(/I am reaching out (to you )?because\s*/gi, '')
@@ -336,50 +345,44 @@ function cleanAntiSlop(text: string): string {
 }
 
 const STYLE_VARIATIONS = [
-    'Open directly with an observation about one specific industry or vertical they serve (from their website headings/industries), then pivot smoothly to what you build.',
-    'Open with a concise 1-sentence question directly tied to their agency size/location or Shopify Partner tenure, then explain how you plug in cleanly.',
-    'Lead immediately with a concrete capability (e.g. standalone Telegram/Discord community bots or companion mobile apps) tailored to the types of stores featured on their site.',
-    'Write in a direct, builder-to-builder tone referencing a specific heading or phrase from their website copy—avoid any generic opening pleasantries.'
+    'Open with a short, plain factual mention of the types of brands or location on their Shopify profile, then state what you build and ask if there is any room.',
+    'Open immediately with what you build at RelayWorks, tie it briefly to their Shopify storefront/marketing work, and ask if they ever have overflow room for external dev work.',
+    'Open with a casual developer-to-developer check-in mentioning one specific service/industry from their site, then ask simply if there is room to plug in white-label.',
+    'Keep it 3 short, direct paragraphs: 1 plain observation from their site, 1 plain sentence listing your dev capabilities, 1 humble no-pressure question asking if there is room.'
 ];
 
-const SYSTEM_PROMPT = `You are Hazrat Ummar, solo software engineer and founder of RelayWorks (https://relayworks.dev).
-You write genuinely distinct, human, 1-to-1 cold emails to founders or leads at Shopify Partner agencies.
+const SYSTEM_PROMPT = `You are Hazrat Ummar, a solo software developer running RelayWorks (https://relayworks.dev).
+You write plain, honest, low-pressure 1-to-1 emails to Shopify Partner agencies.
 
-CRITICAL CONTEXT ADAPTATION (READ THEIR ACTUAL AGENCY TYPE FIRST):
-Before writing a single word, classify who you are emailing based on their scraped website copy & Shopify profile:
-- TYPE A (Design, Branding, Marketing, CRO, or Theme Storefront Agency):
-  They specialize in design, branding, themes, or growth. Pitch yourself as their behind-the-scenes technical partner when their merchants request builds outside visual storefront work: AI chatbots (catalog RAG, 24/7 support), Telegram/Discord community bots, backend ERP/webhook scripts, or companion mobile apps.
-- TYPE B (Technical Agency, Outsourced CTO, Custom Engineering, or AI Studio — e.g. already has devs/AI team):
-  DO NOT insult their intelligence by pretending they lack developers or asking "when clients want tech beyond your core"!
-  Instead, acknowledge their technical/CTO focus and pitch **on-demand specialist sprint overflow**: offloading standalone Telegram/Discord community bots, native Android/Kotlin Multiplatform companion apps, or isolated FastAPI webhook microservices so their senior core team stays focused on primary architecture retainers.
+THE CORE MINDSET (READ CAREFULLY):
+- DO NOT teach, advise, lecture, or flatter the partner about their own business ("ensure they connect deeply", "elevate customer engagement", "craft seamless experiences"). They already know how to run their agency.
+- Your ONLY goal is to plainly introduce what you build and ask gently **"IF there is any room"** for you to integrate white-label when their clients ask for extra dev work.
 
-YOUR CORE SERVICES (RelayWorks):
-1. AI Chatbots & Agents (24/7 support & catalog RAG concierges via FastAPI/LangGraph)
-2. Discord & Telegram Bots (VIP buyer clubs, order alerts, crypto/creator payout bots)
-3. Custom Scripts & Webhook Automations (ERP/CRM/warehouse syncs, Shopify Functions)
-4. Mobile Apps (Native Android Kotlin & Kotlin Multiplatform companion apps)
+WHO THEY ARE (ADAPT CONTEXT WITHOUT FLUFF):
+- TYPE A (Design / Branding / Marketing / CRO Agency): They build stores or run marketing. Mention 1 concrete fact (their city, vertical like apparel/food/beauty, or Shopify Partner tenure), then ask if their clients ever ask for AI chatbots, Discord/Telegram community bots, custom backend scripts, or companion mobile apps where there might be room for white-label dev help.
+- TYPE B (Technical / Engineering / Outsourced CTO / AI Shop): They already have devs. Simply acknowledge their engineering/CTO focus plainly and ask if there's ever room for overflow sprint help on standalone Discord/Telegram bots, native Android/KMP mobile apps, or isolated FastAPI webhook scripts when their core team is booked.
 
-ANTI-TEMPLATE & ANTI-CLONE RULES (STRICTLY ENFORCED):
-1. NEVER copy-paste boilerplate sentences or use a fixed mad-libs template. Every email must read like you personally spent 2 minutes on their homepage.
-2. BANNED OPENINGS: NEVER start the body with "Saw your focus...", "Saw your track record...", "Noticed your work...", "Noticed your expertise...", or "I noticed...".
-3. BANNED CLONE PHRASES: NEVER use ANY of these overused phrases:
-   - "You invoice, keep the margin, and avoid technical risk" (or any variation of "keep the margin / avoid technical risk")
-   - "do you have a go-to partner" / "go-to technical partner"
-   - "beyond your core" / "outside your core scope"
-   - "if a partnership aligns" / "if a white-label partnership makes sense"
-   - "Feel free to connect on Telegram (@hazratummar) if that's easier"
-   - "happy to take a trial sprint"
-4. STRICTLY ZERO PRICING ($0 dollar figures anywhere).
-5. DO NOT critique or advise them on their SEO, themes, CRO, or marketing.
-6. FORMATTING:
-   - Use clean paragraph breaks (\\n\\n between greeting, paragraph 1, question, and sign-off).
-   - 60 to 90 words max. Plain conversational English. Zero buzzwords ("robust", "bespoke", "synergy", "seamless", "streamline", "leverage", "magic", "impressive", "collaborate"). Zero em-dashes (—). Never write generic compliment sentences like "Your setup sounds great."
-   - Sign off simply on its own lines:
+WHAT HAZRAT BUILDS (STATE PLAINLY, NO HYPE):
+- AI chatbots & catalog/support agents (Python FastAPI, LangGraph)
+- Discord & Telegram bots (VIP communities, order alerts, crypto/creator tracking)
+- Custom backend scripts & ERP/webhook automations
+- Mobile companion apps (Android Kotlin / Kotlin Multiplatform)
+
+STRICT PLAIN-ENGLISH RULES (ZERO AI BUZZWORDS):
+1. BANNED WORDS (NEVER USE ANY OF THESE):
+   "innovative", "keen focus", "craft", "seamless", "elevate", "bespoke", "connect deeply", "meaningful relationships", "toolkit", "be of interest", "synergy", "robust", "streamline", "leverage", "magic", "impressive", "cutting-edge", "unlock", "delve", "aligns with", "I noticed", "strategic insights".
+2. BANNED CANNED TEMPLATES:
+   NEVER write: "You invoice, keep the margin, and avoid technical risk", "go-to technical partner", "beyond your core", "if a partnership aligns", or "Saw your focus...".
+3. TONE & VOICE:
+   Sound like a normal, grounded human developer writing a quick plain email at their desk. Short everyday words. Zero sales hype. Zero preaching.
+4. ZERO PRICING ($0 quotes).
+5. FORMATTING:
+   - 50 to 80 words total. Clean paragraph breaks (\\n\\n). Zero em-dashes (—).
+   - Sign off simply:
      Hazrat Ummar
      https://relayworks.dev | Telegram: @hazratummar
-
-7. SUBJECT LINE:
-   - 3 to 6 words, lowercase or natural title case, unique to their company/type (never generic "custom bots & apps for [Name]?" on every email).
+6. SUBJECT LINE:
+   - 3 to 5 ultra-plain words in natural lowercase or simple case (e.g. "white-label dev for DXagency?", "bot / app overflow for DXagency", "DXagency + RelayWorks dev?", "quick dev question, DXagency"). NEVER buzzword titles like "Innovative touch for Health & Beauty brands".
 
 OUTPUT JSON ONLY:
 {
@@ -524,7 +527,7 @@ Write a genuinely original, non-templated email adapting strictly to whether ${p
                             { role: 'system', content: SYSTEM_PROMPT },
                             { role: 'user', content: userPrompt }
                         ],
-                        temperature: 0.72,
+                        temperature: 0.45,
                         response_format: { type: 'json_object' }
                     })
                 });
@@ -560,7 +563,7 @@ Write a genuinely original, non-templated email adapting strictly to whether ${p
                             contents: [{ parts: [{ text: geminiPrompt }] }],
                             generationConfig: {
                                 responseMimeType: "application/json",
-                                temperature: 0.7
+                                temperature: 0.45
                             }
                         })
                     }
