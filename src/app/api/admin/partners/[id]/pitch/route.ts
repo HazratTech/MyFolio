@@ -254,15 +254,16 @@ function generateFallbackPitch(
 
     if (angle === 'custom-scripts' || angle === 'technical-audit') {
         return {
-            subject: `webhook & script capacity for ${partnerName}`,
-            body: `Hey ${partnerName} team,
+            subject: `webhook & script overflow for ${partnerName}`,
+            body: `Hi ${partnerName} team,
 
-Saw your work around ${siteContext?.industries || 'Shopify merchant builds'}.
+Saw your Shopify portfolio around ${siteContext?.industries || 'ecommerce builds and growth'}.
 
-When client projects require standalone backend scripts, ERP/warehouse webhook syncs, or custom Shopify Functions outside standard storefront sprints, I take those tickets white-label so your core team stays focused.
+When merchants ask for standalone work outside Liquid—like ERP/warehouse webhook syncs, private API middleware, or automated order-ops scripts—I handle those builds silently under NDA as your white-label dev partner with clean repo handover.
 
-Would extra backend engineering bandwidth be helpful when roadmaps pile up?
+If your core team wants extra backend capacity without adding full-time headcount, is there room to connect?
 
+Thanks,
 Hazrat Ummar
 https://relayworks.dev | Telegram: @hazratummar`
         };
@@ -271,12 +272,13 @@ https://relayworks.dev | Telegram: @hazratummar`
     if (angle === 'concise') {
         return {
             subject: `quick dev question, ${partnerName}`,
-            body: `Hey ${partnerName} team,
+            body: `Hi ${partnerName} team,
 
-I build white-label AI shopping chatbots, Discord/Telegram community bots, and Android/KMP companion apps for Shopify agencies.
+I step in white-label under NDA for Shopify agencies when clients need standalone AI support chatbots, ERP/webhook automations, Discord/Telegram bots, or companion mobile apps—with full repo handover under your brand.
 
-Open to connecting if you ever need sprint capacity on those fronts?
+Is there ever room for quiet dev backup when those requests hit your roadmap?
 
+Thanks,
 Hazrat Ummar
 https://relayworks.dev | Telegram: @hazratummar`
         };
@@ -284,33 +286,42 @@ https://relayworks.dev | Telegram: @hazratummar`
 
     if (isTechAgency) {
         return {
-            subject: `bot & mobile sprint capacity for ${partnerName}`,
-            body: `Hey ${partnerName} team,
+            subject: `bot & mobile overflow for ${partnerName}`,
+            body: `Hi ${partnerName} team,
 
-Looked through your site and saw you already run dedicated technical and engineering builds for clients.
+Saw on your site that your team already handles technical builds and integrations for Shopify brands.
 
-When your main roadmap is busy and a client asks for a standalone Discord/Telegram community bot, an AI support concierge, or a native Android/KMP companion app, I handle those sprints white-label at RelayWorks (https://relayworks.dev).
+Whenever your roadmap is full and a client asks for a standalone AI support agent, a Discord/Telegram VIP bot, or a native Android/KMP companion app, I ship those tickets white-label under NDA with direct repo handover so you keep margin without pulling core devs off priority work.
 
-Open to keeping my contact handy for specialist overflow sprints?
+Is there any room to keep my contact handy as quiet overflow backup?
 
+Thanks,
 Hazrat Ummar
 https://relayworks.dev | Telegram: @hazratummar`
         };
     }
 
     return {
-        subject: `bots & mobile builds for ${partnerName}`,
-        body: `Hey ${partnerName} team,
+        subject: `white-label dev for ${partnerName}?`,
+        body: `Hi ${partnerName} team,
 
-Looked at your ${siteContext?.location ? `${siteContext.location} ` : ''}Shopify portfolio around ${siteContext?.industries || 'storefront design and growth'}.
+Saw ${partnerName} works on Shopify builds and growth for ${siteContext?.industries || 'consumer brands'}${siteContext?.location ? ` out of ${siteContext.location}` : ''}.
 
-I partner white-label with agencies when merchants request standalone technical builds like AI support/catalog chatbots, Telegram/Discord VIP bots, ERP webhook scripts, or companion mobile apps.
+Whenever merchants ask for out-of-scope features like AI support/catalog chatbots, custom ERP/webhook scripts, Discord/Telegram community bots, or companion mobile apps, I build them silently under your brand with clean repo handover—letting you capture that extra retainer revenue with zero hiring overhead.
 
-If those requests ever hit your inbox, open to a quick chat?
+Is there any room to plug in as quiet white-label dev backup when those asks come up?
 
+Thanks,
 Hazrat Ummar
 https://relayworks.dev | Telegram: @hazratummar`
     };
+}
+
+function ensureCompletePartnerSignature(body: string): string {
+    const trimmed = body.trim();
+    if (/relayworks\.dev/i.test(trimmed)) return trimmed;
+    const withoutTrailingThanks = trimmed.replace(/\n*(thanks|best|regards),?\s*$/i, '').trim();
+    return `${withoutTrailingThanks}\n\nThanks,\nHazrat Ummar\nhttps://relayworks.dev | Telegram: @hazratummar`;
 }
 
 function cleanAntiSlop(text: string): string {
@@ -345,44 +356,42 @@ function cleanAntiSlop(text: string): string {
 }
 
 const STYLE_VARIATIONS = [
-    'Open with a short, plain factual mention of the types of brands or location on their Shopify profile, then state what you build and ask if there is any room.',
-    'Open immediately with what you build at RelayWorks, tie it briefly to their Shopify storefront/marketing work, and ask if they ever have overflow room for external dev work.',
-    'Open with a casual developer-to-developer check-in mentioning one specific service/industry from their site, then ask simply if there is room to plug in white-label.',
-    'Keep it 3 short, direct paragraphs: 1 plain observation from their site, 1 plain sentence listing your dev capabilities, 1 humble no-pressure question asking if there is room.'
+    'Open directly with "[Agency Name] handles [specific Shopify service/vertical]..." (always Subject + Verb first, never starting with "-ing" or "Based in..."), then show the concrete white-label ROI and close with a simple question.',
+    'Open with "I saw [Agency Name] runs..." naming their specific vertical from their site, explain how you take standalone bots, AI agents, webhook scripts, and mobile apps off their plate under NDA, and ask gently if there is overflow room.',
+    'Write 3 tight, punchy paragraphs: 1 clear sentence referencing their actual client work, 2 crisp sentences on how white-label NDA fulfillment lets them capture extra technical retainers with clean repo handover and zero extra hiring, and 1 low-friction closing ask.',
+    'Start with a grounded peer-to-peer intro tying your backend/AI/bot/mobile engineering to the non-storefront asks Shopify merchants bring to agencies like theirs, ending with an easy, no-pressure ask.'
 ];
 
-const SYSTEM_PROMPT = `You are Hazrat Ummar, a solo software developer running RelayWorks (https://relayworks.dev).
-You write plain, honest, low-pressure 1-to-1 emails to Shopify Partner agencies.
+const SYSTEM_PROMPT = `You are Hazrat Ummar, a solo senior software developer running RelayWorks (https://relayworks.dev).
+You write compact, complete, high-value 1-to-1 cold emails to Shopify Partner agencies.
 
-THE CORE MINDSET (READ CAREFULLY):
-- DO NOT teach, advise, lecture, or flatter the partner about their own business ("ensure they connect deeply", "elevate customer engagement", "craft seamless experiences"). They already know how to run their agency.
-- Your ONLY goal is to plainly introduce what you build and ask gently **"IF there is any room"** for you to integrate white-label when their clients ask for extra dev work.
+THE CORE MINDSET:
+- DO NOT lecture, advise, or flatter the partner ("ensure they connect deeply", "craft seamless experiences").
+- Every sentence must show clear COMMERCIAL VALUE for the agency: whenever merchants ask for non-Liquid builds outside a normal storefront sprint, you step in silently under NDA (under their agency brand, direct Git repo handover, zero client poaching) so they capture that extra revenue without hiring full-time Python, AI, or mobile engineers.
+- Ask gently IF there is room for quiet white-label dev backup when those requests come up.
 
-WHO THEY ARE (ADAPT CONTEXT WITHOUT FLUFF):
-- TYPE A (Design / Branding / Marketing / CRO Agency): They build stores or run marketing. Mention 1 concrete fact (their city, vertical like apparel/food/beauty, or Shopify Partner tenure), then ask if their clients ever ask for AI chatbots, Discord/Telegram community bots, custom backend scripts, or companion mobile apps where there might be room for white-label dev help.
-- TYPE B (Technical / Engineering / Outsourced CTO / AI Shop): They already have devs. Simply acknowledge their engineering/CTO focus plainly and ask if there's ever room for overflow sprint help on standalone Discord/Telegram bots, native Android/KMP mobile apps, or isolated FastAPI webhook scripts when their core team is booked.
+GRAMMAR & OPENER RULES (CRITICAL):
+1. NEVER open ANY sentence with a dangling phrase or "-ing" participle ("Based in Austin...", "Working with health & beauty brands...", "Seeing your work...", "Focusing on CRO..."). ALWAYS start with an explicit grammatical subject ("Levitate Foundry builds...", "I saw Levitate Foundry handles...", "When merchants come to your team for...").
+2. Keep it COMPACT yet COMPLETE (80 to 110 words total; 50 to 70 words only if requested angle is "concise").
 
-WHAT HAZRAT BUILDS (STATE PLAINLY, NO HYPE):
-- AI chatbots & catalog/support agents (Python FastAPI, LangGraph)
-- Discord & Telegram bots (VIP communities, order alerts, crypto/creator tracking)
-- Custom backend scripts & ERP/webhook automations
-- Mobile companion apps (Android Kotlin / Kotlin Multiplatform)
+WHAT HAZRAT BUILDS WHITE-LABEL UNDER NDA:
+- AI support & catalog/order-status chatbots (Python FastAPI, LangGraph)
+- Custom backend scripts & ERP/warehouse webhook automations
+- Discord & Telegram VIP customer bots
+- Native Android / Kotlin Multiplatform mobile companion apps
 
-STRICT PLAIN-ENGLISH RULES (ZERO AI BUZZWORDS):
-1. BANNED WORDS (NEVER USE ANY OF THESE):
-   "innovative", "keen focus", "craft", "seamless", "elevate", "bespoke", "connect deeply", "meaningful relationships", "toolkit", "be of interest", "synergy", "robust", "streamline", "leverage", "magic", "impressive", "cutting-edge", "unlock", "delve", "aligns with", "I noticed", "strategic insights".
-2. BANNED CANNED TEMPLATES:
-   NEVER write: "You invoice, keep the margin, and avoid technical risk", "go-to technical partner", "beyond your core", "if a partnership aligns", or "Saw your focus...".
-3. TONE & VOICE:
-   Sound like a normal, grounded human developer writing a quick plain email at their desk. Short everyday words. Zero sales hype. Zero preaching.
-4. ZERO PRICING ($0 quotes).
-5. FORMATTING:
-   - 50 to 80 words total. Clean paragraph breaks (\\n\\n). Zero em-dashes (—).
-   - Sign off simply:
+STRICT PLAIN-ENGLISH RULES (ZERO STIFF PHRASING OR BUZZWORDS):
+1. BANNED WORDS / STIFF PHRASES:
+   "innovative", "keen focus", "craft", "seamless", "elevate", "bespoke", "connect deeply", "meaningful relationships", "toolkit", "be of interest", "synergy", "robust", "streamline", "leverage", "magic", "impressive", "cutting-edge", "unlock", "delve", "aligns with", "I noticed", "strategic insights", "more technical solutions", "more technical depth", "overflow scenarios", "quietly assist", "beyond your core".
+2. TONE & FORMATTING:
+   - Grounded senior engineer talking peer-to-peer. Everyday direct verbs ("build", "ship", "handle", "sync"). Double-newline (\\n\\n) between paragraphs. Zero em-dashes (—).
+   - Zero dollar quotes ($0 pricing).
+   - Always finish with the complete signature:
+     Thanks,
      Hazrat Ummar
      https://relayworks.dev | Telegram: @hazratummar
-6. SUBJECT LINE:
-   - 3 to 5 ultra-plain words in natural lowercase or simple case (e.g. "white-label dev for DXagency?", "bot / app overflow for DXagency", "DXagency + RelayWorks dev?", "quick dev question, DXagency"). NEVER buzzword titles like "Innovative touch for Health & Beauty brands".
+3. SUBJECT LINE:
+   - 3 to 5 plain words, natural lowercase or simple case (e.g. "white-label dev for Levitate?", "bot & webhook backup for Levitate?", "Levitate + RelayWorks dev?").
 
 OUTPUT JSON ONLY:
 {
@@ -540,7 +549,7 @@ Write a genuinely original, non-templated email adapting strictly to whether ${p
                         if (parsed.subject && parsed.body) {
                             generatedPitch = {
                                 subject: cleanAntiSlop(parsed.subject),
-                                body: cleanAntiSlop(parsed.body)
+                                body: ensureCompletePartnerSignature(cleanAntiSlop(parsed.body))
                             };
                             actualModelUsed = targetModel;
                         }
@@ -577,7 +586,7 @@ Write a genuinely original, non-templated email adapting strictly to whether ${p
                         if (parsed.subject && parsed.body) {
                             generatedPitch = {
                                 subject: cleanAntiSlop(parsed.subject),
-                                body: cleanAntiSlop(parsed.body)
+                                body: ensureCompletePartnerSignature(cleanAntiSlop(parsed.body))
                             };
                             actualModelUsed = 'gemini-2.5-flash';
                         }

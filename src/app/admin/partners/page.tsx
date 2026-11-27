@@ -1225,7 +1225,12 @@ export default function ShopifyPartnersPage() {
                                 {/* Email Body */}
                                 <div className="space-y-1">
                                     <div className="flex items-center justify-between">
-                                        <label className="text-[11px] font-bold text-slate-800 uppercase tracking-wider">Email Message</label>
+                                        <div className="flex items-center gap-2">
+                                            <label className="text-[11px] font-bold text-slate-800 uppercase tracking-wider">Email Message</label>
+                                            <span className="text-[10px] font-mono text-slate-500">
+                                                {editableBody.trim() ? editableBody.trim().split(/\s+/).length : 0} words
+                                            </span>
+                                        </div>
                                         <button
                                             type="button"
                                             onClick={() => copyToClipboard(editableBody, "body")}
@@ -1236,10 +1241,10 @@ export default function ShopifyPartnersPage() {
                                         </button>
                                     </div>
                                     <textarea
-                                        rows={8}
+                                        rows={10}
                                         value={editableBody}
                                         onChange={(e) => setEditableBody(e.target.value)}
-                                        className="w-full rounded-xl border border-slate-200 p-3 text-xs text-slate-800 leading-relaxed focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none font-sans"
+                                        className="w-full min-h-[210px] rounded-xl border border-slate-200 p-3 text-xs text-slate-800 leading-relaxed focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none font-sans"
                                     />
                                 </div>
                             </div>

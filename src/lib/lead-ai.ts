@@ -180,17 +180,16 @@ YOUR SECOND JOB — CLEAN ENTITY EXTRACTION:
 - "score": 80-98 (higher if freelance/sprint/contract friendly and has direct contact email).
 - "engagementType": "Fixed Sprint" | "Contract / Freelance" | "Hourly" | "Milestone".
 
-YOUR THIRD JOB — HUMAN PEER-TO-PEER PITCH (ZERO SLOP):
+YOUR THIRD JOB — COMPACT HIGH-VALUE PEER PITCH (ZERO SLOP):
 - "subject": Write a natural, crisp 3 to 6 word subject line referencing their REAL company name and actual project (e.g., "Discord bot build for Substrate Labs", "FastAPI & RAG support for Pond AI", "Android app build for Xolvio"). NEVER insert broken sentence fragments.
-- "body": 60 to 90 words max, formatted with clean double-newline paragraph breaks (short greeting, 1-2 short body paragraphs, crisp sign-off).
-  - Direct, human engineering peer tone. Offer Hazrat's hands-on build services rather than lecturing them with unsolicited advice ("consider using X").
-  - Reference their specific technical problem accurately.
-  - Mention relevant shipped work only where relevant (e.g. ClutchBot/Clipping Club for bots, FastAPI/LangGraph for AI, Kotlin/KMP for mobile).
+- "body": 70 to 105 words max (compact yet complete with concrete commercial value), formatted with clean double-newline paragraph breaks:
+  1. Direct, specific 1-sentence hook referencing their actual technical requirement (NEVER use dangling modifiers like "Based in NYC, you...").
+  2. Concrete value proposition: highlight solo senior engineering execution (no agency bloat, direct repo/code handover from day one, reliable production architecture — matching their category with relevant proof like ClutchBot/Clipping Club for bots, FastAPI/LangGraph/pgvector for AI, or Kotlin/KMP APK builds for mobile).
+  3. Low-friction closing question + full sign-off on its own lines:
+     Hazrat Ummar
+     https://relayworks.dev | Telegram: @hazratummar
   - STRICTLY ZERO dollar amounts or sprint prices ($0 quotes).
   - NO em-dashes (—). NO buzzwords ("robust", "synergy", "seamless", "leverage", "streamline", "game-changer"). NO fake flattery ("impressed by", "aligns perfectly").
-  - Sign off on its own lines:
-    Hazrat Ummar
-    https://relayworks.dev | Telegram: @hazratummar
 
 RETURN JSON ONLY:
 {
@@ -268,13 +267,14 @@ export async function generateLeadPitch(
 
 STRICT RULES:
 - 3 to 6 word natural subject line (lowercase or title case, never robotic "re: AI agent & chatbot engineering for [Sentence]").
-- Format body with clean paragraph breaks (\n\n between paragraphs), 60-90 words total.
-- Offer Hazrat's hands-on build services naturally instead of lecturing them ("consider implementing X").
+- Compact, scannable, yet COMPLETE with real value (70-105 words total) with clean paragraph breaks (\n\n).
+- NEVER use dangling opening modifiers ("Based in Austin, you..."). Make the recipient/company the clear subject.
+- Lead with what they get: solo senior engineer ownership, clean repo handover from day 1, production reliability, zero agency layers.
 - NEVER mention dollar amounts or sprint prices ($0 quotes).
 - NO em-dashes (—). NO buzzwords ("synergy", "leverage", "streamline", "robust", "seamless", "game-changer").
 - NO fake flattery ("admire your work", "loved your post").
 - ${angleInstructions}
-- Sign off on its own lines:
+- Always finish with full sign-off on its own lines:
   Hazrat Ummar
   https://relayworks.dev | Telegram: @hazratummar
 
