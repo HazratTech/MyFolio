@@ -305,10 +305,16 @@ export default function ShopifyPartnersPage() {
         setZohoFeedback(null);
         setRecipientEmail(partner.email || "");
 
-        if (partner.personalizedPitch?.body) {
+        if (partner.personalizedPitch?.body && partner.email) {
             setEditableSubject(partner.personalizedPitch.subject);
             setEditableBody(partner.personalizedPitch.body);
             setActiveAngle(partner.personalizedPitch.angle || "white-label");
+        } else if (partner.personalizedPitch?.body && !partner.email) {
+            // Hydrate existing pitch immediately while extracting missing email/website in background
+            setEditableSubject(partner.personalizedPitch.subject);
+            setEditableBody(partner.personalizedPitch.body);
+            setActiveAngle(partner.personalizedPitch.angle || "white-label");
+            await generatePitchForPartner(partner, partner.personalizedPitch.angle || "white-label");
         } else {
             // Default initial angle to White-Label Partner (Full Suite)
             await generatePitchForPartner(partner, "white-label");
@@ -336,13 +342,14 @@ export default function ShopifyPartnersPage() {
             if (res.ok && data.pitch) {
                 setEditableSubject(data.pitch.subject);
                 setEditableBody(data.pitch.body);
-                if (data.email && !recipientEmail) {
+                if (data.email) {
                     setRecipientEmail(data.email);
                 }
                 // Update local state list
                 setPartners(prev => prev.map(p => p._id === partner._id ? {
                     ...p,
                     email: data.email || p.email,
+                    websiteUrl: data.websiteUrl || p.websiteUrl,
                     description: data.description || p.description,
                     personalizedPitch: data.pitch,
                     websiteContext: data.websiteContext || p.websiteContext
@@ -351,6 +358,7 @@ export default function ShopifyPartnersPage() {
                     setSelectedPartner(prev => prev ? { 
                         ...prev, 
                         email: data.email || prev.email,
+                        websiteUrl: data.websiteUrl || prev.websiteUrl,
                         description: data.description || prev.description,
                         personalizedPitch: data.pitch,
                         websiteContext: data.websiteContext || prev.websiteContext
@@ -769,7 +777,7 @@ export default function ShopifyPartnersPage() {
                                         </a>
 
                                         {/* Official Agency Website Link */}
-                                        {partner.websiteUrl && (
+                                        {partner.websiteUrl && !/shopifycdn\.com|\.(png|jpg|jpeg|svg|webp)(\?|$)/i.test(partner.websiteUrl) && (
                                             <a
                                                 href={partner.websiteUrl}
                                                 target="_blank"
@@ -781,6 +789,14 @@ export default function ShopifyPartnersPage() {
                                                 <span>Visit Website</span>
                                                 <ExternalLink className="w-2.5 h-2.5 opacity-70" />
                                             </a>
+                                        )}
+
+                                        {/* Extracted Agency Email Pill */}
+                                        {partner.email && (
+                                            <span className="inline-flex items-center gap-1 text-[11px] font-mono font-semibold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-md">
+                                                <Mail className="w-3 h-3 text-indigo-600" />
+                                                <span>{partner.email}</span>
+                                            </span>
                                         )}
                                     </div>
 

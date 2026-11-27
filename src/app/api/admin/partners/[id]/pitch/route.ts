@@ -17,6 +17,7 @@ interface ScrapedContext {
     snippet?: string;
     directorySnippet?: string;
     foundEmail?: string;
+    discoveredWebsite?: string;
     lastScrapedAt?: Date | string;
 }
 
@@ -48,13 +49,37 @@ function cleanHtml(rawHtml: string): string {
         .trim();
 }
 
+function decodeCfEmail(hex: string): string | undefined {
+    try {
+        const key = parseInt(hex.slice(0, 2), 16);
+        let out = '';
+        for (let i = 2; i < hex.length; i += 2) {
+            out += String.fromCharCode(parseInt(hex.slice(i, i + 2), 16) ^ key);
+        }
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(out) ? out.toLowerCase() : undefined;
+    } catch {
+        return undefined;
+    }
+}
+
+function isBrokenWebsiteUrl(url?: string): boolean {
+    if (!url) return true;
+    return /shopifycdn\.com|shopify\.com|\.(png|jpg|jpeg|svg|webp|gif|pdf)(\?|$)/i.test(url);
+}
+
 function extractAgencyEmail(html: string): string | undefined {
-    const blocked = /sentry|wixpress|example\.com|shopify\.com|schema\.org|w3\.org|noreply|no-reply|donotreply|@2x|\.(png|jpg|jpeg|gif|svg|webp|css|js)$/i;
+    const blocked = /sentry|wixpress|example\.com|shopify\.com|shopifycdn\.com|schema\.org|w3\.org|noreply|no-reply|donotreply|u002f|@2x|\.(png|jpg|jpeg|gif|svg|webp|css|js)$/i;
 
     const mailtoMatches = Array.from(html.matchAll(/mailto:([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15})/gi));
     for (const m of mailtoMatches) {
         const candidate = m[1].toLowerCase().trim();
         if (!blocked.test(candidate)) return candidate;
+    }
+
+    const cfMatches = Array.from(html.matchAll(/data-cfemail=["']([0-9a-fA-F]+)["']/gi));
+    for (const m of cfMatches) {
+        const decoded = decodeCfEmail(m[1]);
+        if (decoded && !blocked.test(decoded)) return decoded;
     }
 
     const textMatches = html.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}/g) || [];
@@ -80,6 +105,23 @@ async function scrapeDirectory(directoryUrl: string, headers: Record<string, str
         const specialtiesMatch = text.match(/Top services and specialties\s*(.+?)(?:Shopify|What is Shopify|$)/i);
         const descMatch = html.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["']/i);
 
+        const foundEmail = extractAgencyEmail(html);
+
+        let discoveredWebsite: string | undefined;
+        const jsonSite = html.match(/contactType\\",\\"(?:website|other)\\",\\"contactUrl\\",\\"(https?:\/\/[^\\"]+)\\"/i);
+        if (jsonSite && jsonSite[1] && !isBrokenWebsiteUrl(jsonSite[1])) {
+            try {
+                discoveredWebsite = new URL(jsonSite[1].replace(/\\u002F/gi, '/')).origin;
+            } catch {
+                discoveredWebsite = jsonSite[1];
+            }
+        } else if (foundEmail) {
+            const domain = foundEmail.split('@')[1];
+            if (domain && !/^(gmail|yahoo|outlook|hotmail|icloud|protonmail|aol)\./i.test(domain)) {
+                discoveredWebsite = `https://${domain}`;
+            }
+        }
+
         return {
             partnerSince: partnerSinceMatch ? partnerSinceMatch[1].trim() : undefined,
             teamSize: teamSizeMatch ? teamSizeMatch[1].trim() : undefined,
@@ -87,7 +129,9 @@ async function scrapeDirectory(directoryUrl: string, headers: Record<string, str
             industries: industriesMatch ? industriesMatch[1].trim().slice(0, 160) : undefined,
             specialties: specialtiesMatch ? specialtiesMatch[1].replace(/\(opens in a new tab\)/g, '').trim().slice(0, 200) : undefined,
             description: descMatch ? decodeHtmlEntities(descMatch[1].trim()) : undefined,
-            rawSnippet: text.slice(0, 500)
+            rawSnippet: text.slice(0, 500),
+            foundEmail,
+            discoveredWebsite,
         };
     } catch {
         return null;
@@ -96,8 +140,13 @@ async function scrapeDirectory(directoryUrl: string, headers: Record<string, str
 
 async function scrapeWebsite(websiteUrl: string, headers: Record<string, string>) {
     try {
+        if (isBrokenWebsiteUrl(websiteUrl)) return null;
         const res = await fetch(websiteUrl, { headers, signal: AbortSignal.timeout(6000) });
         if (!res.ok) return null;
+        const contentType = res.headers.get('content-type') || '';
+        if (!contentType.includes('text/html') && !contentType.includes('application/xhtml')) {
+            return null;
+        }
         const html = await res.text();
         if (html.includes('Attention Required! | Cloudflare') || html.includes('Sorry, you have been blocked')) {
             return null;
@@ -118,16 +167,18 @@ async function scrapeWebsite(websiteUrl: string, headers: Record<string, string>
 
         let foundEmail = extractAgencyEmail(html);
         if (!foundEmail) {
-            // Check /contact or /contact-us quickly for public agency email
-            try {
-                const origin = new URL(websiteUrl).origin;
-                const contactRes = await fetch(`${origin}/contact`, { headers, signal: AbortSignal.timeout(3500) });
-                if (contactRes.ok) {
-                    const contactHtml = await contactRes.text();
-                    foundEmail = extractAgencyEmail(contactHtml);
+            const origin = new URL(websiteUrl).origin;
+            for (const path of ['/contact', '/contact-us', '/about']) {
+                try {
+                    const contactRes = await fetch(`${origin}${path}`, { headers, signal: AbortSignal.timeout(3500) });
+                    if (contactRes.ok) {
+                        const contactHtml = await contactRes.text();
+                        foundEmail = extractAgencyEmail(contactHtml);
+                        if (foundEmail) break;
+                    }
+                } catch {
+                    // Try next path
                 }
-            } catch {
-                // Ignore contact page lookup failure
             }
         }
 
@@ -166,13 +217,9 @@ async function scrapeWebsiteContext(websiteUrl?: string, directoryUrl?: string):
         'Accept-Language': 'en-US,en;q=0.9',
     };
 
-    const [dirResult, webResult] = await Promise.allSettled([
-        directoryUrl ? scrapeDirectory(directoryUrl, headers) : Promise.resolve(null),
-        websiteUrl ? scrapeWebsite(websiteUrl, headers) : Promise.resolve(null),
-    ]);
-
-    const dirData = dirResult.status === 'fulfilled' ? dirResult.value : null;
-    const webData = webResult.status === 'fulfilled' ? webResult.value : null;
+    const dirData = directoryUrl ? await scrapeDirectory(directoryUrl, headers) : null;
+    const effectiveWebsiteUrl = !isBrokenWebsiteUrl(websiteUrl) ? websiteUrl : dirData?.discoveredWebsite;
+    const webData = effectiveWebsiteUrl ? await scrapeWebsite(effectiveWebsiteUrl, headers) : null;
 
     if (!dirData && !webData) return null;
 
@@ -189,7 +236,8 @@ async function scrapeWebsiteContext(websiteUrl?: string, directoryUrl?: string):
         techKeywords: webData?.techKeywords || ['Shopify', 'Liquid'],
         snippet: webData?.snippet,
         directorySnippet: dirData?.description || dirData?.rawSnippet,
-        foundEmail: webData?.foundEmail,
+        foundEmail: dirData?.foundEmail || webData?.foundEmail,
+        discoveredWebsite: effectiveWebsiteUrl,
         lastScrapedAt: new Date().toISOString()
     };
 }
@@ -402,6 +450,9 @@ export async function POST(
                 if (!partner.email && freshContext.foundEmail) {
                     partner.email = freshContext.foundEmail;
                 }
+                if (freshContext.discoveredWebsite && isBrokenWebsiteUrl(partner.websiteUrl)) {
+                    partner.websiteUrl = freshContext.discoveredWebsite;
+                }
                 await partner.save();
             }
         }
@@ -548,6 +599,7 @@ Write a genuinely original, non-templated email adapting strictly to whether ${p
             pitch: partner.personalizedPitch,
             websiteContext: partner.websiteContext,
             email: partner.email || '',
+            websiteUrl: partner.websiteUrl || '',
             description: partner.description,
         });
     } catch (error: any) {

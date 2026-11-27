@@ -22,18 +22,30 @@ async function fetchHtml(url: string): Promise<string> {
     }
 }
 
-function extractWebsite(html: string): string | undefined {
-    const externalLinks = html.match(/https?:\/\/(?!([a-z0-9-]+\.)?shopify\.com)[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}[^\s\"'<>)]*/gi) || [];
-    const cleanWebsites = Array.from(new Set(externalLinks)).filter(l => 
-        !l.includes('gstatic') && !l.includes('googletagmanager') && 
-        !l.includes('facebook') && !l.includes('twitter') && !l.includes('instagram') && 
-        !l.includes('youtube') && !l.includes('tiktok') && !l.includes('linkedin') && !l.includes('pinterest')
-    );
-    const first = cleanWebsites[0];
-    if (first) {
-        return first.replace(/\\$/, '').trim();
+function extractEmailFromDirectory(html: string): string | undefined {
+    const blocked = /shopify\.com|sentry|wixpress|example\.com|schema\.org|w3\.org|noreply|no-reply/i;
+    const mailtos = Array.from(html.matchAll(/mailto:([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15})/gi));
+    for (const m of mailtos) {
+        const email = m[1].toLowerCase().trim();
+        if (!blocked.test(email)) return email;
     }
     return undefined;
+}
+
+function extractWebsite(html: string): string | undefined {
+    // 1. Check Shopify Partner embedded JSON contactUrl (website or other)
+    const jsonSite = html.match(/contactType\\",\\"(?:website|other)\\",\\"contactUrl\\",\\"(https?:\/\/[^\\"]+)\\"/i);
+    if (jsonSite && jsonSite[1]) {
+        const url = jsonSite[1].replace(/\\u002F/gi, '/').trim();
+        if (!/shopify\.com|shopifycdn\.com/i.test(url)) return url;
+    }
+
+    // 2. Fallback to external href links (excluding CDN assets, social media, and Shopify domains)
+    const hrefMatches = Array.from(html.matchAll(/href="(https?:\/\/[^"]+)"/gi)).map(m => m[1]);
+    const cleanWebsites = Array.from(new Set(hrefMatches)).filter(l =>
+        !/shopify\.com|shopifycdn\.com|gstatic|googletagmanager|google\.com|g\.co|facebook|twitter|x\.com|instagram|youtube|tiktok|linkedin|pinterest|\.(png|jpg|jpeg|svg|webp|css|js|ico)(\?|$)/i.test(l)
+    );
+    return cleanWebsites[0]?.trim() || undefined;
 }
 
 export async function POST(request: Request) {
@@ -103,6 +115,7 @@ export async function POST(request: Request) {
                     const profileHtml = await fetchHtml(candidate.partnerDirectoryUrl);
                     const desc = (profileHtml.match(/<meta\s+name=\"description\"\s+content=\"([^\"]+)\"/i) || [])[1] || '';
                     const websiteUrl = extractWebsite(profileHtml);
+                    const email = extractEmailFromDirectory(profileHtml);
 
                     const services = ['Store building'];
                     const lowerDesc = desc.toLowerCase();
@@ -115,6 +128,7 @@ export async function POST(request: Request) {
                         name: candidate.name,
                         handle: candidate.handle,
                         websiteUrl: websiteUrl || undefined,
+                        email: email || undefined,
                         partnerDirectoryUrl: candidate.partnerDirectoryUrl,
                         country: candidate.country,
                         location: `${candidate.country}`,
