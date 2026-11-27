@@ -22,6 +22,10 @@ export interface ILead {
     budget?: string;
     engagementType?: 'Fixed Sprint' | 'Contract / Freelance' | 'Hourly' | 'Milestone';
     experienceReq?: string;
+    redditAuthor?: string;
+    subreddit?: string;
+    postedAt?: Date;
+    dmPitch?: string;
     notes?: string;
     createdAt?: Date;
     updatedAt?: Date;
@@ -56,6 +60,10 @@ const LeadSchema = new Schema<ILead>({
     budget: { type: String, default: 'Fixed Sprint ($1,200 – $2,500)' },
     engagementType: { type: String, default: 'Fixed Sprint' },
     experienceReq: { type: String, default: 'No Years Req (Portfolio-Driven)' },
+    redditAuthor: { type: String, default: '' },
+    subreddit: { type: String, default: '' },
+    postedAt: { type: Date },
+    dmPitch: { type: String, default: '' },
     notes: { type: String, default: '' },
 }, { timestamps: true });
 

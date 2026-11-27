@@ -27,6 +27,7 @@ export interface QualifiedLeadResult {
     engagementType: 'Fixed Sprint' | 'Contract / Freelance' | 'Hourly' | 'Milestone';
     subject: string;
     body: string;
+    dmPitch?: string;
     modelUsed: string;
 }
 
@@ -203,7 +204,8 @@ RETURN JSON ONLY:
   "score": 92,
   "engagementType": "Contract / Freelance",
   "subject": "3 to 6 word subject line",
-  "body": "Email body text"
+  "body": "Email body text",
+  "dmPitch": "3 to 4 crisp peer sentences for a quick Reddit DM or comment reply referencing their stated task (NO dollar amounts, NO em-dashes, NO buzzwords), ending with Hazrat | https://relayworks.dev | Telegram: @hazratummar"
 }`;
 
 export async function qualifyAndExtractLead(candidate: RawLeadCandidate): Promise<QualifiedLeadResult | null> {
@@ -239,6 +241,7 @@ ${candidate.rawText.slice(0, 1800)}`;
         engagementType,
         subject: cleanAntiSlop(String(d.subject || `${category} support for ${d.company}`)),
         body: cleanAntiSlop(String(d.body || '')),
+        dmPitch: cleanAntiSlop(String(d.dmPitch || d.body || '')),
         modelUsed: aiResult.modelUsed,
     };
 }

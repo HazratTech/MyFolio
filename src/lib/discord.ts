@@ -154,3 +154,89 @@ export async function sendSocialMediaWebhook(
         console.error("Failed to send social media Discord webhook:", err);
     }
 }
+
+export interface RedditLeadAlertItem {
+    company: string;
+    category: string;
+    subreddit: string;
+    redditAuthor: string;
+    sourceUrl: string;
+    dmUrl?: string;
+    budget?: string;
+    painSignal: string;
+    dmPitch?: string;
+    score?: number;
+    postedAt?: Date | string;
+}
+
+export async function sendRedditLeadAlerts(leads: RedditLeadAlertItem[]) {
+    if (!DISCORD_WEBHOOK_URL || leads.length === 0) return;
+
+    const batch = leads.slice(0, 8);
+    const embeds = batch.map((lead) => {
+        const postedUnix = lead.postedAt
+            ? Math.floor(new Date(lead.postedAt).getTime() / 1000)
+            : Math.floor(Date.now() / 1000);
+        const dmLink =
+            lead.dmUrl ||
+            (lead.redditAuthor
+                ? `https://www.reddit.com/message/compose/?to=${encodeURIComponent(lead.redditAuthor.replace(/^u\//i, ""))}&subject=${encodeURIComponent(`Re: ${lead.category} build`)}`
+                : "");
+
+        const fields = [
+            {
+                name: "Subreddit & Author",
+                value: `${lead.subreddit} · u/${lead.redditAuthor} · <t:${postedUnix}:R>`,
+                inline: true,
+            },
+            {
+                name: "Budget / Score",
+                value: `${lead.budget || "Contract"} · Score ${lead.score || 88}/100`,
+                inline: true,
+            },
+            {
+                name: "Requirement",
+                value: (lead.painSignal || "").slice(0, 500) || "See thread",
+                inline: false,
+            },
+        ];
+
+        if (lead.dmPitch) {
+            fields.push({
+                name: "Ready-to-Send DM Draft",
+                value: `\`\`\`\n${lead.dmPitch.slice(0, 700)}\n\`\`\``,
+                inline: false,
+            });
+        }
+
+        if (dmLink) {
+            fields.push({
+                name: "Quick Actions",
+                value: `[Open Reddit Thread](${lead.sourceUrl}) · [Send Reddit PM](${dmLink})`,
+                inline: false,
+            });
+        }
+
+        return {
+            title: `🎯 [${lead.category}] ${lead.company}`.slice(0, 250),
+            url: lead.sourceUrl,
+            color: 0x2563eb,
+            fields,
+            timestamp: new Date().toISOString(),
+            footer: { text: "RelayWorks Reddit Job Radar" },
+        };
+    });
+
+    try {
+        await fetch(DISCORD_WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                content: `🚨 **${leads.length} New Reddit Hiring Lead${leads.length > 1 ? "s" : ""} Found!** Reply fast for highest conversion:`,
+                embeds,
+            }),
+        });
+    } catch (err) {
+        console.error("Failed to send Reddit lead alert to Discord:", err);
+    }
+}

@@ -1,0 +1,17 @@
+name: Reddit Job Radar Cron
+
+on:
+  schedule:
+    # Runs every 15 minutes
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  scan-reddit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Reddit Jobs Cron Endpoint
+        run: |
+          curl -X POST "https://relayworks.dev/api/cron/reddit-jobs" \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+          --fail || echo "Reddit cron trigger failed, will retry next cycle"

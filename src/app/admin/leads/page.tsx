@@ -32,6 +32,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { QuickRedditSearchModal } from "@/components/admin/QuickRedditSearchModal";
 
 interface Lead {
     _id: string;
@@ -42,6 +43,10 @@ interface Lead {
     email?: string;
     source: string;
     sourceUrl?: string;
+    redditAuthor?: string;
+    subreddit?: string;
+    postedAt?: string;
+    dmPitch?: string;
     status: "New" | "Contacted" | "In Discussion" | "Closed" | "Archived";
     score: number;
     confidence: "High" | "Medium" | "Low";
@@ -104,6 +109,7 @@ export default function LeadsAdminPage() {
 
     // Add Lead Modal State
     const [showAddModal, setShowAddModal] = useState(false);
+    const [showRedditSearchModal, setShowRedditSearchModal] = useState(false);
     const [newCompany, setNewCompany] = useState("");
     const [newCategory, setNewCategory] = useState<"Mobile Apps" | "Discord Bots" | "AI & Chatbots" | "Backend">("Backend");
     const [newDecisionMaker, setNewDecisionMaker] = useState("");
@@ -533,7 +539,15 @@ export default function LeadsAdminPage() {
                     </p>
                 </div>
 
-                <div className="flex items-center gap-2.5">
+                <div className="flex flex-wrap items-center gap-2.5">
+                    <Button
+                        onClick={() => setShowRedditSearchModal(true)}
+                        className="bg-orange-600 hover:bg-orange-700 text-white font-medium text-xs h-10 px-4 rounded-xl shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+                    >
+                        <Search className="w-3.5 h-3.5" />
+                        <span>Quick Reddit Search</span>
+                    </Button>
+
                     <Button
                         onClick={() => setShowAddModal(true)}
                         className="bg-slate-950 hover:bg-black text-white font-medium text-xs h-10 px-4 rounded-xl shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
@@ -896,7 +910,19 @@ export default function LeadsAdminPage() {
                                     </select>
 
                                     {/* Action Buttons */}
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        {lead.redditAuthor && (
+                                            <a
+                                                href={`https://www.reddit.com/message/compose/?to=${encodeURIComponent(lead.redditAuthor.replace(/^u\//i, ""))}&subject=${encodeURIComponent(lead.personalizedEmail?.subject || `Re: ${lead.category}`)}&message=${encodeURIComponent((lead.dmPitch || lead.personalizedEmail?.body || "").slice(0, 1500))}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex items-center gap-1 px-3 h-9 rounded-xl border border-orange-200 bg-orange-50 hover:bg-orange-100 text-orange-800 font-medium text-xs transition-colors"
+                                                title="Open Reddit DM with prefilled pitch"
+                                            >
+                                                <Send className="w-3 h-3" />
+                                                <span>Reddit DM</span>
+                                            </a>
+                                        )}
                                         <Button
                                             onClick={() => handleOpenModal(lead)}
                                             size="sm"
@@ -1595,6 +1621,12 @@ export default function LeadsAdminPage() {
                     </form>
                 </DialogContent>
             </Dialog>
+            {/* QUICK REDDIT JOB SEARCH MODAL */}
+            <QuickRedditSearchModal
+                open={showRedditSearchModal}
+                onOpenChange={setShowRedditSearchModal}
+                onLeadImported={() => fetchLeads(true)}
+            />
         </div>
     );
 }

@@ -9,6 +9,8 @@ import {
     qualifyAndExtractLead,
     stripHtmlKeepNewlines,
 } from '@/lib/lead-ai';
+import { scanRedditJobs, buildRedditDmUrl } from '@/lib/reddit-scraper';
+import { sendRedditLeadAlerts, RedditLeadAlertItem } from '@/lib/discord';
 
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
 
@@ -270,19 +272,51 @@ export async function POST() {
         }
 
         // ==========================================
-        // 4. Batch Deduplicate Before AI Qualification
+        // 4. Live Reddit [Hiring] & Niche Buyer Subreddits (Arctic Shift / OAuth)
+        // ==========================================
+        const redditMetaByUrl = new Map<string, { redditAuthor: string; subreddit: string; postedAt: string }>();
+        try {
+            const { posts: redditPosts } = await scanRedditJobs({
+                maxAgeHours: 36,
+                limitPerSub: 25,
+                strictCategory: true,
+            });
+            for (const rp of redditPosts.slice(0, 20)) {
+                redditMetaByUrl.set(rp.sourceUrl, {
+                    redditAuthor: rp.author,
+                    subreddit: `r/${rp.subreddit}`,
+                    postedAt: rp.postedAt,
+                });
+                rawCandidates.push({
+                    rawText: `${rp.title}\n\n${rp.selftext}`.slice(0, 1800),
+                    author: rp.author,
+                    source: `Reddit r/${rp.subreddit}`,
+                    sourceUrl: rp.sourceUrl,
+                    extractedEmail: rp.extractedEmail,
+                    defaultCategory: rp.categoryHint,
+                    rawTitle: rp.title,
+                    budget: rp.budget,
+                });
+            }
+        } catch (err: any) {
+            console.error('Reddit sync error:', err.message);
+        }
+
+        // ==========================================
+        // 5. Batch Deduplicate Before AI Qualification
         // ==========================================
         const candidateUrls = rawCandidates.map(c => c.sourceUrl);
         const existingDocs = await Lead.find({ sourceUrl: { $in: candidateUrls } }, { sourceUrl: 1 });
         const existingSet = new Set(existingDocs.map(d => d.sourceUrl));
 
-        const freshCandidates = rawCandidates.filter(c => !existingSet.has(c.sourceUrl)).slice(0, 20);
+        const freshCandidates = rawCandidates.filter(c => !existingSet.has(c.sourceUrl)).slice(0, 24);
 
         let addedCount = 0;
         let rejectedCount = 0;
+        const redditAlerts: RedditLeadAlertItem[] = [];
 
         // ==========================================
-        // 5. AI Gatekeeper Verification + Entity Extraction (Concurrent chunks of 5)
+        // 6. AI Gatekeeper Verification + Entity Extraction (Concurrent chunks of 5)
         // ==========================================
         const CHUNK_SIZE = 5;
         for (let i = 0; i < freshCandidates.length; i += CHUNK_SIZE) {
@@ -292,7 +326,8 @@ export async function POST() {
                     const qualified = await qualifyAndExtractLead(cand);
                     if (!qualified) return null;
 
-                    return {
+                    const redditMeta = redditMetaByUrl.get(cand.sourceUrl);
+                    const doc = {
                         title: `${qualified.category} · ${qualified.company}`,
                         company: qualified.company,
                         category: qualified.category,
@@ -308,13 +343,35 @@ export async function POST() {
                         budget: cand.budget || qualified.engagementType,
                         engagementType: qualified.engagementType,
                         experienceReq: 'No Years Req (Portfolio-Driven)',
+                        redditAuthor: redditMeta?.redditAuthor || '',
+                        subreddit: redditMeta?.subreddit || '',
+                        postedAt: redditMeta?.postedAt ? new Date(redditMeta.postedAt) : undefined,
+                        dmPitch: qualified.dmPitch || qualified.body,
                         personalizedEmail: {
                             subject: qualified.subject,
                             body: qualified.body,
                             modelUsed: qualified.modelUsed,
                         },
-                        notes: `AI-verified from ${cand.source}. ${cand.extractedEmail ? 'Direct email extracted.' : 'Apply via original posting URL.'}`,
+                        notes: `AI-verified from ${cand.source}. ${cand.extractedEmail ? 'Direct email extracted.' : redditMeta ? 'Reply via Reddit DM / thread.' : 'Apply via original posting URL.'}`,
                     };
+
+                    if (redditMeta) {
+                        redditAlerts.push({
+                            company: doc.company,
+                            category: doc.category,
+                            subreddit: redditMeta.subreddit,
+                            redditAuthor: redditMeta.redditAuthor,
+                            sourceUrl: doc.sourceUrl,
+                            dmUrl: buildRedditDmUrl(redditMeta.redditAuthor, doc.personalizedEmail.subject, doc.dmPitch),
+                            budget: doc.budget,
+                            painSignal: doc.painSignal,
+                            dmPitch: doc.dmPitch,
+                            score: doc.score,
+                            postedAt: redditMeta.postedAt,
+                        });
+                    }
+
+                    return doc;
                 })
             );
 
@@ -327,6 +384,10 @@ export async function POST() {
                 });
                 addedCount += validDocs.length;
             }
+        }
+
+        if (redditAlerts.length > 0) {
+            await sendRedditLeadAlerts(redditAlerts);
         }
 
         const totalLeads = await Lead.countDocuments({});
