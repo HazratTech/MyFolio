@@ -6,6 +6,8 @@ import Testimonial from "@/models/Testimonial";
 import Partner from "@/models/Partner";
 import Lead from "@/models/Lead";
 import Post from "@/models/Post";
+import Invoice from "@/models/Invoice";
+import Conversion from "@/models/Conversion";
 import { getZohoStatus } from "@/lib/zoho-mail";
 import {
     Handshake,
@@ -18,6 +20,9 @@ import {
     Plus,
     Sparkles,
     Send,
+    Receipt,
+    Landmark,
+    ArrowRightLeft,
 } from "lucide-react";
 import { AutoBlogConfigSection } from "@/components/admin/AutoBlogConfigSection";
 
@@ -37,6 +42,8 @@ export default async function AdminDashboard() {
         leadContacted,
         publishedPosts,
         draftPosts,
+        billingInvoices,
+        billingConversions,
     ] = await Promise.all([
         Project.countDocuments(),
         Testimonial.countDocuments(),
@@ -48,11 +55,33 @@ export default async function AdminDashboard() {
         Lead.countDocuments({ status: { $in: ["Contacted", "In Discussion", "Closed"] } }),
         Post.countDocuments({ status: "published" }),
         Post.countDocuments({ status: "draft" }),
+        Invoice.find().select("currency totalAmount reconciliationStatus").lean(),
+        Conversion.find().select("receivedINR").lean(),
     ]);
+
+    const totalInvoicedUSD = billingInvoices.reduce(
+        (sum: number, inv: any) => sum + (inv.currency === "USD" ? Number(inv.totalAmount || 0) : 0),
+        0
+    );
+    const totalBankCreditedINR = billingConversions.reduce(
+        (sum: number, conv: any) => sum + Number(conv.receivedINR || 0),
+        0
+    );
+    const unreconciledCount = billingInvoices.filter(
+        (inv: any) => inv.reconciliationStatus === "UNRECONCILED"
+    ).length;
 
     const zohoStatus = getZohoStatus();
 
     const kpis = [
+        {
+            name: "Billing & Realized",
+            value: `$${totalInvoicedUSD.toLocaleString()}`,
+            sub: `₹${totalBankCreditedINR.toLocaleString()} credited · ${unreconciledCount} pending UTR`,
+            href: "/admin/billing",
+            icon: Landmark,
+            iconBg: "bg-emerald-50 border-emerald-200/80 text-emerald-600",
+        },
         {
             name: "Shopify Partners",
             value: partnerTotal,
@@ -70,17 +99,9 @@ export default async function AdminDashboard() {
             iconBg: "bg-indigo-50 border-indigo-200/80 text-indigo-600",
         },
         {
-            name: "Published Articles",
-            value: publishedPosts,
-            sub: `${draftPosts} drafts queued`,
-            href: "/admin/blog",
-            icon: FileText,
-            iconBg: "bg-emerald-50 border-emerald-200/80 text-emerald-600",
-        },
-        {
-            name: "Portfolio & Proof",
+            name: "Portfolio & Blog",
             value: projectCount,
-            sub: `${testimonialCount} client testimonials`,
+            sub: `${publishedPosts} articles · ${testimonialCount} reviews`,
             href: "/admin/projects",
             icon: FolderKanban,
             iconBg: "bg-amber-50 border-amber-200/80 text-amber-600",
@@ -88,6 +109,13 @@ export default async function AdminDashboard() {
     ];
 
     const quickLinks = [
+        {
+            title: "Open Billing & Tax Suite",
+            desc: `${billingInvoices.length} invoices tracked · ${unreconciledCount} crypto receipt(s) pending UTR.`,
+            href: unreconciledCount > 0 ? "/admin/billing?tab=reconciliation" : "/admin/billing",
+            icon: unreconciledCount > 0 ? ArrowRightLeft : Receipt,
+            badge: unreconciledCount > 0 ? "Action Needed" : "Finance",
+        },
         {
             title: "Pitch Shopify Agencies",
             desc: `${partnerNew} uncontacted partners waiting in your pipeline.`,

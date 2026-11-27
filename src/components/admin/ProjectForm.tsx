@@ -213,28 +213,28 @@ export default function ProjectForm({ params }: { params: { id?: string } }) {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Form Column */}
                 <div className="lg:col-span-7">
-                    <Card className="bg-card/50 backdrop-blur-sm border-white/10">
+                    <Card className="bg-white border-slate-200/90 text-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
                         <CardContent className="pt-6">
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium">Title</label>
+                                        <label className="text-xs font-medium text-slate-700">Title</label>
                                         <Input
                                             name="title"
                                             value={formData.title}
                                             onChange={handleChange}
                                             required
                                             placeholder="e.g. ClutchBot — Valorant Assistant"
-                                            className="bg-white/5 border-white/10"
+                                            className="bg-white border-slate-200 text-slate-900"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium">Category</label>
+                                        <label className="text-xs font-medium text-slate-700">Category</label>
                                         <select
                                             name="category"
                                             value={formData.category}
                                             onChange={handleChange}
-                                            className="flex h-10 w-full items-center justify-between rounded-md border border-white/10 bg-[#18181b] px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                            className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                                         >
                                             <option value="Discord Bots">Discord Bots</option>
                                             <option value="Mobile Apps">Mobile Apps</option>
@@ -244,44 +244,44 @@ export default function ProjectForm({ params }: { params: { id?: string } }) {
                                         </select>
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium">Display Order ID</label>
+                                        <label className="text-xs font-medium text-slate-700">Display Order ID</label>
                                         <Input
                                             type="number"
                                             name="id"
                                             value={formData.id}
                                             onChange={handleChange}
                                             required
-                                            className="bg-white/5 border-white/10"
+                                            className="bg-white border-slate-200 text-slate-900"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium">Live Demo URL</label>
+                                        <label className="text-xs font-medium text-slate-700">Live Demo URL</label>
                                         <Input
                                             name="liveUrl"
                                             value={formData.liveUrl}
                                             onChange={handleChange}
                                             placeholder="https://relayworks.dev/..."
-                                            className="bg-white/5 border-white/10"
+                                            className="bg-white border-slate-200 text-slate-900"
                                         />
                                     </div>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium">GitHub Repository URL</label>
+                                    <label className="text-xs font-medium text-slate-700">GitHub Repository URL</label>
                                     <Input
                                         name="githubUrl"
                                         value={formData.githubUrl}
                                         onChange={handleChange}
                                         placeholder="https://github.com/ihazratummar/..."
-                                        className="bg-white/5 border-white/10"
+                                        className="bg-white border-slate-200 text-slate-900"
                                     />
                                 </div>
 
                                 {/* Quick Presets for Thumbnails */}
-                                <div className="space-y-3 p-4 rounded-xl bg-white/5 border border-white/10">
+                                <div className="space-y-3 p-4 rounded-xl bg-slate-50 border border-slate-200">
                                     <div className="flex items-center justify-between">
-                                        <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                                            <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+                                        <label className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                                            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
                                             <span>Quick Preset Thumbnails (Generated Assets)</span>
                                         </label>
                                     </div>
@@ -293,8 +293,8 @@ export default function ProjectForm({ params }: { params: { id?: string } }) {
                                                 onClick={() => applyPresetThumbnail(preset.path)}
                                                 className={`text-xs px-2.5 py-1.5 rounded-lg border transition-all cursor-pointer ${
                                                     formData.images[0] === preset.path
-                                                        ? "bg-blue-600 border-blue-500 text-white font-semibold"
-                                                        : "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10"
+                                                        ? "bg-slate-900 border-slate-900 text-white font-semibold"
+                                                        : "bg-white border-slate-200 text-slate-700 hover:bg-slate-100"
                                                 }`}
                                             >
                                                 {preset.label}
@@ -305,12 +305,12 @@ export default function ProjectForm({ params }: { params: { id?: string } }) {
 
                                 {/* Project Images */}
                                 <div className="space-y-4">
-                                    <label className="text-sm font-medium">Project Images &amp; Storage</label>
+                                    <label className="text-xs font-medium text-slate-700">Project Images &amp; Storage</label>
                                     <div className="grid grid-cols-1 gap-4">
                                         {formData.images.map((img, index) => (
-                                            <div key={index} className="flex flex-col gap-2 p-4 border border-white/10 rounded-lg bg-white/5">
+                                            <div key={index} className="flex flex-col gap-2 p-4 border border-slate-200 rounded-lg bg-slate-50/60">
                                                 <div className="flex justify-between items-center">
-                                                    <span className="text-sm font-medium text-muted-foreground">Image {index + 1}</span>
+                                                    <span className="text-xs font-medium text-slate-600">Image {index + 1}</span>
                                                     <Button
                                                         type="button"
                                                         variant="destructive"
@@ -323,7 +323,7 @@ export default function ProjectForm({ params }: { params: { id?: string } }) {
 
                                                 {img ? (
                                                     <div className="flex gap-4 items-center">
-                                                        <div className="relative w-24 h-24 bg-black/20 rounded-md overflow-hidden flex-shrink-0">
+                                                        <div className="relative w-24 h-24 bg-slate-200 rounded-md overflow-hidden flex-shrink-0">
                                                             {/* eslint-disable-next-line @next/next/no-img-element */}
                                                             <img src={img} alt={`Preview ${index}`} className="w-full h-full object-cover" />
                                                         </div>
@@ -331,20 +331,20 @@ export default function ProjectForm({ params }: { params: { id?: string } }) {
                                                             <Input
                                                                 value={img}
                                                                 onChange={(e) => handleImageChange(index, e.target.value)}
-                                                                className="bg-white/5 border-white/10 font-mono text-xs"
+                                                                className="bg-white border-slate-200 text-slate-900 font-mono text-xs"
                                                             />
-                                                            <p className="text-xs text-green-400">✓ Active image set</p>
+                                                            <p className="text-xs text-emerald-600 font-medium">✓ Active image set</p>
                                                         </div>
                                                     </div>
                                                 ) : (
                                                     <div className="space-y-4">
                                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                             <div className="space-y-2">
-                                                                <label className="text-xs text-muted-foreground">Paste Image URL / Local Path</label>
+                                                                <label className="text-xs text-slate-500">Paste Image URL / Local Path</label>
                                                                 <div className="flex gap-2">
                                                                     <Input
                                                                         placeholder="/images/projects/... or https://..."
-                                                                        className="bg-white/5 border-white/10 text-xs"
+                                                                        className="bg-white border-slate-200 text-slate-900 text-xs"
                                                                         id={`url-input-${index}`}
                                                                     />
                                                                     <Button
@@ -362,11 +362,11 @@ export default function ProjectForm({ params }: { params: { id?: string } }) {
                                                             </div>
 
                                                             <div className="space-y-2">
-                                                                <label className="text-xs text-muted-foreground">Or Upload File to Storage</label>
+                                                                <label className="text-xs text-slate-500">Or Upload File to Storage</label>
                                                                 <Input
                                                                     type="file"
                                                                     accept="image/*"
-                                                                    className="bg-white/5 border-white/10 cursor-pointer text-xs"
+                                                                    className="bg-white border-slate-200 text-slate-900 cursor-pointer text-xs"
                                                                     onChange={async (e) => {
                                                                         const file = e.target.files?.[0];
                                                                         if (!file) return;
@@ -403,13 +403,13 @@ export default function ProjectForm({ params }: { params: { id?: string } }) {
 
                                 {/* Tags & Quick Selector */}
                                 <div className="space-y-3">
-                                    <label className="text-sm font-medium">Tags (comma separated)</label>
+                                    <label className="text-xs font-medium text-slate-700">Tags (comma separated)</label>
                                     <Input
                                         name="tags"
                                         value={formData.tags}
                                         onChange={handleChange}
                                         placeholder="Python 3.12, discord.py, Components V2"
-                                        className="bg-white/5 border-white/10"
+                                        className="bg-white border-slate-200 text-slate-900"
                                     />
                                     <div className="flex flex-wrap gap-1.5 pt-1">
                                         {QUICK_TAGS.map((tag) => {
@@ -421,8 +421,8 @@ export default function ProjectForm({ params }: { params: { id?: string } }) {
                                                     onClick={() => toggleQuickTag(tag)}
                                                     className={`text-[11px] px-2 py-0.5 rounded-md font-mono border transition-all cursor-pointer ${
                                                         isSelected
-                                                            ? "bg-blue-600 border-blue-500 text-white"
-                                                            : "bg-white/5 border-white/10 text-slate-400 hover:text-white"
+                                                            ? "bg-slate-900 border-slate-900 text-white"
+                                                            : "bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                                                     }`}
                                                 >
                                                     {isSelected ? "✓ " : "+ "}{tag}
@@ -435,7 +435,7 @@ export default function ProjectForm({ params }: { params: { id?: string } }) {
                                 {/* Description */}
                                 <div className="space-y-2">
                                     <div className="flex justify-between items-center">
-                                        <label className="text-sm font-medium">Description</label>
+                                        <label className="text-xs font-medium text-slate-700">Description</label>
                                         <span className="text-xs text-slate-400 font-mono">{formData.description.length} chars</span>
                                     </div>
                                     <Textarea
@@ -444,7 +444,7 @@ export default function ProjectForm({ params }: { params: { id?: string } }) {
                                         onChange={handleChange}
                                         required
                                         placeholder="Describe the architecture, key commands, client problem solved, and production metrics..."
-                                        className="bg-white/5 border-white/10 min-h-[160px] text-sm leading-relaxed"
+                                        className="bg-white border-slate-200 text-slate-900 min-h-[160px] text-sm leading-relaxed"
                                     />
                                 </div>
 
@@ -463,8 +463,8 @@ export default function ProjectForm({ params }: { params: { id?: string } }) {
                 <div className="lg:col-span-5 space-y-4">
                     <div className="sticky top-6">
                         <div className="flex items-center gap-2 mb-3">
-                            <Eye className="w-4 h-4 text-blue-400" />
-                            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-300">Live Portfolio Card Preview</h2>
+                            <Eye className="w-4 h-4 text-blue-600" />
+                            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">Live Portfolio Card Preview</h2>
                         </div>
 
                         {/* Preview Card */}
@@ -538,23 +538,23 @@ export default function ProjectForm({ params }: { params: { id?: string } }) {
 
                         {/* Comments admin preview if editing */}
                         {isEditing && (
-                            <div className="mt-6 border-t border-white/10 pt-6">
-                                <h3 className="text-sm font-bold mb-3 flex items-center gap-2 text-slate-300">
-                                    <MessageSquare className="w-4 h-4 text-blue-400" />
+                            <div className="mt-6 border-t border-slate-200 pt-6">
+                                <h3 className="text-sm font-bold mb-3 flex items-center gap-2 text-slate-800">
+                                    <MessageSquare className="w-4 h-4 text-blue-600" />
                                     <span>Comments ({comments.length})</span>
                                 </h3>
                                 <div className="space-y-2.5 max-h-56 overflow-y-auto">
                                     {comments.length > 0 ? (
                                         comments.map((comment) => (
-                                            <div key={comment._id} className="bg-white/5 p-3 rounded-lg flex justify-between items-start text-xs border border-white/10">
+                                            <div key={comment._id} className="bg-white p-3 rounded-lg flex justify-between items-start text-xs border border-slate-200">
                                                 <div>
                                                     <div className="flex items-center gap-2 mb-1">
-                                                        <span className="font-semibold text-blue-400">{comment.name}</span>
-                                                        <span className="text-[10px] text-muted-foreground">
+                                                        <span className="font-semibold text-blue-600">{comment.name}</span>
+                                                        <span className="text-[10px] text-slate-400">
                                                             {new Date(comment.createdAt).toLocaleDateString()}
                                                         </span>
                                                     </div>
-                                                    <p className="text-slate-300">{comment.content}</p>
+                                                    <p className="text-slate-700">{comment.content}</p>
                                                 </div>
                                                 <Button
                                                     variant="ghost"

@@ -92,42 +92,42 @@ export default function TestimonialsAdmin() {
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold font-heading">Testimonials</h1>
-                <Button onClick={openNewDialog} className="bg-primary hover:bg-primary/90 text-white">
+                <h1 className="text-2xl font-bold tracking-tight text-slate-900">Testimonials</h1>
+                <Button onClick={openNewDialog} className="bg-slate-900 hover:bg-slate-800 text-white">
                     <Plus className="w-4 h-4 mr-2" />
                     Add Testimonial
                 </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {testimonials.map((testimonial) => (
-                    <Card key={testimonial._id} className="bg-card/50 backdrop-blur-sm border-white/10 group">
+                    <Card key={testimonial._id} className="bg-white border-slate-200/90 text-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.03)] group">
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-muted overflow-hidden">
+                            <CardTitle className="flex items-center gap-3 text-slate-900">
+                                <div className="w-10 h-10 rounded-full bg-slate-100 overflow-hidden shrink-0">
                                     {testimonial.image ? (
                                         <img src={testimonial.image} alt={testimonial.name} className="w-full h-full object-cover" />
                                     ) : (
-                                        <div className="w-full h-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+                                        <div className="w-full h-full bg-blue-50 text-blue-700 flex items-center justify-center font-bold">
                                             {testimonial.name.charAt(0)}
                                         </div>
                                     )}
                                 </div>
                                 <div>
-                                    <div className="text-base">{testimonial.name}</div>
-                                    <div className="text-xs text-muted-foreground">{testimonial.role} @ {testimonial.company}</div>
+                                    <div className="text-base text-slate-900">{testimonial.name}</div>
+                                    <div className="text-xs text-slate-500 font-normal">{testimonial.role} @ {testimonial.company}</div>
                                 </div>
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="flex gap-1 mb-2 text-yellow-500">
+                            <div className="flex gap-1 mb-2 text-amber-500">
                                 {[...Array(5)].map((_, i) => (
-                                    <Star key={i} className={`w-3 h-3 ${i < (testimonial.rating || 5) ? "fill-current" : "text-muted"}`} />
+                                    <Star key={i} className={`w-3.5 h-3.5 ${i < (testimonial.rating || 5) ? "fill-current" : "text-slate-200"}`} />
                                 ))}
                             </div>
-                            <p className="text-sm text-muted-foreground mb-4 line-clamp-3">"{testimonial.content}"</p>
+                            <p className="text-sm text-slate-600 mb-4 line-clamp-3">"{testimonial.content}"</p>
                             <div className="flex justify-end gap-2">
-                                <Button variant="outline" size="sm" onClick={() => openEditDialog(testimonial)} className="border-white/10 hover:bg-white/5">
+                                <Button variant="outline" size="sm" onClick={() => openEditDialog(testimonial)} className="border-slate-200 bg-white text-slate-700 hover:bg-slate-50">
                                     <Pencil className="w-4 h-4 mr-2" />
                                     Edit
                                 </Button>
@@ -135,7 +135,7 @@ export default function TestimonialsAdmin() {
                                     variant="destructive"
                                     size="sm"
                                     onClick={() => handleDelete(testimonial._id)}
-                                    className="bg-red-500/10 text-red-500 hover:bg-red-500/20 border-none"
+                                    className="bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200/70"
                                 >
                                     <Trash2 className="w-4 h-4" />
                                 </Button>
@@ -146,42 +146,42 @@ export default function TestimonialsAdmin() {
             </div>
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogContent className="bg-background/95 backdrop-blur-2xl border-white/10">
+                <DialogContent className="bg-white border-slate-200 text-slate-900">
                     <DialogHeader>
-                        <DialogTitle>{currentTestimonial._id ? "Edit Testimonial" : "New Testimonial"}</DialogTitle>
+                        <DialogTitle className="text-slate-900">{currentTestimonial._id ? "Edit Testimonial" : "New Testimonial"}</DialogTitle>
                     </DialogHeader>
                     <form onSubmit={handleSave} className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Name</label>
+                                <label className="text-xs font-medium text-slate-700">Name</label>
                                 <Input
                                     value={currentTestimonial.name || ""}
                                     onChange={(e) => setCurrentTestimonial({ ...currentTestimonial, name: e.target.value })}
                                     required
-                                    className="bg-white/5 border-white/10"
+                                    className="bg-white border-slate-200 text-slate-900"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Role</label>
+                                <label className="text-xs font-medium text-slate-700">Role</label>
                                 <Input
                                     value={currentTestimonial.role || ""}
                                     onChange={(e) => setCurrentTestimonial({ ...currentTestimonial, role: e.target.value })}
                                     required
-                                    className="bg-white/5 border-white/10"
+                                    className="bg-white border-slate-200 text-slate-900"
                                 />
                             </div>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Company</label>
+                                <label className="text-xs font-medium text-slate-700">Company</label>
                                 <Input
                                     value={currentTestimonial.company || ""}
                                     onChange={(e) => setCurrentTestimonial({ ...currentTestimonial, company: e.target.value })}
-                                    className="bg-white/5 border-white/10"
+                                    className="bg-white border-slate-200 text-slate-900"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Rating (1-5)</label>
+                                <label className="text-xs font-medium text-slate-700">Rating (1-5)</label>
                                 <Input
                                     type="number"
                                     min="1"
@@ -189,31 +189,31 @@ export default function TestimonialsAdmin() {
                                     value={currentTestimonial.rating || 5}
                                     onChange={(e) => setCurrentTestimonial({ ...currentTestimonial, rating: Number(e.target.value) })}
                                     required
-                                    className="bg-white/5 border-white/10"
+                                    className="bg-white border-slate-200 text-slate-900"
                                 />
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">Image URL</label>
+                            <label className="text-xs font-medium text-slate-700">Image URL</label>
                             <Input
                                 value={currentTestimonial.image || ""}
                                 onChange={(e) => setCurrentTestimonial({ ...currentTestimonial, image: e.target.value })}
                                 placeholder="https://..."
-                                className="bg-white/5 border-white/10"
+                                className="bg-white border-slate-200 text-slate-900"
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">Content</label>
+                            <label className="text-xs font-medium text-slate-700">Content</label>
                             <Textarea
                                 value={currentTestimonial.content || ""}
                                 onChange={(e) => setCurrentTestimonial({ ...currentTestimonial, content: e.target.value })}
                                 required
-                                className="bg-white/5 border-white/10 min-h-[100px]"
+                                className="bg-white border-slate-200 text-slate-900 min-h-[100px]"
                             />
                         </div>
                         <div className="flex justify-end gap-2">
-                            <Button type="button" variant="ghost" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-                            <Button type="submit" className="bg-primary text-white">Save</Button>
+                            <Button type="button" variant="ghost" onClick={() => setIsDialogOpen(false)} className="text-slate-600 hover:bg-slate-100">Cancel</Button>
+                            <Button type="submit" className="bg-slate-900 hover:bg-slate-800 text-white">Save</Button>
                         </div>
                     </form>
                 </DialogContent>

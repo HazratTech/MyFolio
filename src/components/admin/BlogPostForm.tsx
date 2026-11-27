@@ -169,33 +169,33 @@ export default function BlogPostForm({ initialData, isEditing = false }: BlogPos
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 space-y-6">
-                    <Card className="bg-card/50 backdrop-blur-sm border-white/10">
+                    <Card className="bg-white border-slate-200/90 text-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
                         <CardContent className="pt-6 space-y-4">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Title</label>
+                                <label className="text-xs font-medium text-slate-700">Title</label>
                                 <Input
                                     name="title"
                                     value={formData.title}
                                     onChange={handleChange}
                                     required
-                                    className="text-lg font-bold bg-background border-border"
+                                    className="text-lg font-bold bg-white border-slate-200 text-slate-900"
                                     placeholder="Enter post title..."
                                 />
                             </div>
                             {!isEditing && (
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium text-muted-foreground">Slug (Optional - auto-generated from title)</label>
+                                    <label className="text-xs font-medium text-slate-500">Slug (Optional - auto-generated from title)</label>
                                     <Input
                                         name="slug"
                                         value={formData.slug}
                                         onChange={handleChange}
-                                        className="bg-background border-border font-mono text-sm"
+                                        className="bg-white border-slate-200 text-slate-900 font-mono text-sm"
                                         placeholder="custom-slug-url"
                                     />
                                 </div>
                             )}
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Content</label>
+                                <label className="text-xs font-medium text-slate-700">Content</label>
                                 <TiptapEditor
                                     content={formData.content}
                                     onChange={handleEditorChange}
@@ -205,15 +205,15 @@ export default function BlogPostForm({ initialData, isEditing = false }: BlogPos
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-card/50 backdrop-blur-sm border-white/10">
+                    <Card className="bg-white border-slate-200/90 text-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
                         <CardContent className="pt-6 space-y-4">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Excerpt</label>
+                                <label className="text-xs font-medium text-slate-700">Excerpt</label>
                                 <textarea
                                     name="excerpt"
                                     value={formData.excerpt}
                                     onChange={handleChange}
-                                    className="flex w-full rounded-md border border-border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[100px]"
+                                    className="flex w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-50 min-h-[100px]"
                                     placeholder="Brief summary for SEO and previews..."
                                 />
                             </div>
@@ -222,11 +222,11 @@ export default function BlogPostForm({ initialData, isEditing = false }: BlogPos
                 </div>
 
                 <div className="space-y-6">
-                    <Card className="bg-card/50 backdrop-blur-sm border-white/10">
+                    <Card className="bg-white border-slate-200/90 text-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
                         <CardContent className="pt-6 space-y-4">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Cover Image</label>
-                                <div className="border-2 border-dashed border-border rounded-lg p-4 text-center hover:bg-muted/50 transition-colors relative group">
+                                <label className="text-xs font-medium text-slate-700">Cover Image</label>
+                                <div className="border-2 border-dashed border-slate-200 rounded-lg p-4 text-center hover:bg-slate-50 transition-colors relative group">
                                     <Input
                                         id="cover-upload"
                                         type="file"
@@ -242,7 +242,7 @@ export default function BlogPostForm({ initialData, isEditing = false }: BlogPos
                                                 alt="Cover"
                                                 className="w-full h-full object-cover"
                                             />
-                                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                            <div className="absolute inset-0 bg-slate-900/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                                                 <MediaPickerModal onSelect={(media) => {
                                                     setFormData((prev: any) => ({
                                                         ...prev,
@@ -271,9 +271,9 @@ export default function BlogPostForm({ initialData, isEditing = false }: BlogPos
                                                 coverImageKey: media.key
                                             }));
                                         }}>
-                                            <div className="py-8 cursor-pointer relative hover:bg-white/5 transition-colors">
-                                                <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                                                <p className="text-sm text-muted-foreground">Select from Media Library</p>
+                                            <div className="py-8 cursor-pointer relative hover:bg-slate-100/70 transition-colors rounded-md">
+                                                <Upload className="w-8 h-8 mx-auto mb-2 text-slate-400" />
+                                                <p className="text-sm text-slate-500">Select from Media Library</p>
                                             </div>
                                         </MediaPickerModal>
                                     )}
@@ -287,9 +287,9 @@ export default function BlogPostForm({ initialData, isEditing = false }: BlogPos
                                     name="featured"
                                     checked={formData.featured || false}
                                     onChange={(e) => setFormData((prev: any) => ({ ...prev, featured: e.target.checked }))}
-                                    className="h-4 w-4 rounded border-white/10 text-primary focus:ring-primary bg-background cursor-pointer"
+                                    className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 bg-white cursor-pointer"
                                 />
-                                <label htmlFor="featured" className="text-sm font-medium select-none cursor-pointer text-white/95">
+                                <label htmlFor="featured" className="text-sm font-medium select-none cursor-pointer text-slate-800">
                                     Feature this article on homepage
                                 </label>
                             </div>

@@ -54,21 +54,20 @@ export default function ProjectsAdmin() {
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold font-heading">Projects</h1>
+                <h1 className="text-2xl font-bold tracking-tight text-slate-900">Projects</h1>
                 <Link href="/admin/projects/new">
-                    <Button className="bg-primary hover:bg-primary/90 text-white">
+                    <Button className="bg-slate-900 hover:bg-slate-800 text-white">
                         <Plus className="w-4 h-4 mr-2" />
                         Add Project
                     </Button>
                 </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {projects.map((project) => (
-                    <Card key={project._id} className="bg-card/50 backdrop-blur-sm border-white/10 overflow-hidden group">
-                        <div className="h-48 bg-muted relative">
-                            {/* Placeholder for image */}
-                            <div className="absolute inset-0 bg-white/5 flex items-center justify-center text-muted-foreground">
+                    <Card key={project._id} className="bg-white border-slate-200/90 text-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.03)] overflow-hidden group">
+                        <div className="h-44 bg-slate-100 relative border-b border-slate-100">
+                            <div className="absolute inset-0 flex items-center justify-center text-slate-400 text-xs">
                                 {(project.images && project.images.length > 0) || project.image ? (
                                     <img
                                         src={(project.images && project.images.length > 0) ? project.images[0] : project.image}
@@ -79,14 +78,14 @@ export default function ProjectsAdmin() {
                             </div>
                         </div>
                         <CardHeader>
-                            <CardTitle className="flex justify-between items-start">
+                            <CardTitle className="flex justify-between items-start text-slate-900">
                                 <span className="truncate">{project.title}</span>
                             </CardTitle>
-                            <p className="text-sm text-muted-foreground">{project.category}</p>
+                            <p className="text-xs text-slate-500">{project.category}</p>
                         </CardHeader>
                         <CardContent className="flex justify-end gap-2">
                             <Link href={`/admin/projects/${project._id}`}>
-                                <Button variant="outline" size="sm" className="border-white/10 hover:bg-white/5">
+                                <Button variant="outline" size="sm" className="border-slate-200 bg-white text-slate-700 hover:bg-slate-50">
                                     <Pencil className="w-4 h-4 mr-2" />
                                     Edit
                                 </Button>
@@ -95,7 +94,7 @@ export default function ProjectsAdmin() {
                                 variant="destructive"
                                 size="sm"
                                 onClick={() => handleDelete(project._id)}
-                                className="bg-red-500/10 text-red-500 hover:bg-red-500/20 border-none"
+                                className="bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200/70"
                             >
                                 <Trash2 className="w-4 h-4" />
                             </Button>

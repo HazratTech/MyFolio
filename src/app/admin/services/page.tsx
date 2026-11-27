@@ -122,30 +122,30 @@ export default function ServicesAdmin() {
                 </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {services.map((service) => (
-                    <Card key={service._id} className="bg-card/50 backdrop-blur-sm border-white/10 group">
+                    <Card key={service._id} className="bg-white border-slate-200/90 text-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.03)] group">
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-3">
-                                <div className="p-2 bg-primary/10 rounded-lg text-primary">
+                            <CardTitle className="flex items-center gap-3 text-slate-900">
+                                <div className="p-2 bg-blue-50 border border-blue-100 rounded-lg text-blue-600">
                                     {renderIcon(service.icon)}
                                 </div>
                                 <span className="truncate">{service.title}</span>
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{service.description}</p>
+                            <p className="text-sm text-slate-600 mb-4 line-clamp-2">{service.description}</p>
                             <div className="flex justify-between items-center">
-                                <span className="font-bold">{service.price}</span>
+                                <span className="font-bold text-slate-900">{service.price}</span>
                                 <div className="flex gap-2">
-                                    <Button variant="outline" size="sm" onClick={() => openEditDialog(service)} className="border-white/10 hover:bg-white/5">
+                                    <Button variant="outline" size="sm" onClick={() => openEditDialog(service)} className="border-slate-200 bg-white text-slate-700 hover:bg-slate-50">
                                         <Pencil className="w-4 h-4" />
                                     </Button>
                                     <Button
                                         variant="destructive"
                                         size="sm"
                                         onClick={() => handleDelete(service._id)}
-                                        className="bg-red-500/10 text-red-500 hover:bg-red-500/20 border-none"
+                                        className="bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200/70"
                                     >
                                         <Trash2 className="w-4 h-4" />
                                     </Button>
@@ -157,71 +157,71 @@ export default function ServicesAdmin() {
             </div>
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogContent className="bg-background/95 backdrop-blur-2xl border-white/10 max-h-[90vh] overflow-y-auto">
+                <DialogContent className="bg-white border-slate-200 text-slate-900 max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
-                        <DialogTitle>{currentService._id ? "Edit Service" : "New Service"}</DialogTitle>
+                        <DialogTitle className="text-slate-900">{currentService._id ? "Edit Service" : "New Service"}</DialogTitle>
                     </DialogHeader>
                     <form onSubmit={handleSave} className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Title</label>
+                                <label className="text-xs font-medium text-slate-700">Title</label>
                                 <Input
                                     value={currentService.title || ""}
                                     onChange={(e) => setCurrentService({ ...currentService, title: e.target.value })}
                                     required
-                                    className="bg-white/5 border-white/10"
+                                    className="bg-white border-slate-200 text-slate-900"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Category</label>
+                                <label className="text-xs font-medium text-slate-700">Category</label>
                                 <Input
                                     value={currentService.category || ""}
                                     onChange={(e) => setCurrentService({ ...currentService, category: e.target.value })}
                                     required
-                                    className="bg-white/5 border-white/10"
+                                    className="bg-white border-slate-200 text-slate-900"
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">Description</label>
+                            <label className="text-xs font-medium text-slate-700">Description</label>
                             <Textarea
                                 value={currentService.description || ""}
                                 onChange={(e) => setCurrentService({ ...currentService, description: e.target.value })}
                                 required
-                                className="bg-white/5 border-white/10"
+                                className="bg-white border-slate-200 text-slate-900"
                             />
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Price</label>
+                                <label className="text-xs font-medium text-slate-700">Price</label>
                                 <Input
                                     value={currentService.price || ""}
                                     onChange={(e) => setCurrentService({ ...currentService, price: e.target.value })}
                                     required
-                                    className="bg-white/5 border-white/10"
+                                    className="bg-white border-slate-200 text-slate-900"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Icon (Lucide Name)</label>
+                                <label className="text-xs font-medium text-slate-700">Icon (Lucide Name)</label>
                                 <Input
                                     value={currentService.icon || ""}
                                     onChange={(e) => setCurrentService({ ...currentService, icon: e.target.value })}
                                     required
-                                    className="bg-white/5 border-white/10"
+                                    className="bg-white border-slate-200 text-slate-900"
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">Features</label>
+                            <label className="text-xs font-medium text-slate-700">Features</label>
                             <div className="flex gap-2">
                                 <Input
                                     value={newFeature}
                                     onChange={(e) => setNewFeature(e.target.value)}
                                     placeholder="Add a feature..."
-                                    className="bg-white/5 border-white/10"
+                                    className="bg-white border-slate-200 text-slate-900"
                                     onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
                                             e.preventDefault();
@@ -233,7 +233,7 @@ export default function ServicesAdmin() {
                             </div>
                             <div className="space-y-2 mt-2">
                                 {currentService.features?.map((feature, index) => (
-                                    <div key={index} className="flex justify-between items-center bg-white/5 p-2 rounded text-sm">
+                                    <div key={index} className="flex justify-between items-center bg-slate-50 border border-slate-200 p-2 rounded text-sm text-slate-800">
                                         <span>{feature}</span>
                                         <Button type="button" variant="ghost" size="sm" onClick={() => removeFeature(index)}>
                                             <X className="w-3 h-3" />
@@ -244,8 +244,8 @@ export default function ServicesAdmin() {
                         </div>
 
                         <div className="flex justify-end gap-2 pt-4">
-                            <Button type="button" variant="ghost" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-                            <Button type="submit" className="bg-primary text-white">Save</Button>
+                            <Button type="button" variant="ghost" onClick={() => setIsDialogOpen(false)} className="text-slate-600 hover:bg-slate-100">Cancel</Button>
+                            <Button type="submit" className="bg-slate-900 hover:bg-slate-800 text-white">Save</Button>
                         </div>
                     </form>
                 </DialogContent>

@@ -55,32 +55,32 @@ export default function EditorImageSettings({ editor }: EditorImageSettingsProps
     if (!isVisible) return null;
 
     return (
-        <Card className="bg-card/50 backdrop-blur-sm border-white/10 animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <Card className="bg-white border-slate-200/90 text-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.03)] animate-in fade-in slide-in-from-bottom-4 duration-300">
             <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium flex items-center gap-2 uppercase tracking-wider text-muted-foreground">
+                <CardTitle className="text-xs font-semibold flex items-center gap-2 uppercase tracking-wider text-slate-500">
                     <ImageIcon className="w-4 h-4" /> Image Settings
                 </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="space-y-2">
-                    <label className="text-xs font-medium text-foreground/80">Description (Alt Text)</label>
+                    <label className="text-xs font-medium text-slate-700">Description (Alt Text)</label>
                     <Input
                         value={alt}
                         onChange={(e) => setAlt(e.target.value)}
                         placeholder="Detailed description for SEO..."
-                        className="bg-white/5 border-white/10 text-sm"
+                        className="bg-white border-slate-200 text-slate-900 text-sm"
                     />
                 </div>
                 <div className="space-y-2">
-                    <label className="text-xs font-medium text-foreground/80">Dimensions</label>
+                    <label className="text-xs font-medium text-slate-700">Dimensions</label>
                     <Input
                         value={width}
                         onChange={(e) => setWidth(e.target.value)}
                         placeholder="e.g. 100% or 500px"
-                        className="bg-white/5 border-white/10 text-sm"
+                        className="bg-white border-slate-200 text-slate-900 text-sm"
                     />
                 </div>
-                <Button onClick={updateImage} className="w-full text-xs font-bold" variant="secondary">
+                <Button onClick={updateImage} className="w-full text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-white">
                     Apply Changes
                 </Button>
             </CardContent>

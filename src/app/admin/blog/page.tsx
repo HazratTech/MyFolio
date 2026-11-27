@@ -222,7 +222,7 @@ export default function BlogAdminPage() {
                 </div>
             </div>
 
-            <div className="border border-border rounded-lg overflow-hidden bg-card">
+            <div className="border border-slate-200/90 rounded-xl overflow-hidden bg-white shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
                 <Table>
                     <TableHeader className="bg-muted/50">
                         <TableRow className="border-border hover:bg-muted/50">
@@ -344,33 +344,33 @@ export default function BlogAdminPage() {
 
             {/* Slide-over Drawer / Sheet */}
             <Sheet open={isFabOpen} onOpenChange={setIsFabOpen}>
-                <SheetContent side="right" className="w-[95vw] sm:max-w-[480px] bg-background/95 border-l border-white/10 text-foreground p-6 overflow-y-auto custom-scrollbar flex flex-col justify-between">
+                <SheetContent side="right" className="w-[95vw] sm:max-w-[480px] bg-white border-l border-slate-200 text-slate-900 p-6 overflow-y-auto custom-scrollbar flex flex-col justify-between">
                     <div>
                         <SheetHeader className="p-0 mb-6">
-                            <SheetTitle className="text-2xl font-bold flex items-center gap-2 font-heading">
-                                <Sparkles className="w-6 h-6 text-primary" />
+                            <SheetTitle className="text-2xl font-bold flex items-center gap-2 font-heading text-slate-900">
+                                <Sparkles className="w-6 h-6 text-blue-600" />
                                 Affiliate Writer
                             </SheetTitle>
-                            <SheetDescription className="text-muted-foreground text-sm leading-relaxed mt-2">
+                            <SheetDescription className="text-slate-500 text-sm leading-relaxed mt-2">
                                 Provide a brief topic/product prompt and your affiliate links. The system will build a highly-detailed review with a conversion-focused sales copy mindset, guarantee your exact affiliate links are injected, and generate gpt-image-1 cover/inline art.
                             </SheetDescription>
                         </SheetHeader>
 
                         {genError && (
-                            <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-lg text-sm mb-4">
+                            <div className="bg-rose-50 border border-rose-200 text-rose-700 p-3 rounded-lg text-sm mb-4">
                                 <strong>Error:</strong> {genError}
                             </div>
                         )}
 
                         {genSuccessSlug && (
-                            <div className="bg-green-500/10 border border-green-500/20 text-green-400 p-4 rounded-lg text-sm mb-6 flex flex-col gap-2">
+                            <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 p-4 rounded-lg text-sm mb-6 flex flex-col gap-2">
                                 <span className="font-semibold">✓ Post generated and published successfully!</span>
                                 <div className="flex gap-2 mt-1">
-                                    <Link href={`/blog/${genSuccessSlug}`} target="_blank" className="text-primary underline font-medium flex items-center gap-1">
+                                    <Link href={`/blog/${genSuccessSlug}`} target="_blank" className="text-blue-600 underline font-medium flex items-center gap-1">
                                         <Eye className="w-3.5 h-3.5" /> View Post
                                     </Link>
-                                    <span className="text-white/20">|</span>
-                                    <Link href={`/admin/blog/${genSuccessSlug}`} className="text-primary underline font-medium flex items-center gap-1">
+                                    <span className="text-slate-300">|</span>
+                                    <Link href={`/admin/blog/${genSuccessSlug}`} className="text-blue-600 underline font-medium flex items-center gap-1">
                                         <Edit className="w-3.5 h-3.5" /> Edit Post
                                     </Link>
                                 </div>
@@ -380,8 +380,8 @@ export default function BlogAdminPage() {
                         {generating ? (
                             <div className="space-y-6 py-4">
                                 <div className="flex items-center gap-3">
-                                    <Loader2 className="w-6 h-6 text-primary animate-spin" />
-                                    <span className="font-medium text-sm text-gray-700">Generating Affiliate Content...</span>
+                                    <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
+                                    <span className="font-medium text-sm text-slate-700">Generating Affiliate Content...</span>
                                 </div>
 
                                 <div className="space-y-3">
@@ -389,23 +389,23 @@ export default function BlogAdminPage() {
                                         <div key={idx} className="flex items-center gap-2 text-xs">
                                             <div className={`w-2.5 h-2.5 rounded-full flex items-center justify-center ${
                                                 idx < genStep 
-                                                    ? "bg-green-500 text-white" 
+                                                    ? "bg-emerald-500 text-white" 
                                                     : idx === genStep 
-                                                        ? "bg-primary animate-ping" 
-                                                        : "bg-white/10"
+                                                        ? "bg-blue-600 animate-ping" 
+                                                        : "bg-slate-200"
                                             }`}>
                                                 {idx < genStep && <span className="text-[6px]">✓</span>}
                                             </div>
-                                            <span className={idx === genStep ? "text-primary font-medium" : idx < genStep ? "text-muted-foreground line-through" : "text-muted-foreground/60"}>
+                                            <span className={idx === genStep ? "text-blue-600 font-medium" : idx < genStep ? "text-slate-400 line-through" : "text-slate-400"}>
                                                 {step}
                                             </span>
                                         </div>
                                     ))}
                                 </div>
 
-                                <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden">
+                                <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
                                     <div 
-                                        className="bg-primary h-full transition-all duration-1000 ease-out" 
+                                        className="bg-blue-600 h-full transition-all duration-1000 ease-out" 
                                         style={{ width: `${Math.min(100, (genStep / steps.length) * 100)}%` }}
                                     />
                                 </div>
@@ -413,20 +413,20 @@ export default function BlogAdminPage() {
                         ) : (
                             <form onSubmit={handleGenerate} className="space-y-5">
                                 <div className="space-y-2">
-                                    <label htmlFor="prompt-field" className="text-sm font-semibold text-foreground">Review Topic or Product Brief</label>
+                                    <label htmlFor="prompt-field" className="text-sm font-semibold text-slate-900">Review Topic or Product Brief</label>
                                     <Textarea
                                         id="prompt-field"
                                         placeholder="e.g. Hostinger VPS Hosting review, compare it with AWS Lightsail, emphasize speed, pricing and reliability..."
                                         value={prompt}
                                         onChange={(e) => setPrompt(e.target.value)}
                                         required
-                                        className="bg-muted/50 border-white/10 focus:border-primary/50 text-sm min-h-[100px] resize-none rounded-xl"
+                                        className="bg-white border-slate-200 text-slate-900 focus:border-blue-500 text-sm min-h-[100px] resize-none rounded-xl"
                                     />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label htmlFor="links-field" className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                                        <Link2 className="w-4 h-4 text-primary" />
+                                    <label htmlFor="links-field" className="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
+                                        <Link2 className="w-4 h-4 text-blue-600" />
                                         Affiliate Link(s)
                                     </label>
                                     <Textarea
@@ -434,15 +434,15 @@ export default function BlogAdminPage() {
                                         placeholder="Paste your links here (one per line, e.g. https://www.hostinger.com/partner...)"
                                         value={affiliateLinks}
                                         onChange={(e) => setAffiliateLinks(e.target.value)}
-                                        className="bg-muted/50 border-white/10 focus:border-primary/50 text-sm min-h-[80px] font-mono resize-none rounded-xl"
+                                        className="bg-white border-slate-200 text-slate-900 focus:border-blue-500 text-sm min-h-[80px] font-mono resize-none rounded-xl"
                                     />
-                                    <p className="text-[10px] text-muted-foreground">The AI will seamlessly embed these URLs. Failsafes guarantee they will be present.</p>
+                                    <p className="text-[11px] text-slate-500">The AI will seamlessly embed these URLs. Failsafes guarantee they will be present.</p>
                                 </div>
 
                                 <Button
                                     type="submit"
                                     disabled={generating || !prompt.trim()}
-                                    className="w-full bg-gradient-to-r from-primary to-blue-600 hover:from-primary/95 hover:to-blue-600/95 text-white font-medium h-11 rounded-xl shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 mt-4"
+                                    className="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium h-11 rounded-xl transition-all flex items-center justify-center gap-2 mt-4"
                                 >
                                     <Zap className="w-4 h-4" />
                                     Generate and Publish
@@ -451,7 +451,7 @@ export default function BlogAdminPage() {
                         )}
                     </div>
 
-                    <div className="pt-6 border-t border-white/5 text-[10px] text-muted-foreground flex justify-between">
+                    <div className="pt-6 border-t border-slate-100 text-[10px] text-slate-400 flex justify-between">
                         <span>Powered by Gemini 2.5 Flash</span>
                         <span>Gpt Image 1</span>
                     </div>

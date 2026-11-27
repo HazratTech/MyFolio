@@ -3,7 +3,24 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Target, FolderKanban, MessageSquare, LogOut, User, Menu, X, FileText, Command, Image as ImageIcon, Globe, Handshake } from "lucide-react";
+import {
+    LayoutDashboard,
+    Target,
+    FolderKanban,
+    MessageSquare,
+    LogOut,
+    User,
+    Menu,
+    FileText,
+    Command,
+    Image as ImageIcon,
+    Globe,
+    Handshake,
+    Receipt,
+    ArrowRightLeft,
+    Users,
+    FileArchive,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
@@ -36,63 +53,106 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         router.push("/admin/login");
     };
 
-    const navItems = [
-        { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-        { name: "Lead Radar", href: "/admin/leads", icon: Target },
-        { name: "Shopify Partners", href: "/admin/partners", icon: Handshake },
-        { name: "Projects", href: "/admin/projects", icon: FolderKanban },
-        { name: "Blog Posts", href: "/admin/blog", icon: FileText },
-        { name: "Categories", href: "/admin/categories", icon: Command },
-        { name: "Media", href: "/admin/media", icon: ImageIcon },
-        { name: "Testimonials", href: "/admin/testimonials", icon: MessageSquare },
-        { name: "Socials", href: "/admin/socials", icon: User },
-        { name: "View Live Site", href: "/", icon: Globe },
+    const navGroups = [
+        {
+            label: "Overview",
+            items: [
+                { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+            ],
+        },
+        {
+            label: "Finance & Billing",
+            items: [
+                { name: "Billing Overview", href: "/admin/billing", icon: Receipt },
+                { name: "Invoices", href: "/admin/billing?tab=invoices", icon: FileText },
+                { name: "UTR Reconciliation", href: "/admin/billing?tab=reconciliation", icon: ArrowRightLeft },
+                { name: "Billing Clients", href: "/admin/billing?tab=clients", icon: Users },
+                { name: "CA Tax Pack", href: "/admin/billing?tab=reports", icon: FileArchive },
+            ],
+        },
+        {
+            label: "Outreach & Pipeline",
+            items: [
+                { name: "Lead Radar", href: "/admin/leads", icon: Target },
+                { name: "Shopify Partners", href: "/admin/partners", icon: Handshake },
+            ],
+        },
+        {
+            label: "Portfolio & Content",
+            items: [
+                { name: "Projects", href: "/admin/projects", icon: FolderKanban },
+                { name: "Blog Posts", href: "/admin/blog", icon: FileText },
+                { name: "Categories", href: "/admin/categories", icon: Command },
+                { name: "Media", href: "/admin/media", icon: ImageIcon },
+                { name: "Testimonials", href: "/admin/testimonials", icon: MessageSquare },
+                { name: "Socials", href: "/admin/socials", icon: User },
+                { name: "View Live Site", href: "/", icon: Globe },
+            ],
+        },
     ];
 
     const SidebarContent = () => (
         <div className="flex flex-col h-full bg-white text-slate-900">
-            <div className="p-6 border-b border-slate-200">
-                <Link href="/" className="text-2xl font-bold font-heading tracking-tighter text-slate-950">
-                    Relay<span className="text-blue-600">Works</span>
-                </Link>
-                <p className="text-xs text-slate-500 mt-1 font-medium">Admin Panel</p>
+            <div className="px-5 py-5 border-b border-slate-200/80 flex items-center justify-between">
+                <div>
+                    <Link href="/" className="text-xl font-bold font-heading tracking-tight text-slate-950">
+                        Relay<span className="text-blue-600">Works</span>
+                    </Link>
+                    <p className="text-[11px] text-slate-500 mt-0.5 font-medium">Operations &amp; Finance OS</p>
+                </div>
+                <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                    Admin
+                </span>
             </div>
 
-            <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
-                {navItems.map((item) => {
-                    const isActive = pathname === item.href;
-                    return (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            target={item.href === "/" ? "_blank" : undefined}
-                            rel={item.href === "/" ? "noopener noreferrer" : undefined}
-                            onClick={() => setIsMobileOpen(false)}
-                            className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-150 text-sm font-medium ${isActive
-                                ? "bg-slate-950 text-white shadow-xs"
-                                : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"
-                                }`}
-                        >
-                            <item.icon className={`w-4 h-4 ${isActive ? "text-white" : "text-slate-500"}`} />
-                            <span>{item.name}</span>
-                        </Link>
-                    );
-                })}
+            <nav className="flex-1 px-3 py-4 space-y-5 overflow-y-auto">
+                {navGroups.map((group) => (
+                    <div key={group.label}>
+                        <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                            {group.label}
+                        </p>
+                        <div className="space-y-0.5">
+                            {group.items.map((item) => {
+                                const baseHref = item.href.split("?")[0];
+                                const isActive =
+                                    baseHref === "/admin/billing"
+                                        ? pathname === "/admin/billing" && item.href === "/admin/billing"
+                                        : pathname === baseHref || (baseHref !== "/admin" && baseHref !== "/" && pathname.startsWith(baseHref));
+                                return (
+                                    <Link
+                                        key={item.href}
+                                        href={item.href}
+                                        target={item.href === "/" ? "_blank" : undefined}
+                                        rel={item.href === "/" ? "noopener noreferrer" : undefined}
+                                        onClick={() => setIsMobileOpen(false)}
+                                        className={`flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-150 text-[13px] font-medium ${isActive
+                                            ? "bg-slate-950 text-white shadow-xs"
+                                            : "text-slate-600 hover:bg-slate-100/90 hover:text-slate-950"
+                                            }`}
+                                    >
+                                        <item.icon className={`w-4 h-4 shrink-0 ${isActive ? "text-white" : "text-slate-400"}`} />
+                                        <span className="truncate">{item.name}</span>
+                                    </Link>
+                                );
+                            })}
+                        </div>
+                    </div>
+                ))}
             </nav>
 
-            <div className="p-4 border-t border-slate-200">
-                <div className="flex items-center gap-3 px-3.5 py-2.5 mb-2 rounded-xl bg-slate-50 border border-slate-200/80">
-                    <div className="w-8 h-8 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700">
-                        <User className="w-4 h-4" />
+            <div className="p-3 border-t border-slate-200/80">
+                <div className="flex items-center gap-2.5 px-3 py-2 mb-2 rounded-lg bg-slate-50 border border-slate-200/80">
+                    <div className="w-7 h-7 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700 shrink-0">
+                        <User className="w-3.5 h-3.5" />
                     </div>
                     <div className="overflow-hidden">
-                        <p className="text-xs font-bold text-slate-900 truncate">Admin</p>
+                        <p className="text-xs font-semibold text-slate-900 truncate">Admin</p>
                         <p className="text-[11px] text-slate-500 truncate font-mono">{adminEmail}</p>
                     </div>
                 </div>
                 <Button
                     variant="ghost"
-                    className="w-full justify-start text-xs font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 h-9 rounded-xl"
+                    className="w-full justify-start text-xs font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 h-8 rounded-lg px-3"
                     onClick={handleLogout}
                 >
                     <LogOut className="w-3.5 h-3.5 mr-2" />
