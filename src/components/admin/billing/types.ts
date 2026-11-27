@@ -35,6 +35,7 @@ export interface InvoiceRecord {
   discount: number;
   taxAmount: number;
   totalAmount: number;
+  paidAmount?: number;
   notes?: string;
   terms?: string;
   status: "DRAFT" | "ISSUED" | "PARTIALLY_PAID" | "PAID" | "CANCELLED";
@@ -74,6 +75,7 @@ export interface PaymentRecord {
   blockchainExplorerUrl?: string;
   rateINRAtReceipt: number;
   fiatValueINRAtReceipt: number;
+  appliedAmount?: number;
   rateSource?: string;
   payerWallet?: string;
   recipientWallet?: string;

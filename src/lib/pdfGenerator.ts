@@ -89,6 +89,16 @@ export function generateInvoiceHTML(invoice: any, profile: any, client: any): st
                 <td style="padding: 10px 0; font-size: 15px; font-weight: 800; color: #0f172a;">TOTAL:</td>
                 <td style="padding: 10px 0; font-size: 18px; font-weight: 800; color: #2563eb; text-align: right;">${invoice.currency} ${Number(invoice.totalAmount).toLocaleString()}</td>
               </tr>
+              ${Number(invoice.paidAmount || 0) > 0 && Number(invoice.paidAmount || 0) < Number(invoice.totalAmount) - 0.01 ? `
+                <tr>
+                  <td style="padding: 6px 0; font-size: 13px; color: #059669; font-weight: 600;">Paid to Date:</td>
+                  <td style="padding: 6px 0; font-size: 13px; color: #059669; text-align: right; font-weight: 700;">- ${invoice.currency} ${Number(invoice.paidAmount).toLocaleString()}</td>
+                </tr>
+                <tr style="border-top: 1px solid #cbd5e1;">
+                  <td style="padding: 8px 0; font-size: 14px; font-weight: 800; color: #b45309;">BALANCE DUE:</td>
+                  <td style="padding: 8px 0; font-size: 16px; font-weight: 800; color: #b45309; text-align: right;">${invoice.currency} ${Math.max(0, Number(invoice.totalAmount) - Number(invoice.paidAmount)).toLocaleString()}</td>
+                </tr>
+              ` : ""}
             </table>
           </td>
         </tr>

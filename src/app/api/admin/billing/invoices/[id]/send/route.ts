@@ -38,9 +38,16 @@ export async function POST(
       body.subject || `Invoice ${invoice.invoiceNumber} from RelayWorks (${invoice.currency} ${invoice.totalAmount.toLocaleString()})`
     );
 
+    const paidAmt = Number((invoice as any).paidAmount || 0);
+    const remainingAmt = Math.max(0, Number((invoice.totalAmount - paidAmt).toFixed(2)));
+    const installmentLine =
+      paidAmt > 0 && remainingAmt > 0.01
+        ? `Paid to Date: ${invoice.currency} ${paidAmt.toLocaleString()}\nBalance Due: ${invoice.currency} ${remainingAmt.toLocaleString()}`
+        : `Total Due: ${invoice.currency} ${invoice.totalAmount.toLocaleString()}`;
+
     const text = String(
       body.body ||
-        `Hi ${invoice.clientName},\n\nPlease find your invoice details below:\n\nInvoice #: ${invoice.invoiceNumber}\nIssue Date: ${invoice.issueDate}\nDue Date: ${invoice.dueDate}\nTotal Due: ${invoice.currency} ${invoice.totalAmount.toLocaleString()}\n\nItems:\n${linesText}\n\nPayment Instructions:\n${invoice.terms}\n${invoice.pdfHash ? `\nSHA-256 Document Hash: ${invoice.pdfHash}\n` : ""}\nThanks,\nHazrat Ummar\nRelayWorks (https://relayworks.dev)`
+        `Hi ${invoice.clientName},\n\nPlease find your invoice details below:\n\nInvoice #: ${invoice.invoiceNumber}\nIssue Date: ${invoice.issueDate}\nDue Date: ${invoice.dueDate}\nInvoice Total: ${invoice.currency} ${invoice.totalAmount.toLocaleString()}\n${installmentLine}\n\nItems:\n${linesText}\n\nPayment Instructions:\n${invoice.terms}\n${invoice.pdfHash ? `\nSHA-256 Document Hash: ${invoice.pdfHash}\n` : ""}\nThanks,\nHazrat Ummar\nRelayWorks (https://relayworks.dev)`
     );
 
     const sendRes = await sendZohoEmail({ to, subject, text });

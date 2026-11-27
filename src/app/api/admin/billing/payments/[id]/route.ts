@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 import dbConnect from "@/lib/db";
 import Payment from "@/models/Payment";
-import Invoice from "@/models/Invoice";
 import AuditLog from "@/models/AuditLog";
+import { recalculateInvoicePaymentState } from "@/lib/billingSync";
 
 export async function PUT(
   req: Request,
@@ -19,11 +19,15 @@ export async function PUT(
       return NextResponse.json({ success: false, error: "Payment not found" }, { status: 404 });
     }
 
+    if (body.paymentMethod) payment.paymentMethod = body.paymentMethod;
     if (body.asset) payment.asset = body.asset;
-    if (body.network) payment.network = body.network;
+    if (body.network !== undefined) payment.network = body.network;
     if (body.amountCrypto !== undefined) payment.amountCrypto = Number(body.amountCrypto);
     if (body.rateINRAtReceipt !== undefined) payment.rateINRAtReceipt = Number(body.rateINRAtReceipt);
     if (body.fiatValueINRAtReceipt !== undefined) payment.fiatValueINRAtReceipt = Number(body.fiatValueINRAtReceipt);
+    if (body.appliedAmount !== undefined && body.appliedAmount !== null && body.appliedAmount !== "") {
+      payment.appliedAmount = Number(body.appliedAmount);
+    }
     if (body.transactionDate) payment.transactionDate = body.transactionDate;
     if (body.txHash !== undefined) payment.txHash = body.txHash;
     if (body.blockchainExplorerUrl !== undefined) payment.blockchainExplorerUrl = body.blockchainExplorerUrl;
@@ -39,6 +43,7 @@ export async function PUT(
     }
 
     await payment.save();
+    await recalculateInvoicePaymentState(payment.invoiceId);
 
     await AuditLog.create({
       action: "PAYMENT_UPDATED",
@@ -69,13 +74,7 @@ export async function DELETE(
     const invoiceId = payment.invoiceId;
     await Payment.findByIdAndDelete(id);
 
-    const remainingPayments = await Payment.find({ invoiceId });
-    if (remainingPayments.length === 0) {
-      await Invoice.findByIdAndUpdate(invoiceId, {
-        status: "ISSUED",
-        reconciliationStatus: "UNPAID",
-      });
-    }
+    await recalculateInvoicePaymentState(invoiceId);
 
     await AuditLog.create({
       action: "PAYMENT_DELETED",

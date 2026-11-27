@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Plus,
   ExternalLink,
@@ -11,6 +11,8 @@ import {
   Edit3,
   Loader2,
   Search,
+  CheckCircle2,
+  Clock,
 } from "lucide-react";
 import { POPULAR_COINS } from "@/lib/popularCoins";
 import type { InvoiceRecord, PaymentRecord } from "./types";
@@ -18,8 +20,12 @@ import type { InvoiceRecord, PaymentRecord } from "./types";
 interface CryptoLedgerProps {
   payments: PaymentRecord[];
   invoices: InvoiceRecord[];
+  preselectedInvoiceId?: string | null;
+  onClearPreselect?: () => void;
   onRefresh: () => void;
 }
+
+const USD_STABLE_ASSETS = new Set(["USDT", "USDC", "USD", "BUSD", "DAI", "FDUSD"]);
 
 function getExplorerUrl(
   txHash: string,
@@ -63,6 +69,8 @@ function getExplorerUrl(
 export default function CryptoLedger({
   payments,
   invoices,
+  preselectedInvoiceId,
+  onClearPreselect,
   onRefresh,
 }: CryptoLedgerProps) {
   const [showModal, setShowModal] = useState(false);
@@ -71,10 +79,16 @@ export default function CryptoLedger({
   const [showCoinDropdown, setShowCoinDropdown] = useState(false);
 
   const [invoiceId, setInvoiceId] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<
+    "crypto" | "bank_wire" | "other"
+  >("crypto");
   const [asset, setAsset] = useState("USDT");
   const [network, setNetwork] = useState("TRC20");
   const [amountCrypto, setAmountCrypto] = useState("");
   const [rateINRAtReceipt, setRateINRAtReceipt] = useState("87.5");
+  const [priceUSD, setPriceUSD] = useState("1");
+  const [appliedAmount, setAppliedAmount] = useState("");
+  const [appliedManuallyEdited, setAppliedManuallyEdited] = useState(false);
   const [transactionDate, setTransactionDate] = useState(
     new Date().toISOString().split("T")[0]
   );
@@ -87,9 +101,93 @@ export default function CryptoLedger({
   const [fetchingPrice, setFetchingPrice] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const unpaidInvoices = invoices.filter(
-    (inv) => inv.status !== "PAID" && inv.status !== "CANCELLED"
+  const selectableInvoices = invoices.filter(
+    (inv) => inv.status !== "CANCELLED"
   );
+
+  const getInvoiceBalance = useCallback(
+    (inv: InvoiceRecord | undefined) => {
+      if (!inv) return { total: 0, paid: 0, remaining: 0, count: 0 };
+      const linked = payments.filter((p) => p.invoiceId === inv._id);
+      const paid = Number(
+        (
+          inv.paidAmount ?? (inv.status === "PAID" ? inv.totalAmount : 0)
+        ).toFixed(2)
+      );
+      const remaining = Math.max(
+        0,
+        Number((inv.totalAmount - paid).toFixed(2))
+      );
+      return { total: inv.totalAmount, paid, remaining, count: linked.length };
+    },
+    [payments]
+  );
+
+  const computeAppliedValue = (
+    amtStr: string,
+    currAsset: string,
+    currMethod: "crypto" | "bank_wire" | "other",
+    usdRateStr: string,
+    inrRateStr: string,
+    invCurr: string
+  ) => {
+    const amt = Number(amtStr || 0);
+    const rINR = Number(inrRateStr || 87.5);
+    const rUSD = Number(usdRateStr || 1);
+    if (invCurr.toUpperCase() === "INR") {
+      return currMethod === "bank_wire" && currAsset === "INR"
+        ? String(Number(amt.toFixed(2)))
+        : String(Number((amt * rINR).toFixed(2)));
+    }
+    if (
+      currMethod !== "crypto" ||
+      USD_STABLE_ASSETS.has(currAsset.toUpperCase())
+    ) {
+      return String(Number(amt.toFixed(2)));
+    }
+    return String(Number((amt * rUSD).toFixed(2)));
+  };
+
+  const openForInvoice = useCallback(
+    (targetInv: InvoiceRecord | undefined) => {
+      setEditingId(null);
+      setPaymentMethod("crypto");
+      setAsset("USDT");
+      setNetwork("TRC20");
+      setRateINRAtReceipt("87.5");
+      setPriceUSD("1");
+      setAppliedManuallyEdited(false);
+
+      const bal = getInvoiceBalance(targetInv);
+      const defaultAmt =
+        bal.remaining > 0
+          ? String(bal.remaining)
+          : targetInv
+          ? String(targetInv.totalAmount)
+          : "";
+      setInvoiceId(targetInv?._id || "");
+      setAmountCrypto(defaultAmt);
+      setAppliedAmount(defaultAmt);
+      setTransactionDate(new Date().toISOString().split("T")[0]);
+      setTxHash("");
+      setExplorerUrl("");
+      setPayerWallet("");
+      setRecipientWallet("");
+      setNotes("");
+      setShowModal(true);
+    },
+    [getInvoiceBalance]
+  );
+
+  useEffect(() => {
+    if (preselectedInvoiceId && invoices.length > 0) {
+      const targetInv = invoices.find((i) => i._id === preselectedInvoiceId);
+      if (targetInv) {
+        openForInvoice(targetInv);
+      }
+      onClearPreselect?.();
+    }
+  }, [preselectedInvoiceId, invoices, openForInvoice, onClearPreselect]);
 
   const filteredCoins = POPULAR_COINS.filter(
     (c) =>
@@ -97,7 +195,10 @@ export default function CryptoLedger({
       c.name.toLowerCase().includes(coinSearch.toLowerCase())
   );
 
-  const fetchLiveRate = async (symbol: string) => {
+  const selectedInvoice = invoices.find((i) => i._id === invoiceId);
+  const selectedBalance = getInvoiceBalance(selectedInvoice);
+
+  const fetchLiveRate = async (symbol: string, currentAmt = amountCrypto) => {
     setFetchingPrice(true);
     try {
       const res = await fetch(
@@ -105,7 +206,22 @@ export default function CryptoLedger({
       );
       const data = await res.json();
       if (data.success && data.priceINR) {
-        setRateINRAtReceipt(String(Number(data.priceINR).toFixed(2)));
+        const nextInr = String(Number(data.priceINR).toFixed(2));
+        const nextUsd = String(Number(data.priceUSD || 1));
+        setRateINRAtReceipt(nextInr);
+        setPriceUSD(nextUsd);
+        if (!appliedManuallyEdited) {
+          setAppliedAmount(
+            computeAppliedValue(
+              currentAmt,
+              symbol,
+              paymentMethod,
+              nextUsd,
+              nextInr,
+              selectedInvoice?.currency || "USD"
+            )
+          );
+        }
       }
     } catch (e) {
       console.error(e);
@@ -115,29 +231,41 @@ export default function CryptoLedger({
   };
 
   const openAddModal = () => {
-    setEditingId(null);
-    const defaultInv = unpaidInvoices[0] || invoices[0];
-    setInvoiceId(defaultInv?._id || "");
-    setAsset("USDT");
-    setNetwork("TRC20");
-    setAmountCrypto(defaultInv ? String(defaultInv.totalAmount) : "");
-    setRateINRAtReceipt("87.5");
-    setTransactionDate(new Date().toISOString().split("T")[0]);
-    setTxHash("");
-    setExplorerUrl("");
-    setPayerWallet("");
-    setRecipientWallet("");
-    setNotes("");
-    setShowModal(true);
+    const firstPending =
+      selectableInvoices.find((i) => i.status !== "PAID") ||
+      selectableInvoices[0];
+    openForInvoice(firstPending);
   };
 
   const openEditModal = (p: PaymentRecord) => {
     setEditingId(p._id);
     setInvoiceId(p.invoiceId);
+    setPaymentMethod(p.paymentMethod || "crypto");
     setAsset(p.asset);
     setNetwork(p.network || "TRC20");
     setAmountCrypto(String(p.amountCrypto));
     setRateINRAtReceipt(String(p.rateINRAtReceipt));
+    const derivedUsd =
+      p.appliedAmount && p.amountCrypto > 0
+        ? String(Number((p.appliedAmount / p.amountCrypto).toFixed(4)))
+        : p.rateINRAtReceipt > 0
+        ? String(Number((p.rateINRAtReceipt / 87.5).toFixed(4)))
+        : "1";
+    setPriceUSD(derivedUsd);
+    const inv = invoices.find((i) => i._id === p.invoiceId);
+    const effectiveApplied =
+      p.appliedAmount !== undefined && p.appliedAmount !== null
+        ? String(p.appliedAmount)
+        : computeAppliedValue(
+            String(p.amountCrypto),
+            p.asset,
+            p.paymentMethod || "crypto",
+            derivedUsd,
+            String(p.rateINRAtReceipt),
+            inv?.currency || "USD"
+          );
+    setAppliedAmount(effectiveApplied);
+    setAppliedManuallyEdited(true);
     setTransactionDate(p.transactionDate);
     setTxHash(p.txHash || "");
     setExplorerUrl(p.blockchainExplorerUrl || "");
@@ -153,13 +281,14 @@ export default function CryptoLedger({
     try {
       const payload = {
         invoiceId,
-        paymentMethod: "crypto",
-        asset: asset.toUpperCase(),
+        paymentMethod,
+        asset: paymentMethod === "crypto" ? asset.toUpperCase() : asset,
         network,
         amountCrypto: Number(amountCrypto),
         rateINRAtReceipt: Number(rateINRAtReceipt),
         fiatValueINRAtReceipt:
           Number(amountCrypto || 0) * Number(rateINRAtReceipt || 0),
+        appliedAmount: Number(appliedAmount || 0),
         transactionDate,
         txHash,
         blockchainExplorerUrl: explorerUrl,
@@ -192,7 +321,7 @@ export default function CryptoLedger({
   const handleDelete = async (p: PaymentRecord) => {
     if (
       !confirm(
-        `Delete ${p.amountCrypto} ${p.asset} receipt for ${p.invoiceNumber}? The invoice status will revert to UNPAID.`
+        `Delete ${p.amountCrypto} ${p.asset} receipt for ${p.invoiceNumber}? The invoice paid balance & status will automatically recalculate.`
       )
     ) {
       return;
@@ -204,16 +333,35 @@ export default function CryptoLedger({
     if (data.success) onRefresh();
   };
 
+  // Live preview of balance after adding/editing this installment
+  const editingOriginalApplied = editingId
+    ? Number(payments.find((p) => p._id === editingId)?.appliedAmount ?? 0)
+    : 0;
+  const basePaidExcludingCurrent = Math.max(
+    0,
+    selectedBalance.paid - editingOriginalApplied
+  );
+  const projectedTotalPaid = Number(
+    (basePaidExcludingCurrent + Number(appliedAmount || 0)).toFixed(2)
+  );
+  const projectedRemaining = Math.max(
+    0,
+    Number((selectedBalance.total - projectedTotalPaid).toFixed(2))
+  );
+  const willFullySettle =
+    selectedBalance.total > 0 &&
+    projectedTotalPaid >= selectedBalance.total - 0.01;
+
   return (
     <div className="space-y-4">
       <div className="rounded-xl border border-slate-200/90 bg-white p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 className="text-base font-semibold text-slate-900">
-            Crypto Payments Ledger
+            Payments &amp; Crypto Installment Ledger
           </h2>
           <p className="text-xs text-slate-500">
-            Track on-chain client payments, fair-market INR value at receipt,
-            and explorer TX hashes.
+            Record full or partial installment receipts (crypto, wire, or fiat),
+            live spot INR values, and applied invoice credits.
           </p>
         </div>
         <button
@@ -221,7 +369,7 @@ export default function CryptoLedger({
           className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold transition-colors"
         >
           <Plus className="w-4 h-4" />
-          Record Crypto Receipt
+          Record Receipt / Installment
         </button>
       </div>
 
@@ -230,11 +378,11 @@ export default function CryptoLedger({
           <div className="p-12 text-center">
             <Coins className="w-8 h-8 text-slate-300 mx-auto mb-2" />
             <p className="text-sm font-medium text-slate-700">
-              No crypto payments recorded
+              No payments recorded yet
             </p>
             <p className="text-xs text-slate-500 mt-1">
-              Log incoming USDT, USDC, BTC, SOL, or custom tokens against an
-              invoice.
+              Log incoming USDT, USDC, BTC, SOL, or partial installments against
+              any invoice.
             </p>
           </div>
         ) : (
@@ -242,21 +390,30 @@ export default function CryptoLedger({
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50/70 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-                  <th className="py-3 px-5">Invoice & Date</th>
-                  <th className="py-3 px-4">Asset / Network</th>
-                  <th className="py-3 px-4 text-right">Amount</th>
-                  <th className="py-3 px-4 text-right">INR Value at Receipt</th>
-                  <th className="py-3 px-4">On-Chain Tx</th>
+                  <th className="py-3 px-5">Invoice &amp; Date</th>
+                  <th className="py-3 px-4">Asset / Method</th>
+                  <th className="py-3 px-4 text-right">Amount Received</th>
+                  <th className="py-3 px-4 text-right">Applied to Invoice</th>
+                  <th className="py-3 px-4 text-right">INR Value</th>
+                  <th className="py-3 px-4">On-Chain Tx / Ref</th>
                   <th className="py-3 px-5 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-sm">
                 {payments.map((p) => {
+                  const inv = invoices.find((i) => i._id === p.invoiceId);
                   const link = getExplorerUrl(
                     p.txHash || "",
                     p.network,
                     p.blockchainExplorerUrl
                   );
+                  const appliedDisplay =
+                    p.appliedAmount !== undefined && p.appliedAmount !== null
+                      ? `${inv?.currency || "USD"} ${Number(p.appliedAmount).toLocaleString()}`
+                      : inv?.status === "PAID"
+                      ? `Settled`
+                      : `—`;
+
                   return (
                     <tr
                       key={p._id}
@@ -274,12 +431,17 @@ export default function CryptoLedger({
                         <span className="inline-flex items-center gap-1.5 font-semibold text-slate-900">
                           {p.asset}
                           <span className="text-[11px] font-medium px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">
-                            {p.network || "Spot"}
+                            {p.network || p.paymentMethod}
                           </span>
                         </span>
                       </td>
                       <td className="py-3.5 px-4 text-right font-mono font-semibold text-slate-900 tabular-nums">
                         {p.amountCrypto.toLocaleString()} {p.asset}
+                      </td>
+                      <td className="py-3.5 px-4 text-right tabular-nums">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-200/70">
+                          {appliedDisplay}
+                        </span>
                       </td>
                       <td className="py-3.5 px-4 text-right tabular-nums">
                         <div className="font-semibold text-slate-900">
@@ -343,7 +505,9 @@ export default function CryptoLedger({
           <div className="bg-white border border-slate-200 rounded-2xl shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto">
             <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white z-10">
               <h3 className="text-base font-semibold text-slate-900">
-                {editingId ? "Edit Crypto Receipt" : "Record Crypto Receipt"}
+                {editingId
+                  ? "Edit Payment / Installment"
+                  : "Record Payment / Installment"}
               </h3>
               <button
                 onClick={() => setShowModal(false)}
@@ -363,44 +527,147 @@ export default function CryptoLedger({
                     value={invoiceId}
                     onChange={(e) => {
                       const inv = invoices.find((i) => i._id === e.target.value);
+                      const bal = getInvoiceBalance(inv);
                       setInvoiceId(e.target.value);
-                      if (inv) setAmountCrypto(String(inv.totalAmount));
+                      setAppliedManuallyEdited(false);
+                      const nextAmt =
+                        bal.remaining > 0
+                          ? String(bal.remaining)
+                          : inv
+                          ? String(inv.totalAmount)
+                          : "";
+                      setAmountCrypto(nextAmt);
+                      setAppliedAmount(
+                        computeAppliedValue(
+                          nextAmt,
+                          asset,
+                          paymentMethod,
+                          priceUSD,
+                          rateINRAtReceipt,
+                          inv?.currency || "USD"
+                        )
+                      );
                     }}
                     className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 bg-white text-slate-900"
                   >
                     <option value="">Select Invoice...</option>
-                    {invoices.map((inv) => (
-                      <option key={inv._id} value={inv._id}>
-                        {inv.invoiceNumber} — {inv.clientName} ({inv.currency}{" "}
-                        {inv.totalAmount}) [{inv.status}]
-                      </option>
-                    ))}
+                    {selectableInvoices.map((inv) => {
+                      const bal = getInvoiceBalance(inv);
+                      return (
+                        <option key={inv._id} value={inv._id}>
+                          {inv.invoiceNumber} — {inv.clientName} (
+                          {inv.currency} {bal.remaining.toLocaleString()} due /{" "}
+                          {inv.totalAmount.toLocaleString()} total) [{inv.status}]
+                        </option>
+                      );
+                    })}
                   </select>
                 </div>
               )}
 
+              {/* Live Installment Tracker Box */}
+              {selectedInvoice && (
+                <div
+                  className={`rounded-xl border p-3.5 text-xs space-y-1.5 ${
+                    willFullySettle
+                      ? "bg-emerald-50/70 border-emerald-200 text-emerald-900"
+                      : "bg-blue-50/70 border-blue-200 text-blue-950"
+                  }`}
+                >
+                  <div className="flex items-center justify-between font-semibold">
+                    <span className="flex items-center gap-1.5">
+                      {willFullySettle ? (
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      ) : (
+                        <Clock className="w-3.5 h-3.5 text-blue-600" />
+                      )}
+                      {selectedInvoice.invoiceNumber} Installment Status
+                    </span>
+                    <span className="font-mono tabular-nums">
+                      Total: {selectedInvoice.currency}{" "}
+                      {selectedBalance.total.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-[11px] opacity-85 tabular-nums">
+                    <span>
+                      Already paid: {selectedInvoice.currency}{" "}
+                      {basePaidExcludingCurrent.toLocaleString()} (
+                      {selectedBalance.count} receipt
+                      {selectedBalance.count === 1 ? "" : "s"})
+                    </span>
+                    <span>
+                      {willFullySettle
+                        ? "After this: PAID IN FULL"
+                        : `Remaining after this: ${selectedInvoice.currency} ${projectedRemaining.toLocaleString()} (PARTIAL)`}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Payment Method */}
+              <div className="grid grid-cols-3 gap-2 p-1 rounded-xl bg-slate-100">
+                {(
+                  [
+                    { id: "crypto", label: "Crypto" },
+                    { id: "bank_wire", label: "Bank Wire" },
+                    { id: "other", label: "Wise / Other" },
+                  ] as const
+                ).map((m) => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() => {
+                      setPaymentMethod(m.id);
+                      if (m.id !== "crypto") {
+                        setAsset(selectedInvoice?.currency || "USD");
+                        setNetwork(m.id === "bank_wire" ? "SWIFT/WIRE" : "OTHER");
+                        setPriceUSD("1");
+                      } else {
+                        setAsset("USDT");
+                        setNetwork("TRC20");
+                        setPriceUSD("1");
+                      }
+                    }}
+                    className={`py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                      paymentMethod === m.id
+                        ? "bg-white text-slate-900 shadow-xs"
+                        : "text-slate-600 hover:text-slate-900"
+                    }`}
+                  >
+                    {m.label}
+                  </button>
+                ))}
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="relative">
                   <label className="block text-xs font-medium text-slate-700 mb-1">
-                    Asset Ticker (45+ Supported)
+                    {paymentMethod === "crypto"
+                      ? "Asset Ticker (45+ Supported)"
+                      : "Currency / Rail"}
                   </label>
                   <div className="relative">
                     <input
                       type="text"
                       required
                       value={asset}
-                      onFocus={() => setShowCoinDropdown(true)}
+                      onFocus={() =>
+                        paymentMethod === "crypto" && setShowCoinDropdown(true)
+                      }
                       onChange={(e) => {
-                        setAsset(e.target.value.toUpperCase());
+                        const sym = e.target.value.toUpperCase();
+                        setAsset(sym);
                         setCoinSearch(e.target.value);
-                        setShowCoinDropdown(true);
+                        if (paymentMethod === "crypto") setShowCoinDropdown(true);
                       }}
                       placeholder="USDT, BTC, SOL..."
                       className="w-full px-3 py-2 text-sm font-mono rounded-lg border border-slate-200 bg-white text-slate-900"
                     />
-                    <Search className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2" />
+                    {paymentMethod === "crypto" && (
+                      <Search className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2" />
+                    )}
                   </div>
-                  {showCoinDropdown && (
+                  {showCoinDropdown && paymentMethod === "crypto" && (
                     <div className="absolute z-20 mt-1 w-full max-h-48 overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-lg">
                       {filteredCoins.slice(0, 12).map((c) => (
                         <button
@@ -439,7 +706,9 @@ export default function CryptoLedger({
 
                 <div>
                   <label className="block text-xs font-medium text-slate-700 mb-1">
-                    Chain / Network
+                    {paymentMethod === "crypto"
+                      ? "Chain / Network"
+                      : "Channel / Reference"}
                   </label>
                   <input
                     type="text"
@@ -454,15 +723,46 @@ export default function CryptoLedger({
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-xs font-medium text-slate-700 mb-1">
-                    Crypto Amount
+                    Amount Received ({asset})
                   </label>
                   <input
                     type="number"
                     step="any"
                     required
                     value={amountCrypto}
-                    onChange={(e) => setAmountCrypto(e.target.value)}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      setAmountCrypto(v);
+                      if (!appliedManuallyEdited) {
+                        setAppliedAmount(
+                          computeAppliedValue(
+                            v,
+                            asset,
+                            paymentMethod,
+                            priceUSD,
+                            rateINRAtReceipt,
+                            selectedInvoice?.currency || "USD"
+                          )
+                        );
+                      }
+                    }}
                     className="w-full px-3 py-2 text-sm tabular-nums rounded-lg border border-slate-200 bg-white text-slate-900"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-700 mb-1">
+                    Applied to Invoice ({selectedInvoice?.currency || "USD"})
+                  </label>
+                  <input
+                    type="number"
+                    step="any"
+                    required
+                    value={appliedAmount}
+                    onChange={(e) => {
+                      setAppliedManuallyEdited(true);
+                      setAppliedAmount(e.target.value);
+                    }}
+                    className="w-full px-3 py-2 text-sm font-semibold tabular-nums rounded-lg border border-blue-200 bg-blue-50/30 text-slate-900"
                   />
                 </div>
                 <div>
@@ -492,6 +792,9 @@ export default function CryptoLedger({
                     </button>
                   </div>
                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-medium text-slate-700 mb-1">
                     Receipt Date
@@ -504,29 +807,26 @@ export default function CryptoLedger({
                     className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 bg-white text-slate-900"
                   />
                 </div>
-              </div>
-
-              <div className="rounded-lg bg-slate-50 border border-slate-200/80 px-3.5 py-2.5 flex items-center justify-between text-xs">
-                <span className="text-slate-500">
-                  Calculated INR Valuation at Receipt:
-                </span>
-                <span className="font-bold text-slate-900 tabular-nums">
-                  ₹
-                  {Math.round(
-                    Number(amountCrypto || 0) * Number(rateINRAtReceipt || 0)
-                  ).toLocaleString()}
-                </span>
+                <div className="rounded-lg bg-slate-50 border border-slate-200/80 px-3.5 py-2 flex flex-col justify-center text-xs">
+                  <span className="text-slate-500">INR Valuation at Receipt:</span>
+                  <span className="font-bold text-slate-900 tabular-nums text-sm">
+                    ₹
+                    {Math.round(
+                      Number(amountCrypto || 0) * Number(rateINRAtReceipt || 0)
+                    ).toLocaleString()}
+                  </span>
+                </div>
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-slate-700 mb-1">
-                  Transaction Hash (TxID)
+                  Transaction Hash / Payment Reference
                 </label>
                 <input
                   type="text"
                   value={txHash}
                   onChange={(e) => setTxHash(e.target.value)}
-                  placeholder="0x... or Tron/Solana signature"
+                  placeholder="0x... or Tron/Solana signature or Wire Ref"
                   className="w-full px-3 py-2 text-xs font-mono rounded-lg border border-slate-200 bg-white text-slate-900"
                 />
               </div>
@@ -570,7 +870,11 @@ export default function CryptoLedger({
                   className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold disabled:opacity-60"
                 >
                   {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                  {editingId ? "Save Changes" : "Record Receipt"}
+                  {editingId
+                    ? "Save Changes"
+                    : willFullySettle
+                    ? "Record Final Payment"
+                    : "Record Installment"}
                 </button>
               </div>
             </form>

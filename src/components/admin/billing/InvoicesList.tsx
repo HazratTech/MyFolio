@@ -14,6 +14,7 @@ import {
   Send,
   Loader2,
   FileText,
+  Coins,
 } from "lucide-react";
 import { generateInvoiceHTML } from "@/lib/pdfGenerator";
 import type {
@@ -21,21 +22,26 @@ import type {
   BusinessProfileRecord,
   ClientRecord,
   InvoiceRecord,
+  PaymentRecord,
 } from "./types";
 
 interface InvoicesListProps {
   invoices: InvoiceRecord[];
+  payments: PaymentRecord[];
   clients: ClientRecord[];
   profile: BusinessProfileRecord | null;
   setActiveTab: (tab: BillingTab) => void;
+  onRecordInstallment: (invoiceId: string) => void;
   onRefresh: () => void;
 }
 
 export default function InvoicesList({
   invoices,
+  payments,
   clients,
   profile,
   setActiveTab,
+  onRecordInstallment,
   onRefresh,
 }: InvoicesListProps) {
   const [search, setSearch] = useState("");
@@ -112,13 +118,20 @@ export default function InvoicesList({
       )
       .join("\n");
 
+    const paid = Number(inv.paidAmount || 0);
+    const remaining = Math.max(0, Number((inv.totalAmount - paid).toFixed(2)));
+    const balanceSection =
+      paid > 0 && remaining > 0.01
+        ? `Invoice Total: ${inv.currency} ${inv.totalAmount.toLocaleString()}\nPaid to Date: ${inv.currency} ${paid.toLocaleString()}\nBalance Due: ${inv.currency} ${remaining.toLocaleString()}`
+        : `Total Due: ${inv.currency} ${inv.totalAmount.toLocaleString()}`;
+
     setEmailModalInvoice(inv);
     setEmailTo(client?.email || "");
     setEmailSubject(
-      `Invoice ${inv.invoiceNumber} from ${profile?.tradeName || "RelayWorks"} (${inv.currency} ${inv.totalAmount.toLocaleString()})`
+      `Invoice ${inv.invoiceNumber} from ${profile?.tradeName || "RelayWorks"} (${inv.currency} ${(remaining > 0.01 && paid > 0 ? remaining : inv.totalAmount).toLocaleString()})`
     );
     setEmailBody(
-      `Hi ${inv.clientName},\n\nPlease find your invoice details below:\n\nInvoice #: ${inv.invoiceNumber}\nIssue Date: ${inv.issueDate}\nDue Date: ${inv.dueDate}\nTotal Due: ${inv.currency} ${inv.totalAmount.toLocaleString()}\n\nItems:\n${linesText}\n\nPayment Instructions:\n${inv.terms || "Cryptocurrency (USDT/USDC) or Direct Bank Transfer accepted."}${
+      `Hi ${inv.clientName},\n\nPlease find your invoice details below:\n\nInvoice #: ${inv.invoiceNumber}\nIssue Date: ${inv.issueDate}\nDue Date: ${inv.dueDate}\n${balanceSection}\n\nItems:\n${linesText}\n\nPayment Instructions:\n${inv.terms || "Cryptocurrency (USDT/USDC) or Direct Bank Transfer accepted."}${
         inv.pdfHash ? `\n\nSHA-256 Document Hash: ${inv.pdfHash}` : ""
       }\n\nThanks,\n${profile?.legalName || "Hazrat Ummar"}\n${profile?.tradeName || "RelayWorks"}`
     );
@@ -207,7 +220,8 @@ export default function InvoicesList({
           >
             <option value="ALL">All Statuses</option>
             <option value="ISSUED">Issued (Unpaid)</option>
-            <option value="PAID">Paid</option>
+            <option value="PARTIALLY_PAID">Partially Paid (Installments)</option>
+            <option value="PAID">Paid in Full</option>
             <option value="UNRECONCILED">Crypto Unreconciled</option>
             <option value="RECONCILED">Reconciled (Bank UTR)</option>
           </select>
@@ -241,122 +255,179 @@ export default function InvoicesList({
                   <th className="py-3 px-5">Invoice</th>
                   <th className="py-3 px-4">Client</th>
                   <th className="py-3 px-4">Dates</th>
-                  <th className="py-3 px-4 text-right">Amount</th>
+                  <th className="py-3 px-4 text-right">Amount &amp; Balance</th>
                   <th className="py-3 px-4">Status</th>
                   <th className="py-3 px-4">Hash</th>
                   <th className="py-3 px-5 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-sm">
-                {filtered.map((inv) => (
-                  <tr
-                    key={inv._id}
-                    className="hover:bg-slate-50/70 transition-colors"
-                  >
-                    <td className="py-3.5 px-5">
-                      <span className="font-mono text-xs font-semibold text-slate-900 block">
-                        {inv.invoiceNumber}
-                      </span>
-                      {inv.isExport && (
-                        <span className="inline-block mt-1 text-[10px] font-medium px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200/80">
-                          Export LUT
+                {filtered.map((inv) => {
+                  const invPayments = payments.filter(
+                    (p) => p.invoiceId === inv._id
+                  );
+                  const paid = Number(
+                    inv.paidAmount ?? (inv.status === "PAID" ? inv.totalAmount : 0)
+                  );
+                  const remaining = Math.max(
+                    0,
+                    Number((inv.totalAmount - paid).toFixed(2))
+                  );
+                  const pct =
+                    inv.totalAmount > 0
+                      ? Math.min(100, Math.round((paid / inv.totalAmount) * 100))
+                      : 0;
+                  const canAddInstallment =
+                    inv.status !== "PAID" && inv.status !== "CANCELLED";
+
+                  return (
+                    <tr
+                      key={inv._id}
+                      className="hover:bg-slate-50/70 transition-colors"
+                    >
+                      <td className="py-3.5 px-5">
+                        <span className="font-mono text-xs font-semibold text-slate-900 block">
+                          {inv.invoiceNumber}
                         </span>
-                      )}
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <p className="font-medium text-slate-900">
-                        {inv.clientName}
-                      </p>
-                      <p className="text-xs text-slate-500">
-                        {inv.clientCountry}
-                      </p>
-                    </td>
-                    <td className="py-3.5 px-4 text-xs text-slate-600 tabular-nums">
-                      <div>Issued: {inv.issueDate}</div>
-                      <div className="text-slate-400">Due: {inv.dueDate}</div>
-                    </td>
-                    <td className="py-3.5 px-4 text-right font-semibold text-slate-900 tabular-nums">
-                      {inv.currency} {inv.totalAmount.toLocaleString()}
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <div className="flex flex-col items-start gap-1">
-                        <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium border ${
-                            inv.status === "PAID"
-                              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                              : inv.status === "CANCELLED"
-                              ? "bg-rose-50 text-rose-700 border-rose-200"
-                              : "bg-slate-100 text-slate-700 border-slate-200"
-                          }`}
-                        >
-                          {inv.status}
-                        </span>
-                        <span
-                          className={`text-[10px] font-medium ${
-                            inv.reconciliationStatus === "RECONCILED"
-                              ? "text-emerald-600"
-                              : inv.reconciliationStatus === "UNRECONCILED"
-                              ? "text-amber-600"
-                              : "text-slate-400"
-                          }`}
-                        >
-                          {inv.reconciliationStatus === "RECONCILED"
-                            ? "UTR Matched"
-                            : inv.reconciliationStatus === "UNRECONCILED"
-                            ? "Awaiting UTR"
-                            : "Unpaid"}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="py-3.5 px-4">
-                      {inv.pdfHash ? (
-                        <button
-                          onClick={() => handleCopyHash(inv)}
-                          title={inv.pdfHash}
-                          className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200/80 text-slate-600 font-mono text-[11px] transition-colors"
-                        >
-                          <ShieldCheck className="w-3 h-3 text-emerald-600" />
-                          {inv.pdfHash.slice(0, 8)}...
-                          {copiedHashId === inv._id ? (
-                            <Check className="w-3 h-3 text-emerald-600" />
-                          ) : (
-                            <Copy className="w-3 h-3 text-slate-400" />
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {inv.isExport && (
+                            <span className="inline-block text-[10px] font-medium px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200/80">
+                              Export LUT
+                            </span>
                           )}
-                        </button>
-                      ) : (
-                        <span className="text-xs text-slate-400">—</span>
-                      )}
-                    </td>
-                    <td className="py-3.5 px-5 text-right">
-                      <div className="inline-flex items-center gap-1.5">
-                        <button
-                          onClick={() => openEmailModal(inv)}
-                          title="Send Invoice via Zoho Mail"
-                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-200 text-slate-700 hover:text-blue-700 text-xs font-medium transition-colors"
-                        >
-                          <Mail className="w-3.5 h-3.5" />
-                          Email
-                        </button>
-                        <button
-                          onClick={() => handlePrintPDF(inv)}
-                          title="Print / Save PDF"
-                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-medium transition-colors"
-                        >
-                          <Printer className="w-3.5 h-3.5" />
-                          PDF
-                        </button>
-                        <button
-                          onClick={() => handleDelete(inv)}
-                          disabled={deletingId === inv._id}
-                          title="Delete Invoice"
-                          className="p-1.5 rounded-lg border border-transparent hover:border-rose-200 hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors disabled:opacity-50"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                          {invPayments.length > 0 && (
+                            <span className="inline-block text-[10px] font-medium px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">
+                              {invPayments.length} installment
+                              {invPayments.length > 1 ? "s" : ""}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <p className="font-medium text-slate-900">
+                          {inv.clientName}
+                        </p>
+                        <p className="text-xs text-slate-500">
+                          {inv.clientCountry}
+                        </p>
+                      </td>
+                      <td className="py-3.5 px-4 text-xs text-slate-600 tabular-nums">
+                        <div>Issued: {inv.issueDate}</div>
+                        <div className="text-slate-400">Due: {inv.dueDate}</div>
+                      </td>
+                      <td className="py-3.5 px-4 text-right tabular-nums">
+                        <div className="font-semibold text-slate-900">
+                          {inv.currency} {inv.totalAmount.toLocaleString()}
+                        </div>
+                        {inv.status === "PARTIALLY_PAID" && (
+                          <div className="mt-1 space-y-1">
+                            <div className="text-[11px] font-medium text-amber-700">
+                              Paid {inv.currency} {paid.toLocaleString()} · Due{" "}
+                              {inv.currency} {remaining.toLocaleString()}
+                            </div>
+                            <div className="w-28 ml-auto h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                              <div
+                                className="h-full bg-blue-600 rounded-full"
+                                style={{ width: `${pct}%` }}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <div className="flex flex-col items-start gap-1">
+                          <span
+                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium border ${
+                              inv.status === "PAID"
+                                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                : inv.status === "PARTIALLY_PAID"
+                                ? "bg-blue-50 text-blue-700 border-blue-200"
+                                : inv.status === "CANCELLED"
+                                ? "bg-rose-50 text-rose-700 border-rose-200"
+                                : "bg-slate-100 text-slate-700 border-slate-200"
+                            }`}
+                          >
+                            {inv.status === "PARTIALLY_PAID"
+                              ? `PARTIAL (${pct}%)`
+                              : inv.status}
+                          </span>
+                          <span
+                            className={`text-[10px] font-medium ${
+                              inv.reconciliationStatus === "RECONCILED"
+                                ? "text-emerald-600"
+                                : inv.reconciliationStatus === "UNRECONCILED"
+                                ? "text-amber-600"
+                                : "text-slate-400"
+                            }`}
+                          >
+                            {inv.reconciliationStatus === "RECONCILED"
+                              ? "UTR Matched"
+                              : inv.reconciliationStatus === "UNRECONCILED"
+                              ? "Awaiting UTR"
+                              : "Unpaid"}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        {inv.pdfHash ? (
+                          <button
+                            onClick={() => handleCopyHash(inv)}
+                            title={inv.pdfHash}
+                            className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200/80 text-slate-600 font-mono text-[11px] transition-colors"
+                          >
+                            <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                            {inv.pdfHash.slice(0, 8)}...
+                            {copiedHashId === inv._id ? (
+                              <Check className="w-3 h-3 text-emerald-600" />
+                            ) : (
+                              <Copy className="w-3 h-3 text-slate-400" />
+                            )}
+                          </button>
+                        ) : (
+                          <span className="text-xs text-slate-400">—</span>
+                        )}
+                      </td>
+                      <td className="py-3.5 px-5 text-right">
+                        <div className="inline-flex items-center gap-1.5">
+                          {canAddInstallment && (
+                            <button
+                              onClick={() => onRecordInstallment(inv._id)}
+                              title="Record Payment / Installment"
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium transition-colors"
+                            >
+                              <Coins className="w-3.5 h-3.5" />
+                              + Pay
+                            </button>
+                          )}
+                          <button
+                            onClick={() => openEmailModal(inv)}
+                            title="Send Invoice via Zoho Mail"
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-200 text-slate-700 hover:text-blue-700 text-xs font-medium transition-colors"
+                          >
+                            <Mail className="w-3.5 h-3.5" />
+                            Email
+                          </button>
+                          <button
+                            onClick={() => handlePrintPDF(inv)}
+                            title="Print / Save PDF"
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-medium transition-colors"
+                          >
+                            <Printer className="w-3.5 h-3.5" />
+                            PDF
+                          </button>
+                          <button
+                            onClick={() => handleDelete(inv)}
+                            disabled={deletingId === inv._id}
+                            title="Delete Invoice"
+                            className="p-1.5 rounded-lg border border-transparent hover:border-rose-200 hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors disabled:opacity-50"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

@@ -24,6 +24,7 @@ export interface IInvoice extends Document {
   discount: number;
   taxAmount: number;
   totalAmount: number;
+  paidAmount: number;
   notes?: string;
   terms?: string;
   status: "DRAFT" | "ISSUED" | "PARTIALLY_PAID" | "PAID" | "CANCELLED";
@@ -58,6 +59,7 @@ const InvoiceSchema = new Schema<IInvoice>(
     discount: { type: Number, default: 0 },
     taxAmount: { type: Number, default: 0 },
     totalAmount: { type: Number, required: true },
+    paidAmount: { type: Number, default: 0 },
     notes: { type: String, default: "" },
     terms: { type: String, default: "Payment due upon receipt or as specified." },
     status: {

@@ -4,6 +4,10 @@ import dbConnect from "@/lib/db";
 import Payment from "@/models/Payment";
 import Invoice from "@/models/Invoice";
 import AuditLog from "@/models/AuditLog";
+import {
+  getEffectiveAppliedAmount,
+  recalculateInvoicePaymentState,
+} from "@/lib/billingSync";
 
 export async function GET() {
   try {
@@ -32,6 +36,18 @@ export async function POST(req: Request) {
     const fiatValueINRAtReceipt = body.fiatValueINRAtReceipt
       ? Number(body.fiatValueINRAtReceipt)
       : rateINRAtReceipt * amountCrypto;
+    const appliedAmount =
+      body.appliedAmount !== undefined && body.appliedAmount !== null && body.appliedAmount !== ""
+        ? Number(body.appliedAmount)
+        : getEffectiveAppliedAmount(
+            {
+              amountCrypto,
+              fiatValueINRAtReceipt,
+              asset: body.asset || "USDT",
+              paymentMethod: body.paymentMethod || "crypto",
+            },
+            invoice.currency
+          );
 
     const payment = await Payment.create({
       invoiceId: invoice._id,
@@ -45,24 +61,28 @@ export async function POST(req: Request) {
       blockchainExplorerUrl: body.blockchainExplorerUrl || "",
       rateINRAtReceipt,
       fiatValueINRAtReceipt,
+      appliedAmount,
       rateSource: body.rateSource || "Binance Spot / Market Rate",
       payerWallet: body.payerWallet || "",
       recipientWallet: body.recipientWallet || "",
       notes: body.notes || "",
     });
 
-    invoice.status = "PAID";
-    invoice.reconciliationStatus = "UNRECONCILED";
-    await invoice.save();
+    const updatedInvoice = await recalculateInvoicePaymentState(invoice._id);
+    const totalPaid = updatedInvoice?.paidAmount ?? appliedAmount;
+    const remaining = Math.max(0, Number((invoice.totalAmount - totalPaid).toFixed(2)));
 
     await AuditLog.create({
       action: "PAYMENT_RECORDED",
       entityType: "Payment",
       entityId: payment._id.toString(),
-      summary: `Recorded ${payment.asset} ${payment.amountCrypto} receipt for Invoice ${invoice.invoiceNumber} (Valued at ₹${fiatValueINRAtReceipt.toLocaleString()})`,
+      summary: `Recorded ${payment.asset} ${payment.amountCrypto} (${invoice.currency} ${appliedAmount.toLocaleString()} applied) for Invoice ${invoice.invoiceNumber} — Paid ${totalPaid.toLocaleString()} / ${invoice.totalAmount.toLocaleString()} (${updatedInvoice?.status}, Remaining: ${remaining.toLocaleString()})`,
     });
 
-    return NextResponse.json({ success: true, data: payment }, { status: 201 });
+    return NextResponse.json(
+      { success: true, data: payment, invoice: updatedInvoice },
+      { status: 201 }
+    );
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }

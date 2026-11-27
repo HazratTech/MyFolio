@@ -74,6 +74,7 @@ export default function BillingWorkspace() {
   const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
   const [profile, setProfile] = useState<BusinessProfileRecord | null>(null);
   const [auditLogs, setAuditLogs] = useState<AuditLogRecord[]>([]);
+  const [preselectedInvoiceId, setPreselectedInvoiceId] = useState<string | null>(null);
 
   const setActiveTab = (tab: BillingTab) => {
     setActiveTabState(tab);
@@ -243,9 +244,14 @@ export default function BillingWorkspace() {
           {activeTab === "invoices" && (
             <InvoicesList
               invoices={invoices}
+              payments={payments}
               clients={clients}
               profile={profile}
               setActiveTab={setActiveTab}
+              onRecordInstallment={(invoiceId) => {
+                setPreselectedInvoiceId(invoiceId);
+                setActiveTab("crypto-payments");
+              }}
               onRefresh={() => fetchAllData(true)}
             />
           )}
@@ -264,6 +270,8 @@ export default function BillingWorkspace() {
             <CryptoLedger
               payments={payments}
               invoices={invoices}
+              preselectedInvoiceId={preselectedInvoiceId}
+              onClearPreselect={() => setPreselectedInvoiceId(null)}
               onRefresh={() => fetchAllData(true)}
             />
           )}

@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import dbConnect from "@/lib/db";
 import Invoice from "@/models/Invoice";
 import AuditLog from "@/models/AuditLog";
+import { recalculateInvoicePaymentState } from "@/lib/billingSync";
 
 export async function GET(
   req: Request,
@@ -38,6 +39,7 @@ export async function PUT(
     const prevStatus = invoice.status;
     Object.assign(invoice, body);
     await invoice.save();
+    await recalculateInvoicePaymentState(invoice._id);
 
     await AuditLog.create({
       action: "INVOICE_UPDATED",

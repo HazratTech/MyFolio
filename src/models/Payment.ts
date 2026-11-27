@@ -12,6 +12,7 @@ export interface IPayment extends Document {
   blockchainExplorerUrl?: string;
   rateINRAtReceipt: number;
   fiatValueINRAtReceipt: number;
+  appliedAmount?: number;
   rateSource?: string;
   payerWallet?: string;
   recipientWallet?: string;
@@ -33,6 +34,7 @@ const PaymentSchema = new Schema<IPayment>(
     blockchainExplorerUrl: { type: String, default: "" },
     rateINRAtReceipt: { type: Number, required: true, default: 0 },
     fiatValueINRAtReceipt: { type: Number, required: true, default: 0 },
+    appliedAmount: { type: Number },
     rateSource: { type: String, default: "Binance Spot / Market Rate" },
     payerWallet: { type: String, default: "" },
     recipientWallet: { type: String, default: "" },

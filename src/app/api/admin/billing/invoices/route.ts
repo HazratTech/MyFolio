@@ -9,7 +9,16 @@ import AuditLog from "@/models/AuditLog";
 export async function GET() {
   try {
     await dbConnect();
-    const invoices = await Invoice.find().sort({ createdAt: -1 });
+    const rawInvoices = await Invoice.find().sort({ createdAt: -1 }).lean();
+    const invoices = rawInvoices.map((inv: any) => ({
+      ...inv,
+      paidAmount:
+        inv.paidAmount !== undefined && inv.paidAmount !== null
+          ? Number(inv.paidAmount)
+          : inv.status === "PAID"
+          ? Number(inv.totalAmount || 0)
+          : 0,
+    }));
     return NextResponse.json({ success: true, data: invoices }, {
       headers: { "Cache-Control": "no-store, max-age=0" },
     });

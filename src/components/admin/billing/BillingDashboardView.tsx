@@ -308,7 +308,11 @@ export default function BillingDashboardView({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-sm">
-                  {invoices.slice(0, 6).map((inv) => (
+                  {invoices.slice(0, 6).map((inv) => {
+                    const paid = Number(inv.paidAmount ?? (inv.status === "PAID" ? inv.totalAmount : 0));
+                    const remaining = Math.max(0, Number((inv.totalAmount - paid).toFixed(2)));
+                    const pct = inv.totalAmount > 0 ? Math.min(100, Math.round((paid / inv.totalAmount) * 100)) : 0;
+                    return (
                     <tr
                       key={inv._id}
                       onClick={() => setActiveTab("invoices")}
@@ -330,19 +334,33 @@ export default function BillingDashboardView({
                         {inv.issueDate}
                       </td>
                       <td className="py-3 px-4 text-right font-semibold text-slate-900 tabular-nums">
-                        {inv.currency} {inv.totalAmount.toLocaleString()}
+                        <div>{inv.currency} {inv.totalAmount.toLocaleString()}</div>
+                        {inv.status === "PARTIALLY_PAID" && (
+                          <div className="mt-1 space-y-1">
+                            <div className="text-[10px] font-medium text-amber-700">
+                              Paid {paid.toLocaleString()} · Due {remaining.toLocaleString()} ({pct}%)
+                            </div>
+                            <div className="w-24 ml-auto h-1 rounded-full bg-slate-100 overflow-hidden">
+                              <div className="h-full bg-blue-600 rounded-full" style={{ width: `${pct}%` }} />
+                            </div>
+                          </div>
+                        )}
                       </td>
                       <td className="py-3 px-5 text-right">
                         <span
                           className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium border ${
-                            inv.reconciliationStatus === "RECONCILED"
+                            inv.status === "PARTIALLY_PAID"
+                              ? "bg-blue-50 text-blue-700 border-blue-200"
+                              : inv.reconciliationStatus === "RECONCILED"
                               ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                               : inv.reconciliationStatus === "UNRECONCILED"
                               ? "bg-amber-50 text-amber-700 border-amber-200"
                               : "bg-slate-100 text-slate-600 border-slate-200"
                           }`}
                         >
-                          {inv.reconciliationStatus === "RECONCILED"
+                          {inv.status === "PARTIALLY_PAID"
+                            ? `Partial (${pct}%)`
+                            : inv.reconciliationStatus === "RECONCILED"
                             ? "Reconciled"
                             : inv.reconciliationStatus === "UNRECONCILED"
                             ? "Crypto Paid"
@@ -350,7 +368,8 @@ export default function BillingDashboardView({
                         </span>
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

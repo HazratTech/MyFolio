@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 import dbConnect from "@/lib/db";
 import Conversion from "@/models/Conversion";
-import Invoice from "@/models/Invoice";
 import AuditLog from "@/models/AuditLog";
+import { recalculateInvoicePaymentState } from "@/lib/billingSync";
 
 export async function PUT(
   req: Request,
@@ -69,9 +69,8 @@ export async function DELETE(
     await Conversion.findByIdAndDelete(id);
 
     if (invoiceIds.length > 0) {
-      await Invoice.updateMany(
-        { _id: { $in: invoiceIds } },
-        { $set: { reconciliationStatus: "UNRECONCILED" } }
+      await Promise.all(
+        invoiceIds.map((iid) => recalculateInvoicePaymentState(iid))
       );
     }
 

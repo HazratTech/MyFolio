@@ -4,8 +4,8 @@ import mongoose from "mongoose";
 import dbConnect from "@/lib/db";
 import Conversion from "@/models/Conversion";
 import Payment from "@/models/Payment";
-import Invoice from "@/models/Invoice";
 import AuditLog from "@/models/AuditLog";
+import { recalculateInvoicePaymentState } from "@/lib/billingSync";
 
 export async function GET() {
   try {
@@ -74,9 +74,8 @@ export async function POST(req: Request) {
       notes: body.notes || "",
     });
 
-    await Invoice.updateMany(
-      { _id: { $in: invoiceIds } },
-      { $set: { reconciliationStatus: "RECONCILED" } }
+    await Promise.all(
+      invoiceIds.map((iid) => recalculateInvoicePaymentState(iid))
     );
 
     await AuditLog.create({
