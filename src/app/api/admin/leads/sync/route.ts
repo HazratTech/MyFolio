@@ -10,6 +10,7 @@ import {
     stripHtmlKeepNewlines,
 } from '@/lib/lead-ai';
 import { scanRedditJobs, buildRedditDmUrl } from '@/lib/reddit-scraper';
+import { fetchMultiPlatformCandidates } from '@/lib/multi-platform-scraper';
 import { sendRedditLeadAlerts, RedditLeadAlertItem } from '@/lib/discord';
 
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
@@ -303,7 +304,30 @@ export async function POST() {
         }
 
         // ==========================================
-        // 5. Batch Deduplicate Before AI Qualification
+        // 5. Verified Multi-Platform Live Jobs & Paid Bounties (GitHub, Freelancer Low-Bid, WWR, Himalayas, Jobicy, WorkingNomads, Mastodon)
+        // ==========================================
+        try {
+            const discovered = await fetchMultiPlatformCandidates();
+            for (const item of discovered.slice(0, 20)) {
+                rawCandidates.push({
+                    rawText: item.rawText,
+                    author: item.author,
+                    source: item.source,
+                    sourceUrl: item.sourceUrl,
+                    extractedEmail: item.extractedEmail,
+                    defaultCategory: item.defaultCategory,
+                    rawCompany: item.rawCompany,
+                    rawTitle: item.rawTitle,
+                    rawTags: item.rawTags,
+                    budget: item.budget,
+                });
+            }
+        } catch (err: any) {
+            console.error('Multi-platform sync error:', err.message);
+        }
+
+        // ==========================================
+        // 6. Batch Deduplicate Before AI Qualification
         // ==========================================
         const candidateUrls = rawCandidates.map(c => c.sourceUrl);
         const existingDocs = await Lead.find({ sourceUrl: { $in: candidateUrls } }, { sourceUrl: 1 });

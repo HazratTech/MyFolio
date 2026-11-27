@@ -27,12 +27,14 @@ import {
     Plus,
     FileText,
     Mail,
-    CheckCircle2
+    CheckCircle2,
+    Globe
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { QuickRedditSearchModal } from "@/components/admin/QuickRedditSearchModal";
+import { MultiPlatformScoutModal } from "@/components/admin/MultiPlatformScoutModal";
 
 interface Lead {
     _id: string;
@@ -110,6 +112,7 @@ export default function LeadsAdminPage() {
     // Add Lead Modal State
     const [showAddModal, setShowAddModal] = useState(false);
     const [showRedditSearchModal, setShowRedditSearchModal] = useState(false);
+    const [showMultiScoutModal, setShowMultiScoutModal] = useState(false);
     const [newCompany, setNewCompany] = useState("");
     const [newCategory, setNewCategory] = useState<"Mobile Apps" | "Discord Bots" | "AI & Chatbots" | "Backend">("Backend");
     const [newDecisionMaker, setNewDecisionMaker] = useState("");
@@ -540,6 +543,14 @@ export default function LeadsAdminPage() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2.5">
+                    <Button
+                        onClick={() => setShowMultiScoutModal(true)}
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs h-10 px-4 rounded-xl shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+                    >
+                        <Globe className="w-3.5 h-3.5" />
+                        <span>Multi-Platform Scout</span>
+                    </Button>
+
                     <Button
                         onClick={() => setShowRedditSearchModal(true)}
                         className="bg-orange-600 hover:bg-orange-700 text-white font-medium text-xs h-10 px-4 rounded-xl shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
@@ -1625,6 +1636,13 @@ export default function LeadsAdminPage() {
             <QuickRedditSearchModal
                 open={showRedditSearchModal}
                 onOpenChange={setShowRedditSearchModal}
+                onLeadImported={() => fetchLeads(true)}
+            />
+
+            {/* MULTI-PLATFORM REAL JOB SCOUT MODAL */}
+            <MultiPlatformScoutModal
+                open={showMultiScoutModal}
+                onOpenChange={setShowMultiScoutModal}
                 onLeadImported={() => fetchLeads(true)}
             />
         </div>
