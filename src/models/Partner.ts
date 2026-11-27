@@ -23,6 +23,8 @@ export interface IPartner {
         angle?: 'white-label' | 'custom-scripts' | 'concise' | 'technical-audit' | 'ai-automation';
         modelUsed?: string;
         generatedAt?: Date;
+        sentAt?: Date;
+        sentVia?: string;
     };
     websiteContext?: {
         source?: 'combined' | 'website' | 'shopify-directory';
@@ -69,7 +71,9 @@ const PartnerSchema = new Schema<IPartner>({
         body: { type: String },
         angle: { type: String, default: 'white-label' },
         modelUsed: { type: String, default: 'gpt-4o' },
-        generatedAt: { type: Date }
+        generatedAt: { type: Date },
+        sentAt: { type: Date },
+        sentVia: { type: String },
     },
     websiteContext: {
         source: { type: String },

@@ -28,11 +28,24 @@ import {
     CheckCircle,
     Cpu,
     Zap,
-    Bot
+    Bot,
+    Mail
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+
+function decodeEntities(str?: string): string {
+    if (!str) return "";
+    return str
+        .replace(/&amp;/g, "&")
+        .replace(/&quot;/g, '"')
+        .replace(/&#x27;|&#39;|&apos;/g, "'")
+        .replace(/&#x2F;/g, "/")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&nbsp;/g, " ");
+}
 
 interface Partner {
     _id: string;
@@ -116,10 +129,14 @@ export default function ShopifyPartnersPage() {
     const [pitchModel, setPitchModel] = useState<"gpt-4o" | "gpt-4o-mini" | "gemini">("gpt-4o");
     const [editableSubject, setEditableSubject] = useState("");
     const [editableBody, setEditableBody] = useState("");
+    const [recipientEmail, setRecipientEmail] = useState("");
     const [isGeneratingPitch, setIsGeneratingPitch] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [saveSuccess, setSaveSuccess] = useState(false);
     const [copiedField, setCopiedField] = useState<string | null>(null);
+    const [zohoStatus, setZohoStatus] = useState<{ configured: boolean; senderEmail: string | null }>({ configured: false, senderEmail: null });
+    const [isSendingZoho, setIsSendingZoho] = useState(false);
+    const [zohoFeedback, setZohoFeedback] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
     // Manual Add Partner Modal
     const [showAddModal, setShowAddModal] = useState(false);
@@ -172,6 +189,15 @@ export default function ShopifyPartnersPage() {
     useEffect(() => {
         fetchPartners();
     }, [selectedCountry, selectedStatus, displayLimit]);
+
+    useEffect(() => {
+        fetch("/api/admin/email-status", { cache: "no-store" })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                if (data) setZohoStatus({ configured: !!data.configured, senderEmail: data.senderEmail || null });
+            })
+            .catch(() => {});
+    }, []);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -276,6 +302,8 @@ export default function ShopifyPartnersPage() {
     const handleOpenPitchModal = async (partner: Partner) => {
         setSelectedPartner(partner);
         setSaveSuccess(false);
+        setZohoFeedback(null);
+        setRecipientEmail(partner.email || "");
 
         if (partner.personalizedPitch?.body) {
             setEditableSubject(partner.personalizedPitch.subject);
@@ -308,15 +336,22 @@ export default function ShopifyPartnersPage() {
             if (res.ok && data.pitch) {
                 setEditableSubject(data.pitch.subject);
                 setEditableBody(data.pitch.body);
+                if (data.email && !recipientEmail) {
+                    setRecipientEmail(data.email);
+                }
                 // Update local state list
                 setPartners(prev => prev.map(p => p._id === partner._id ? {
                     ...p,
+                    email: data.email || p.email,
+                    description: data.description || p.description,
                     personalizedPitch: data.pitch,
                     websiteContext: data.websiteContext || p.websiteContext
                 } : p));
                 if (selectedPartner && selectedPartner._id === partner._id) {
                     setSelectedPartner(prev => prev ? { 
                         ...prev, 
+                        email: data.email || prev.email,
+                        description: data.description || prev.description,
                         personalizedPitch: data.pitch,
                         websiteContext: data.websiteContext || prev.websiteContext
                     } : null);
@@ -326,6 +361,43 @@ export default function ShopifyPartnersPage() {
             console.error("Failed to generate AI pitch:", err);
         } finally {
             setIsGeneratingPitch(false);
+        }
+    };
+
+    const handleSendViaZoho = async () => {
+        if (!selectedPartner) return;
+        if (!recipientEmail.trim()) {
+            setZohoFeedback({ type: "error", text: "Enter the agency email address above before sending." });
+            return;
+        }
+        try {
+            setIsSendingZoho(true);
+            setZohoFeedback(null);
+            const res = await fetch(`/api/admin/partners/${selectedPartner._id}/send`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    to: recipientEmail.trim(),
+                    subject: editableSubject,
+                    body: editableBody,
+                    angle: activeAngle,
+                    modelUsed: selectedPartner.personalizedPitch?.modelUsed || pitchModel,
+                }),
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                setZohoFeedback({ type: "success", text: data.message || "Sent via Zoho Mail!" });
+                if (selectedPartner.status === "New") {
+                    updatePartnerStatus(selectedPartner._id, "Pitched");
+                }
+                fetchPartners(true);
+            } else {
+                setZohoFeedback({ type: "error", text: data.error || "Failed to send via Zoho Mail" });
+            }
+        } catch (err: any) {
+            setZohoFeedback({ type: "error", text: err.message || "Network error sending via Zoho Mail" });
+        } finally {
+            setIsSendingZoho(false);
         }
     };
 
@@ -723,7 +795,7 @@ export default function ShopifyPartnersPage() {
                                         {partner.description && (
                                             <div className="mt-1.5 p-3 rounded-xl bg-slate-50 border border-slate-200/70 text-xs text-slate-700 leading-relaxed">
                                                 <span className="font-semibold text-slate-900 mr-1.5">Focus &amp; Specialty:</span>
-                                                {partner.description}
+                                                {decodeEntities(partner.description)}
                                             </div>
                                         )}
                                     </div>
@@ -898,7 +970,7 @@ export default function ShopifyPartnersPage() {
                                     {selectedPartner.description && (
                                         <div className="text-[11px] text-slate-600 leading-relaxed border-t border-slate-200/70 pt-1.5">
                                             <span className="font-semibold text-slate-800 mr-1">Agency Focus:</span>
-                                            {selectedPartner.description}
+                                            {decodeEntities(selectedPartner.description)}
                                         </div>
                                     )}
 
@@ -1078,6 +1150,42 @@ export default function ShopifyPartnersPage() {
                                     </div>
                                 </div>
 
+                                {/* Recipient Email & Zoho Status */}
+                                <div className="space-y-1">
+                                    <div className="flex items-center justify-between gap-2">
+                                        <label className="text-[11px] font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                                            <Mail className="w-3 h-3 text-blue-600" />
+                                            <span>Recipient Email (To)</span>
+                                        </label>
+                                        {zohoStatus.configured ? (
+                                            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                Zoho Mail Ready: {zohoStatus.senderEmail}
+                                            </span>
+                                        ) : (
+                                            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
+                                                Zoho SMTP not configured in .env.local
+                                            </span>
+                                        )}
+                                    </div>
+                                    <Input
+                                        type="email"
+                                        placeholder="e.g. hello@agency.com (auto-extracted when available or paste from website)"
+                                        value={recipientEmail}
+                                        onChange={(e) => setRecipientEmail(e.target.value)}
+                                        className="h-9 text-xs rounded-xl font-mono bg-white border-slate-200"
+                                    />
+                                </div>
+
+                                {zohoFeedback && (
+                                    <div className={`p-2.5 rounded-xl text-xs font-medium border ${
+                                        zohoFeedback.type === "success"
+                                            ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+                                            : "bg-rose-50 border-rose-200 text-rose-800"
+                                    }`}>
+                                        {zohoFeedback.text}
+                                    </div>
+                                )}
+
                                 {/* Subject Line */}
                                 <div className="space-y-1">
                                     <div className="flex items-center justify-between">
@@ -1167,7 +1275,7 @@ export default function ShopifyPartnersPage() {
 
                                 <div className="flex items-center gap-2">
                                     <a
-                                        href={`mailto:contact@${selectedPartner.handle}.com?subject=${encodeURIComponent(editableSubject)}&body=${encodeURIComponent(editableBody)}`}
+                                        href={`mailto:${recipientEmail.trim() || `contact@${selectedPartner.handle}.com`}?subject=${encodeURIComponent(editableSubject)}&body=${encodeURIComponent(editableBody)}`}
                                         className="inline-flex"
                                         onClick={() => {
                                             if (selectedPartner.status === "New") {
@@ -1175,11 +1283,25 @@ export default function ShopifyPartnersPage() {
                                             }
                                         }}
                                     >
-                                        <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs h-8 px-4 rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer">
-                                            <Send className="w-3.5 h-3.5" />
-                                            <span>Open in Email App</span>
+                                        <Button variant="outline" className="border-slate-300 bg-white hover:bg-slate-100 text-slate-700 font-medium text-xs h-8 px-3 rounded-xl shadow-2xs flex items-center gap-1.5 cursor-pointer">
+                                            <ExternalLink className="w-3.5 h-3.5" />
+                                            <span>Email App</span>
                                         </Button>
                                     </a>
+
+                                    <Button
+                                        type="button"
+                                        onClick={handleSendViaZoho}
+                                        disabled={isSendingZoho}
+                                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs h-8 px-4 rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer"
+                                    >
+                                        {isSendingZoho ? (
+                                            <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                                        ) : (
+                                            <Send className="w-3.5 h-3.5" />
+                                        )}
+                                        <span>{isSendingZoho ? "Sending..." : "Send via Zoho Mail"}</span>
+                                    </Button>
                                 </div>
                             </div>
                         </div>
